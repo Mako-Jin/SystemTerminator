@@ -22,3 +22,25 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+/.idea/
+/sts-auth/sts-auth-application/target/
+/sts-auth/sts-auth-application/sts-auth-application.iml
+/sts-auth/sts-auth-domain/target/
+/sts-auth/sts-auth-domain/sts-auth-domain.iml
+/sts-auth/sts-auth-infrastructure/target/
+/sts-auth/sts-auth-infrastructure/sts-auth-infrastructure.iml
+/sts-auth/sts-auth-interfaces/target/
+/sts-auth/sts-auth-interfaces/sts-auth-interfaces.iml
+/sts-auth/sts-auth-starter/target/
+/sts-auth/sts-auth-starter/sts-auth-starter.iml
+/sts-common/sts-common-basic/target/
+/sts-common/sts-common-basic/sts-common-basic.iml
+/sts-common/sts-common-domain/target/
+/sts-common/sts-common-domain/sts-common-domain.iml
+/sts-common/sts-common-tools/target/
+/sts-common/sts-common-tools/sts-common-tools.iml
+/sts-common/sts-common-web/target/
+/sts-common/sts-common-web/sts-common-web.iml
+/sts-common/sts-common.iml
+/sts-parent/sts-parent.iml
+/sts-auth/sts-auth.iml
