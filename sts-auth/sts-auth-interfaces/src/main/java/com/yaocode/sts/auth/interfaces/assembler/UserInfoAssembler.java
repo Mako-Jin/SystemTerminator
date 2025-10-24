@@ -3,7 +3,7 @@ package com.yaocode.sts.auth.interfaces.assembler;
 
 import com.yaocode.sts.auth.application.dto.UserInfoDto;
 import com.yaocode.sts.auth.interfaces.model.params.CreateUserParams;
-import com.yaocode.sts.auth.model.vo.UserInfoVo;
+import com.yaocode.sts.auth.interfaces.model.vo.UserInfoVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

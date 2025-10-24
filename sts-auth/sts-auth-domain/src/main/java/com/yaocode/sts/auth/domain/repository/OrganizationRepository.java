@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.common.domain.Repository;
 
 /**
@@ -10,4 +12,13 @@ import com.yaocode.sts.common.domain.Repository;
  * @date: 2025年10月13日 22:55
  */
 public interface OrganizationRepository extends Repository<OrganizationInfoEntity, OrganizationId> {
+
+    /**
+     * 保存组织和用户关联关系
+     * @param tenantId 租户id
+     * @param organizationId 组织id
+     * @param userId 用户id
+     */
+    void saveRelOrganizationUser(TenantId tenantId, OrganizationId organizationId, UserId userId);
+
 }

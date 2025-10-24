@@ -40,7 +40,11 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
     /**
      * 是否允许注册新用户
      */
-    private String allowRegister;
+    private Integer allowRegister;
+    /**
+     * 是否允许注册新用户
+     */
+    private Integer allowAdd;
     /**
      * 父id
      */

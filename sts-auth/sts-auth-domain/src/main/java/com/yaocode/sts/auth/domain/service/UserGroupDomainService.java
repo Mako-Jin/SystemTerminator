@@ -1,6 +1,8 @@
 package com.yaocode.sts.auth.domain.service;
 
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 
 import java.util.List;
 
@@ -24,5 +26,13 @@ public interface UserGroupDomainService {
      * @return boolean
      */
     boolean validateUserGroupId(List<UserGroupId> userGroupIdList);
+
+    /**
+     * 用户组分配用户
+     * @param tenantId 租户id
+     * @param userGroupId 用户组id
+     * @param userId 用户id
+     */
+    void associatedUserGroupUser(TenantId tenantId, UserGroupId userGroupId, UserId userId);
 
 }

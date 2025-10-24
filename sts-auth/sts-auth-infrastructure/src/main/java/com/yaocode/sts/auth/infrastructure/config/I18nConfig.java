@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.infrastructure.config;
 
-import com.yaocode.sts.auth.infrastructure.utils.MessageUtils;
+import com.yaocode.sts.common.tools.messages.MessageUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

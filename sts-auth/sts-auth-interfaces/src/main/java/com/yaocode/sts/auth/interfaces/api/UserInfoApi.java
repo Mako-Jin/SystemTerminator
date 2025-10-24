@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.interfaces.api;
 
 import com.yaocode.sts.auth.interfaces.model.params.CreateUserParams;
-import com.yaocode.sts.auth.model.vo.UserInfoVo;
+import com.yaocode.sts.auth.interfaces.model.vo.UserInfoVo;
 import com.yaocode.sts.common.web.model.ResultModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -43,6 +43,10 @@
             <groupId>com.yaocode.sts</groupId>
             <artifactId>sts-common-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-basic</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

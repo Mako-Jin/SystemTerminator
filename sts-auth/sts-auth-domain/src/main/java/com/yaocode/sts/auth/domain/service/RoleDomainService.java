@@ -1,6 +1,8 @@
 package com.yaocode.sts.auth.domain.service;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 
 import java.util.List;
 
@@ -24,5 +26,13 @@ public interface RoleDomainService {
      * @return boolean
      */
     boolean validateRoleId(List<RoleId> roleIdList);
+
+    /**
+     * 给用户分配角色权限
+     * @param tenantId 租户id
+     * @param userId 用户id
+     * @param roleIdList 角色id列表
+     */
+    void associatedRole(TenantId tenantId, UserId userId, List<RoleId> roleIdList);
 
 }

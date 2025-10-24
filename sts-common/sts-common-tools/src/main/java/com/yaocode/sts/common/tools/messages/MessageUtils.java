@@ -1,4 +1,4 @@
-package com.yaocode.sts.auth.infrastructure.utils;
+package com.yaocode.sts.common.tools.messages;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;

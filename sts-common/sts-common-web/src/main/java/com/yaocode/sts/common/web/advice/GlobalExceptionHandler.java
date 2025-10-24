@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.advice;
 
+import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.enums.ResultEnums;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.result.ResultUtils;
@@ -22,6 +23,20 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    private final MessageUtils messageUtils;
+
+    public GlobalExceptionHandler(MessageUtils messageUtils) {
+        this.messageUtils = messageUtils;
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResultModel<?> handleIllegalArgumentException(IllegalArgumentException exception) {
+        logger.error("参数校验异常 ==> {}", exception.getMessage());
+        return handle(ResultEnums.PARAM_ERROR, exception);
+    }
+
     @ResponseBody
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -40,6 +55,7 @@ public class GlobalExceptionHandler {
     }
 
     protected ResultModel<?> handle(String code, String message) {
+        message = messageUtils.getMessage(message);
         return ResultUtils.error(code, message);
     }
 

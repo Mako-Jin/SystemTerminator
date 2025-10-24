@@ -9,4 +9,12 @@ import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
  * @date: 2025年10月14日 19:50
  */
 public interface RoleInfoDao extends IService<RoleInfoPo> {
+
+    /**
+     * 查询租户下的默认权限
+     * @param tenantId 租户id
+     * @return RoleInfoPo
+     */
+    RoleInfoPo getDefaultRole(String tenantId);
+
 }

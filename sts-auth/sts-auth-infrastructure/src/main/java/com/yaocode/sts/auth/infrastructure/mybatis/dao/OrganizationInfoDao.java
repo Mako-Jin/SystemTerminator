@@ -9,4 +9,7 @@ import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
  * @date: 2025年10月14日 19:50
  */
 public interface OrganizationInfoDao extends IService<OrganizationInfoPo> {
+
+
+
 }

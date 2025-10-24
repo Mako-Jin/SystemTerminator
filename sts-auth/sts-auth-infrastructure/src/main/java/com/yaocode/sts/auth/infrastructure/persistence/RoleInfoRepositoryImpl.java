@@ -3,10 +3,20 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelRoleUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RoleInfoDao;
+import com.yaocode.sts.auth.infrastructure.po.RelRoleUserPo;
+import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
+import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -19,6 +29,9 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
 
     @Resource
     private RoleInfoDao roleInfoDao;
+
+    @Resource
+    private RelRoleUserDao relRoleUserDao;
 
     @Override
     public Optional<RoleInfoEntity> findById(RoleId roleId) {
@@ -33,5 +46,42 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
     @Override
     public void delete(RoleInfoEntity aggregate) {
 
+    }
+
+    @Override
+    public List<RoleInfoEntity> findByIdList(TenantId tenantId, List<RoleId> roleIdList) {
+        return null;
+    }
+
+    @Override
+    public void saveRelRoleUser(TenantId tenantId, UserId userId, List<RoleId> roleIdList) {
+        List<String> roleIdStrList = roleIdList.stream().map(RoleId::getValue).toList();
+        List<RelRoleUserPo> existRelList = relRoleUserDao.getByUserIdAndRoleIdList(
+                tenantId.getValue(), userId.getValue(), roleIdStrList
+        );
+        List<String> existRoleIdList = existRelList.stream().map(RelRoleUserPo::getRoleId).toList();
+        List<String> nonExistList = roleIdStrList.stream().filter(e -> !existRoleIdList.contains(e)).toList();
+        if (CollectionUtils.isEmpty(nonExistList)) {
+            return;
+        }
+        List<RelRoleUserPo> relRoleUserPoList = new ArrayList<>();
+        nonExistList.forEach(e -> {
+            RelRoleUserPo relRoleUserPo = new RelRoleUserPo();
+            relRoleUserPo.setRelId(IdFactory.generate());
+            relRoleUserPo.setTenantId(tenantId.getValue());
+            relRoleUserPo.setRoleId(e);
+            relRoleUserPo.setUserId(userId.getValue());
+            relRoleUserPoList.add(relRoleUserPo);
+        });
+        relRoleUserDao.saveBatch(relRoleUserPoList);
+    }
+
+    @Override
+    public Optional<RoleId> getDefaultRole(TenantId tenantId) {
+        RoleInfoPo roleInfoPo = roleInfoDao.getDefaultRole(tenantId.getValue());
+        if (Objects.isNull(roleInfoPo)) {
+            return Optional.empty();
+        }
+        return Optional.of(RoleId.of(roleInfoPo.getRoleId()));
     }
 }

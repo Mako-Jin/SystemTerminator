@@ -10,7 +10,7 @@ spring:
     username: root
     password: 515322
   messages:
-    basename: i18n/messages
+    basename: classpath*:i18n/messages
     use-code-as-default-message: true
     encoding: UTF-8
     cache-duration: 3600
@@ -34,6 +34,6 @@ logging:
   level:
     com.yaocode.sts.auth: INFO
     org.springframework: INFO
-    org.apache.ibatis: INFO
+    org.apache.ibatis: debug
   file:
     path: ./logs

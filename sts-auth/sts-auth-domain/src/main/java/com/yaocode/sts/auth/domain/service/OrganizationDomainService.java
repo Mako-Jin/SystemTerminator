@@ -1,6 +1,8 @@
 package com.yaocode.sts.auth.domain.service;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 
 import java.util.List;
 
@@ -24,5 +26,13 @@ public interface OrganizationDomainService {
      * @return boolean
      */
     boolean validateOrganizationId(List<OrganizationId> organizationIdList);
+
+    /**
+     * 组织分配用户
+     * @param tenantId 租户id
+     * @param organizationId 组织id
+     * @param userId 用户id
+     */
+    void associatedOrganizationUser(TenantId tenantId, OrganizationId organizationId, UserId userId);
 
 }

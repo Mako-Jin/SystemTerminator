@@ -4,7 +4,7 @@ import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
 import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.exception.AuthenticationException;
 import com.yaocode.sts.auth.application.exception.PermissionException;
-import com.yaocode.sts.auth.infrastructure.utils.MessageUtils;
+import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.advice.GlobalExceptionHandler;
 import com.yaocode.sts.common.web.model.ResultModel;
 import jakarta.annotation.Resource;
@@ -27,6 +27,10 @@ public class AuthExceptionHandler extends GlobalExceptionHandler {
 
     @Resource
     private MessageUtils messageUtils;
+
+    public AuthExceptionHandler(MessageUtils messageUtils) {
+        super(messageUtils);
+    }
 
     @ResponseBody
     @ExceptionHandler(AuthenticationException.class)
@@ -58,7 +62,6 @@ public class AuthExceptionHandler extends GlobalExceptionHandler {
         // if (exception instanceof DataExistException dataExistException) {
         //     return ResultUtils.error(resultEnums.getCode(), message, dataExistException.getData());
         // }
-        message = messageUtils.getMessage(message);
         return super.handle(resultEnums.getCode(), message);
     }
 

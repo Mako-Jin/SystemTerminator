@@ -2,7 +2,6 @@ package com.yaocode.sts.auth.starter.controller;
 
 import com.yaocode.sts.auth.application.dto.TenantInfoDto;
 import com.yaocode.sts.auth.application.service.TenantInfoApplicationService;
-import com.yaocode.sts.auth.interfaces.api.RoleInfoApi;
 import com.yaocode.sts.auth.interfaces.api.TenantInfoApi;
 import com.yaocode.sts.auth.interfaces.assembler.TenantInfoAssembler;
 import com.yaocode.sts.auth.interfaces.model.params.CreateTenantParams;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @SubRequestMapping("/v1")
-public class TenantInfoController implements TenantInfoApi, RoleInfoApi {
+public class TenantInfoController implements TenantInfoApi {
 
     @Resource
     private TenantInfoApplicationService tenantInfoApplicationService;

@@ -6,7 +6,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.auth.interfaces.api.UserInfoApi;
 import com.yaocode.sts.auth.interfaces.assembler.UserInfoAssembler;
 import com.yaocode.sts.auth.interfaces.model.params.CreateUserParams;
-import com.yaocode.sts.auth.model.vo.UserInfoVo;
+import com.yaocode.sts.auth.interfaces.model.vo.UserInfoVo;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.result.ResultUtils;

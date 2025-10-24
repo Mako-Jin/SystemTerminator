@@ -38,10 +38,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.yaocode.sts</groupId>
-            <artifactId>sts-common-basic</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

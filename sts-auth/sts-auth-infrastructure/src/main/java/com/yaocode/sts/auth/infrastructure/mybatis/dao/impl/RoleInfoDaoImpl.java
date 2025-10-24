@@ -1,9 +1,11 @@
 package com.yaocode.sts.auth.infrastructure.mybatis.dao.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RoleInfoDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.mapper.RoleInfoMapper;
 import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
+import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +20,11 @@ public class RoleInfoDaoImpl extends ServiceImpl<RoleInfoMapper, RoleInfoPo> imp
     @Resource
     private RoleInfoMapper roleInfoMapper;
 
+    @Override
+    public RoleInfoPo getDefaultRole(String tenantId) {
+        LambdaQueryWrapper<RoleInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleInfoPo::getTenantId, tenantId);
+        wrapper.eq(RoleInfoPo::getIsDefault, OppositeEnums.YES.getCode());
+        return roleInfoMapper.selectOne(wrapper);
+    }
 }

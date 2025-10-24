@@ -45,6 +45,10 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-tools</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

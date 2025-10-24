@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.common.domain.Repository;
 
 import java.util.Optional;
@@ -26,5 +27,12 @@ public interface TenantInfoRepository extends Repository<TenantInfoEntity, Tenan
      * @return Optional<TenantInfoEntity>
      */
     Optional<TenantInfoEntity> getByTenantName(String tenantName);
+
+    /**
+     * 保存租户用户关联关系
+     * @param tenantId 租户id
+     * @param userId 用户id
+     */
+    void saveRelTenantUser(TenantId tenantId, UserId userId);
 
 }

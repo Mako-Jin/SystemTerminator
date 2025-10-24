@@ -8,6 +8,7 @@ package com.yaocode.sts.auth.interfaces.model.params;
 public record CreateUserParams (
         String tenantId,
         String orgId,
+        String userGroupId,
         String username,
         String email,
         String phoneNum,

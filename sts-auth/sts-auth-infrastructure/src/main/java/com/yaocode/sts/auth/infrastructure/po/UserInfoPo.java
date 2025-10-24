@@ -48,9 +48,5 @@ public class UserInfoPo extends BasePo {
      * 是否被删：0：删了，1没有删
      */
     private Integer isDeleted;
-    /**
-     * 租户id
-     */
-    private String tenantId;
 
 }

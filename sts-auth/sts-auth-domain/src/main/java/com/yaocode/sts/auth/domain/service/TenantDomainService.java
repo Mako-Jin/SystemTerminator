@@ -1,6 +1,8 @@
 package com.yaocode.sts.auth.domain.service;
 
+import com.yaocode.sts.auth.domain.enums.UserAddTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 
 import java.util.List;
@@ -39,5 +41,12 @@ public interface TenantDomainService {
      * @return boolean
      */
     boolean existsByTenantName(String tenantName);
+
+    /**
+     * 绑定租户和用户关系
+     * @param tenantId 租户id
+     * @param userId 用户id
+     */
+    void associatedTenantUser(TenantId tenantId, UserId userId, UserAddTypeEnums userAddType);
 
 }

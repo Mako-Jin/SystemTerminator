@@ -15,6 +15,11 @@ public enum ResultEnums {
      * 系统异常
      */
     SYSTEM_ERROR("005000", "common.web.system.error"),
+
+    /**
+     * 系统异常
+     */
+    PARAM_ERROR("004000", "common.web.param.error"),
     ;
 
     private final String code;

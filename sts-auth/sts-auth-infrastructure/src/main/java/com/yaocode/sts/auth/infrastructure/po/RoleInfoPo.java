@@ -33,8 +33,18 @@ public class RoleInfoPo extends BasePo {
      */
     private String roleDesc;
     /**
-     * 创建者id
+     * 父id
      */
     private String parentId;
+
+    /**
+     * 租户id
+     */
+    private String tenantId;
+    /**
+     * 是否是租户下的默认权限
+     */
+    private Integer isDefault;
+
 
 }
