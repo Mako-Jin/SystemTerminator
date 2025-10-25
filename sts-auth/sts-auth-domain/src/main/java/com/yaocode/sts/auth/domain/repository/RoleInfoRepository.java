@@ -4,6 +4,7 @@ import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.common.domain.Repository;
 
 import java.util.List;
@@ -23,6 +24,22 @@ public interface RoleInfoRepository extends Repository<RoleInfoEntity, RoleId> {
      * @return List<RoleInfoEntity>
      */
     List<RoleInfoEntity> findByIdList(TenantId tenantId, List<RoleId> roleIdList);
+
+    /**
+     * 通过角色编码查询角色信息
+     * @param tenantId 租户id
+     * @param roleCode 角色id列表
+     * @return Optional<RoleInfoEntity>
+     */
+    Optional<RoleInfoEntity> findByRoleCode(TenantId tenantId, RoleCode roleCode);
+
+    /**
+     * 通过角色名查询角色信息
+     * @param tenantId 租户id
+     * @param roleName 角色名
+     * @return List<RoleInfoEntity>
+     */
+    Optional<RoleInfoEntity> findByRoleName(TenantId tenantId, String roleName);
 
     /**
      * 保存用户角色关联关系

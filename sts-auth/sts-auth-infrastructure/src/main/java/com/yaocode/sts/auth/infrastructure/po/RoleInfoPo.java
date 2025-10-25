@@ -46,5 +46,4 @@ public class RoleInfoPo extends BasePo {
      */
     private Integer isDefault;
 
-
 }

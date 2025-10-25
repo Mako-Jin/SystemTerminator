@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +17,12 @@ import lombok.Setter;
 public class RoleInfoEntity extends AbstractAggregate<RoleId> {
 
     private TenantId tenantId;
-    private String name;
-    private String code;
+    private RoleCode roleCode;
+    private String roleName;
+    private String roleDesc;
+    private Integer isDefault;
 
-    protected RoleInfoEntity(RoleId roleId) {
+    public RoleInfoEntity(RoleId roleId) {
         super(roleId);
     }
     // private Set<Permission> permissions; // 值对象集合

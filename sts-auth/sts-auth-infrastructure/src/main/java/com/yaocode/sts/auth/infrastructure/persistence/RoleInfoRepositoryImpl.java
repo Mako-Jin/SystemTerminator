@@ -5,6 +5,8 @@ import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
+import com.yaocode.sts.auth.infrastructure.converter.RoleInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelRoleUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RoleInfoDao;
 import com.yaocode.sts.auth.infrastructure.po.RelRoleUserPo;
@@ -40,7 +42,9 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
 
     @Override
     public RoleId save(RoleInfoEntity aggregate) {
-        return null;
+        RoleInfoPo roleInfoPo = RoleInfoConverter.INSTANCE.toPo(aggregate);
+        roleInfoDao.save(roleInfoPo);
+        return aggregate.getId();
     }
 
     @Override
@@ -51,6 +55,18 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
     @Override
     public List<RoleInfoEntity> findByIdList(TenantId tenantId, List<RoleId> roleIdList) {
         return null;
+    }
+
+    @Override
+    public Optional<RoleInfoEntity> findByRoleCode(TenantId tenantId, RoleCode roleCode) {
+        RoleInfoPo roleInfoPo = roleInfoDao.getByRoleCode(tenantId.getValue(), roleCode.getValue());
+        return Optional.ofNullable(RoleInfoConverter.INSTANCE.toEntity(roleInfoPo));
+    }
+
+    @Override
+    public Optional<RoleInfoEntity> findByRoleName(TenantId tenantId, String roleName) {
+        RoleInfoPo roleInfoPo = roleInfoDao.getByRoleName(tenantId.getValue(), roleName);
+        return Optional.ofNullable(RoleInfoConverter.INSTANCE.toEntity(roleInfoPo));
     }
 
     @Override

@@ -28,6 +28,6 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfoPo> imp
         wrapper.in(!CollectionUtils.isEmpty(userIdList), UserInfoPo::getUserId, userIdList);
         wrapper.eq(UserInfoPo::getUsername, username);
         List<UserInfoPo> userInfoPoList = userInfoMapper.selectList(wrapper);
-        return userInfoPoList.isEmpty() ? null : userInfoPoList.getFirst();
+        return userInfoPoList.isEmpty() ? null : userInfoPoList.get(0);
     }
 }

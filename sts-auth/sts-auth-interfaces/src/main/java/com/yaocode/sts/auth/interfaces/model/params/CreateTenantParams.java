@@ -32,6 +32,11 @@ public class CreateTenantParams {
     @Range(min = 0, max = 1, message = "allowRegister只支持0和1")
     private Integer allowRegister = OppositeEnums.NO.getCode();
     /**
+     * 是否允许新增新用户
+     */
+    @Range(min = 0, max = 1, message = "allowAdd只支持0和1")
+    private Integer allowAdd = OppositeEnums.YES.getCode();
+    /**
      * 父id
      */
     private String parentId;

@@ -27,4 +27,20 @@ public class RoleInfoDaoImpl extends ServiceImpl<RoleInfoMapper, RoleInfoPo> imp
         wrapper.eq(RoleInfoPo::getIsDefault, OppositeEnums.YES.getCode());
         return roleInfoMapper.selectOne(wrapper);
     }
+
+    @Override
+    public RoleInfoPo getByRoleCode(String tenantId, String roleCode) {
+        LambdaQueryWrapper<RoleInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleInfoPo::getTenantId, tenantId);
+        wrapper.eq(RoleInfoPo::getRoleCode, roleCode);
+        return roleInfoMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public RoleInfoPo getByRoleName(String tenantId, String roleName) {
+        LambdaQueryWrapper<RoleInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleInfoPo::getTenantId, tenantId);
+        wrapper.eq(RoleInfoPo::getRoleName, roleName);
+        return roleInfoMapper.selectOne(wrapper);
+    }
 }

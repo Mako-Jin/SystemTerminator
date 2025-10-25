@@ -6,6 +6,7 @@ import com.yaocode.sts.auth.application.service.TenantInfoApplicationService;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
+import com.yaocode.sts.auth.domain.service.RoleDomainService;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import jakarta.annotation.Resource;
@@ -29,6 +30,9 @@ public class TenantInfoApplicationServiceImpl implements TenantInfoApplicationSe
     @Resource
     private TenantDomainService tenantDomainService;
 
+    @Resource
+    private RoleDomainService roleDomainService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String singleAdd(TenantInfoDto tenantInfoDto) {
@@ -44,6 +48,9 @@ public class TenantInfoApplicationServiceImpl implements TenantInfoApplicationSe
         // 4. 设置默认值/初始化状态
         tenantInfoEntity.setTenantStatus(TenantStatusEnums.ACTIVATE.getCode());
         tenantInfoRepository.save(tenantInfoEntity);
+        // 新建一个默认权限
+        roleDomainService.createDefaultRole(tenantInfoEntity);
+
         return tenantInfoEntity.getId().getValue();
     }
 }

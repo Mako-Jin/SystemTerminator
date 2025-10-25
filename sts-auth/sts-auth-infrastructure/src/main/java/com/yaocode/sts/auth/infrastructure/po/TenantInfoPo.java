@@ -40,11 +40,15 @@ public class TenantInfoPo extends BasePo {
     /**
      * 租户状态
      */
-    private String tenantLevel;
+    private Integer tenantLevel;
     /**
      * 是否允许注册新用户
      */
-    private String allowRegister;
+    private Integer allowRegister;
+    /**
+     * 是否允许新增新用户
+     */
+    private Integer allowAdd;
     /**
      * 父id
      */

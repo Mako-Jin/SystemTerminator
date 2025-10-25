@@ -37,7 +37,11 @@ public class TenantInfoDto {
     /**
      * 是否允许注册新用户
      */
-    private String allowRegister;
+    private Integer allowRegister;
+    /**
+     * 是否允许新增新用户
+     */
+    private Integer allowAdd;
     /**
      * 创建者id
      */

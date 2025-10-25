@@ -36,7 +36,7 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
     /**
      * 租户状态
      */
-    private String tenantLevel;
+    private Integer tenantLevel;
     /**
      * 是否允许注册新用户
      */

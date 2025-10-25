@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service;
 
+import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
@@ -34,5 +35,11 @@ public interface RoleDomainService {
      * @param roleIdList 角色id列表
      */
     void associatedRole(TenantId tenantId, UserId userId, List<RoleId> roleIdList);
+
+    /**
+     * 创建租户的默认权限
+     * @param tenantInfoEntity 租户信息
+     */
+    void createDefaultRole(TenantInfoEntity tenantInfoEntity);
 
 }

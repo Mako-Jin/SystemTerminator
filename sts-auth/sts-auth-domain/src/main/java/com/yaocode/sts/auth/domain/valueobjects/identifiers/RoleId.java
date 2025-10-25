@@ -27,7 +27,7 @@ public class RoleId extends Identifier<String> {
     }
 
     public static RoleId nextId() {
-        return new RoleId(IdFactory.generate());
+        return new RoleId(IdFactory.generate().toString());
     }
 
 }

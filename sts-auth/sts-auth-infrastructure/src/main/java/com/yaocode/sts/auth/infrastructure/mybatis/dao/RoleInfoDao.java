@@ -17,4 +17,20 @@ public interface RoleInfoDao extends IService<RoleInfoPo> {
      */
     RoleInfoPo getDefaultRole(String tenantId);
 
+    /**
+     * 角色码查角色
+     * @param tenantId 租户id
+     * @param roleCode 角色码
+     * @return RoleInfoPo
+     */
+    RoleInfoPo getByRoleCode(String tenantId, String roleCode);
+
+    /**
+     * 角色名查角色
+     * @param tenantId 租户id
+     * @param roleName 角色名
+     * @return RoleInfoPo
+     */
+    RoleInfoPo getByRoleName(String tenantId, String roleName);
+
 }
