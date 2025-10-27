@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,14 +15,33 @@ import lombok.Setter;
 @Setter
 @Getter
 public class OrganizationInfoEntity extends AbstractAggregate<OrganizationId> {
-    protected OrganizationInfoEntity(OrganizationId s) {
-        super(s);
+
+    public OrganizationInfoEntity(OrganizationId organizationId) {
+        super(organizationId);
     }
 
+    /**
+     * 租户id
+     */
     private TenantId tenantId;
-    private String name;
-    private String code;
-    private OrganizationId parentId;
-    // private OrganizationPath path;
-    private Integer sortOrder;
+    /**
+     * 组织机构名称
+     */
+    private String organizationName;
+    /**
+     * 组织机构编码
+     */
+    private OrganizationCode organizationCode;
+    /**
+     * 组织机构描述
+     */
+    private String organizationDesc;
+    /**
+     * 排序
+     */
+    private String sort;
+    /**
+     * 创建者id
+     */
+    private String parentId;
 }

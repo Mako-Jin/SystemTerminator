@@ -3,16 +3,12 @@ package com.yaocode.sts.auth.domain.valueobjects.primitives;
 import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.common.domain.model.Identifier;
 
-import java.util.regex.Pattern;
-
 /**
  *
  * @author: Jin-LiangBo
  * @date: 2025年10月25日 11:38
  */
 public class RoleCode extends Identifier<String> {
-
-    private static final Pattern TENANT_CODE_REGEX = Pattern.compile("^[a-zA-Z0-9-]+$");
 
     protected RoleCode(String value) {
         super(value);

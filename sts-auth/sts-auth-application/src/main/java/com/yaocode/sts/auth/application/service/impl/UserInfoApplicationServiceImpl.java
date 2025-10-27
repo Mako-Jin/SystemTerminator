@@ -83,7 +83,7 @@ public class UserInfoApplicationServiceImpl implements UserInfoApplicationServic
         OrganizationId organizationId = null;
         if (Objects.nonNull(userInfoDto.getOrganizationId())) {
             organizationId = OrganizationId.of(userInfoDto.getOrganizationId());
-            if (!organizationDomainService.validateOrganizationId(organizationId)) {
+            if (!organizationDomainService.validateOrganizationId(tenantId, organizationId)) {
                 throw new IllegalArgumentException("auth.params.data.not.exists");
             }
         }

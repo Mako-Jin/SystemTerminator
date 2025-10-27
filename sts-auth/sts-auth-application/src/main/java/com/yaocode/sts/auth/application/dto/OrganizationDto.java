@@ -1,24 +1,18 @@
-package com.yaocode.sts.auth.infrastructure.po;
+package com.yaocode.sts.auth.application.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
- * 组织结构持久化对象
+ *
  * @author: Jin-LiangBo
- * @date: 2025年10月14日 19:08
+ * @date: 2025年10月25日 17:25
  */
 @Data
-@TableName("auth_tbl_org")
-@EqualsAndHashCode(callSuper = true)
-public class OrganizationInfoPo extends BasePo {
+public class OrganizationDto {
 
     /**
      * 组织机构id
      */
-    @TableId
     private String organizationId;
     /**
      * 组织机构名称

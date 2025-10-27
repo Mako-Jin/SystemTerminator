@@ -5,8 +5,11 @@ import com.yaocode.sts.auth.domain.repository.OrganizationRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
+import com.yaocode.sts.auth.infrastructure.converter.OrganizationConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.OrganizationInfoDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelOrganizationUserDao;
+import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
 import com.yaocode.sts.auth.infrastructure.po.RelOrganizationUserPo;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
@@ -36,7 +39,9 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
 
     @Override
     public OrganizationId save(OrganizationInfoEntity aggregate) {
-        return null;
+        OrganizationInfoPo organizationInfoPo = OrganizationConverter.INSTANCE.toPo(aggregate);
+        organizationInfoDao.save(organizationInfoPo);
+        return OrganizationId.of(organizationInfoPo.getOrganizationId());
     }
 
     @Override
@@ -59,5 +64,23 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         relOrganizationUserPo.setOrganizationId(organizationId.getValue());
         relOrganizationUserPo.setUserId(userId.getValue());
         relOrganizationUserDao.save(relOrganizationUserPo);
+    }
+
+    @Override
+    public Optional<OrganizationInfoEntity> findById(TenantId tenantId, OrganizationId id) {
+        OrganizationInfoPo po = organizationInfoDao.getById(tenantId.getValue(), id.getValue());
+        return Optional.ofNullable(OrganizationConverter.INSTANCE.toEntity(po));
+    }
+
+    @Override
+    public Optional<OrganizationInfoEntity> findByOrganizationCode(TenantId tenantId, OrganizationCode organizationCode) {
+        OrganizationInfoPo po = organizationInfoDao.getByOrganizationCode(tenantId.getValue(), organizationCode.getValue());
+        return Optional.ofNullable(OrganizationConverter.INSTANCE.toEntity(po));
+    }
+
+    @Override
+    public Optional<OrganizationInfoEntity> findByOrganizationName(TenantId tenantId, String organizationName) {
+        OrganizationInfoPo po = organizationInfoDao.getByOrganizationName(tenantId.getValue(), organizationName);
+        return Optional.ofNullable(OrganizationConverter.INSTANCE.toEntity(po));
     }
 }

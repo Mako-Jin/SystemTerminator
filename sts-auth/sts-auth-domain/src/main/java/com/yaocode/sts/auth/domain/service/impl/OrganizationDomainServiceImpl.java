@@ -10,6 +10,7 @@ import com.yaocode.sts.auth.domain.service.OrganizationDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,8 @@ public class OrganizationDomainServiceImpl implements OrganizationDomainService 
     private UserInfoRepository userInfoRepository;
 
     @Override
-    public boolean validateOrganizationId(OrganizationId organizationId) {
-        return false;
+    public boolean validateOrganizationId(TenantId tenantId, OrganizationId organizationId) {
+        return organizationRepository.findById(tenantId, organizationId).isPresent();
     }
 
     @Override
@@ -61,5 +62,15 @@ public class OrganizationDomainServiceImpl implements OrganizationDomainService 
             throw new IllegalArgumentException("auth.params.data.not.exists");
         }
         organizationRepository.saveRelOrganizationUser(tenantId, organizationId, userId);
+    }
+
+    @Override
+    public boolean uniqueOrganizationCode(TenantId tenantId, OrganizationCode organizationCode) {
+        return organizationRepository.findByOrganizationCode(tenantId, organizationCode).isPresent();
+    }
+
+    @Override
+    public boolean uniqueOrganizationName(TenantId tenantId, String organizationName) {
+        return organizationRepository.findByOrganizationName(tenantId, organizationName).isPresent();
     }
 }
