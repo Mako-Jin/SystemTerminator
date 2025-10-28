@@ -39,7 +39,7 @@ public class OrganizationApplicationServiceImpl implements OrganizationApplicati
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OrganizationId singleAdd(OrganizationDto organizationDto) {
+    public String singleAdd(OrganizationDto organizationDto) {
         TenantId tenantId = TenantId.of(organizationDto.getTenantId());
         if (!tenantDomainService.validateTenantId(tenantId)) {
             throw new IllegalArgumentException("租户不存在");
@@ -53,12 +53,12 @@ public class OrganizationApplicationServiceImpl implements OrganizationApplicati
         }
         if (Objects.nonNull(organizationDto.getParentId())) {
             OrganizationId parentId = OrganizationId.of(organizationDto.getParentId());
-            if (organizationDomainService.validateOrganizationId(tenantId, parentId)) {
-                throw new IllegalArgumentException("组织名称已存在");
+            if (!organizationDomainService.validateOrganizationId(tenantId, parentId)) {
+                throw new IllegalArgumentException("父组织不存在");
             }
         }
         organizationDto.setOrganizationId(IdFactory.generate().toString());
         OrganizationInfoEntity entity = organizationApplicationConverter.toEntity(organizationDto);
-        return organizationRepository.save(entity);
+        return organizationRepository.save(entity).getValue();
     }
 }

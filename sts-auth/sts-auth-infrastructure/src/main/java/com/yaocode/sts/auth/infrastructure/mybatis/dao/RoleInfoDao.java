@@ -11,6 +11,14 @@ import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
 public interface RoleInfoDao extends IService<RoleInfoPo> {
 
     /**
+     * 角色id查角色
+     * @param tenantId 租户id
+     * @param roleId 角色id
+     * @return RoleInfoPo
+     */
+    RoleInfoPo getByRoleId(String tenantId, String roleId);
+
+    /**
      * 查询租户下的默认权限
      * @param tenantId 租户id
      * @return RoleInfoPo

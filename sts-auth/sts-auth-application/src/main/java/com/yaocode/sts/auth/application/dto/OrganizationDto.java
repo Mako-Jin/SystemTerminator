@@ -31,7 +31,7 @@ public class OrganizationDto {
      */
     private String sort;
     /**
-     * 创建者id
+     * 父id
      */
     private String parentId;
     /**

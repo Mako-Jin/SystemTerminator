@@ -18,6 +18,14 @@ import java.util.Optional;
 public interface RoleInfoRepository extends Repository<RoleInfoEntity, RoleId> {
 
     /**
+     * 根据id查找数据
+     * @param tenantId 租户id
+     * @param roleId 角色id
+     * @return java.util.Optional<RoleInfoEntity>
+     */
+    Optional<RoleInfoEntity> findById(TenantId tenantId, RoleId roleId);
+
+    /**
      * 通过角色id列表查询角色信息
      * @param tenantId 租户id
      * @param roleIdList 角色id列表

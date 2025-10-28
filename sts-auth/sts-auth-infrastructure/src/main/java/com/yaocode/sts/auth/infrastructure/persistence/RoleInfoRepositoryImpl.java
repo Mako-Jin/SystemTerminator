@@ -40,6 +40,7 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
         return Optional.empty();
     }
 
+
     @Override
     public RoleId save(RoleInfoEntity aggregate) {
         RoleInfoPo roleInfoPo = RoleInfoConverter.INSTANCE.toPo(aggregate);
@@ -50,6 +51,12 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
     @Override
     public void delete(RoleInfoEntity aggregate) {
 
+    }
+
+    @Override
+    public Optional<RoleInfoEntity> findById(TenantId tenantId, RoleId roleId) {
+        RoleInfoPo roleInfoPo = roleInfoDao.getByRoleId(tenantId.getValue(), roleId.getValue());
+        return Optional.ofNullable(RoleInfoConverter.INSTANCE.toEntity(roleInfoPo));
     }
 
     @Override

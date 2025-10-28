@@ -43,6 +43,11 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
 
     @Override
+    public boolean validateRoleId(TenantId tenantId, RoleId roleId) {
+        return roleInfoRepository.findById(tenantId, roleId).isPresent();
+    }
+
+    @Override
     public boolean validateRoleId(List<RoleId> roleIdList) {
         return false;
     }
@@ -95,5 +100,15 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         roleInfoEntity.setTenantId(tenantInfoEntity.getId());
         roleInfoEntity.setIsDefault(OppositeEnums.YES.getCode());
         roleInfoRepository.save(roleInfoEntity);
+    }
+
+    @Override
+    public boolean uniqueRoleCode(TenantId tenantId, RoleCode roleCode) {
+        return roleInfoRepository.findByRoleCode(tenantId, roleCode).isPresent();
+    }
+
+    @Override
+    public boolean uniqueRoleName(TenantId tenantId, String roleName) {
+        return roleInfoRepository.findByRoleName(tenantId, roleName).isPresent();
     }
 }

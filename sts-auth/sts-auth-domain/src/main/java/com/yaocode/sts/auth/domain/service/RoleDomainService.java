@@ -4,6 +4,7 @@ import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 
 import java.util.List;
 
@@ -20,6 +21,14 @@ public interface RoleDomainService {
      * @return boolean
      */
     boolean validateRoleId(RoleId roleId);
+
+    /**
+     * 验证角色id有效性
+     * @param tenantId 租户id
+     * @param roleId 角色id
+     * @return boolean
+     */
+    boolean validateRoleId(TenantId tenantId, RoleId roleId);
 
     /**
      * 验证角色id有效性
@@ -41,5 +50,21 @@ public interface RoleDomainService {
      * @param tenantInfoEntity 租户信息
      */
     void createDefaultRole(TenantInfoEntity tenantInfoEntity);
+
+    /**
+     * 角色编码唯一性校验
+     * @param tenantId 租户id
+     * @param roleCode 角色编码
+     * @return boolean
+     */
+    boolean uniqueRoleCode(TenantId tenantId, RoleCode roleCode);
+
+    /**
+     * 角色名唯一性校验
+     * @param tenantId 租户id
+     * @param roleName 角色名
+     * @return boolean
+     */
+    boolean uniqueRoleName(TenantId tenantId, String roleName);
 
 }

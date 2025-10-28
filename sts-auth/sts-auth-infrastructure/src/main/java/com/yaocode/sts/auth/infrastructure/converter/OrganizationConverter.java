@@ -1,14 +1,10 @@
 package com.yaocode.sts.auth.infrastructure.converter;
 
 import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
-import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
-import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
-import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -39,7 +35,7 @@ public interface OrganizationConverter {
      * @param organizationInfoPo OrganizationInfoPo
      * @return OrganizationInfoEntity
      */
-    @Mapping(target = "id", source = "organizationInfoPo.organizationId", qualifiedByName = "stringToOrganizationId")
+    @Mapping(target = "organizationId", source = "organizationInfoPo.organizationId", qualifiedByName = "stringToOrganizationId")
     @Mapping(target = "organizationCode", source = "organizationInfoPo.organizationCode", qualifiedByName = "stringToOrganizationCode")
     @Mapping(target = "tenantId", source = "organizationInfoPo.tenantId", qualifiedByName = "stringToTenantId")
     OrganizationInfoEntity toEntity(OrganizationInfoPo organizationInfoPo);

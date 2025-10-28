@@ -21,6 +21,14 @@ public class RoleInfoDaoImpl extends ServiceImpl<RoleInfoMapper, RoleInfoPo> imp
     private RoleInfoMapper roleInfoMapper;
 
     @Override
+    public RoleInfoPo getByRoleId(String tenantId, String roleId) {
+        LambdaQueryWrapper<RoleInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleInfoPo::getTenantId, tenantId);
+        wrapper.eq(RoleInfoPo::getRoleId, roleId);
+        return roleInfoMapper.selectOne(wrapper);
+    }
+
+    @Override
     public RoleInfoPo getDefaultRole(String tenantId) {
         LambdaQueryWrapper<RoleInfoPo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RoleInfoPo::getTenantId, tenantId);

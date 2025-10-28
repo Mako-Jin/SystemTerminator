@@ -2,7 +2,6 @@ package com.yaocode.sts.auth.starter.controller;
 
 import com.yaocode.sts.auth.application.dto.OrganizationDto;
 import com.yaocode.sts.auth.application.service.OrganizationApplicationService;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.interfaces.api.OrganizationApi;
 import com.yaocode.sts.auth.interfaces.assembler.OrganizationAssembler;
 import com.yaocode.sts.auth.interfaces.model.params.CreateOrganizationParams;
@@ -28,9 +27,9 @@ public class OrganizationController implements OrganizationApi {
     private OrganizationAssembler organizationAssembler;
 
     @Override
-    public ResultModel<OrganizationId> singleAdd(CreateOrganizationParams params) {
+    public ResultModel<String> singleAdd(CreateOrganizationParams params) {
         OrganizationDto organizationDto = organizationAssembler.toDto(params);
-        OrganizationId organizationId = organizationApplicationService.singleAdd(organizationDto);
+        String organizationId = organizationApplicationService.singleAdd(organizationDto);
         return ResultUtils.ok(organizationId);
     }
 

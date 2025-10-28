@@ -1,7 +1,6 @@
 package com.yaocode.sts.auth.application.service;
 
 import com.yaocode.sts.auth.application.dto.OrganizationDto;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 
 /**
  *
@@ -15,6 +14,6 @@ public interface OrganizationApplicationService {
      * @param organizationDto dto
      * @return OrganizationId
      */
-    OrganizationId singleAdd(OrganizationDto organizationDto);
+    String singleAdd(OrganizationDto organizationDto);
 
 }
