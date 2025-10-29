@@ -5,9 +5,12 @@ import com.yaocode.sts.auth.domain.repository.UserGroupRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
+import com.yaocode.sts.auth.infrastructure.converter.UserGroupConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelUserGroupUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.UserGroupDao;
 import com.yaocode.sts.auth.infrastructure.po.RelUserGroupUserPo;
+import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
@@ -29,6 +32,9 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     @Resource
     private RelUserGroupUserDao relUserGroupUserDao;
 
+    @Resource
+    private UserGroupConverter userGroupConverter;
+
     @Override
     public Optional<UserGroupEntity> findById(UserGroupId userGroupId) {
         return Optional.empty();
@@ -36,7 +42,9 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     @Override
     public UserGroupId save(UserGroupEntity aggregate) {
-        return null;
+        UserGroupPo userGroupPo = userGroupConverter.toPo(aggregate);
+        userGroupDao.save(userGroupPo);
+        return UserGroupId.of(userGroupPo.getUserGroupId());
     }
 
     @Override
@@ -59,5 +67,23 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
         relUserGroupUserPo.setUserGroupId(userGroupId.getValue());
         relUserGroupUserPo.setUserId(userId.getValue());
         relUserGroupUserDao.save(relUserGroupUserPo);
+    }
+
+    @Override
+    public Optional<UserGroupEntity> findById(TenantId tenantId, UserGroupId userGroupId) {
+        UserGroupPo userGroupPo = userGroupDao.getById(tenantId.getValue(), userGroupId.getValue());
+        return Optional.ofNullable(userGroupConverter.toEntity(userGroupPo));
+    }
+
+    @Override
+    public Optional<UserGroupEntity> findByUserGroupCode(TenantId tenantId, UserGroupCode userGroupCode) {
+        UserGroupPo userGroupPo = userGroupDao.getByUserGroupCode(tenantId.getValue(), userGroupCode.getValue());
+        return Optional.ofNullable(userGroupConverter.toEntity(userGroupPo));
+    }
+
+    @Override
+    public Optional<UserGroupEntity> findUserGroupName(TenantId tenantId, String userGroupName) {
+        UserGroupPo userGroupPo = userGroupDao.getByUserGroupName(tenantId.getValue(), userGroupName);
+        return Optional.ofNullable(userGroupConverter.toEntity(userGroupPo));
     }
 }

@@ -12,12 +12,12 @@ import lombok.Data;
 public class CreateRoleParams {
 
     /**
-     * 组织编码
+     * 角色编码
      */
     @NotBlank(message = "角色编码不能为空")
     private String roleCode;
     /**
-     * 组织名称
+     * 角色名称
      */
     @NotBlank(message = "角色名称不能为空")
     private String roleName;

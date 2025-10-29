@@ -5,28 +5,28 @@ import lombok.Data;
 /**
  *
  * @author: Jin-LiangBo
- * @date: 2025年10月28日 20:55
+ * @date: 2025年10月28日 21:42
  */
 @Data
-public class RoleInfoDto {
+public class UserGroupDto {
 
     /**
-     * 角色id
+     * 用户组id
      */
-    private String roleId;
+    private String userGroupId;
     /**
-     * 角色编码
+     * 用户组编码
      */
-    private String roleCode;
+    private String userGroupCode;
 
     /**
-     * 角色名
+     * 用户组名
      */
-    private String roleName;
+    private String userGroupName;
     /**
-     * 角色描述
+     * 用户组描述
      */
-    private String roleDesc;
+    private String userGroupDesc;
     /**
      * 父id
      */

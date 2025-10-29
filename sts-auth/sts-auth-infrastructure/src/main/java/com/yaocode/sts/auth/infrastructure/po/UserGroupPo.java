@@ -37,4 +37,9 @@ public class UserGroupPo extends BasePo {
      */
     private String parentId;
 
+    /**
+     * 租户id
+     */
+    private String tenantId;
+
 }

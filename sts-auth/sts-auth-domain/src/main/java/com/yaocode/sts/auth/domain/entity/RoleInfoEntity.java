@@ -21,6 +21,7 @@ public class RoleInfoEntity extends AbstractAggregate<RoleId> {
     private String roleName;
     private String roleDesc;
     private Integer isDefault;
+    private String parentId;
 
     public RoleInfoEntity(RoleId roleId) {
         super(roleId);

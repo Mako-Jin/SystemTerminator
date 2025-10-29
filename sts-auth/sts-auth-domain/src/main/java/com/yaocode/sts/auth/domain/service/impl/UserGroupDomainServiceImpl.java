@@ -10,6 +10,7 @@ import com.yaocode.sts.auth.domain.service.UserGroupDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,11 @@ public class UserGroupDomainServiceImpl implements UserGroupDomainService {
     }
 
     @Override
+    public boolean validateUserGroupId(TenantId tenantId, UserGroupId userGroupId) {
+        return userGroupRepository.findById(tenantId, userGroupId).isPresent();
+    }
+
+    @Override
     public boolean validateUserGroupId(List<UserGroupId> userGroupIdList) {
         return false;
     }
@@ -61,5 +67,15 @@ public class UserGroupDomainServiceImpl implements UserGroupDomainService {
             throw new IllegalArgumentException("auth.params.data.not.exists");
         }
         userGroupRepository.saveRelUserGroupUser(tenantId, userGroupId, userId);
+    }
+
+    @Override
+    public boolean uniqueUserGroupCode(TenantId tenantId, UserGroupCode userGroupCode) {
+        return userGroupRepository.findByUserGroupCode(tenantId, userGroupCode).isPresent();
+    }
+
+    @Override
+    public boolean uniqueUserGroupName(TenantId tenantId, String userGroupName) {
+        return userGroupRepository.findUserGroupName(tenantId, userGroupName).isPresent();
     }
 }
