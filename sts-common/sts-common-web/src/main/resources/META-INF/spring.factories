@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    com.yaocode.sts.common.web.config.RestApiElapsedAutoConfiguration,\
+    com.yaocode.sts.common.web.config.SubRequestMappingAutoConfiguration=

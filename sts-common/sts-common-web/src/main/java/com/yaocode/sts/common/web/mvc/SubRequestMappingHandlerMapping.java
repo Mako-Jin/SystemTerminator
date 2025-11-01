@@ -1,5 +1,6 @@
-package com.yaocode.sts.common.web.annotation;
+package com.yaocode.sts.common.web.mvc;
 
+import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotationPredicates;
 import org.springframework.core.annotation.MergedAnnotations;
@@ -19,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -80,7 +82,7 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
         return null;
     }
 
-    protected RequestMappingInfo createRequestMappingInfo(
+    protected RequestMappingInfo createSubRequestMappingInfo(
             SubRequestMapping requestMapping, @Nullable RequestCondition<?> customCondition) {
 
         RequestMappingInfo.Builder builder = RequestMappingInfo
@@ -122,7 +124,8 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
         }
         if (!subRequestMappings.isEmpty()) {
             SubRequestMapping subRequestMapping = (SubRequestMapping) subRequestMappings.get(0).annotation;
-            RequestMappingInfo subRequestMappingInfo = createRequestMappingInfo(subRequestMapping, customCondition);
+            RequestMappingInfo subRequestMappingInfo = createSubRequestMappingInfo(subRequestMapping, customCondition);
+            assert requestMappingInfo != null;
             requestMappingInfo = requestMappingInfo.combine(subRequestMappingInfo);
         }
 
@@ -171,6 +174,30 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
+    }
+
+    public record FirstRunAndSubOfPredicate<A extends Annotation>(
+            Function<? super MergedAnnotation<A>, ?> valueExtractor
+    ) implements Predicate<MergedAnnotation<A>> {
+
+        public static <A extends Annotation> Predicate<MergedAnnotation<A>> firstRunAndSubOf(
+                Function<? super MergedAnnotation<A>, ?> valueExtractor) {
+
+            return new FirstRunAndSubOfPredicate<>(valueExtractor);
+        }
+
+        public FirstRunAndSubOfPredicate {
+            Assert.notNull(valueExtractor, "Value extractor must not be null");
+        }
+
+        @Override
+        public boolean test(@Nullable MergedAnnotation<A> aMergedAnnotation) {
+            if (aMergedAnnotation.getType() == SubRequestMapping.class) {
+                return true;
+            }
+            return MergedAnnotationPredicates.firstRunOf(valueExtractor).test(aMergedAnnotation);
+        }
+
     }
 
 }

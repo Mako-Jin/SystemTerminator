@@ -1,1 +1,2 @@
 com.yaocode.sts.common.web.config.SubRequestMappingAutoConfiguration
+com.yaocode.sts.common.web.config.RestApiElapsedAutoConfiguration

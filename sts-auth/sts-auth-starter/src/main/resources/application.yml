@@ -37,3 +37,9 @@ logging:
     org.apache.ibatis: debug
   file:
     path: ./logs
+
+#yaocode:
+#  web:
+#    api:
+#      elapsed:
+#        enabled: false

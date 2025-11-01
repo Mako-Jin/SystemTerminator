@@ -1,6 +1,6 @@
 package com.yaocode.sts.common.web.config;
 
-import com.yaocode.sts.common.web.annotation.SubRequestMappingHandlerMapping;
+import com.yaocode.sts.common.web.mvc.SubRequestMappingHandlerMapping;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

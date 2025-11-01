@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "yaocode.web.api.elapsed",
+      "type": "com.yaocode.sts.common.web.properties.RestApiElapsedProperties",
+      "description": "接口耗时监控.",
+      "sourceType": "com.yaocode.sts.common.web.properties.RestApiElapsedProperties"
+    },
+    {
+      "name": "yaocode.web.api.elapsed.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用接口耗时监控.",
+      "defaultValue": true
+    },
+    {
+      "name": "yaocode.web.api.threshold",
+      "type": "java.lang.Long",
+      "description": "耗时阈值（毫秒），超过此值的接口会打印WARN日志.",
+      "defaultValue": 1000
+    },
+    {
+      "name": "yaocode.web.api.elapsed.enable-db-storage",
+      "type": "java.lang.Boolean",
+      "description": "是否记录到数据库.",
+      "defaultValue": false
+    },
+    {
+      "name": "yaocode.web.api.elapsed.db-storage-threshold",
+      "type": "java.lang.Long",
+      "description": "数据库记录阈值（毫秒），只有耗时超过此值的请求才会记录到数据库.",
+      "defaultValue": 0
+    }
+  ]
+}
