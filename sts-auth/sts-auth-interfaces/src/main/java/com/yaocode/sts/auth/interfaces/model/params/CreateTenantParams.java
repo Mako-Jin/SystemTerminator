@@ -1,6 +1,8 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
+import com.yaocode.sts.common.web.annotation.CheckXss;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
@@ -15,16 +17,22 @@ public class CreateTenantParams {
     /**
      * 租户名称
      */
+    @CheckXss
+    @CheckSqlInjection
     @NotBlank(message = "租户名称不能为空")
     private String tenantName;
     /**
      * 租户编码
      */
+    @CheckXss
+    @CheckSqlInjection
     @NotBlank(message = "租户编码不能为空")
     private String tenantCode;
     /**
      * 租户描述
      */
+    @CheckXss
+    @CheckSqlInjection
     private String tenantDesc;
     /**
      * 是否允许注册新用户
@@ -39,6 +47,8 @@ public class CreateTenantParams {
     /**
      * 父id
      */
+    @CheckXss
+    @CheckSqlInjection
     private String parentId;
 
 }

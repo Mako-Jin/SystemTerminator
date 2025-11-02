@@ -56,6 +56,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.yaocode.sts</groupId>
             <artifactId>sts-common-tools</artifactId>
         </dependency>

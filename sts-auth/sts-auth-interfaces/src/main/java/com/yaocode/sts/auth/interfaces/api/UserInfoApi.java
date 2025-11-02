@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.interfaces.api;
 
 import com.yaocode.sts.auth.interfaces.model.params.CreateUserParams;
 import com.yaocode.sts.auth.interfaces.model.vo.UserInfoVo;
+import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
+import com.yaocode.sts.common.web.annotation.CheckXss;
 import com.yaocode.sts.common.web.model.ResultModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +25,7 @@ public interface UserInfoApi {
      * @return UserInfo 用户信息
      */
     @GetMapping("/single/{userId}")
-    ResultModel<UserInfoVo> getSingle(@PathVariable String userId);
+    ResultModel<UserInfoVo> getSingle(@PathVariable @CheckXss @CheckSqlInjection String userId);
 
     /**
      * 单个添加用户
