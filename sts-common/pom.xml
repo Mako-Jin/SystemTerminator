@@ -29,6 +29,7 @@
         <module>sts-common-web</module>
         <module>sts-common-tools</module>
         <module>sts-common-domain</module>
+        <module>sts-common-db</module>
     </modules>
 
     <dependencyManagement>

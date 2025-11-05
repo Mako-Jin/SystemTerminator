@@ -29,6 +29,10 @@
             <groupId>com.yaocode.sts</groupId>
             <artifactId>sts-auth-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-db</artifactId>
+        </dependency>
         <!-- mapstruct start -->
         <dependency>
             <groupId>org.mapstruct</groupId>

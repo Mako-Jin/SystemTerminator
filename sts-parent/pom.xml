@@ -28,6 +28,8 @@
         <spring-boot.version>3.5.6</spring-boot.version>
         <lombok.version>1.18.42</lombok.version>
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
+        <mybatis-spring.version>3.0.5</mybatis-spring.version>
+        <mybatis.version>3.5.19</mybatis.version>
         <mysql-driver.version>9.4.0</mysql-driver.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <hutool.version>5.8.40</hutool.version>
@@ -61,6 +63,16 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- mybatis-plus end -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
             <!-- mysql start -->
             <dependency>
                 <groupId>com.mysql</groupId>
@@ -110,6 +122,11 @@
                 <artifactId>sts-common-domain</artifactId>
                 <version>0.0.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-common-db</artifactId>
+                <version>0.0.0</version>
+            </dependency>
             <!-- 自研包 end -->
         </dependencies>
 
@@ -137,6 +154,7 @@
                     <include>**/*.docx</include>
                     <include>**/*.ftl</include>
                     <include>**/*.json</include>
+                    <include>**/*.sql</include>
                 </includes>
             </resource>
             <resource>

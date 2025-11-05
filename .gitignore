@@ -44,3 +44,5 @@ replay_pid*
 /sts-common/sts-common.iml
 /sts-parent/sts-parent.iml
 /sts-auth/sts-auth.iml
+/sts-common/sts-common-db/sts-common-db.iml
+/sts-common/sts-common-db/target/

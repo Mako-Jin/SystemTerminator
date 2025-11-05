@@ -3,7 +3,6 @@ package com.yaocode.sts.auth.starter;
 import com.yaocode.sts.common.web.annotation.EnableRestApiElapsed;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -13,11 +12,11 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @EnableRestApiElapsed
 @SpringBootApplication
-@ComponentScan(basePackages = "com.yaocode.sts")
+@ComponentScan(basePackages = "com.yaocode.sts.auth")
 public class AuthApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(AuthApplication.class, args);
+        SpringApplication.run(AuthApplication.class, args);
     }
 
 }

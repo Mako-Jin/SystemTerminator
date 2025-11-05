@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.yaocode.sts.common.db.config.DbMigrationAutoConfiguration,
+# Depends On Database Initialization Detectors
+org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector=\
+com.baomidou.mybatisplus.autoconfigure.MybatisDependsOnDatabaseInitializationDetector
