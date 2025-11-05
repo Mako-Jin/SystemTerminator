@@ -11,3 +11,8 @@
     勾选"使用Unicode UTF-8提供全球语言支持"
     
     重启电脑
+
+
+```aidl
+sql脚本自动升级，如果在组件扫描范围内，bean创建会早，导致找不到DataSource的bean
+```
