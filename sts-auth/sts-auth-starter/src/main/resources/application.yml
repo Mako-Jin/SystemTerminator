@@ -7,8 +7,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/yc-sts-db-auth?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: root
-    password: 515322
+    username: yc-sts-db-auth
+    password: yc-sts-db-auth
   messages:
     basename: classpath*:i18n/messages
     use-code-as-default-message: true

@@ -2,6 +2,7 @@ package com.yaocode.sts.common.db.config;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.yaocode.sts.common.db.DbMigrationManager;
+import com.yaocode.sts.common.db.listener.DbMigrationInitListener;
 import com.yaocode.sts.common.db.properties.DbMigrationProperties;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -14,7 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,19 +34,14 @@ public class DbMigrationAutoConfiguration implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(DbMigrationAutoConfiguration.class);
 
-    private final ApplicationContext applicationContext;
     private final DbMigrationProperties properties;
 
-    public DbMigrationAutoConfiguration(DbMigrationProperties properties,
-                                        ApplicationContext applicationContext) {
-        logger.info("=== DbMigrationAutoConfiguration Constructor called ===");
+    public DbMigrationAutoConfiguration(DbMigrationProperties properties) {
         this.properties = properties;
-        this.applicationContext = applicationContext;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.info("=== DbMigrationAutoConfiguration afterPropertiesSet ===");
     }
 
     @Bean
@@ -54,4 +49,11 @@ public class DbMigrationAutoConfiguration implements InitializingBean {
     public DbMigrationManager databaseVersionManager(DataSource dataSource) {
         return new DbMigrationManager(dataSource, properties);
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DbMigrationInitListener dbMigrationInitListener() {
+        return new DbMigrationInitListener();
+    }
+
 }

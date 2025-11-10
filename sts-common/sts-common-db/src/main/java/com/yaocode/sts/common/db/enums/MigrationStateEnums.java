@@ -11,6 +11,10 @@ public enum MigrationStateEnums {
      */
     PENDING,
     /**
+     * Init
+     */
+    PREPARED,
+    /**
      * RUNNING
      */
     RUNNING,
