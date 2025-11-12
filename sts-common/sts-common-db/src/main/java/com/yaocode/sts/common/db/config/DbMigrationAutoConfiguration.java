@@ -3,6 +3,7 @@ package com.yaocode.sts.common.db.config;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.yaocode.sts.common.db.DbMigrationManager;
 import com.yaocode.sts.common.db.listener.DbMigrationInitListener;
+import com.yaocode.sts.common.db.listener.DbMigrationStartListener;
 import com.yaocode.sts.common.db.properties.DbMigrationProperties;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -54,6 +55,12 @@ public class DbMigrationAutoConfiguration implements InitializingBean {
     @ConditionalOnMissingBean
     public DbMigrationInitListener dbMigrationInitListener() {
         return new DbMigrationInitListener();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DbMigrationStartListener dbMigrationStartListener() {
+        return new DbMigrationStartListener();
     }
 
 }

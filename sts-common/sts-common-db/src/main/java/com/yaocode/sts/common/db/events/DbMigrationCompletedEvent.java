@@ -4,12 +4,9 @@ import com.yaocode.sts.common.db.DbMigrationEngine;
 import com.yaocode.sts.common.db.enums.MigrationStateEnums;
 
 /**
- * TODO
  *
- * @version 1.0
- * @Author: Jin-LiangBo
- * @Date: 2025年11月03日 23:10
- * @Description:
+ * @author: Jin-LiangBo
+ * @date: 2025年11月03日 23:10
  */
 public class DbMigrationCompletedEvent extends DbMigrationEvent {
 

@@ -11,5 +11,7 @@ public interface SqlConstants {
     String INTO = "INTO";
     String TABLE = "TABLE";
     String UNKNOWN = "UNKNOWN";
+    String SET = "SET";
+    String WHERE = "WHERE";
 
 }

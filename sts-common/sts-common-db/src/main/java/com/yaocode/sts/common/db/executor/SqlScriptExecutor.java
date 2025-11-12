@@ -3,8 +3,6 @@ package com.yaocode.sts.common.db.executor;
 import com.yaocode.sts.common.db.statement.SqlStatement;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
-
 /**
  *
  * @author: Jin-LiangBo
@@ -44,17 +42,18 @@ public interface SqlScriptExecutor {
      */
     void executeScript(SqlStatement sqlStatement);
 
-    DataSource createDataSource();
+    /**
+     * 查询表的数据量
+     * @param tableName 表名
+     * @return long
+     */
+    long getTableDataCount(String tableName);
 
-    boolean checkDbStatus();
-
-    boolean initVersionTables();
-
-    void loadScripts();
-
-    boolean detectConflicts();
-
-    void executeMigration();
-
+    /**
+     * 检查sql执行过没
+     * @param sql 脚本
+     * @return boolean
+     */
+    boolean checkSqlExecuteStatus(String sql);
 
 }

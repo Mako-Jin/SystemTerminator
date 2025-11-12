@@ -6,20 +6,20 @@ import com.yaocode.sts.common.db.enums.SqlSecurityLevelEnums;
 /**
  *
  * @author: Jin-LiangBo
- * @date: 2025年11月09日 21:52
+ * @date: 2025年11月12日 20:26
  */
-public class InsertStatement extends AbstractSqlStatement {
+public class DropTableStatement extends AbstractSqlStatement {
 
-    public InsertStatement() {
+    public DropTableStatement() {
     }
 
-    public InsertStatement(String sql, SqlSecurityLevelEnums securityLevel, SqlScriptTypeEnums category) {
+    public DropTableStatement(String sql, SqlSecurityLevelEnums securityLevel, SqlScriptTypeEnums category) {
         super(sql, securityLevel, category, "");
     }
 
     @Override
     public String extractTableName() {
-        String tablePart = getSql().replaceFirst("^INSERT\\s+INTO\\s+", "");
+        String tablePart = getSql().replaceFirst("^DROP\\s+TABLE\\s+(IF\\s+EXISTS\\s+)?", "");
         return extractFirstIdentifier(tablePart);
     }
 }

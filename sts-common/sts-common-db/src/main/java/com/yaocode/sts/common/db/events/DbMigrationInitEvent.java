@@ -16,6 +16,6 @@ public class DbMigrationInitEvent extends DbMigrationEvent {
 
     @Override
     public DbMigrationEngine getSource() {
-        return (DbMigrationEngine) super.getSource();
+        return super.getSource();
     }
 }

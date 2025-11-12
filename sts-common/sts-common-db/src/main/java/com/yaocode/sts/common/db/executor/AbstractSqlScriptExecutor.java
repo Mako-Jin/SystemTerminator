@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- *
+ * TODO 还没考虑事务，万一执行失败了怎么办
  * @author: Jin-LiangBo
  * @date: 2025年11月08日 20:51
  */
@@ -27,7 +27,6 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
     public AbstractSqlScriptExecutor(DataSource dataSource) {
         this.dataSource = dataSource;
         this.systemConnection = createSystemConnection();
-        this.connection = createConnection();
     }
 
     private Connection createSystemConnection() {
@@ -169,6 +168,9 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
     }
 
     public Connection getConnection() {
+        if (connection == null) {
+            this.connection = createConnection();
+        }
         return connection;
     }
 

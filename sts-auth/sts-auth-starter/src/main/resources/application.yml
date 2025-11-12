@@ -38,7 +38,11 @@ logging:
   file:
     path: ./logs
 
-#yaocode:
+yaocode:
+  database:
+    migrate:
+      sqlScriptPath:
+        - classpath*:/db/migration/mysql/*.sql
 #  web:
 #    api:
 #      elapsed:

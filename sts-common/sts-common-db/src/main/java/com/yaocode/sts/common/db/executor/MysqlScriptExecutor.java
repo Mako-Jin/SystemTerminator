@@ -83,12 +83,12 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
         String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES " +
                 "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
         try {
-            if (Objects.isNull(getSystemConnection())) {
+            if (Objects.isNull(getConnection())) {
                 logger.error("数据库系统连接为空");
                 return false;
             }
             try (
-                PreparedStatement prepareStatement = getSystemConnection().prepareStatement(sql)
+                PreparedStatement prepareStatement = getConnection().prepareStatement(sql)
             ) {
                 prepareStatement.setString(1, tableName);
                 try (ResultSet rs = prepareStatement.executeQuery()) {
@@ -104,39 +104,12 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
     }
 
     @Override
-    public DataSource createDataSource() {
-        return null;
-    }
-
-    @Override
-    public boolean checkDbStatus() {
-        return false;
-    }
-
-    @Override
-    public boolean initVersionTables() {
-        return false;
-    }
-
-    @Override
-    public void loadScripts() {
-
-    }
-
-    @Override
-    public boolean detectConflicts() {
-        return false;
-    }
-
-    @Override
-    public void executeMigration() {
-
-    }
-
-    @Override
     public void executeScript(SqlStatement sqlStatement) {
         if (Objects.isNull(getConnection())) {
             logger.warn("数据库连接为空");
+            return;
+        }
+        if (this.checkSqlExecuteStatus(sqlStatement.getSql())) {
             return;
         }
         int status = 0;
@@ -172,13 +145,49 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
     }
 
     @Override
+    public long getTableDataCount(String tableName) {
+        if (Objects.isNull(getConnection())) {
+            logger.warn("数据库连接为空");
+            return 1;
+        }
+        if (tableName == null || SqlConstants.UNKNOWN.equals(tableName)) {
+            return 1;
+        }
+        String sql = "SELECT COUNT(*) FROM " + tableName;
+        try (Statement stmt = getConnection().createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        return 1;
+    }
+
+    @Override
+    public boolean checkSqlExecuteStatus(String sql) {
+        if (Objects.isNull(getConnection())) {
+            logger.warn("数据库连接为空");
+            return false;
+        }
+        String scriptHistory = "select count(*) from script_history where script_content = ?";
+        try (PreparedStatement prepareStatement = getConnection().prepareStatement(scriptHistory)) {
+            prepareStatement.setString(1, sql);
+            ResultSet resultSet = prepareStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            logger.error("执行记录数据插入失败: " + e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
     public void close() throws IOException {
         this.setSystemConnection(null);
         this.setConnection(null);
     }
 
-    // @Override
-    // public void executeScript(DataSource dataSource) {
-    //
-    // }
 }

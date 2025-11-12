@@ -6,6 +6,7 @@ import com.yaocode.sts.common.db.constants.CommonConstants;
 import com.yaocode.sts.common.db.events.DbMigrationInitEvent;
 import com.yaocode.sts.common.db.executor.SqlScriptExecutor;
 import com.yaocode.sts.common.db.properties.DbMigrationProperties;
+import com.yaocode.sts.common.db.statement.CreateTableStatement;
 import com.yaocode.sts.common.db.statement.SqlStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -43,9 +43,8 @@ public class DbMigrationInitListener {
             return;
         }
         SqlScriptExecutor sqlScriptExecutor = dbMigrationEngine.getScriptExecutor();
-        DataSource dataSource = dbMigrationEngine.getDataSource();
         if (!sqlScriptExecutor.checkDatabaseExists()) {
-            // TODO 得先有个有权限的账号，如果人家没配置root，你这就没办法
+            // TODO 得先有个有权限的账号，如果人家没配置root，你这就没办法，还是先建一个账号，然后删除
             sqlScriptExecutor.createDatabase();
         }
         ScriptLoader scriptLoader = dbMigrationEngine.getScriptLoader();
@@ -65,14 +64,24 @@ public class DbMigrationInitListener {
                 statements.addAll(currentStatements);
             }
             for (SqlStatement statement : statements) {
-                // todo 这块需要检查这个sql到底执行过没；
-                if (!sqlScriptExecutor.checkTableExists(statement.getTableName())) {
-                    sqlScriptExecutor.executeScript(statement);
+                if (!(statement instanceof CreateTableStatement)) {
+                    if (sqlScriptExecutor.checkSqlExecuteStatus(statement.getSql())) {
+                        continue;
+                    }
+                    if (!sqlScriptExecutor.checkTableExists(statement.getTableName())) {
+                        sqlScriptExecutor.executeScript(statement);
+                    }
                 }
+                if (!statement.getTableName().equalsIgnoreCase(CommonConstants.SCRIPT_CONTROL_TABLE_NAME)) {
+                    continue;
+                }
+                if (sqlScriptExecutor.checkTableExists(statement.getTableName())) {
+                    continue;
+                }
+                sqlScriptExecutor.executeScript(statement);
             }
         } catch (IOException | URISyntaxException ioException) {
             logger.info("版本控制的脚本加载出错 => {}", ioException.getMessage());
-            return;
         }
     }
 
