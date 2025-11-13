@@ -1,18 +1,18 @@
 
 -- ----------------------------
--- Table structure for auth_tbl_auth
+-- Table structure for auth_tbl_resource
 -- ----------------------------
-DROP TABLE IF EXISTS `auth_tbl_auth`;
-CREATE TABLE `auth_tbl_auth`  (
-  `auth_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '权限id',
-  `auth_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '权限名称',
-  `auth_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '权限值',
-  `auth_desc` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '权限描述',
-  `auth_type` tinyint NULL DEFAULT NULL COMMENT '权限类型',
+DROP TABLE IF EXISTS `auth_tbl_resource`;
+CREATE TABLE `auth_tbl_resource`  (
+  `resource_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '资源id',
+  `resource_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '资源名称',
+  `resource_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '资源值',
+  `resource_desc` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '资源描述',
+  `resource_type` tinyint NULL DEFAULT NULL COMMENT '资源类型',
   `request_url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求地址',
   `request_method` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求方法',
   `is_deprecated` tinyint NULL DEFAULT NULL COMMENT '是否过期',
-  `is_whiteList` tinyint NULL DEFAULT NULL COMMENT '是否白名单',
+  `is_white_list` tinyint NULL DEFAULT NULL COMMENT '是否白名单',
   `menu_icon` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '菜单图标',
   `create_user_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者id',
   `create_user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者名',
@@ -20,11 +20,12 @@ CREATE TABLE `auth_tbl_auth`  (
   `update_user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者名',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`auth_id`) USING BTREE
+  PRIMARY KEY (`resource_id`) USING BTREE,
+  UNIQUE INDEX `resource_value_unique_index`(`resource_value` ASC) USING BTREE COMMENT '资源值唯一索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of auth_tbl_auth
+-- Records of auth_tbl_resource
 -- ----------------------------
 
 -- ----------------------------
@@ -73,14 +74,14 @@ CREATE TABLE `auth_tbl_rel_org_user`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for auth_tbl_rel_role_auth
+-- Table structure for auth_tbl_rel_role_resource
 -- ----------------------------
-DROP TABLE IF EXISTS `auth_tbl_rel_role_auth`;
-CREATE TABLE `auth_tbl_rel_role_auth`  (
+DROP TABLE IF EXISTS `auth_tbl_rel_role_resource`;
+CREATE TABLE `auth_tbl_rel_role_resource`  (
   `rel_id` bigint NOT NULL COMMENT '主键id',
   `tenant_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '租户id',
   `role_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '角色id',
-  `auth_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '菜单id',
+  `resource_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '资源id',
   `create_user_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者id',
   `create_user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者名',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
@@ -88,7 +89,7 @@ CREATE TABLE `auth_tbl_rel_role_auth`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of auth_tbl_rel_role_auth
+-- Records of auth_tbl_rel_role_resource
 -- ----------------------------
 
 -- ----------------------------
