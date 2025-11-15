@@ -15,27 +15,32 @@ public enum ResourceTypeEnums {
     /**
      * 服务
      */
-    Server(1, "服务"),
+    SERVER(1, "服务"),
+
+    /**
+     * 服务
+     */
+    SERVICE(2, "服务"),
 
     /**
      * 模块
      */
-    MODULE(2, "模块"),
+    MODULE(3, "模块"),
 
     /**
      * 页面
      */
-    PAGES(3, "页面"),
+    PAGES(4, "页面"),
 
     /**
      * 接口
      */
-    URL(4, "接口"),
+    API(5, "接口"),
 
     /**
      * 数据
      */
-    DATA(5, "数据"),
+    DATA(6, "数据"),
     ;
 
     private final Integer code;

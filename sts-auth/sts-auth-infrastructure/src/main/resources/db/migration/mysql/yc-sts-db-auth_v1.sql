@@ -11,9 +11,11 @@ CREATE TABLE `auth_tbl_resource`  (
   `resource_type` tinyint NULL DEFAULT NULL COMMENT '资源类型',
   `request_url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求地址',
   `request_method` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求方法',
+  `is_enabled` tinyint NULL DEFAULT NULL COMMENT '是否激活',
   `is_deprecated` tinyint NULL DEFAULT NULL COMMENT '是否过期',
   `is_white_list` tinyint NULL DEFAULT NULL COMMENT '是否白名单',
   `menu_icon` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '菜单图标',
+  `version` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '版本',
   `create_user_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者id',
   `create_user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建者名',
   `update_user_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新者id',
@@ -22,7 +24,8 @@ CREATE TABLE `auth_tbl_resource`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`resource_id`) USING BTREE,
   UNIQUE INDEX `resource_value_unique_index`(`resource_value` ASC) USING BTREE COMMENT '资源值唯一索引'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
 
 -- ----------------------------
 -- Records of auth_tbl_resource
