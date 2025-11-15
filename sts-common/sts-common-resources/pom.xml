@@ -3,20 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.yaocode.sts</groupId>
-        <artifactId>sts-parent</artifactId>
+        <artifactId>sts-common</artifactId>
         <version>0.0.0</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sts-common</artifactId>
+    <artifactId>sts-common-resources</artifactId>
     <version>0.0.0</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>sts-common</name>
-    <description>Common -- 基础里面的公共服务</description>
+    <name>sts-common-resources</name>
+    <description>Common resources - resources服务资源管理公共服务</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,22 +23,12 @@
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
-    <modules>
-        <module>sts-common-basic</module>
-        <module>sts-common-web</module>
-        <module>sts-common-tools</module>
-        <module>sts-common-domain</module>
-        <module>sts-common-db</module>
-        <module>sts-common-resources</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+    </dependencies>
 
     <build>
-
+        <plugins>
+        </plugins>
     </build>
 
 </project>

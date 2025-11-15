@@ -46,3 +46,4 @@ replay_pid*
 /sts-auth/sts-auth.iml
 /sts-common/sts-common-db/sts-common-db.iml
 /sts-common/sts-common-db/target/
+/sts-common/sts-common-resources/sts-common-resources.iml
