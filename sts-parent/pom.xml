@@ -127,6 +127,11 @@
                 <artifactId>sts-common-db</artifactId>
                 <version>0.0.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-common-resources</artifactId>
+                <version>0.0.0</version>
+            </dependency>
             <!-- 自研包 end -->
         </dependencies>
 
