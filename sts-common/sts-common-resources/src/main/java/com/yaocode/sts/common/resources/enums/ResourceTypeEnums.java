@@ -28,19 +28,24 @@ public enum ResourceTypeEnums {
     MODULE(3, "模块"),
 
     /**
+     * 菜单
+     */
+    MENUS(4, "菜单"),
+
+    /**
      * 页面
      */
-    PAGES(4, "页面"),
+    PAGES(5, "页面"),
 
     /**
      * 接口
      */
-    API(5, "接口"),
+    API(6, "接口"),
 
     /**
      * 数据
      */
-    DATA(6, "数据"),
+    DATA(7, "数据"),
     ;
 
     private final Integer code;

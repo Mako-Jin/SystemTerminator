@@ -20,6 +20,11 @@ public class ResourcesConfigProperties {
 
     private boolean enabled = true;
 
+    /**
+     * 扫描的基础包路径
+     */
+    private String[] basePackages = {"com.yaocode.sts"};
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -28,4 +33,11 @@ public class ResourcesConfigProperties {
         this.enabled = enabled;
     }
 
+    public String[] getBasePackages() {
+        return basePackages;
+    }
+
+    public void setBasePackages(String[] basePackages) {
+        this.basePackages = basePackages;
+    }
 }

@@ -2,6 +2,7 @@ package com.yaocode.sts.common.resources.annotation;
 
 import com.yaocode.sts.common.resources.enums.RequestMethodEnums;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,6 +26,10 @@ import java.lang.annotation.Target;
 })
 public @interface Resources {
 
+    @AliasFor(annotation = Resources.class, attribute = "code")
+    String value() default "";
+
+    @AliasFor(annotation = Resources.class, attribute = "value")
     String code() default "";
 
     String name() default "";
