@@ -27,6 +27,6 @@ public interface SystemResourcesHandler extends ResourcesHandler<SystemResources
      * @param systemResources 系统资源注解
      * @param serverResourcesModel 服务资源数据
      */
-    void addServerResource(List<SystemResources> systemResources, ServerResourcesModel serverResourcesModel);
+    void addResources(List<SystemResources> systemResources, ServerResourcesModel serverResourcesModel);
 
 }

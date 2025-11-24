@@ -47,18 +47,12 @@ public class SystemResourcesHandlerImpl implements SystemResourcesHandler {
 
     @Override
     public boolean isExist(SystemResourcesModel resource) {
-        if (isExist(resource.getCode())) {
-            return true;
-        }
-        return false;
+        return isExist(resource.getCode());
     }
 
     @Override
     public boolean isExist(String code) {
-        if (systemResourcesModelList.stream().anyMatch(e -> Objects.equals(e.getCode(), code))) {
-            return true;
-        }
-        return false;
+        return systemResourcesModelList.stream().anyMatch(e -> Objects.equals(e.getCode(), code));
     }
 
     @Override
@@ -78,7 +72,7 @@ public class SystemResourcesHandlerImpl implements SystemResourcesHandler {
     }
 
     @Override
-    public void addServerResource(List<SystemResources> systemResources, ServerResourcesModel serverResourcesModel) {
+    public void addResources(List<SystemResources> systemResources, ServerResourcesModel serverResourcesModel) {
         List<String> systemCodeList = systemResources.stream()
                     .map(SystemResources::code)
                     .filter(this::isExist).toList();

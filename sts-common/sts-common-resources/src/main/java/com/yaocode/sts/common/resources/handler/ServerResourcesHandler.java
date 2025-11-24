@@ -27,6 +27,6 @@ public interface ServerResourcesHandler extends ResourcesHandler<ServerResources
      * @param serverResources 大服务资源资源注解
      * @param serviceResourcesModel 小服务资源数据
      */
-    void addServiceResource(List<ServerResources> serverResources, ServiceResourcesModel serviceResourcesModel);
+    void addResources(List<ServerResources> serverResources, ServiceResourcesModel serviceResourcesModel);
 
 }

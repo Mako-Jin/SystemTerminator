@@ -2,10 +2,12 @@ package com.yaocode.sts.common.resources.config;
 
 import com.yaocode.sts.common.resources.ResourcesAutoInitEngine;
 import com.yaocode.sts.common.resources.ResourcesScanner;
+import com.yaocode.sts.common.resources.handler.ModuleResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ServerResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ServiceResourcesHandler;
 import com.yaocode.sts.common.resources.handler.SystemResourcesHandler;
+import com.yaocode.sts.common.resources.handler.impl.ModuleResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.handler.impl.ServerResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.handler.impl.ServiceResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.handler.impl.SystemResourcesHandlerImpl;
@@ -66,11 +68,11 @@ public class ResourcesConfig {
         return new ServiceResourcesHandlerImpl(applicationContext, serverResourcesHandler);
     }
 
-    // @Bean
-    // public ModuleResourcesHandler moduleResourcesHandler() {
-    //     return new ModuleResourcesHandler();
-    // }
-    //
+    @Bean
+    public ModuleResourcesHandler moduleResourcesHandler(ApplicationContext applicationContext, ServiceResourcesHandler serviceResourcesHandler) {
+        return new ModuleResourcesHandlerImpl(applicationContext, serviceResourcesHandler);
+    }
+
     // @Bean
     // public ApiResourcesHandler apiResourcesHandler() {
     //     return new ApiResourcesHandler();

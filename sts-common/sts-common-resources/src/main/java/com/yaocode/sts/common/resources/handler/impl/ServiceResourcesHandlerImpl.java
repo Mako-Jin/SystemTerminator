@@ -3,7 +3,7 @@ package com.yaocode.sts.common.resources.handler.impl;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.handler.ServerResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ServiceResourcesHandler;
-import com.yaocode.sts.common.resources.model.ServerResourcesModel;
+import com.yaocode.sts.common.resources.model.ModuleResourcesModel;
 import com.yaocode.sts.common.resources.model.ServiceResourcesModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 服务资源扫描类
@@ -43,6 +44,7 @@ public class ServiceResourcesHandlerImpl implements ServiceResourcesHandler {
     @Override
     public void addResources(ServiceResourcesModel resource) {
         if (isExist(resource)) {
+            logger.warn("service编码={}已存在", resource.getCode());
             return;
         }
         serviceResourcesModels.add(resource);
@@ -55,11 +57,7 @@ public class ServiceResourcesHandlerImpl implements ServiceResourcesHandler {
 
     @Override
     public boolean isExist(String code) {
-        if (serviceResourcesModels.stream().anyMatch(e -> Objects.equals(e.getCode(), code))) {
-            logger.warn("服务编码={}已注册", code);
-            return true;
-        }
-        return false;
+        return serviceResourcesModels.stream().anyMatch(e -> Objects.equals(e.getCode(), code));
     }
 
     @Override
@@ -78,7 +76,7 @@ public class ServiceResourcesHandlerImpl implements ServiceResourcesHandler {
             model.setPath(annotatedResource.path());
             if (annotatedResource.belongTo().length > 0) {
                 serverResourcesHandler.convert(Arrays.asList(annotatedResource.belongTo()));
-                serverResourcesHandler.addServiceResource(Arrays.asList(annotatedResource.belongTo()), model);
+                serverResourcesHandler.addResources(Arrays.asList(annotatedResource.belongTo()), model);
             }
             this.addResources(model);
         }
@@ -113,5 +111,20 @@ public class ServiceResourcesHandlerImpl implements ServiceResourcesHandler {
 
     public void setServerResourcesHandler(ServerResourcesHandler serverResourcesHandler) {
         this.serverResourcesHandler = serverResourcesHandler;
+    }
+
+    @Override
+    public void addResources(List<ServiceResources> serviceResources, ModuleResourcesModel moduleResourcesModel) {
+        List<String> serviceCodeList = serviceResources.stream()
+                .map(ServiceResources::code)
+                .filter(this::isExist).toList();
+        for (String serviceCode : serviceCodeList) {
+            Optional<ServiceResourcesModel> optional = serviceResourcesModels.stream()
+                    .filter(e -> Objects.equals(e.getCode(), serviceCode)).findFirst();
+            if (optional.isEmpty()) {
+                continue;
+            }
+            optional.get().addModuleResources(moduleResourcesModel);
+        }
     }
 }

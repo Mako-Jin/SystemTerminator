@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Resources(type = ResourceTypeEnums.SYSTEM)
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface SystemResources {
 
     @AliasFor(annotation = Resources.class, attribute = "value")

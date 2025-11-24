@@ -1,12 +1,10 @@
 package com.yaocode.sts.common.resources.handler.impl;
 
 import com.yaocode.sts.common.resources.annotation.ServerResources;
-import com.yaocode.sts.common.resources.annotation.SystemResources;
 import com.yaocode.sts.common.resources.handler.ServerResourcesHandler;
 import com.yaocode.sts.common.resources.handler.SystemResourcesHandler;
 import com.yaocode.sts.common.resources.model.ServerResourcesModel;
 import com.yaocode.sts.common.resources.model.ServiceResourcesModel;
-import com.yaocode.sts.common.resources.model.SystemResourcesModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -59,10 +57,7 @@ public class ServerResourcesHandlerImpl implements ServerResourcesHandler {
 
     @Override
     public boolean isExist(String code) {
-        if (serverResourcesModels.stream().anyMatch(e -> Objects.equals(e.getCode(), code))) {
-            return true;
-        }
-        return false;
+        return serverResourcesModels.stream().anyMatch(e -> Objects.equals(e.getCode(), code));
     }
 
     @Override
@@ -80,7 +75,7 @@ public class ServerResourcesHandlerImpl implements ServerResourcesHandler {
             model.setEnable(annotatedResource.isEnabled());
             if (annotatedResource.belongTo().length > 0) {
                 systemResourcesHandler.convert(Arrays.asList(annotatedResource.belongTo()));
-                systemResourcesHandler.addServerResource(Arrays.asList(annotatedResource.belongTo()), model);
+                systemResourcesHandler.addResources(Arrays.asList(annotatedResource.belongTo()), model);
             }
             this.addResources(model);
         }
@@ -118,13 +113,13 @@ public class ServerResourcesHandlerImpl implements ServerResourcesHandler {
     }
 
     @Override
-    public void addServiceResource(List<ServerResources> serverResources, ServiceResourcesModel serviceResourcesModel) {
-        List<String> systemCodeList = serverResources.stream()
+    public void addResources(List<ServerResources> serverResources, ServiceResourcesModel serviceResourcesModel) {
+        List<String> serverCodeList = serverResources.stream()
                 .map(ServerResources::code)
                 .filter(this::isExist).toList();
-        for (String systemCode : systemCodeList) {
+        for (String serverCode : serverCodeList) {
             Optional<ServerResourcesModel> optional = serverResourcesModels.stream()
-                    .filter(e -> Objects.equals(e.getCode(), systemCode)).findFirst();
+                    .filter(e -> Objects.equals(e.getCode(), serverCode)).findFirst();
             if (optional.isEmpty()) {
                 continue;
             }
