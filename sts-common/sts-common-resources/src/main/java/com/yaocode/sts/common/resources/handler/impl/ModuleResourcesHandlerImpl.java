@@ -3,6 +3,7 @@ package com.yaocode.sts.common.resources.handler.impl;
 import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.handler.ModuleResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ServiceResourcesHandler;
+import com.yaocode.sts.common.resources.model.ApiResourcesModel;
 import com.yaocode.sts.common.resources.model.ModuleResourcesModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,5 +111,10 @@ public class ModuleResourcesHandlerImpl implements ModuleResourcesHandler {
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void addResources(List<ModuleResources> moduleResourcesList, ApiResourcesModel apiResourcesModel) {
+
     }
 }

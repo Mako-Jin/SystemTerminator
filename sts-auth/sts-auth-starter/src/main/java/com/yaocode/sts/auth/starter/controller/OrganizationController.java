@@ -5,6 +5,7 @@ import com.yaocode.sts.auth.application.service.OrganizationApplicationService;
 import com.yaocode.sts.auth.interfaces.api.OrganizationApi;
 import com.yaocode.sts.auth.interfaces.assembler.OrganizationAssembler;
 import com.yaocode.sts.auth.interfaces.model.params.CreateOrganizationParams;
+import com.yaocode.sts.common.resources.annotation.ApiResources;
 import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
@@ -43,6 +44,7 @@ public class OrganizationController implements OrganizationApi {
     private OrganizationAssembler organizationAssembler;
 
     @Override
+    @ApiResources(code = "000000000002001", name = "新增", desc = "新增单个组织架构")
     public ResultModel<String> singleAdd(CreateOrganizationParams params) {
         OrganizationDto organizationDto = organizationAssembler.toDto(params);
         String organizationId = organizationApplicationService.singleAdd(organizationDto);

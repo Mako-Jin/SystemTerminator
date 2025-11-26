@@ -8,5 +8,5 @@ package com.yaocode.sts.common.resources.handler;
  * @Date: 2025年11月15日 22:37
  * @Description:
  */
-public interface RequestResourcesHandler {
+public interface ApiRequestHandler {
 }

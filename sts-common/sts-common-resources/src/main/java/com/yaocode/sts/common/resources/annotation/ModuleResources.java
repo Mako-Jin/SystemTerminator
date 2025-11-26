@@ -47,6 +47,10 @@ public @interface ModuleResources {
     @AliasFor(annotation = Resources.class, attribute = "isWhiteList")
     boolean isWhiteList() default false;
 
+    /**
+     * 属于哪个服务的资源，默认属于当前主类的Service的资源
+     * @return ModuleResources[]
+     */
     ServiceResources[] belongTo() default {};
 
 }

@@ -2,11 +2,13 @@ package com.yaocode.sts.common.resources.config;
 
 import com.yaocode.sts.common.resources.ResourcesAutoInitEngine;
 import com.yaocode.sts.common.resources.ResourcesScanner;
+import com.yaocode.sts.common.resources.handler.ApiResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ModuleResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ServerResourcesHandler;
 import com.yaocode.sts.common.resources.handler.ServiceResourcesHandler;
 import com.yaocode.sts.common.resources.handler.SystemResourcesHandler;
+import com.yaocode.sts.common.resources.handler.impl.ApiResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.handler.impl.ModuleResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.handler.impl.ServerResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.handler.impl.ServiceResourcesHandlerImpl;
@@ -73,11 +75,11 @@ public class ResourcesConfig {
         return new ModuleResourcesHandlerImpl(applicationContext, serviceResourcesHandler);
     }
 
-    // @Bean
-    // public ApiResourcesHandler apiResourcesHandler() {
-    //     return new ApiResourcesHandler();
-    // }
-    //
+    @Bean
+    public ApiResourcesHandler apiResourcesHandler(ApplicationContext applicationContext, ModuleResourcesHandler moduleResourcesHandler ) {
+        return new ApiResourcesHandlerImpl(applicationContext, moduleResourcesHandler);
+    }
+
     // @Bean
     // public MenuResourcesHandler menuResourcesHandler() {
     //     return new MenuResourcesHandler();

@@ -5,16 +5,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 模块资源
+ * 接口资源数据类
  * @author: Jin-LiangBo
- * @date: 2025年11月21日 20:46
+ * @date: 2025年11月26日 22:57
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ModuleResourcesModel extends ResourcesModel {
+public class ApiResourcesModel extends ResourcesModel {
 
-    public ModuleResourcesModel() {
-        this.setType(ResourceTypeEnums.MODULE);
+    public ApiResourcesModel() {
+        this.setType(ResourceTypeEnums.API);
     }
 
     private String path;
@@ -24,5 +24,7 @@ public class ModuleResourcesModel extends ResourcesModel {
     private boolean isDeprecated;
 
     private boolean isWhiteList;
+
+    private String requestMethod;
 
 }

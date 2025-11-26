@@ -51,6 +51,10 @@ public @interface ApiResources {
     @AliasFor(annotation = Resources.class, attribute = "requestMethod")
     RequestMethodEnums requestMethod() default RequestMethodEnums.GET;
 
-    ServiceResources[] belongTo() default {};
+    /**
+     * 属于哪个模块资源，默认属于当前Controller类的module的资源
+     * @return ModuleResources[]
+     */
+    ModuleResources[] belongTo() default {};
 
 }
