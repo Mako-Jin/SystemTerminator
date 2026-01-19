@@ -104,7 +104,6 @@ public class DbMigrationStartListener {
     @Order(4)
     @EventListener
     public void handleDbMigrationExecuteEvent(DbMigrationStartEvent dbMigrationStartEvent) {
-        logger.info("DbMigrationStartListener 44444444444444");
     }
 
 }

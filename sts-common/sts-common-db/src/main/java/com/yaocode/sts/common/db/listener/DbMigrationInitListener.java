@@ -97,7 +97,6 @@ public class DbMigrationInitListener {
     @Order(2)
     @EventListener
     public void prepareDbMigrationEnv(DbMigrationInitEvent dbMigrationInitEvent) {
-        logger.info("DbMigrationInitListener 2222222222222");
     }
 
 }
