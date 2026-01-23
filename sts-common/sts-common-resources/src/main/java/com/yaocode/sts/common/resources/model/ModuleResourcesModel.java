@@ -4,6 +4,8 @@ import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 模块资源
  * @author: Jin-LiangBo
@@ -17,12 +19,12 @@ public class ModuleResourcesModel extends ResourcesModel {
         this.setType(ResourceTypeEnums.MODULE);
     }
 
-    private String path;
+    private List<String> path;
 
-    private boolean isEnabled;
+    private String icon;
 
-    private boolean isDeprecated;
+    private Integer isWhiteList;
 
-    private boolean isWhiteList;
+    private List<String> parentCode;
 
 }

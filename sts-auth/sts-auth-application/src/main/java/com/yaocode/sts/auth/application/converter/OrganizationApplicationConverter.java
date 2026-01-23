@@ -31,6 +31,16 @@ public interface OrganizationApplicationConverter {
     OrganizationInfoEntity toEntity(OrganizationDto organizationDto);
 
     /**
+     * entity转Dto
+     * @param entity OrganizationInfoEntity
+     * @return OrganizationDto
+     */
+    @Mapping(target = "organizationId", source = "entity.id", qualifiedByName = "organizationIdToString")
+    @Mapping(target = "organizationCode", source = "entity.organizationCode", qualifiedByName = "organizationCodeToString")
+    @Mapping(target = "tenantId", source = "entity.tenantId", qualifiedByName = "tenantIdToString")
+    OrganizationDto toDto(OrganizationInfoEntity entity);
+
+    /**
      * 值对象与基本类型的转换方法
      * @param organizationId OrganizationId
      * @return String organizationId

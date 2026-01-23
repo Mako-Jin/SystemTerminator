@@ -54,4 +54,8 @@ public enum OppositeEnums {
         return desc;
     }
 
+    public static Integer getCode(boolean flag) {
+        return flag ? OppositeEnums.YES.getCode() : OppositeEnums.NO.getCode();
+    }
+
 }

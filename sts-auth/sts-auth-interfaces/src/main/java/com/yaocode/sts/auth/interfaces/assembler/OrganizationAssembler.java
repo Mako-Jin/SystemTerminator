@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.interfaces.assembler;
 
 import com.yaocode.sts.auth.application.dto.OrganizationDto;
 import com.yaocode.sts.auth.interfaces.model.params.CreateOrganizationParams;
+import com.yaocode.sts.auth.interfaces.model.vo.OrganizationInfoVo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -21,5 +22,12 @@ public interface OrganizationAssembler {
      * @return OrganizationDto
      */
     OrganizationDto toDto(CreateOrganizationParams organizationParams);
+
+    /**
+     * 数据传输对象转Vo
+     * @param organizationDto 组织机构数据传输对象
+     * @return OrganizationInfoVo
+     */
+    OrganizationInfoVo toVo(OrganizationDto organizationDto);
 
 }

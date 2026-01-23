@@ -1,5 +1,14 @@
 package com.yaocode.sts.common.resources.enums;
 
+import com.yaocode.sts.common.resources.annotation.ApiResources;
+import com.yaocode.sts.common.resources.annotation.ModuleResources;
+import com.yaocode.sts.common.resources.annotation.ServerResources;
+import com.yaocode.sts.common.resources.annotation.ServiceResources;
+import com.yaocode.sts.common.resources.annotation.SystemResources;
+import com.yaocode.sts.common.resources.model.ResourcesModel;
+
+import java.lang.annotation.Annotation;
+
 /**
  * 资源类型枚举类
  * @author: Jin-LiangBo
@@ -63,6 +72,21 @@ public enum ResourceTypeEnums {
 
     public String getDesc() {
         return desc;
+    }
+
+    public static String createDefaultResourceCode(Class<?> clazz) {
+        if (SystemResources.class.equals(clazz)) {
+            return "0".repeat(3);
+        } else if (ServerResources.class.equals(clazz)) {
+            return "0".repeat(6);
+        } else if (ServiceResources.class.equals(clazz)) {
+            return "0".repeat(9);
+        } else if (ModuleResources.class.equals(clazz)) {
+            return "0".repeat(12);
+        }  else if (ApiResources.class.equals(clazz)) {
+            return "0".repeat(15);
+        }
+        throw new IllegalArgumentException();
     }
 
 }

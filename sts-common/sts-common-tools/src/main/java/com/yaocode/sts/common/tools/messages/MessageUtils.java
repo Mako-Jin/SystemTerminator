@@ -41,7 +41,7 @@ public class MessageUtils {
      */
     public String getMessage(String key, String defaultMessage){
         try {
-            return messageSource.getMessage(key, null,defaultMessage, LocaleContextHolder.getLocale());
+            return messageSource.getMessage(key, null, defaultMessage, LocaleContextHolder.getLocale());
         } catch (NoSuchMessageException e) {
             log.debug("get message error:key = {}; defaultMessage = {}" , key, defaultMessage);
             log.error("get message error:message is {} , cause is {}" , e.getMessage(), e.getCause());

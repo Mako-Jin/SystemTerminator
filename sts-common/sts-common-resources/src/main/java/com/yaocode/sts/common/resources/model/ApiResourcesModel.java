@@ -3,6 +3,9 @@ package com.yaocode.sts.common.resources.model;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * 接口资源数据类
@@ -17,14 +20,12 @@ public class ApiResourcesModel extends ResourcesModel {
         this.setType(ResourceTypeEnums.API);
     }
 
-    private String path;
+    private List<String> path;
 
-    private boolean isEnabled;
+    private Integer isWhiteList;
 
-    private boolean isDeprecated;
+    private List<String> parentCode;
 
-    private boolean isWhiteList;
-
-    private String requestMethod;
+    private List<RequestMethod> requestMethod;
 
 }

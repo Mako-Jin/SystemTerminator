@@ -1,20 +1,21 @@
 package com.yaocode.sts.common.resources.config;
 
 import com.yaocode.sts.common.resources.ResourcesAutoInitEngine;
-import com.yaocode.sts.common.resources.ResourcesScanner;
-import com.yaocode.sts.common.resources.handler.ApiResourcesHandler;
-import com.yaocode.sts.common.resources.handler.ModuleResourcesHandler;
-import com.yaocode.sts.common.resources.handler.ResourcesHandler;
-import com.yaocode.sts.common.resources.handler.ServerResourcesHandler;
-import com.yaocode.sts.common.resources.handler.ServiceResourcesHandler;
-import com.yaocode.sts.common.resources.handler.SystemResourcesHandler;
-import com.yaocode.sts.common.resources.handler.impl.ApiResourcesHandlerImpl;
-import com.yaocode.sts.common.resources.handler.impl.ModuleResourcesHandlerImpl;
-import com.yaocode.sts.common.resources.handler.impl.ServerResourcesHandlerImpl;
-import com.yaocode.sts.common.resources.handler.impl.ServiceResourcesHandlerImpl;
-import com.yaocode.sts.common.resources.handler.impl.SystemResourcesHandlerImpl;
-import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.properties.ResourcesConfigProperties;
+import com.yaocode.sts.common.resources.services.ResourcesBuilder;
+import com.yaocode.sts.common.resources.services.handler.ApiResourcesHandler;
+import com.yaocode.sts.common.resources.services.handler.ModuleResourcesHandler;
+import com.yaocode.sts.common.resources.services.handler.ServerResourcesHandler;
+import com.yaocode.sts.common.resources.services.handler.ServiceResourcesHandler;
+import com.yaocode.sts.common.resources.services.handler.SystemResourcesHandler;
+import com.yaocode.sts.common.resources.services.handler.impl.ApiResourcesHandlerImpl;
+import com.yaocode.sts.common.resources.services.handler.impl.ModuleResourcesHandlerImpl;
+import com.yaocode.sts.common.resources.services.handler.impl.ServerResourcesHandlerImpl;
+import com.yaocode.sts.common.resources.services.handler.impl.ServiceResourcesHandlerImpl;
+import com.yaocode.sts.common.resources.services.handler.impl.SystemResourcesHandlerImpl;
+import com.yaocode.sts.common.resources.utils.PropertyResolverUtils;
+import com.yaocode.sts.common.tools.messages.MessageUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -22,9 +23,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
 
 /**
  * 资源配置类
@@ -41,58 +39,79 @@ public class ResourcesConfig {
     @ConditionalOnMissingBean
     public ResourcesAutoInitEngine resourcesAutoInitEngine(
             ResourcesConfigProperties resourcesConfigProperties,
-            ResourcesScanner<?, ?> resourcesScanner
+            ResourcesBuilder resourcesBuilder
     ) {
-        return new ResourcesAutoInitEngine(resourcesConfigProperties, resourcesScanner);
+        return new ResourcesAutoInitEngine(resourcesConfigProperties, resourcesBuilder);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public <A extends Annotation, M extends ResourcesModel> ResourcesScanner<A, M> resourcesScanner(
-            List<ResourcesHandler<A, M>> resourceHandlers,
+    public ResourcesBuilder resourcesBuilder(
+            ApplicationContext applicationContext,
+            SystemResourcesHandler systemResourcesHandler,
+            ServerResourcesHandler serverResourcesHandler,
+            ServiceResourcesHandler serviceResourcesHandler,
+            ModuleResourcesHandler moduleResourcesHandler,
+            ApiResourcesHandler apiResourcesHandler
+    ) {
+        return new ResourcesBuilder(
+                applicationContext,
+                systemResourcesHandler,
+                serverResourcesHandler,
+                serviceResourcesHandler,
+                moduleResourcesHandler,
+                apiResourcesHandler
+        );
+    }
+
+    @Bean
+    public PropertyResolverUtils propertyResolverUtils(
+            ConfigurableBeanFactory configurableBeanFactory,
+            MessageUtils messageUtils,
             ResourcesConfigProperties resourcesConfigProperties
     ) {
-        return new ResourcesScanner<>(resourcesConfigProperties, resourceHandlers);
+        return new PropertyResolverUtils(configurableBeanFactory, messageUtils, resourcesConfigProperties);
     }
 
     @Bean
-    public SystemResourcesHandler systemResourcesHandler(ApplicationContext applicationContext) {
-        return new SystemResourcesHandlerImpl(applicationContext);
+    public SystemResourcesHandler systemResourcesHandler(ApplicationContext applicationContext, PropertyResolverUtils propertyResolverUtils) {
+        return new SystemResourcesHandlerImpl(applicationContext, propertyResolverUtils);
     }
 
     @Bean
-    public ServerResourcesHandler serverResourcesHandler(ApplicationContext applicationContext, SystemResourcesHandler systemResourcesHandler) {
-        return new ServerResourcesHandlerImpl(applicationContext, systemResourcesHandler);
+    public ServerResourcesHandler serverResourcesHandler(
+            ApplicationContext applicationContext,
+            PropertyResolverUtils propertyResolverUtils,
+            SystemResourcesHandler systemResourcesHandler
+    ) {
+        return new ServerResourcesHandlerImpl(applicationContext, propertyResolverUtils, systemResourcesHandler);
     }
 
     @Bean
-    public ServiceResourcesHandler serviceResourcesHandler(ApplicationContext applicationContext, ServerResourcesHandler serverResourcesHandler) {
-        return new ServiceResourcesHandlerImpl(applicationContext, serverResourcesHandler);
+    public ServiceResourcesHandler serviceResourcesHandler(
+            ApplicationContext applicationContext,
+            PropertyResolverUtils propertyResolverUtils,
+            ServerResourcesHandler serverResourcesHandler
+    ) {
+        return new ServiceResourcesHandlerImpl(applicationContext, propertyResolverUtils, serverResourcesHandler);
     }
 
     @Bean
-    public ModuleResourcesHandler moduleResourcesHandler(ApplicationContext applicationContext, ServiceResourcesHandler serviceResourcesHandler) {
-        return new ModuleResourcesHandlerImpl(applicationContext, serviceResourcesHandler);
+    public ModuleResourcesHandler moduleResourcesHandler(
+            ApplicationContext applicationContext,
+            PropertyResolverUtils propertyResolverUtils,
+            ServiceResourcesHandler serviceResourcesHandler,
+            ApiResourcesHandler apiResourcesHandler
+    ) {
+        return new ModuleResourcesHandlerImpl(applicationContext, propertyResolverUtils, serviceResourcesHandler, apiResourcesHandler);
     }
 
     @Bean
-    public ApiResourcesHandler apiResourcesHandler(ApplicationContext applicationContext, ModuleResourcesHandler moduleResourcesHandler ) {
-        return new ApiResourcesHandlerImpl(applicationContext, moduleResourcesHandler);
+    public ApiResourcesHandler apiResourcesHandler(
+            ApplicationContext applicationContext,
+            PropertyResolverUtils propertyResolverUtils
+    ) {
+        return new ApiResourcesHandlerImpl(applicationContext, propertyResolverUtils);
     }
-
-    // @Bean
-    // public MenuResourcesHandler menuResourcesHandler() {
-    //     return new MenuResourcesHandler();
-    // }
-    //
-    // @Bean
-    // public PagesResourcesHandler menuResourcesHandler() {
-    //     return new MenuResourcesHandler();
-    // }
-    //
-    // @Bean
-    // public DataResourcesHandler dataResourcesHandler() {
-    //     return new DataResourcesHandler();
-    // }
 
 }

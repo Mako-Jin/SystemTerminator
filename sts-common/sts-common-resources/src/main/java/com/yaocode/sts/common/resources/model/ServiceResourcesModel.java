@@ -4,7 +4,6 @@ import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,16 +19,10 @@ public class ServiceResourcesModel extends ResourcesModel {
         setType(ResourceTypeEnums.SERVICE);
     }
 
-    private List<ModuleResourcesModel> moduleResourcesModelList = new ArrayList<>();
-
-    private String menuIcon;
-
-    private boolean isEnable;
+    private String icon;
 
     private String path;
 
-    public void addModuleResources(ModuleResourcesModel moduleResourcesModel) {
-        moduleResourcesModelList.add(moduleResourcesModel);
-    }
+    private List<String> parentCode;
 
 }

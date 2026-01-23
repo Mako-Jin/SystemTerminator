@@ -1,8 +1,6 @@
 package com.yaocode.sts.common.resources.properties;
 
-import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.utils.Constants;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +11,15 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2025年11月15日 16:12
  */
 @Configuration(proxyBeanMethods = false)
-@ConfigurationProperties(prefix = Constants.SPRINGDOC_PREFIX)
+@ConfigurationProperties(prefix = ResourcesConfigProperties.RESOURCES_CONFIG_PREFIX)
 @ConditionalOnProperty(name = "yaocode.web.resources.enabled", matchIfMissing = true)
-@ConditionalOnBean(SpringDocConfiguration.class)
 public class ResourcesConfigProperties {
 
+    public static final String RESOURCES_CONFIG_PREFIX = "yaocode.web.resources";
+
+    /**
+     * 是否开启资源扫描
+     */
     private boolean enabled = true;
 
     /**
@@ -26,7 +28,7 @@ public class ResourcesConfigProperties {
     private String[] basePackages = {"com.yaocode.sts"};
 
     public boolean isEnabled() {
-        return this.enabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {

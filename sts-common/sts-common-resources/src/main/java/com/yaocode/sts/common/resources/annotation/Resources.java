@@ -1,6 +1,5 @@
 package com.yaocode.sts.common.resources.annotation;
 
-import com.yaocode.sts.common.resources.enums.RequestMethodEnums;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import org.springframework.core.annotation.AliasFor;
 
@@ -38,18 +37,14 @@ public @interface Resources {
 
     ResourceTypeEnums type();
 
-    String path() default "";
+    String version() default "0.0.0.0";
 
-    RequestMethodEnums requestMethod() default RequestMethodEnums.GET;
+    String icon() default "";
 
     boolean isEnabled() default true;
 
     boolean isDeprecated() default false;
 
-    boolean isWhiteList() default false;
-
-    String menuIcon() default "";
-
-    String version() default "0.0.0.0";
+    ContactInfo contactInfo() default @ContactInfo;
 
 }

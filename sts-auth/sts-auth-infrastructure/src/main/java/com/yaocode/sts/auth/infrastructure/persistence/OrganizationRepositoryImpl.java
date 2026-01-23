@@ -34,7 +34,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
 
     @Override
     public Optional<OrganizationInfoEntity> findById(OrganizationId organizationId) {
-        return Optional.empty();
+        OrganizationInfoPo po = organizationInfoDao.getById(organizationId.getValue());
+        return Optional.ofNullable(OrganizationConverter.INSTANCE.toEntity(po));
     }
 
     @Override

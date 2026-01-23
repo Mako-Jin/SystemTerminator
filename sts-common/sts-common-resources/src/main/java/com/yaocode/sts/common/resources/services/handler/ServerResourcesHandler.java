@@ -1,10 +1,9 @@
-package com.yaocode.sts.common.resources.handler;
+package com.yaocode.sts.common.resources.services.handler;
 
 import com.yaocode.sts.common.resources.annotation.ServerResources;
 import com.yaocode.sts.common.resources.model.ServerResourcesModel;
-import com.yaocode.sts.common.resources.model.ServiceResourcesModel;
 
-import java.util.List;
+import java.lang.annotation.Annotation;
 
 /**
  * 服务资源处理器接口
@@ -18,15 +17,8 @@ public interface ServerResourcesHandler extends ResourcesHandler<ServerResources
      * @return java.lang.Class<ServerResources>
      */
     @Override
-    default Class<ServerResources> getSupportedAnnotation() {
+    default Class<? extends Annotation> getSupportedAnnotation() {
         return ServerResources.class;
     }
-
-    /**
-     * 大服务资源下绑定小服务资源
-     * @param serverResources 大服务资源资源注解
-     * @param serviceResourcesModel 小服务资源数据
-     */
-    void addResources(List<ServerResources> serverResources, ServiceResourcesModel serviceResourcesModel);
 
 }

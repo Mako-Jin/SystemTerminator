@@ -4,9 +4,6 @@ import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 系统资源模型
  * @author: Jin-LiangBo
@@ -20,12 +17,6 @@ public class SystemResourcesModel extends ResourcesModel {
         setType(ResourceTypeEnums.SYSTEM);
     }
 
-    private String menuIcon;
-
-    private List<ServerResourcesModel> serverResourcesModelList = new ArrayList<>();
-
-    public void addServerResources(ServerResourcesModel serverResourcesModel) {
-        serverResourcesModelList.add(serverResourcesModel);
-    }
+    private String icon;
 
 }

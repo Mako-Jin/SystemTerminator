@@ -1,10 +1,9 @@
-package com.yaocode.sts.common.resources.handler;
+package com.yaocode.sts.common.resources.services.handler;
 
 import com.yaocode.sts.common.resources.annotation.SystemResources;
-import com.yaocode.sts.common.resources.model.ServerResourcesModel;
 import com.yaocode.sts.common.resources.model.SystemResourcesModel;
 
-import java.util.List;
+import java.lang.annotation.Annotation;
 
 /**
  * 系统资源处理器接口
@@ -18,15 +17,7 @@ public interface SystemResourcesHandler extends ResourcesHandler<SystemResources
      * @return java.lang.Class<SystemResources>
      */
     @Override
-    default Class<SystemResources> getSupportedAnnotation() {
+    default Class<? extends Annotation> getSupportedAnnotation() {
         return SystemResources.class;
     }
-
-    /**
-     * 系统资源下绑定服务资源
-     * @param systemResources 系统资源注解
-     * @param serverResourcesModel 服务资源数据
-     */
-    void addResources(List<SystemResources> systemResources, ServerResourcesModel serverResourcesModel);
-
 }

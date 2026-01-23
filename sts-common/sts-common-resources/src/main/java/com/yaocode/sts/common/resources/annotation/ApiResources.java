@@ -1,8 +1,8 @@
 package com.yaocode.sts.common.resources.annotation;
 
-import com.yaocode.sts.common.resources.enums.RequestMethodEnums;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -33,8 +33,7 @@ public @interface ApiResources {
     @AliasFor(annotation = Resources.class, attribute = "desc")
     String desc() default "";
 
-    @AliasFor(annotation = Resources.class, attribute = "path")
-    String path() default "";
+    String[] path() default {""};
 
     @AliasFor(annotation = Resources.class, attribute = "version")
     String version() default "0.0.0.0";
@@ -45,16 +44,17 @@ public @interface ApiResources {
     @AliasFor(annotation = Resources.class, attribute = "isDeprecated")
     boolean isDeprecated() default false;
 
-    @AliasFor(annotation = Resources.class, attribute = "isWhiteList")
     boolean isWhiteList() default false;
 
-    @AliasFor(annotation = Resources.class, attribute = "requestMethod")
-    RequestMethodEnums requestMethod() default RequestMethodEnums.GET;
+    RequestMethod[] requestMethod() default {};
 
     /**
-     * 属于哪个模块资源，默认属于当前Controller类的module的资源
+     * 父编码，填写module的资源编码-code
      * @return ModuleResources[]
      */
-    ModuleResources[] belongTo() default {};
+    String[] parent() default {};
+
+    @AliasFor(annotation = Resources.class, attribute = "contactInfo")
+    ContactInfo contact() default @ContactInfo();
 
 }

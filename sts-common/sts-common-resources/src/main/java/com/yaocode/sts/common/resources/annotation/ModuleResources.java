@@ -32,8 +32,10 @@ public @interface ModuleResources {
     @AliasFor(annotation = Resources.class, attribute = "desc")
     String desc() default "";
 
-    @AliasFor(annotation = Resources.class, attribute = "path")
-    String path() default "";
+    String[] path() default {""};
+
+    @AliasFor(annotation = Resources.class, attribute = "icon")
+    String icon() default "";
 
     @AliasFor(annotation = Resources.class, attribute = "version")
     String version() default "0.0.0.0";
@@ -44,13 +46,15 @@ public @interface ModuleResources {
     @AliasFor(annotation = Resources.class, attribute = "isDeprecated")
     boolean isDeprecated() default false;
 
-    @AliasFor(annotation = Resources.class, attribute = "isWhiteList")
     boolean isWhiteList() default false;
 
     /**
-     * 属于哪个服务的资源，默认属于当前主类的Service的资源
+     * 父编码，填写service的资源编码-code
      * @return ModuleResources[]
      */
-    ServiceResources[] belongTo() default {};
+    String[] parent() default {};
+
+    @AliasFor(annotation = Resources.class, attribute = "contactInfo")
+    ContactInfo contact() default @ContactInfo();
 
 }

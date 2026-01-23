@@ -10,12 +10,16 @@ import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
+import com.yaocode.sts.common.basic.exception.DataExistsException;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  *
@@ -24,6 +28,8 @@ import java.util.Objects;
  */
 @Service
 public class OrganizationApplicationServiceImpl implements OrganizationApplicationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationApplicationServiceImpl.class);
 
     @Resource
     private OrganizationRepository organizationRepository;
@@ -60,5 +66,18 @@ public class OrganizationApplicationServiceImpl implements OrganizationApplicati
         organizationDto.setOrganizationId(IdFactory.generate().toString());
         OrganizationInfoEntity entity = organizationApplicationConverter.toEntity(organizationDto);
         return organizationRepository.save(entity).getValue();
+    }
+
+    @Override
+    public OrganizationDto getById(String organizationId) {
+        OrganizationId valueObjectId = OrganizationId.of(organizationId);
+        // TODO 这块应该获取一下租户id，都不一定有自己租户id的权限，要么获取当前租户id，后端获取应该安全点
+        Optional<OrganizationInfoEntity> organizationInfoEntity = organizationRepository.findById(valueObjectId);
+        if (organizationInfoEntity.isEmpty()) {
+            logger.warn("组织不存在, organizationId: {}", organizationId);
+            throw new DataExistsException(String.format("组织不存在, ID: %s", organizationId));
+        }
+        // 转换为DTO
+        return organizationApplicationConverter.toDto(organizationInfoEntity.get());
     }
 }

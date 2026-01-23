@@ -16,4 +16,11 @@ public interface OrganizationApplicationService {
      */
     String singleAdd(OrganizationDto organizationDto);
 
+    /**
+     * 根据id查询组织结构信息
+     * @param organizationId 组织机构id
+     * @return OrganizationDto
+     */
+    OrganizationDto getById(String organizationId);
+
 }

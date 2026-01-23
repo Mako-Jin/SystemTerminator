@@ -32,8 +32,8 @@ public @interface ServerResources {
     @AliasFor(annotation = Resources.class, attribute = "desc")
     String desc() default "";
 
-    @AliasFor(annotation = Resources.class, attribute = "menuIcon")
-    String menuIcon() default "";
+    @AliasFor(annotation = Resources.class, attribute = "icon")
+    String icon() default "";
 
     @AliasFor(annotation = Resources.class, attribute = "version")
     String version() default "0.0.0.0";
@@ -41,6 +41,12 @@ public @interface ServerResources {
     @AliasFor(annotation = Resources.class, attribute = "isEnabled")
     boolean isEnabled() default true;
 
-    SystemResources[] belongTo() default {};
+    @AliasFor(annotation = Resources.class, attribute = "isDeprecated")
+    boolean isDeprecated() default false;
+
+    String[] parent() default {};
+
+    @AliasFor(annotation = Resources.class, attribute = "contactInfo")
+    ContactInfo contact() default @ContactInfo();
 
 }
