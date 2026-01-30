@@ -23,7 +23,7 @@ public class ResourceId extends Identifier<String> {
     }
 
     public static ResourceId nextId() {
-        return new ResourceId(IdFactory.generate());
+        return new ResourceId(IdFactory.generate().toString());
     }
 
 }

@@ -37,6 +37,11 @@
             <groupId>com.yaocode.sts</groupId>
             <artifactId>sts-auth-infrastructure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-resources</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

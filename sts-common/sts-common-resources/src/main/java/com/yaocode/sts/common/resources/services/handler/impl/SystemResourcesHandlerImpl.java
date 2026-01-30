@@ -17,7 +17,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +30,8 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
 
     private static final Logger logger = LoggerFactory.getLogger(SystemResourcesHandlerImpl.class);
 
+    private List<SystemResourcesModel> resources;
+
     public SystemResourcesHandlerImpl(ApplicationContext applicationContext, PropertyResolverUtils propertyResolverUtils) {
         super(applicationContext, propertyResolverUtils);
     }
@@ -38,26 +39,26 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
     @Override
     public List<SystemResourcesModel> build() {
         Map<String, Object> systemResourcesMap = this.scanResources();
-        List<SystemResourcesModel> systemResourcesModelList = new ArrayList<>();
+        this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         SystemResourcesModel systemResourcesModel = new SystemResourcesModel();
         this.buildDefaultResourcesModel(systemResourcesModel);
-        systemResourcesModelList.add(systemResourcesModel);
+        this.resources.add(systemResourcesModel);
 
         if (systemResourcesMap.isEmpty()) {
             ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
             scanner.addIncludeFilter(new AnnotationTypeFilter(SystemResources.class));
             if (!AutoConfigurationPackages.has(getApplicationContext())) {
-                return Collections.emptyList();
+                return this.resources;
             }
             List<String> packagesToScan = AutoConfigurationPackages.get(getApplicationContext());
             SystemResources systemResources = getSystemResourcesDefClass(scanner, packagesToScan);
             if (Objects.nonNull(systemResources)) {
                 systemResourcesModel = new SystemResourcesModel();
                 this.buildResourcesModel(systemResourcesModel, systemResources);
-                systemResourcesModelList.add(systemResourcesModel);
+                this.resources.add(systemResourcesModel);
             }
-            return systemResourcesModelList;
+            return this.resources;
         }
 
         for (Object bean : systemResourcesMap.values()) {
@@ -65,9 +66,9 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
             SystemResources systemResources = AnnotatedElementUtils.findMergedAnnotation(objClz, SystemResources.class);
             systemResourcesModel = new SystemResourcesModel();
             this.buildResourcesModel(systemResourcesModel, systemResources);
-            systemResourcesModelList.add(systemResourcesModel);
+            this.resources.add(systemResourcesModel);
         }
-        return systemResourcesModelList;
+        return this.resources;
     }
 
     @Override
@@ -82,12 +83,17 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
         resourcesModel.setDesc(annotatedResource.desc());
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        }
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
-        }
+        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
+        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
+    }
+
+    @Override
+    public List<SystemResourcesModel> getResources() {
+        return this.resources;
+    }
+
+    public void setResources(List<SystemResourcesModel> resources) {
+        this.resources = resources;
     }
 
     @Override

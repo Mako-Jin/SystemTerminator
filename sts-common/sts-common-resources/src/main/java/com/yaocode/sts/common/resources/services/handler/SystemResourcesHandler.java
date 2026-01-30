@@ -20,4 +20,5 @@ public interface SystemResourcesHandler extends ResourcesHandler<SystemResources
     default Class<? extends Annotation> getSupportedAnnotation() {
         return SystemResources.class;
     }
+
 }

@@ -13,6 +13,8 @@ import com.yaocode.sts.common.resources.services.handler.impl.ModuleResourcesHan
 import com.yaocode.sts.common.resources.services.handler.impl.ServerResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.services.handler.impl.ServiceResourcesHandlerImpl;
 import com.yaocode.sts.common.resources.services.handler.impl.SystemResourcesHandlerImpl;
+import com.yaocode.sts.common.resources.services.remote.ResourcesServiceClient;
+import com.yaocode.sts.common.resources.services.remote.impl.ResourcesServiceClientImpl;
 import com.yaocode.sts.common.resources.utils.PropertyResolverUtils;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 资源配置类
@@ -34,6 +37,12 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ResourcesConfigProperties.class)
 @ConditionalOnProperty(name = "yaocode.web.resources.enabled", matchIfMissing = true)
 public class ResourcesConfig {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -52,7 +61,8 @@ public class ResourcesConfig {
             ServerResourcesHandler serverResourcesHandler,
             ServiceResourcesHandler serviceResourcesHandler,
             ModuleResourcesHandler moduleResourcesHandler,
-            ApiResourcesHandler apiResourcesHandler
+            ApiResourcesHandler apiResourcesHandler,
+            ResourcesServiceClient resourcesServiceClient
     ) {
         return new ResourcesBuilder(
                 applicationContext,
@@ -60,7 +70,8 @@ public class ResourcesConfig {
                 serverResourcesHandler,
                 serviceResourcesHandler,
                 moduleResourcesHandler,
-                apiResourcesHandler
+                apiResourcesHandler,
+                resourcesServiceClient
         );
     }
 
@@ -112,6 +123,12 @@ public class ResourcesConfig {
             PropertyResolverUtils propertyResolverUtils
     ) {
         return new ApiResourcesHandlerImpl(applicationContext, propertyResolverUtils);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ResourcesServiceClient resourcesServiceClient(RestTemplate restTemplate) {
+        return new ResourcesServiceClientImpl(restTemplate);
     }
 
 }

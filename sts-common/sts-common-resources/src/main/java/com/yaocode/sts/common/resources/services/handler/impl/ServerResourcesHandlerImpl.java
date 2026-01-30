@@ -4,11 +4,9 @@ import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.resources.annotation.ServerResources;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.model.ServerResourcesModel;
-import com.yaocode.sts.common.resources.model.SystemResourcesModel;
 import com.yaocode.sts.common.resources.services.handler.ServerResourcesHandler;
 import com.yaocode.sts.common.resources.services.handler.SystemResourcesHandler;
 import com.yaocode.sts.common.resources.utils.PropertyResolverUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +29,8 @@ import java.util.stream.Collectors;
 public class ServerResourcesHandlerImpl extends AbstractResourcesHandler<ServerResources, ServerResourcesModel> implements ServerResourcesHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerResourcesHandlerImpl.class);
+
+    private List<ServerResourcesModel> resources;
 
     private final SystemResourcesHandler systemResourcesHandler;
 
@@ -56,14 +56,14 @@ public class ServerResourcesHandlerImpl extends AbstractResourcesHandler<ServerR
                 .map(ResourcesModel::getCode)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        List<ServerResourcesModel> serverResourcesModelList = new ArrayList<>();
+        this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         ServerResourcesModel serverResourcesModel = new ServerResourcesModel();
         this.buildDefaultResourcesModel(serverResourcesModel);
-        serverResourcesModelList.add(serverResourcesModel);
+        this.resources.add(serverResourcesModel);
 
         if (serverResourcesMap.isEmpty()) {
-            return serverResourcesModelList;
+            return this.resources;
         }
 
         for (Object bean : serverResourcesMap.values()) {
@@ -73,9 +73,9 @@ public class ServerResourcesHandlerImpl extends AbstractResourcesHandler<ServerR
             this.buildResourcesModel(serverResourcesModel, serverResources);
             List<String> parentCodeList = filterParentCode(serverResourcesModel.getParentCode(), parentSystemCodeList);
             serverResourcesModel.setParentCode(parentCodeList);
-            serverResourcesModelList.add(serverResourcesModel);
+            this.resources.add(serverResourcesModel);
         }
-        return serverResourcesModelList;
+        return this.resources;
     }
 
     @Override
@@ -97,12 +97,21 @@ public class ServerResourcesHandlerImpl extends AbstractResourcesHandler<ServerR
         resourcesModel.setDesc(annotatedResource.desc());
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        }
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
-        }
+        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
+        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
         resourcesModel.setParentCode(Arrays.asList(annotatedResource.parent()));
+    }
+
+    @Override
+    public List<ServerResourcesModel> getResources() {
+        return this.resources;
+    }
+
+    public void setResources(List<ServerResourcesModel> resources) {
+        this.resources = resources;
+    }
+
+    public SystemResourcesHandler getSystemResourcesHandler() {
+        return systemResourcesHandler;
     }
 }

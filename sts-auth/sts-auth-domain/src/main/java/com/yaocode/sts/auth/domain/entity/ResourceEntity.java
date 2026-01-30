@@ -6,6 +6,8 @@ import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -42,17 +44,22 @@ public class ResourceEntity extends AbstractAggregate<ResourceId> {
     /**
      * 接口请求地址
      */
-    private String requestUrl;
+    private List<String> requestUrl;
 
     /**
      * 请求方法，大写：POST,GET,PUT
      */
-    private String requestMethod;
+    private List<String> requestMethod;
 
     /**
      * 是否已弃用；0：未；1：已
      */
     private Integer isDeprecated;
+
+    /**
+     * 是否启用；0：未；1：已
+     */
+    private Integer isEnabled;
 
     /**
      * 是否白名单；0：不是；1：是
@@ -62,6 +69,16 @@ public class ResourceEntity extends AbstractAggregate<ResourceId> {
     /**
      * 菜单显示图标
      */
-    private String menuIcon;
+    private String icon;
+
+    /**
+     * 版本
+     */
+    private String version;
+
+    /**
+     * 父资源编码列表，逗号分割
+     */
+    private List<String> parentCode;
 
 }

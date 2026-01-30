@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -95,13 +96,18 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
         resolveProperty(resourcesModel::getDesc, resourcesModel::setDesc);
         resolveProperty(resourcesModel::getVersion, resourcesModel::setVersion);
 
-        ContactInfoModel contactInfoModel = resourcesModel.getContactInfoModel();
-        if (contactInfoModel != null) {
+        List<ContactInfoModel> contactInfoModelList = resourcesModel.getContactInfoModelList();
+        if (CollectionUtils.isEmpty(contactInfoModelList)) {
+            return;
+        }
+        List<ContactInfoModel> contactInfoModelResult = new ArrayList<>();
+        for (ContactInfoModel contactInfoModel : contactInfoModelList) {
             resolveProperty(contactInfoModel::getName, contactInfoModel::setName);
             resolveProperty(contactInfoModel::getEmail, contactInfoModel::setEmail);
             resolveProperty(contactInfoModel::getDocsUrl, contactInfoModel::setDocsUrl);
-            resourcesModel.setContactInfoModel(contactInfoModel);
+            contactInfoModelResult.add(contactInfoModel);
         }
+        resourcesModel.setContactInfoModelList(contactInfoModelResult);
     }
 
     /**
@@ -155,6 +161,8 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
             if (systemCodeList.contains(resolveParentCode)) {
                 newParentCodeList.add(resolveParentCode);
             } else {
+                // 那假如说这个code是其他系统的呢？, 当前服务肯定扫描不到呀。
+                // @SystemResources也是多个，需要加上这个系统资源注解
                 logger.warn("parent code {} not exist, pass it", resolveParentCode);
             }
         }

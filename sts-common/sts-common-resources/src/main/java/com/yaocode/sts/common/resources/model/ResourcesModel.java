@@ -3,6 +3,8 @@ package com.yaocode.sts.common.resources.model;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 资源模型
  * @author: Jin-LiangBo
@@ -42,6 +44,6 @@ public class ResourcesModel {
     /**
      * 作者信息
      */
-    private ContactInfoModel contactInfoModel;
+    private List<ContactInfoModel> contactInfoModelList;
 
 }

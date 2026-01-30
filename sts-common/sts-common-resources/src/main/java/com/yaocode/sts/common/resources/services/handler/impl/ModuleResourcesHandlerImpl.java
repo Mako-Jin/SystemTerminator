@@ -42,6 +42,8 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
 
     private final ApiResourcesHandler apiResourcesHandler;
 
+    private List<ModuleResourcesModel> resources;
+
     public ModuleResourcesHandlerImpl(
             ApplicationContext applicationContext,
             PropertyResolverUtils propertyResolverUtils,
@@ -66,14 +68,14 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
                 .map(ResourcesModel::getCode)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        List<ModuleResourcesModel> moduleResourcesModelList = new ArrayList<>();
+        this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         ModuleResourcesModel moduleResourcesModel = new ModuleResourcesModel();
         this.buildDefaultResourcesModel(moduleResourcesModel);
-        moduleResourcesModelList.add(moduleResourcesModel);
+        this.resources.add(moduleResourcesModel);
 
         if (moduleResourcesMap.isEmpty()) {
-            return moduleResourcesModelList;
+            return this.resources;
         }
 
         for (Object bean : moduleResourcesMap.values()) {
@@ -85,11 +87,11 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
             moduleResourcesModel.setParentCode(parentCodeList);
             List<String> requestPath = checkAndBuildRequestPath(objClz, moduleResourcesModel.getPath());
             moduleResourcesModel.setPath(requestPath);
-            moduleResourcesModelList.add(moduleResourcesModel);
+            this.resources.add(moduleResourcesModel);
             // api的应该放到这块，没有直接扫描方法注解的，得循环类。
             apiResourcesHandler.build(objClz, moduleResourcesModel);
         }
-        return moduleResourcesModelList;
+        return this.resources;
     }
 
     private List<String> checkAndBuildRequestPath(Class<?> clazz, List<String> annotationPathList) {
@@ -160,17 +162,18 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
         resourcesModel.setPath(Arrays.asList(annotatedResource.path()));
-        if (Objects.nonNull(annotatedResource.isWhiteList())) {
-            resourcesModel.setIsWhiteList(OppositeEnums.getCode(annotatedResource.isWhiteList()));
-        } else {
-            resourcesModel.setIsWhiteList(OppositeEnums.NO.getCode());
-        }
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        }
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
-        }
+        resourcesModel.setIsWhiteList(OppositeEnums.getCode(annotatedResource.isWhiteList()));
+        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
+        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
         resourcesModel.setParentCode(Arrays.asList(annotatedResource.parent()));
+    }
+
+    @Override
+    public List<ModuleResourcesModel> getResources() {
+        return this.resources;
+    }
+
+    public void setResources(List<ModuleResourcesModel> resources) {
+        this.resources = resources;
     }
 }

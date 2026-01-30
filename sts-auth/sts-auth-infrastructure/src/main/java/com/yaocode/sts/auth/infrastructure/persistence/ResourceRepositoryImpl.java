@@ -9,6 +9,7 @@ import com.yaocode.sts.auth.infrastructure.po.ResourcePo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -40,5 +41,26 @@ public class ResourceRepositoryImpl implements ResourceRepository {
     @Override
     public void delete(ResourceEntity aggregate) {
 
+    }
+
+    @Override
+    public List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList) {
+        List<ResourcePo> resourcePoList = resourceConverter.toPoList(resourceEntityList);
+        resourceDao.saveBatch(resourcePoList);
+        return resourcePoList.stream().map(e -> ResourceId.of(e.getResourceId())).toList();
+    }
+
+    @Override
+    public Optional<ResourceEntity> findByEntity(ResourceEntity resourceEntity) {
+        ResourcePo resourcePo = resourceConverter.toPo(resourceEntity);
+        ResourcePo po = resourceDao.getByPo(resourcePo);
+        return Optional.ofNullable(resourceConverter.toEntity(po));
+    }
+
+    @Override
+    public List<ResourceEntity> findByEntityList(List<ResourceEntity> resourceEntityList) {
+        List<ResourcePo> resourcePoList = resourceConverter.toPoList(resourceEntityList);
+        List<ResourcePo> dbResourcePoList = resourceDao.getByPoList(resourcePoList);
+        return resourceConverter.toEntityList(dbResourcePoList);
     }
 }

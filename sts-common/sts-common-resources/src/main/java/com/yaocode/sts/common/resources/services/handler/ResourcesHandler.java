@@ -96,4 +96,10 @@ public interface ResourcesHandler<A extends Annotation, M extends ResourcesModel
      */
     PropertyResolverUtils getPropertyResolverUtils();
 
+    /**
+     * 获取所有资源
+     * @return java.util.List<M>
+     */
+    List<M> getResources();
+
 }

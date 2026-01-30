@@ -9,7 +9,6 @@ import com.yaocode.sts.common.resources.model.ServiceResourcesModel;
 import com.yaocode.sts.common.resources.services.handler.ServerResourcesHandler;
 import com.yaocode.sts.common.resources.services.handler.ServiceResourcesHandler;
 import com.yaocode.sts.common.resources.utils.PropertyResolverUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +34,8 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
 
     private final ServerResourcesHandler serverResourcesHandler;
 
+    private List<ServiceResourcesModel> resources;
+
     public ServiceResourcesHandlerImpl(
             ApplicationContext applicationContext,
             PropertyResolverUtils propertyResolverUtils,
@@ -57,14 +58,14 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
                 .map(ResourcesModel::getCode)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        List<ServiceResourcesModel> serviceResourcesModelList = new ArrayList<>();
+        this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         ServiceResourcesModel serviceResourcesModel = new ServiceResourcesModel();
         this.buildDefaultResourcesModel(serviceResourcesModel);
-        serviceResourcesModelList.add(serviceResourcesModel);
+        this.resources.add(serviceResourcesModel);
 
         if (serviceResourcesMap.isEmpty()) {
-            return serviceResourcesModelList;
+            return this.resources;
         }
 
         for (Object bean : serviceResourcesMap.values()) {
@@ -75,9 +76,9 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
             List<String> parentCodeList = filterParentCode(serviceResourcesModel.getParentCode(), parentServerCodeList);
             serviceResourcesModel.setParentCode(parentCodeList);
             checkAndSetServicePath(serviceResourcesModel);
-            serviceResourcesModelList.add(serviceResourcesModel);
+            this.resources.add(serviceResourcesModel);
         }
-        return serviceResourcesModelList;
+        return this.resources;
     }
 
     private void checkAndSetServicePath(ServiceResourcesModel serviceResourcesModel) {
@@ -109,13 +110,17 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
         resourcesModel.setPath(annotatedResource.path());
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        }
-        if (Objects.nonNull(annotatedResource.isDeprecated())) {
-            resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
-        }
+        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
+        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
         resourcesModel.setParentCode(Arrays.asList(annotatedResource.parent()));
     }
 
+    @Override
+    public List<ServiceResourcesModel> getResources() {
+        return this.resources;
+    }
+
+    public void setResources(List<ServiceResourcesModel> resources) {
+        this.resources = resources;
+    }
 }

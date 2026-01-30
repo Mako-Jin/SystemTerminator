@@ -1,6 +1,9 @@
 package com.yaocode.sts.auth.application.dto;
 
+import com.yaocode.sts.common.resources.model.ContactInfoModel;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  *
@@ -38,12 +41,12 @@ public class ResourceDto {
     /**
      * 接口请求地址
      */
-    private String requestUrl;
+    private List<String> requestUrl;
 
     /**
      * 请求方法，大写：POST,GET,PUT
      */
-    private String requestMethod;
+    private List<String> requestMethod;
 
     /**
      * 是否已弃用；0：未；1：已
@@ -56,8 +59,28 @@ public class ResourceDto {
     private Integer isWhiteList;
 
     /**
+     * 是否启用；0：未；1：已
+     */
+    private Integer isEnabled;
+
+    /**
      * 菜单显示图标
      */
-    private String menuIcon;
+    private String icon;
+
+    /**
+     * 版本
+     */
+    private String version;
+
+    /**
+     * 父资源编码列表，逗号分割
+     */
+    private List<String> parentCode;
+
+    /**
+     * 作者信息
+     */
+    private List<ContactInfoModel> contactInfoModelList;
 
 }

@@ -5,9 +5,6 @@ import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.annotation.ServerResources;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.annotation.SystemResources;
-import com.yaocode.sts.common.resources.model.ResourcesModel;
-
-import java.lang.annotation.Annotation;
 
 /**
  * 资源类型枚举类

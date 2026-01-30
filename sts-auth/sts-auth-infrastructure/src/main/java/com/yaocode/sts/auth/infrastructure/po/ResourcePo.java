@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -64,6 +66,21 @@ public class ResourcePo extends BasePo {
     /**
      * 菜单显示图标
      */
-    private String menuIcon;
+    private String icon;
+
+    /**
+     * 版本
+     */
+    private String version;
+
+    /**
+     * 是否启用；0：未；1：已
+     */
+    private Integer isEnabled;
+
+    /**
+     * 父资源编码列表，逗号分割
+     */
+    private String parentCode;
 
 }

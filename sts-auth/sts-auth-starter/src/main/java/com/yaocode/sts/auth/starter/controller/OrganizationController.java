@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @SubRequestMapping("/v1")
-@ModuleResources(code = "000000000002", name = "组织架构数据", desc = "组织架构资源数据控制器")
+@ModuleResources(code = "000000000002", name = "组织架构数据", desc = "组织架构资源数据控制器", parent = {"000000000"})
 public class OrganizationController implements OrganizationApi {
 
     @Resource

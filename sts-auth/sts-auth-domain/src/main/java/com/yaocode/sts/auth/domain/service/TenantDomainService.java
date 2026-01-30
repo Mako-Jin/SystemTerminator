@@ -46,6 +46,7 @@ public interface TenantDomainService {
      * 绑定租户和用户关系
      * @param tenantId 租户id
      * @param userId 用户id
+     * @param userAddType 用户新增类型
      */
     void associatedTenantUser(TenantId tenantId, UserId userId, UserAddTypeEnums userAddType);
 

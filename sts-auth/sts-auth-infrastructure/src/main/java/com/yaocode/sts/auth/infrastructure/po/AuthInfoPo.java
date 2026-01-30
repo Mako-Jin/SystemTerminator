@@ -65,6 +65,6 @@ public class AuthInfoPo extends BasePo {
     /**
      * 菜单显示图标
      */
-    private String menuIcon;
+    private String icon;
 
 }

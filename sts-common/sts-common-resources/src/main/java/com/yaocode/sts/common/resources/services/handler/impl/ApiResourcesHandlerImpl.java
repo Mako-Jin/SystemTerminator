@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +38,7 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
 
     private static final Logger logger = LoggerFactory.getLogger(ApiResourcesHandlerImpl.class);
 
-    private static final List<ApiResourcesModel> apiResourcesModelList = new ArrayList<>();
+    private final List<ApiResourcesModel> apiResourcesModelList = new ArrayList<>();
 
     public ApiResourcesHandlerImpl(
             ApplicationContext applicationContext,
@@ -91,6 +92,9 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
                     apiResourcesModel.getParentCode(),
                     Collections.singleton(moduleResourcesModel.getCode())
             );
+            if (CollectionUtils.isEmpty(parentCodeList)) {
+                parentCodeList = Collections.singletonList(moduleResourcesModel.getCode());
+            }
             apiResourcesModel.setParentCode(parentCodeList);
             RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(method, RequestMapping.class);
             checkAndFilterRequestMethod(requestMapping, apiResourcesModel);
@@ -140,6 +144,7 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
     }
 
     private List<String> checkAndBuildRequestPath(RequestMapping requestMapping, List<String> pathList, ModuleResourcesModel moduleResourcesModel) {
+        pathList = pathList.stream().filter(StringUtils::hasText).toList();
         if (requestMapping == null || moduleResourcesModel == null || pathList == null) {
             return Collections.emptyList();
         }
@@ -155,22 +160,24 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
         Set<String> requestPathSet = new HashSet<>(Arrays.asList(requestMappingPaths));
 
         for (String parentPath : moduleResourcesModel.getPath()) {
+            if (CollectionUtils.isEmpty(pathList)) {
+                requestPathSet.forEach(requestPath -> finalPathListResult.add(combinePath(parentPath, requestPath)));
+                continue;
+            }
+            Set<String> newRequestPathSet = requestPathSet.stream().map(e -> combinePath(parentPath, e)).collect(Collectors.toSet());
             for (String apiPath : pathList) {
-                String combinePath = combinePath(parentPath, apiPath);
+                if (!StringUtils.hasText(apiPath)) {
+                    continue;
+                }
 
                 // 检查是否是直接匹配
-                if (requestPathSet.contains(apiPath)) {
+                if (newRequestPathSet.contains(apiPath) || requestPathSet.contains(apiPath)) {
+                    String combinePath = combinePath(parentPath, apiPath);
                     logger.warn("方法路径 {} 已自动修改成全路径 {}", apiPath, combinePath);
-                    finalPathListResult.add(combinePath);
+                    finalPathListResult.add(combinePath(parentPath, apiPath));
                     continue;
                 }
-
-                // 检查是否已经是完整路径
-                if (requestPathSet.contains(combinePath)) {
-                    finalPathListResult.add(combinePath);
-                    continue;
-                }
-                logger.warn("路径配置错误，已自动忽略。API路径: {}, 组合路径: {}", apiPath, combinePath);
+                logger.warn("路径配置错误，已自动忽略。API路径: {}", apiPath);
             }
         }
         return new ArrayList<>(new LinkedHashSet<>(finalPathListResult));
