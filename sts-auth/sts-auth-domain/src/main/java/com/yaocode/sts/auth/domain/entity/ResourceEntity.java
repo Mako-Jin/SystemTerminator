@@ -81,4 +81,9 @@ public class ResourceEntity extends AbstractAggregate<ResourceId> {
      */
     private List<String> parentCode;
 
+    /**
+     * 联系人信息
+     */
+    private List<ContactInfoEntity> contactInfoModelList;
+
 }

@@ -62,7 +62,7 @@ public class ResourceApplicationServiceImpl implements ResourceApplicationServic
     private List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList) {
         List<ResourceEntity> filterResourceEntityList =
                 resourceDomainService.checkResourceEntityList(resourceEntityList);
-        return resourceRepository.batchSave(filterResourceEntityList);
+        return resourceDomainService.batchSave(filterResourceEntityList);
     }
 
 }

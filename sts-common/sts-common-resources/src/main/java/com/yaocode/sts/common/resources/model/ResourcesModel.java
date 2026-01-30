@@ -42,7 +42,7 @@ public class ResourcesModel {
      */
     private ResourceTypeEnums type;
     /**
-     * 作者信息
+     * 联系人信息
      */
     private List<ContactInfoModel> contactInfoModelList;
 

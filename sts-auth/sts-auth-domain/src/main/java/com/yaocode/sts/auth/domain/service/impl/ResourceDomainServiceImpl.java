@@ -3,6 +3,7 @@ package com.yaocode.sts.auth.domain.service.impl;
 import com.yaocode.sts.auth.domain.entity.ResourceEntity;
 import com.yaocode.sts.auth.domain.repository.ResourceRepository;
 import com.yaocode.sts.auth.domain.service.ResourceDomainService;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,11 @@ public class ResourceDomainServiceImpl implements ResourceDomainService {
                     && Objects.equals(resourceEntity.getVersion(), dbEntity.getVersion())
                     && Objects.equals(resourceEntity.getRequestUrl(), dbEntity.getRequestUrl())
         )).toList();
+    }
+
+    @Override
+    public List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList) {
+        return resourceRepository.batchSave(resourceEntityList);
     }
 
 }

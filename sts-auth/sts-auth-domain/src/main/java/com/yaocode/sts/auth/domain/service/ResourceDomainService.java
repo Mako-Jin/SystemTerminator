@@ -1,6 +1,7 @@
 package com.yaocode.sts.auth.domain.service;
 
 import com.yaocode.sts.auth.domain.entity.ResourceEntity;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 
 import java.util.List;
 
@@ -24,5 +25,12 @@ public interface ResourceDomainService {
      * @return java.util.List<ResourceEntity>
      */
     List<ResourceEntity> checkResourceEntityList(List<ResourceEntity> resourceEntityList);
+
+    /**
+     * 批量保存资源数据
+     * @param resourceEntityList 资源数据列表
+     * @return java.util.List<ResourceId>
+     */
+    List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList);
 
 }
