@@ -80,13 +80,13 @@ public class UserGroupEntity extends AbstractAggregate<UserGroupId> {
             throw new IllegalArgumentException("租户不存在");
         }
         if (userGroupDomainService.uniqueUserGroupCode(tenantId, userGroupCode)) {
-            throw new IllegalArgumentException("角色编码已存在");
+            throw new IllegalArgumentException("用户组编码已存在");
         }
         if (userGroupDomainService.uniqueUserGroupName(tenantId, userGroupName)) {
-            throw new IllegalArgumentException("角色名称已存在");
+            throw new IllegalArgumentException("用户组名称已存在");
         }
-        if (!userGroupDomainService.validateUserGroupId(tenantId, parentUserGroupId)) {
-            throw new IllegalArgumentException("父角色不存在");
+        if (Objects.nonNull(parentUserGroupId) && !userGroupDomainService.validateUserGroupId(tenantId, parentUserGroupId)) {
+            throw new IllegalArgumentException("父用户组不存在");
         }
         UserGroupEntity entity = new UserGroupEntity(UserGroupId.nextId());
         entity.tenantId = tenantId;

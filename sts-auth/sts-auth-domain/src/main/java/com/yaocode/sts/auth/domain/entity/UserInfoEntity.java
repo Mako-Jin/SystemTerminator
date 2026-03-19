@@ -10,7 +10,6 @@ import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.List;
  * @date: 2025年10月07日 21:55
  */
 @Getter
-@Setter
 public class UserInfoEntity extends AbstractAggregate<UserId> {
 
     public UserInfoEntity(UserId userId) {

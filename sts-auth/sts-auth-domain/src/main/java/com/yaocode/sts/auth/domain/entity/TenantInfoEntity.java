@@ -1,10 +1,10 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
  * @date: 2025年10月10日 21:20
  */
 @Getter
-@Setter
 public class TenantInfoEntity extends AbstractAggregate<TenantId> {
 
     /**
@@ -76,6 +75,10 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
 
     public TenantInfoEntity(TenantId tenantId) {
         super(tenantId);
+    }
+
+    public void initDefault() {
+        this.tenantStatus = TenantStatusEnums.ACTIVATE.getCode();
     }
 
 }

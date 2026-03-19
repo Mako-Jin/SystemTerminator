@@ -5,7 +5,6 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 组织机构实体类
@@ -13,7 +12,6 @@ import lombok.Setter;
  * @date: 2025年10月12日 13:38
  */
 @Getter
-@Setter
 public class OrganizationInfoEntity extends AbstractAggregate<OrganizationId> {
 
     public OrganizationInfoEntity(OrganizationId organizationId) {

@@ -4,7 +4,6 @@ import com.yaocode.sts.auth.application.converter.TenantInfoApplicationConverter
 import com.yaocode.sts.auth.application.dto.TenantInfoDto;
 import com.yaocode.sts.auth.application.service.TenantInfoApplicationService;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
-import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
 import com.yaocode.sts.auth.domain.service.RoleDomainService;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
@@ -46,7 +45,7 @@ public class TenantInfoApplicationServiceImpl implements TenantInfoApplicationSe
         }
         TenantInfoEntity tenantInfoEntity = tenantInfoApplicationConverter.toEntityForAdd(tenantInfoDto);
         // 4. 设置默认值/初始化状态
-        tenantInfoEntity.setTenantStatus(TenantStatusEnums.ACTIVATE.getCode());
+        tenantInfoEntity.initDefault();
         tenantInfoRepository.save(tenantInfoEntity);
         // 新建一个默认权限
         roleDomainService.createDefaultRole(tenantInfoEntity);

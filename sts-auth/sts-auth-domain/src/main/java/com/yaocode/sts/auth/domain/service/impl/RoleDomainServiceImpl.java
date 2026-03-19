@@ -9,6 +9,7 @@ import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.RoleDomainService;
+import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
@@ -30,6 +31,9 @@ public class RoleDomainServiceImpl implements RoleDomainService {
 
     @Resource
     private TenantInfoRepository tenantInfoRepository;
+
+    @Resource
+    private TenantDomainService tenantDomainService;
 
     @Resource
     private RoleInfoRepository roleInfoRepository;
@@ -92,13 +96,16 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         if (roleNameEntity.isPresent()) {
             throw new IllegalArgumentException("auth.data.is.exists");
         }
-        RoleId roleId = RoleId.nextId();
-        RoleInfoEntity roleInfoEntity = new RoleInfoEntity(roleId);
-        roleInfoEntity.setRoleCode(roleCode);
-        roleInfoEntity.setRoleName(roleName);
-        roleInfoEntity.setRoleDesc(roleName);
-        roleInfoEntity.setTenantId(tenantInfoEntity.getId());
-        roleInfoEntity.setIsDefault(OppositeEnums.YES.getCode());
+        RoleInfoEntity roleInfoEntity = RoleInfoEntity.build(
+                tenantDomainService,
+                this,
+                tenantInfoEntity.getId(),
+                roleCode,
+                roleName,
+                roleName,
+                OppositeEnums.YES.getCode(),
+                null
+        );
         roleInfoRepository.save(roleInfoEntity);
     }
 
