@@ -42,4 +42,9 @@ public class UserGroupPo extends BasePo {
      */
     private String tenantId;
 
+    /**
+     * 状态是否可用
+     */
+    private Integer isEnabled;
+
 }

@@ -12,8 +12,8 @@ import lombok.Setter;
  * @author: Jin-LiangBo
  * @date: 2025年10月12日 13:38
  */
-@Setter
 @Getter
+@Setter
 public class OrganizationInfoEntity extends AbstractAggregate<OrganizationId> {
 
     public OrganizationInfoEntity(OrganizationId organizationId) {

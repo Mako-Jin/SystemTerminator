@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -38,14 +39,14 @@ public class ResourceDaoImpl extends ServiceImpl<ResourceMapper, ResourcePo> imp
     @Override
     public List<ResourcePo> getByPoList(List<ResourcePo> resourcePoList) {
         LambdaQueryWrapper<ResourcePo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(ResourcePo::getResourceValue, resourcePoList.stream().map(ResourcePo::getResourceValue).filter(Objects::nonNull).toList());
-        wrapper.in(ResourcePo::getResourceName, resourcePoList.stream().map(ResourcePo::getResourceName).filter(Objects::nonNull).toList());
-        wrapper.in(ResourcePo::getResourceType, resourcePoList.stream().map(ResourcePo::getResourceType).filter(Objects::nonNull).toList());
-        // TODO 这块有个问题，这种列表转字符串的，如果其他都一样，但是逗号分隔的字符串只少一个值，或者多一个值，岂不是两条数据了。
-        wrapper.in(ResourcePo::getRequestMethod, resourcePoList.stream().map(ResourcePo::getRequestMethod).filter(Objects::nonNull).toList());
-        wrapper.in(ResourcePo::getRequestUrl, resourcePoList.stream().map(ResourcePo::getRequestUrl).filter(Objects::nonNull).toList());
-        wrapper.in(ResourcePo::getVersion, resourcePoList.stream().map(ResourcePo::getVersion).filter(Objects::nonNull).toList());
-        wrapper.in(ResourcePo::getIsEnabled, resourcePoList.stream().map(ResourcePo::getIsEnabled).filter(Objects::nonNull).toList());
+        wrapper.in(ResourcePo::getResourceValue, resourcePoList.stream().map(ResourcePo::getResourceValue).filter(Objects::nonNull).collect(Collectors.toSet()));
+        // wrapper.in(ResourcePo::getResourceName, resourcePoList.stream().map(ResourcePo::getResourceName).filter(Objects::nonNull).collect(Collectors.toSet()));
+        // wrapper.in(ResourcePo::getResourceType, resourcePoList.stream().map(ResourcePo::getResourceType).filter(Objects::nonNull).collect(Collectors.toSet()));
+        // // TODO 这块有个问题，这种列表转字符串的，如果其他都一样，但是逗号分隔的字符串只少一个值，或者多一个值，岂不是两条数据了。
+        // wrapper.in(ResourcePo::getRequestMethod, resourcePoList.stream().map(ResourcePo::getRequestMethod).filter(Objects::nonNull).collect(Collectors.toSet()));
+        // wrapper.in(ResourcePo::getRequestUrl, resourcePoList.stream().map(ResourcePo::getRequestUrl).filter(Objects::nonNull).collect(Collectors.toSet()));
+        // wrapper.in(ResourcePo::getVersion, resourcePoList.stream().map(ResourcePo::getVersion).filter(Objects::nonNull).collect(Collectors.toSet()));
+        // wrapper.in(ResourcePo::getIsEnabled, resourcePoList.stream().map(ResourcePo::getIsEnabled).filter(Objects::nonNull).collect(Collectors.toSet()));
         return resourceMapper.selectList(wrapper);
     }
 }

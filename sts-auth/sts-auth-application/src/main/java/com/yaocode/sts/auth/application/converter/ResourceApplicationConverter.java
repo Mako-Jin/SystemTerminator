@@ -11,7 +11,6 @@ import com.yaocode.sts.common.resources.model.ServerResourcesModel;
 import com.yaocode.sts.common.resources.model.ServiceResourcesModel;
 import com.yaocode.sts.common.resources.model.SystemResourcesModel;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.CollectionUtils;
@@ -37,11 +36,19 @@ public interface ResourceApplicationConverter {
      * @param resourceDto dto
      * @return ResourceEntity
      */
-    @Mapping(target = "resourceId", source = "resourceDto.resourceId", qualifiedByName = "stringToResourceId")
-    @Mapping(target = "resourceValue", source = "resourceDto.resourceValue", qualifiedByName = "stringToResourceValue")
-    @Mapping(target = "isDeprecated", source = "resourceDto.isDeprecated", defaultValue = "0")
-    @Mapping(target = "isWhiteList", source = "resourceDto.isWhiteList", defaultValue = "0")
-    ResourceEntity toEntity(ResourceDto resourceDto);
+    default ResourceEntity toEntity(ResourceDto resourceDto) {
+        return ResourceEntity.build(
+                ResourceValue.of(resourceDto.getResourceValue()),
+                resourceDto.getResourceName(),
+                resourceDto.getResourceDesc(),
+                resourceDto.getResourceType(),
+                resourceDto.getRequestUrl(),
+                resourceDto.getRequestMethod(),
+                resourceDto.getParentCode(),
+                resourceDto.getIcon(),
+                resourceDto.getVersion()
+        );
+    }
 
     /**
      * 批量转换 to Entity
@@ -101,39 +108,78 @@ public interface ResourceApplicationConverter {
         }
         List<ResourceEntity> result = new ArrayList<>();
         resourcesModelList.forEach(resourcesModel -> {
-            ResourceEntity entity = new ResourceEntity(ResourceId.nextId());
-            entity.setResourceValue(ResourceValue.of(resourcesModel.getCode()));
-            entity.setResourceName(resourcesModel.getName());
-            entity.setResourceDesc(resourcesModel.getDesc());
-            entity.setResourceType(resourcesModel.getType().getCode());
-            entity.setVersion(resourcesModel.getVersion());
-            entity.setIsEnabled(resourcesModel.getIsEnabled());
-            entity.setIsDeprecated(resourcesModel.getIsDeprecated());
+            ResourceEntity entity;
             if (resourcesModel instanceof SystemResourcesModel systemResourcesModel) {
-                entity.setIcon(systemResourcesModel.getIcon());
+                entity = ResourceEntity.build(
+                        ResourceValue.of(systemResourcesModel.getCode()),
+                        systemResourcesModel.getName(),
+                        systemResourcesModel.getDesc(),
+                        systemResourcesModel.getType().getCode(),
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        systemResourcesModel.getIcon(),
+                        systemResourcesModel.getVersion()
+                );
             } else if (resourcesModel instanceof ServerResourcesModel serverResourcesModel) {
-                entity.setIcon(serverResourcesModel.getIcon());
-                entity.setParentCode(serverResourcesModel.getParentCode());
+                entity = ResourceEntity.build(
+                        ResourceValue.of(serverResourcesModel.getCode()),
+                        serverResourcesModel.getName(),
+                        serverResourcesModel.getDesc(),
+                        serverResourcesModel.getType().getCode(),
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        serverResourcesModel.getParentCode(),
+                        serverResourcesModel.getIcon(),
+                        serverResourcesModel.getVersion()
+                );
             } else if (resourcesModel instanceof ServiceResourcesModel serviceResourcesModel) {
-                entity.setIcon(serviceResourcesModel.getIcon());
-                entity.setParentCode(serviceResourcesModel.getParentCode());
-                if (StringUtils.hasText(serviceResourcesModel.getPath())) {
-                    entity.setRequestUrl(Collections.singletonList(serviceResourcesModel.getPath()));
-                }
+                entity = ResourceEntity.build(
+                        ResourceValue.of(serviceResourcesModel.getCode()),
+                        serviceResourcesModel.getName(),
+                        serviceResourcesModel.getDesc(),
+                        serviceResourcesModel.getType().getCode(),
+                        StringUtils.hasText(serviceResourcesModel.getPath()) ?
+                                Collections.singletonList(serviceResourcesModel.getPath()) :
+                                Collections.emptyList(),
+                        Collections.emptyList(),
+                        serviceResourcesModel.getParentCode(),
+                        serviceResourcesModel.getIcon(),
+                        serviceResourcesModel.getVersion()
+                );
             } else if (resourcesModel instanceof ModuleResourcesModel moduleResourcesModel) {
-                entity.setIcon(moduleResourcesModel.getIcon());
-                entity.setParentCode(moduleResourcesModel.getParentCode());
-                if (Objects.nonNull(moduleResourcesModel.getPath())) {
-                    entity.setRequestUrl(moduleResourcesModel.getPath());
-                }
+                entity = ResourceEntity.build(
+                        ResourceValue.of(moduleResourcesModel.getCode()),
+                        moduleResourcesModel.getName(),
+                        moduleResourcesModel.getDesc(),
+                        moduleResourcesModel.getType().getCode(),
+                        Objects.nonNull(moduleResourcesModel.getPath()) ?
+                                moduleResourcesModel.getPath() : Collections.emptyList(),
+                        Collections.emptyList(),
+                        moduleResourcesModel.getParentCode(),
+                        moduleResourcesModel.getIcon(),
+                        moduleResourcesModel.getVersion()
+                );
             } else if (resourcesModel instanceof ApiResourcesModel apiResourcesModel) {
-                entity.setParentCode(apiResourcesModel.getParentCode());
-                entity.setRequestUrl(apiResourcesModel.getPath());
-                entity.setIsWhiteList(apiResourcesModel.getIsWhiteList());
                 List<String> requestMethods =
                         apiResourcesModel.getRequestMethod().stream().map(Enum::name).toList();
-                entity.setRequestMethod(requestMethods);
+                entity = ResourceEntity.build(
+                        ResourceValue.of(apiResourcesModel.getCode()),
+                        apiResourcesModel.getName(),
+                        apiResourcesModel.getDesc(),
+                        apiResourcesModel.getType().getCode(),
+                        apiResourcesModel.getPath(),
+                        requestMethods,
+                        apiResourcesModel.getParentCode(),
+                        null,
+                        apiResourcesModel.getVersion()
+                );
+                entity.reconstructionWhiteList(apiResourcesModel.getIsWhiteList());
+            } else {
+                throw new IllegalArgumentException("不支持的资源类型");
             }
+            entity.reconstructionEnable(resourcesModel.getIsEnabled());
+            entity.reconstructionDeprecated(resourcesModel.getIsDeprecated());
             result.add(entity);
         });
         return result;

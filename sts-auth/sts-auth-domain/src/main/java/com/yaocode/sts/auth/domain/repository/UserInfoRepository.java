@@ -17,6 +17,14 @@ import java.util.Optional;
 public interface UserInfoRepository extends Repository<UserInfoEntity, UserId> {
 
     /**
+     * 根据id查询数据
+     * @param tenantId 租户id
+     * @param userId 主键id
+     * @return java.util.Optional<UserInfoEntity>
+     */
+    Optional<UserInfoEntity> findById(TenantId tenantId, UserId userId);
+
+    /**
      * 通过用户名查询用户信息
      * @param userIdList 用户id列表
      * @param username 用户名

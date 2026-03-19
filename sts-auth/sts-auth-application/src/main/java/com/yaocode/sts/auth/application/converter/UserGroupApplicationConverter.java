@@ -1,12 +1,9 @@
 package com.yaocode.sts.auth.application.converter;
 
-import com.yaocode.sts.auth.application.dto.UserGroupDto;
-import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
@@ -25,10 +22,10 @@ public interface UserGroupApplicationConverter {
      * @param userGroupDto dto
      * @return UserGroupEntity
      */
-    @Mapping(target = "userGroupId", source = "userGroupDto.userGroupId", qualifiedByName = "stringToUserGroupId")
-    @Mapping(target = "userGroupCode", source = "userGroupDto.userGroupCode", qualifiedByName = "stringToUserGroupCode")
-    @Mapping(target = "tenantId", source = "userGroupDto.tenantId", qualifiedByName = "stringToTenantId")
-    UserGroupEntity toEntity(UserGroupDto userGroupDto);
+    // @Mapping(target = "userGroupId", source = "userGroupDto.userGroupId", qualifiedByName = "stringToUserGroupId")
+    // @Mapping(target = "userGroupCode", source = "userGroupDto.userGroupCode", qualifiedByName = "stringToUserGroupCode")
+    // @Mapping(target = "tenantId", source = "userGroupDto.tenantId", qualifiedByName = "stringToTenantId")
+    // UserGroupEntity toEntity(UserGroupDto userGroupDto);
 
     /**
      * 值对象与基本类型的转换方法

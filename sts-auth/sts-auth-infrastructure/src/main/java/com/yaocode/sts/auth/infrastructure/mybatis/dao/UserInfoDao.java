@@ -13,6 +13,14 @@ import java.util.List;
 public interface UserInfoDao extends IService<UserInfoPo> {
 
     /**
+     * 根据租户id和组织id查询数据
+     * @param tenantId 租户id
+     * @param userId 用户id
+     * @return UserInfoPo
+     */
+    UserInfoPo getById(String tenantId, String userId);
+
+    /**
      * 根据用户名查询用户
      * @param userIdList 用户id
      * @param username 用户名

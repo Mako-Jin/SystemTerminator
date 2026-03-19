@@ -3,6 +3,7 @@ package com.yaocode.sts.auth.infrastructure.converter;
 import com.yaocode.sts.auth.domain.entity.ResourceEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.Version;
 import com.yaocode.sts.auth.infrastructure.po.ResourcePo;
 import com.yaocode.sts.common.tools.ListUtils;
 import com.yaocode.sts.common.tools.StringUtils;
@@ -29,10 +30,12 @@ public interface ResourceConverter {
      * @return ResourcePo
      */
     @Mapping(target = "resourceId", source = "resourceEntity.id", qualifiedByName = "resourceIdToString")
-    @Mapping(target = "resourceValue", source = "resourceEntity.resourceValue", qualifiedByName = "resourceValueToString")
-    @Mapping(target = "requestUrl", source = "resourceEntity.requestUrl", qualifiedByName = "listToString")
-    @Mapping(target = "requestMethod", source = "resourceEntity.requestMethod", qualifiedByName = "listToString")
+    @Mapping(target = "resourceValue", source = "resourceEntity.identity.resourceValue", qualifiedByName = "resourceValueToString")
+    @Mapping(target = "requestUrl", source = "resourceEntity.identity.requestUrl", qualifiedByName = "listToString")
+    @Mapping(target = "requestMethod", source = "resourceEntity.identity.requestMethod", qualifiedByName = "listToString")
     @Mapping(target = "parentCode", source = "resourceEntity.parentCode", qualifiedByName = "listToString")
+    @Mapping(target = "version", source = "resourceEntity.version", qualifiedByName = "versionToString")
+    @Mapping(target = "resourceType", source = "resourceEntity.identity.resourceType")
     ResourcePo toPo(ResourceEntity resourceEntity);
 
     /**
@@ -41,6 +44,26 @@ public interface ResourceConverter {
      * @return List<ResourcePo>
      */
     List<ResourcePo> toPoList(List<ResourceEntity> resourceEntityList);
+
+    /**
+     * 值对象与基本类型的转换方法
+     * @param version 版本对象
+     * @return String 版本字符串
+     */
+    @Named("versionToString")
+    default String versionToString(Version version) {
+        return version != null ? version.getStr() : null;
+    }
+
+    /**
+     * 值对象与基本类型的转换方法
+     * @param version 版本对象
+     * @return String 版本字符串
+     */
+    @Named("versionToString")
+    default Version stringToVersion(String version) {
+        return version != null ? Version.of(version) : null;
+    }
 
     /**
      * 列表转换成逗号分割的字符串
@@ -97,12 +120,24 @@ public interface ResourceConverter {
      * @param resourcePo po数据
      * @return ResourceEntity
      */
-    @Mapping(target = "resourceId", source = "resourcePo.resourceId", qualifiedByName = "stringToResourceId")
-    @Mapping(target = "resourceValue", source = "resourcePo.resourceValue", qualifiedByName = "stringToResourceValue")
-    @Mapping(target = "requestUrl", source = "resourcePo.requestUrl", qualifiedByName = "stringToList")
-    @Mapping(target = "requestMethod", source = "resourcePo.requestMethod", qualifiedByName = "stringToList")
-    @Mapping(target = "parentCode", source = "resourcePo.parentCode", qualifiedByName = "stringToList")
-    ResourceEntity toEntity(ResourcePo resourcePo);
+    default ResourceEntity toEntity(ResourcePo resourcePo) {
+        ResourceEntity entity = ResourceEntity.build(
+                stringToResourceValue(resourcePo.getResourceValue()),
+                resourcePo.getResourceName(),
+                resourcePo.getResourceDesc(),
+                resourcePo.getResourceType(),
+                stringToList(resourcePo.getRequestUrl()),
+                stringToList(resourcePo.getRequestMethod()),
+                stringToList(resourcePo.getParentCode()),
+                resourcePo.getIcon(),
+                resourcePo.getVersion()
+        );
+        entity.setId(stringToResourceId(resourcePo.getResourceId()));
+        entity.reconstructionWhiteList(resourcePo.getIsWhiteList());
+        entity.reconstructionEnable(resourcePo.getIsEnabled());
+        entity.reconstructionDeprecated(resourcePo.getIsDeprecated());
+        return entity;
+    }
 
     /**
      * 逗号分割的字符串转换成列表

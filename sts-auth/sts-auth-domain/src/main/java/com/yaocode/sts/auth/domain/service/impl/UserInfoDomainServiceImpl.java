@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 用户信息领域服务
@@ -36,5 +37,11 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
     @Override
     public void validateUserStatus(UserInfoEntity user) {
 
+    }
+
+    @Override
+    public boolean validateUser(TenantId tenantId, UserId userId) {
+        Optional<UserInfoEntity> userInfoEntityOptional = userInfoRepository.findById(tenantId, userId);
+        return userInfoEntityOptional.isPresent();
     }
 }

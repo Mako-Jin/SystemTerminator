@@ -1,21 +1,25 @@
 package com.yaocode.sts.auth.domain.entity;
 
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * 联系人信息
  * @author: Jin-LiangBo
  * @date: 2026年01月30日 16:27
  */
-@Data
-public class ContactInfoEntity extends AbstractAggregate<OrganizationId> {
+@Getter
+public class ContactInfoEntity extends AbstractAggregate<ContactId> {
+
+    public ContactInfoEntity(ContactId contactId) {
+        super(contactId);
+    }
 
     /**
      * 主键id
      */
-    private String contactId;
+    private ContactId contactId;
     /**
      * 联系人姓名
      */

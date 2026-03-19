@@ -6,4 +6,7 @@ package com.yaocode.sts.common.domain;
  * @date: 2026年02月05日 18:26
  */
 public class DomainException extends RuntimeException {
+    public DomainException(String msg) {
+        super(msg);
+    }
 }

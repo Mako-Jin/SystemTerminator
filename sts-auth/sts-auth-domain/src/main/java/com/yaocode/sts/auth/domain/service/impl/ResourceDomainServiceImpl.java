@@ -39,14 +39,7 @@ public class ResourceDomainServiceImpl implements ResourceDomainService {
         }
         List<ResourceEntity> dbEntityList = resourceRepository.findByEntityList(resourceEntityList);
         return resourceEntityList.stream().filter(resourceEntity -> dbEntityList.stream().noneMatch(dbEntity ->
-            Objects.equals(resourceEntity.getResourceValue(), dbEntity.getResourceValue())
-                    && Objects.equals(resourceEntity.getResourceName(), dbEntity.getResourceName())
-                    && Objects.equals(resourceEntity.getResourceType(), dbEntity.getResourceType())
-                    && Objects.equals(resourceEntity.getIsEnabled(), dbEntity.getIsEnabled())
-                    && Objects.equals(resourceEntity.getRequestMethod(), dbEntity.getRequestMethod())
-                    && Objects.equals(resourceEntity.getVersion(), dbEntity.getVersion())
-                    && Objects.equals(resourceEntity.getRequestUrl(), dbEntity.getRequestUrl())
-        )).toList();
+            Objects.equals(resourceEntity, dbEntity))).toList();
     }
 
     @Override

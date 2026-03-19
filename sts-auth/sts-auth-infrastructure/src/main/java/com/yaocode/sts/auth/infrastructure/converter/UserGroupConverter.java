@@ -10,6 +10,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Objects;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -28,6 +30,7 @@ public interface UserGroupConverter {
     @Mapping(target = "userGroupId", source = "userGroupEntity.id", qualifiedByName = "userGroupIdToString")
     @Mapping(target = "userGroupCode", source = "userGroupEntity.userGroupCode", qualifiedByName = "userGroupCodeToString")
     @Mapping(target = "tenantId", source = "userGroupEntity.tenantId", qualifiedByName = "tenantIdToString")
+    @Mapping(target = "parentId", source = "userGroupEntity.parentId", qualifiedByName = "userGroupIdToString")
     UserGroupPo toPo(UserGroupEntity userGroupEntity);
 
     /**
@@ -35,10 +38,21 @@ public interface UserGroupConverter {
      * @param userGroupPo UserGroupPo
      * @return UserGroupEntity
      */
-    @Mapping(target = "userGroupId", source = "userGroupPo.userGroupId", qualifiedByName = "stringToUserGroupId")
-    @Mapping(target = "userGroupCode", source = "userGroupPo.userGroupCode", qualifiedByName = "stringToUserGroupCode")
-    @Mapping(target = "tenantId", source = "userGroupPo.tenantId", qualifiedByName = "stringToTenantId")
-    UserGroupEntity toEntity(UserGroupPo userGroupPo);
+    default UserGroupEntity toEntity(UserGroupPo userGroupPo) {
+        if (Objects.isNull(userGroupPo)) {
+            return null;
+        }
+        UserGroupId userGroupId = UserGroupId.of(userGroupPo.getUserGroupId());
+        UserGroupCode code = UserGroupCode.of(userGroupPo.getUserGroupCode());
+        UserGroupId parentId = userGroupPo.getParentId() != null ?
+                UserGroupId.of(userGroupPo.getParentId()) : null;
+        TenantId tenantId = TenantId.of(userGroupPo.getTenantId());
+        return UserGroupEntity.build(
+                userGroupId, code, userGroupPo.getUserGroupName(),
+                userGroupPo.getUserGroupDesc(), parentId,
+                tenantId, userGroupPo.getIsEnabled()
+        );
+    }
 
     /**
      * 值对象与基本类型的转换方法

@@ -23,6 +23,11 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfoPo> imp
     private UserInfoMapper userInfoMapper;
 
     @Override
+    public UserInfoPo getById(String tenantId, String userId) {
+        return null;
+    }
+
+    @Override
     public UserInfoPo getByUsername(List<String> userIdList, String username) {
         LambdaQueryWrapper<UserInfoPo> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(!CollectionUtils.isEmpty(userIdList), UserInfoPo::getUserId, userIdList);

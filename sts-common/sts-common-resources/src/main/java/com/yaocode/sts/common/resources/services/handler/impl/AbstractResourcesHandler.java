@@ -61,7 +61,7 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
 
     @Override
     public String getDefaultResourceVersion() {
-        return getApplicationName() + "_" + IConstants.DEFAULT_RESOURCE_VERSION;
+        return IConstants.DEFAULT_RESOURCE_VERSION;
     }
 
     @Override

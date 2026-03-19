@@ -1,12 +1,20 @@
 package com.yaocode.sts.auth.domain.valueobjects.identifiers;
 
+import com.yaocode.sts.common.domain.model.Identifier;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+
 /**
- * TODO
- *
- * @version 1.0
- * @Author: Jin-LiangBo
- * @Date: 2026年02月05日 18:18
- * @Description:
+ * ContactId值对象
+ * @author: Jin-LiangBo
+ * @date: 2026年02月05日 18:18
  */
-public class ContactId {
+@Value
+@EqualsAndHashCode(callSuper = true)
+public class ContactId extends Identifier<String> {
+
+    protected ContactId(String value) {
+        super(value);
+    }
+
 }

@@ -8,8 +8,8 @@ import com.yaocode.sts.auth.domain.repository.UserGroupRepository;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.service.UserGroupDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
-import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +39,17 @@ public class UserGroupApplicationServiceImpl implements UserGroupApplicationServ
     @Transactional(rollbackFor = Exception.class)
     public String singleAdd(UserGroupDto userGroupDto) {
         TenantId tenantId = TenantId.of(userGroupDto.getTenantId());
-
         UserGroupCode userGroupCode = UserGroupCode.of(userGroupDto.getUserGroupCode());
-        UserGroupEntity entity = userGroupApplicationConverter.toEntity(userGroupDto);
+        UserGroupId parentId = UserGroupId.of(userGroupDto.getUserGroupId());
+        UserGroupEntity entity = UserGroupEntity.build(
+                tenantDomainService,
+                userGroupDomainService,
+                tenantId,
+                userGroupCode,
+                userGroupDto.getUserGroupName(),
+                userGroupDto.getUserGroupDesc(),
+                parentId
+        );
         return userGroupRepository.save(entity).getValue();
     }
 

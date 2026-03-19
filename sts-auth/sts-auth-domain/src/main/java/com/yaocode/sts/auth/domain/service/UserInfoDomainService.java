@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.service;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 
 /**
@@ -30,5 +31,13 @@ public interface UserInfoDomainService {
      * @param user UserInfoEntity
      */
     void validateUserStatus(UserInfoEntity user);
+
+    /**
+     * 验证用户数据
+     * @param tenantId 租户id
+     * @param userId 用户id
+     * @return boolean
+     */
+    boolean validateUser(TenantId tenantId, UserId userId);
 
 }

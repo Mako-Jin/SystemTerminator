@@ -36,4 +36,30 @@ public class StringUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 字符串不能为空
+     * @param str 源字符串
+     * @param message 错误消息
+     * @return java.lang.String
+     */
+    public static String requireNonEmpty(String str, String message) {
+        if (str == null || str.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+        return str;
+    }
+
+    /**
+     * 字符串不能为空，去除空格
+     * @param str 源字符串
+     * @param message 消息
+     * @return java.lang.String
+     */
+    public static String requireNonBlank(String str, String message) {
+        if (str == null || str.trim().isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+        return str;
+    }
+
 }

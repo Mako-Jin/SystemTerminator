@@ -38,6 +38,12 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     }
 
     @Override
+    public Optional<UserInfoEntity> findById(TenantId tenantId, UserId userId) {
+        UserInfoPo userPo = userInfoDao.getById(tenantId.getValue(), userId.getValue());
+        return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(userPo));
+    }
+
+    @Override
     public Optional<UserInfoEntity> findByUsername(List<UserId> userIdList, Username username) {
         List<String> userIdStrList = userIdList.stream().map(Identifier::getValue).toList();
         UserInfoPo userPo = userInfoDao.getByUsername(userIdStrList, username.getValue());
