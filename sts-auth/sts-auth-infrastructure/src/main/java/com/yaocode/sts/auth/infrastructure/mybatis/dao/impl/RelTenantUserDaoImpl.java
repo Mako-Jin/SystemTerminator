@@ -35,4 +35,12 @@ public class RelTenantUserDaoImpl extends ServiceImpl<RelTenantUserMapper, RelTe
         wrapper.eq(RelTenantUserPo::getTenantId, tenantId);
         return relTenantUserMapper.selectList(wrapper);
     }
+
+    @Override
+    public List<String> getByUserId(String userId) {
+        LambdaQueryWrapper<RelTenantUserPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RelTenantUserPo::getUserId, userId);
+        List<RelTenantUserPo> relList = relTenantUserMapper.selectList(wrapper);
+        return relList.stream().map(RelTenantUserPo::getUserId).toList();
+    }
 }

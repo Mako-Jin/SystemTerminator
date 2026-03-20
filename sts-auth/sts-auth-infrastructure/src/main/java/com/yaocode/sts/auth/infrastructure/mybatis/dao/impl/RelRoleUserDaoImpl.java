@@ -28,4 +28,12 @@ public class RelRoleUserDaoImpl extends ServiceImpl<RelRoleUserMapper, RelRoleUs
         wrapper.in(RelRoleUserPo::getRoleId, roleIdlIst);
         return relRoleUserMapper.selectList(wrapper);
     }
+
+    @Override
+    public List<String> getByUserId(String userId) {
+        LambdaQueryWrapper<RelRoleUserPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RelRoleUserPo::getUserId, userId);
+        List<RelRoleUserPo> relList = relRoleUserMapper.selectList(wrapper);
+        return relList.stream().map(RelRoleUserPo::getUserId).toList();
+    }
 }

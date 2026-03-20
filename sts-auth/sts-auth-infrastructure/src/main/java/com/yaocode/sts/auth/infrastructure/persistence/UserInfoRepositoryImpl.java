@@ -6,7 +6,10 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.auth.infrastructure.converter.UserInfoConverter;
+import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelOrganizationUserDao;
+import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelRoleUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelTenantUserDao;
+import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelUserGroupUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.UserInfoDao;
 import com.yaocode.sts.auth.infrastructure.po.RelTenantUserPo;
 import com.yaocode.sts.auth.infrastructure.po.UserInfoPo;
@@ -31,23 +34,42 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     @Resource
     private RelTenantUserDao relTenantUserDao;
 
+    @Resource
+    private RelOrganizationUserDao relOrganizationUserDao;
+
+    @Resource
+    private RelRoleUserDao relRoleUserDao;
+
+    @Resource
+    private RelUserGroupUserDao relUserGroupUserDao;
+
     @Override
     public Optional<UserInfoEntity> findById(UserId userId) {
         UserInfoPo userPo = userInfoDao.getById(userId.getValue());
-        return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(userPo));
+        return fillRelData(userPo);
     }
 
     @Override
     public Optional<UserInfoEntity> findById(TenantId tenantId, UserId userId) {
         UserInfoPo userPo = userInfoDao.getById(tenantId.getValue(), userId.getValue());
-        return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(userPo));
+        return fillRelData(userPo);
     }
 
     @Override
     public Optional<UserInfoEntity> findByUsername(List<UserId> userIdList, Username username) {
         List<String> userIdStrList = userIdList.stream().map(Identifier::getValue).toList();
         UserInfoPo userPo = userInfoDao.getByUsername(userIdStrList, username.getValue());
-        return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(userPo));
+        return fillRelData(userPo);
+    }
+
+    private Optional<UserInfoEntity> fillRelData(UserInfoPo userPo) {
+        List<String> tenantIdList = relTenantUserDao.getByUserId(userPo.getUserId());
+        List<String> organizationIdList = relOrganizationUserDao.getByUserId(userPo.getUserId());
+        List<String> roleIdList = relRoleUserDao.getByUserId(userPo.getUserId());
+        List<String> userGroupIdList = relUserGroupUserDao.getByUserId(userPo.getUserId());
+        return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(
+                userPo, tenantIdList, organizationIdList, roleIdList, userGroupIdList
+        ));
     }
 
     @Override

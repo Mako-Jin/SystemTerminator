@@ -26,6 +26,7 @@ public interface TenantInfoConverter {
      */
     @Mapping(target = "tenantId", source = "tenantInfoEntity.id", qualifiedByName = "tenantIdToString")
     @Mapping(target = "tenantCode", source = "tenantInfoEntity.tenantCode", qualifiedByName = "tenantCodeToString")
+    @Mapping(target = "parentId", source = "tenantInfoEntity.parentId", qualifiedByName = "tenantIdToString")
     TenantInfoPo toPo(TenantInfoEntity tenantInfoEntity);
 
     /**
@@ -33,10 +34,19 @@ public interface TenantInfoConverter {
      * @param tenantInfoPo TenantInfoPo
      * @return TenantInfoEntity
      */
-    @Mapping(target = "tenantId", source = "tenantInfoPo.tenantId", qualifiedByName = "stringToTenantId")
-    @Mapping(target = "tenantName", source = "tenantName")
-    @Mapping(target = "tenantCode", source = "tenantInfoPo.tenantCode", qualifiedByName = "stringToTenantCode")
-    TenantInfoEntity toEntity(TenantInfoPo tenantInfoPo);
+    default TenantInfoEntity toEntity(TenantInfoPo tenantInfoPo) {
+        return TenantInfoEntity.build(
+                stringToTenantId(tenantInfoPo.getTenantId()),
+                tenantInfoPo.getTenantName(),
+                stringToTenantCode(tenantInfoPo.getTenantCode()),
+                tenantInfoPo.getTenantDesc(),
+                tenantInfoPo.getTenantStatus(),
+                tenantInfoPo.getTenantLevel(),
+                tenantInfoPo.getAllowRegister(),
+                tenantInfoPo.getAllowAdd(),
+                stringToTenantId(tenantInfoPo.getParentId())
+        );
+    }
 
     /**
      * 值对象与基本类型的转换方法

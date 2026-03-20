@@ -28,6 +28,7 @@ public interface OrganizationConverter {
     @Mapping(target = "organizationId", source = "organizationInfoEntity.id", qualifiedByName = "organizationIdToString")
     @Mapping(target = "organizationCode", source = "organizationInfoEntity.organizationCode", qualifiedByName = "organizationCodeToString")
     @Mapping(target = "tenantId", source = "organizationInfoEntity.tenantId", qualifiedByName = "tenantIdToString")
+    @Mapping(target = "parentId", source = "organizationInfoEntity.parentId", qualifiedByName = "organizationIdToString")
     OrganizationInfoPo toPo(OrganizationInfoEntity organizationInfoEntity);
 
     /**
@@ -38,7 +39,17 @@ public interface OrganizationConverter {
     @Mapping(target = "organizationId", source = "organizationInfoPo.organizationId", qualifiedByName = "stringToOrganizationId")
     @Mapping(target = "organizationCode", source = "organizationInfoPo.organizationCode", qualifiedByName = "stringToOrganizationCode")
     @Mapping(target = "tenantId", source = "organizationInfoPo.tenantId", qualifiedByName = "stringToTenantId")
-    OrganizationInfoEntity toEntity(OrganizationInfoPo organizationInfoPo);
+    default OrganizationInfoEntity toEntity(OrganizationInfoPo organizationInfoPo) {
+        return OrganizationInfoEntity.build(
+                stringToOrganizationId(organizationInfoPo.getOrganizationId()),
+                stringToTenantId(organizationInfoPo.getTenantId()),
+                organizationInfoPo.getOrganizationName(),
+                stringToOrganizationCode(organizationInfoPo.getOrganizationCode()),
+                organizationInfoPo.getOrganizationDesc(),
+                organizationInfoPo.getSort(),
+                stringToOrganizationId(organizationInfoPo.getParentId())
+        );
+    }
 
     /**
      * 值对象与基本类型的转换方法

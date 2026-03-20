@@ -20,4 +20,11 @@ public interface RelRoleUserDao extends IService<RelRoleUserPo> {
      */
     List<RelRoleUserPo> getByUserIdAndRoleIdList(String tenantId, String userId, List<String> roleIdlIst);
 
+    /**
+     * 根据用户id查询角色关联关系
+     * @param userId 用户id
+     * @return List<String>
+     */
+    List<String> getByUserId(String userId);
+
 }

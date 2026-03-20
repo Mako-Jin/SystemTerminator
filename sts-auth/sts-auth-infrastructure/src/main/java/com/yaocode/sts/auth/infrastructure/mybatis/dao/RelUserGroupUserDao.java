@@ -3,6 +3,8 @@ package com.yaocode.sts.auth.infrastructure.mybatis.dao;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yaocode.sts.auth.infrastructure.po.RelUserGroupUserPo;
 
+import java.util.List;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -18,5 +20,12 @@ public interface RelUserGroupUserDao extends IService<RelUserGroupUserPo> {
      * @return RelUserGroupUserPo
      */
     RelUserGroupUserPo getByUserGroupIdAndUserId(String tenantId, String userGroupId, String userId);
+
+    /**
+     * 根据用户id查询用户组用户关联关系
+     * @param userId 用户id
+     * @return List<String>
+     */
+    List<String> getByUserId(String userId);
 
 }

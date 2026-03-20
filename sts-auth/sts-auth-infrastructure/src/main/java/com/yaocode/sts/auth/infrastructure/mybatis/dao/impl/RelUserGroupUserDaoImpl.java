@@ -8,6 +8,8 @@ import com.yaocode.sts.auth.infrastructure.po.RelUserGroupUserPo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -26,5 +28,13 @@ public class RelUserGroupUserDaoImpl extends ServiceImpl<RelUserGroupUserMapper,
         wrapper.eq(RelUserGroupUserPo::getUserGroupId, userGroupId);
         wrapper.eq(RelUserGroupUserPo::getUserId, userId);
         return relUserGroupUserMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public List<String> getByUserId(String userId) {
+        LambdaQueryWrapper<RelUserGroupUserPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RelUserGroupUserPo::getUserId, userId);
+        List<RelUserGroupUserPo> relList = relUserGroupUserMapper.selectList(wrapper);
+        return relList.stream().map(RelUserGroupUserPo::getUserId).toList();
     }
 }

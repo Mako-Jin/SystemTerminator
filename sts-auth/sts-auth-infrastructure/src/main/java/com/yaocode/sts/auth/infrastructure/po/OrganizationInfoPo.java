@@ -35,7 +35,7 @@ public class OrganizationInfoPo extends BasePo {
     /**
      * 排序
      */
-    private String sort;
+    private Integer sort;
     /**
      * 创建者id
      */

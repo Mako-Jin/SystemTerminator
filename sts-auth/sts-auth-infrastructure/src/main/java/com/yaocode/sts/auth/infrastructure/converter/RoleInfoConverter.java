@@ -28,6 +28,7 @@ public interface RoleInfoConverter {
     @Mapping(target = "roleId", source = "roleInfoEntity.id", qualifiedByName = "roleIdToString")
     @Mapping(target = "roleCode", source = "roleInfoEntity.roleCode", qualifiedByName = "roleCodeToString")
     @Mapping(target = "tenantId", source = "roleInfoEntity.tenantId", qualifiedByName = "tenantIdToString")
+    @Mapping(target = "parentId", source = "roleInfoEntity.parentId", qualifiedByName = "roleIdToString")
     RoleInfoPo toPo(RoleInfoEntity roleInfoEntity);
 
     /**
@@ -35,10 +36,17 @@ public interface RoleInfoConverter {
      * @param roleInfoPo RoleInfoPo
      * @return RoleInfoPo
      */
-    @Mapping(target = "roleId", source = "roleInfoPo.roleId", qualifiedByName = "stringToRoleId")
-    @Mapping(target = "roleCode", source = "roleInfoPo.roleCode", qualifiedByName = "stringToRoleCode")
-    @Mapping(target = "tenantId", source = "roleInfoPo.tenantId", qualifiedByName = "stringToTenantId")
-    RoleInfoEntity toEntity(RoleInfoPo roleInfoPo);
+    default RoleInfoEntity toEntity(RoleInfoPo roleInfoPo) {
+        return RoleInfoEntity.build(
+                stringToRoleId(roleInfoPo.getRoleId()),
+                stringToTenantId(roleInfoPo.getTenantId()),
+                stringToRoleCode(roleInfoPo.getRoleCode()),
+                roleInfoPo.getRoleName(),
+                roleInfoPo.getRoleDesc(),
+                roleInfoPo.getIsDefault(),
+                stringToRoleId(roleInfoPo.getParentId())
+        );
+    }
 
     /**
      * 值对象与基本类型的转换方法

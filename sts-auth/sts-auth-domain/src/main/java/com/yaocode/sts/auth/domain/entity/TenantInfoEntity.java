@@ -33,7 +33,7 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
      */
     private Integer tenantStatus;
     /**
-     * 租户状态
+     * 租户层级
      */
     private Integer tenantLevel;
     /**
@@ -47,7 +47,7 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
     /**
      * 父id
      */
-    private String parentId;
+    private TenantId parentId;
     /**
      * 创建者id
      */
@@ -77,8 +77,31 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
         super(tenantId);
     }
 
-    public void initDefault() {
+    private void initDefault() {
         this.tenantStatus = TenantStatusEnums.ACTIVATE.getCode();
+    }
+
+    public static TenantInfoEntity build(
+            TenantId tenantId,
+            String tenantName,
+            TenantCode tenantCode,
+            String tenantDesc,
+            Integer tenantStatus,
+            Integer tenantLevel,
+            Integer allowRegister,
+            Integer allowAdd,
+            TenantId parentId
+    ) {
+        TenantInfoEntity entity = new TenantInfoEntity(tenantId);
+        entity.tenantName = tenantName;
+        entity.tenantCode = tenantCode;
+        entity.tenantDesc = tenantDesc;
+        entity.tenantStatus = tenantStatus;
+        entity.tenantLevel = tenantLevel;
+        entity.allowRegister = allowRegister;
+        entity.allowAdd = allowAdd;
+        entity.parentId = parentId;
+        return entity;
     }
 
 }

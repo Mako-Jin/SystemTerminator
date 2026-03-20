@@ -3,9 +3,9 @@ package com.yaocode.sts.auth.domain.entity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
-import com.yaocode.sts.auth.domain.valueobjects.primitives.Password;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
@@ -22,7 +22,7 @@ import java.util.List;
 @Getter
 public class UserInfoEntity extends AbstractAggregate<UserId> {
 
-    public UserInfoEntity(UserId userId) {
+    private UserInfoEntity(UserId userId) {
         super(userId);
     }
 
@@ -30,10 +30,6 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
      * 用户名
      */
     private Username username;
-    /**
-     * 密码
-     */
-    private Password password;
     /**
      * 租户id
      */
@@ -49,7 +45,7 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
     /**
      * 用户组id
      */
-    private List<RoleId> userGroupIdList;
+    private List<UserGroupId> userGroupIdList;
     /**
      * 邮箱
      */
@@ -70,6 +66,29 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
      * 更新时间
      */
     private LocalDateTime updateTime;
+
+    public static UserInfoEntity build(
+            UserId userId,
+            Username username,
+            List<TenantId> tenantIdList,
+            List<OrganizationId> organizationIdList,
+            List<RoleId> roleIdList,
+            List<UserGroupId> userGroupIdList,
+            Email email,
+            PhoneNum phoneNum,
+            Integer isEnabled
+    ) {
+        UserInfoEntity entity = new UserInfoEntity(userId);
+        entity.username = username;
+        entity.tenantIdList = tenantIdList;
+        entity.organizationIdList = organizationIdList;
+        entity.roleIdList = roleIdList;
+        entity.userGroupIdList = userGroupIdList;
+        entity.email = email;
+        entity.phoneNum = phoneNum;
+        entity.isEnabled = isEnabled;
+        return entity;
+    }
 
     // public void changePassword(String newPassword, PasswordEncoder encoder) {
     //     this.password = encoder.encode(newPassword);

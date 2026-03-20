@@ -27,4 +27,11 @@ public interface RelTenantUserDao extends IService<RelTenantUserPo> {
      */
     List<RelTenantUserPo> getByTenantId(String tenantId);
 
+    /**
+     * 根据用户id查询租户关联关系
+     * @param userId 用户id
+     * @return List<String>
+     */
+    List<String> getByUserId(String userId);
+
 }

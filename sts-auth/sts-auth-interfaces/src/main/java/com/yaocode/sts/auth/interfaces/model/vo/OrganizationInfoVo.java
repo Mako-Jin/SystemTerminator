@@ -29,7 +29,7 @@ public class OrganizationInfoVo {
     /**
      * 排序
      */
-    private String sort;
+    private Integer sort;
     /**
      * 父id
      */
