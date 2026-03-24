@@ -28,7 +28,16 @@ public interface RoleInfoApplicationConverter {
     @Mapping(target = "roleId", source = "roleDto.roleId", qualifiedByName = "stringToRoleId")
     @Mapping(target = "roleCode", source = "roleDto.roleCode", qualifiedByName = "stringToRoleCode")
     @Mapping(target = "tenantId", source = "roleDto.tenantId", qualifiedByName = "stringToTenantId")
-    RoleInfoEntity toEntity(RoleInfoDto roleDto);
+    default RoleInfoEntity toEntity(RoleInfoDto roleDto) {
+        return RoleInfoEntity.build(
+                stringToTenantId(roleDto.getTenantId()),
+                stringToRoleCode(roleDto.getRoleCode()),
+                roleDto.getRoleName(),
+                roleDto.getRoleDesc(),
+                roleDto.getIsDefault(),
+                stringToRoleId(roleDto.getParentId())
+        );
+    }
 
     /**
      * 值对象与基本类型的转换方法

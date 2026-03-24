@@ -61,4 +61,23 @@ public class OrganizationInfoEntity extends AbstractAggregate<OrganizationId> {
         entity.parentId = parentId;
         return entity;
     }
+
+    public static OrganizationInfoEntity build(
+            TenantId tenantId,
+            String organizationName,
+            OrganizationCode organizationCode,
+            String organizationDesc,
+            Integer sort,
+            OrganizationId parentId
+    ) {
+        OrganizationInfoEntity entity = new OrganizationInfoEntity(OrganizationId.nextId());
+        entity.tenantId = tenantId;
+        entity.organizationName = organizationName;
+        entity.organizationCode = organizationCode;
+        entity.organizationDesc = organizationDesc;
+        entity.sort = sort;
+        entity.parentId = parentId;
+        return entity;
+    }
+
 }

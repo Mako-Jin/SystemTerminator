@@ -73,11 +73,11 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
      */
     private LocalDateTime updateTime;
 
-    public TenantInfoEntity(TenantId tenantId) {
+    private TenantInfoEntity(TenantId tenantId) {
         super(tenantId);
     }
 
-    private void initDefault() {
+    public void initDefault() {
         this.tenantStatus = TenantStatusEnums.ACTIVATE.getCode();
     }
 
@@ -93,6 +93,42 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
             TenantId parentId
     ) {
         TenantInfoEntity entity = new TenantInfoEntity(tenantId);
+        fillProperty(
+                entity, tenantName, tenantCode, tenantDesc, tenantStatus,
+                tenantLevel, allowRegister, allowAdd, parentId
+        );
+        return entity;
+    }
+
+    public static TenantInfoEntity build(
+            String tenantName,
+            TenantCode tenantCode,
+            String tenantDesc,
+            Integer tenantStatus,
+            Integer tenantLevel,
+            Integer allowRegister,
+            Integer allowAdd,
+            TenantId parentId
+    ) {
+        TenantInfoEntity entity = new TenantInfoEntity(TenantId.nextId());
+        fillProperty(
+                entity, tenantName, tenantCode, tenantDesc, tenantStatus,
+                tenantLevel, allowRegister, allowAdd, parentId
+        );
+        return entity;
+    }
+
+    private static void fillProperty(
+            TenantInfoEntity entity,
+            String tenantName,
+            TenantCode tenantCode,
+            String tenantDesc,
+            Integer tenantStatus,
+            Integer tenantLevel,
+            Integer allowRegister,
+            Integer allowAdd,
+            TenantId parentId
+    ) {
         entity.tenantName = tenantName;
         entity.tenantCode = tenantCode;
         entity.tenantDesc = tenantDesc;
@@ -101,7 +137,6 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
         entity.allowRegister = allowRegister;
         entity.allowAdd = allowAdd;
         entity.parentId = parentId;
-        return entity;
     }
 
 }

@@ -90,6 +90,28 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
         return entity;
     }
 
+    public static UserInfoEntity build(
+            Username username,
+            List<TenantId> tenantIdList,
+            List<OrganizationId> organizationIdList,
+            List<RoleId> roleIdList,
+            List<UserGroupId> userGroupIdList,
+            Email email,
+            PhoneNum phoneNum,
+            Integer isEnabled
+    ) {
+        UserInfoEntity entity = new UserInfoEntity(UserId.nextId());
+        entity.username = username;
+        entity.tenantIdList = tenantIdList;
+        entity.organizationIdList = organizationIdList;
+        entity.roleIdList = roleIdList;
+        entity.userGroupIdList = userGroupIdList;
+        entity.email = email;
+        entity.phoneNum = phoneNum;
+        entity.isEnabled = isEnabled;
+        return entity;
+    }
+
     // public void changePassword(String newPassword, PasswordEncoder encoder) {
     //     this.password = encoder.encode(newPassword);
     // }

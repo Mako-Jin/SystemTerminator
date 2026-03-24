@@ -25,10 +25,16 @@ public interface OrganizationApplicationConverter {
      * @param organizationDto dto
      * @return OrganizationInfoEntity
      */
-    @Mapping(target = "organizationId", source = "organizationDto.organizationId", qualifiedByName = "stringToOrganizationId")
-    @Mapping(target = "organizationCode", source = "organizationDto.organizationCode", qualifiedByName = "stringToOrganizationCode")
-    @Mapping(target = "tenantId", source = "organizationDto.tenantId", qualifiedByName = "stringToTenantId")
-    OrganizationInfoEntity toEntity(OrganizationDto organizationDto);
+    default OrganizationInfoEntity toEntity(OrganizationDto organizationDto) {
+        return OrganizationInfoEntity.build(
+                stringToTenantId(organizationDto.getTenantId()),
+                organizationDto.getOrganizationName(),
+                stringToOrganizationCode(organizationDto.getOrganizationCode()),
+                organizationDto.getOrganizationDesc(),
+                organizationDto.getSort(),
+                stringToOrganizationId(organizationDto.getParentId())
+        );
+    }
 
     /**
      * entity转Dto
@@ -38,6 +44,7 @@ public interface OrganizationApplicationConverter {
     @Mapping(target = "organizationId", source = "entity.id", qualifiedByName = "organizationIdToString")
     @Mapping(target = "organizationCode", source = "entity.organizationCode", qualifiedByName = "organizationCodeToString")
     @Mapping(target = "tenantId", source = "entity.tenantId", qualifiedByName = "tenantIdToString")
+    @Mapping(target = "parentId", source = "entity.parentId", qualifiedByName = "organizationIdToString")
     OrganizationDto toDto(OrganizationInfoEntity entity);
 
     /**

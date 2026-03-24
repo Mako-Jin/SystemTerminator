@@ -24,18 +24,36 @@ public interface TenantInfoApplicationConverter {
      * @param tenantInfoDto dto
      * @return TenantInfoPo
      */
-    @Mapping(target = "tenantId", source = "tenantInfoDto.tenantId", qualifiedByName = "stringToTenantId")
-    @Mapping(target = "tenantCode", source = "tenantInfoDto.tenantCode", qualifiedByName = "stringToTenantCode")
-    TenantInfoEntity toEntity(TenantInfoDto tenantInfoDto);
+    default TenantInfoEntity toEntity(TenantInfoDto tenantInfoDto) {
+        return TenantInfoEntity.build(
+                tenantInfoDto.getTenantName(),
+                stringToTenantCode(tenantInfoDto.getTenantCode()),
+                tenantInfoDto.getTenantDesc(),
+                tenantInfoDto.getTenantStatus(),
+                tenantInfoDto.getTenantLevel(),
+                tenantInfoDto.getAllowRegister(),
+                tenantInfoDto.getAllowAdd(),
+                stringToTenantId(tenantInfoDto.getParentId())
+        );
+    }
 
     /**
      * dto转po
      * @param tenantInfoDto dto
      * @return TenantInfoPo
      */
-    @Mapping(target = "tenantId", qualifiedByName = "createTenantId")
-    @Mapping(target = "tenantCode", source = "tenantInfoDto.tenantCode", qualifiedByName = "stringToTenantCode")
-    TenantInfoEntity toEntityForAdd(TenantInfoDto tenantInfoDto);
+    default TenantInfoEntity toEntityForAdd(TenantInfoDto tenantInfoDto) {
+        return TenantInfoEntity.build(
+                tenantInfoDto.getTenantName(),
+                stringToTenantCode(tenantInfoDto.getTenantCode()),
+                tenantInfoDto.getTenantDesc(),
+                tenantInfoDto.getTenantStatus(),
+                tenantInfoDto.getTenantLevel(),
+                tenantInfoDto.getAllowRegister(),
+                tenantInfoDto.getAllowAdd(),
+                stringToTenantId(tenantInfoDto.getTenantId())
+        );
+    }
 
     /**
      * 值对象与基本类型的转换方法

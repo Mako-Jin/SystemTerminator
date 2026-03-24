@@ -36,5 +36,9 @@ public class RoleInfoDto {
      * 租户id
      */
     private String tenantId;
+    /**
+     * 是否默认角色
+     */
+    private Integer isDefault;
 
 }

@@ -98,6 +98,24 @@ public class RoleInfoEntity extends AbstractAggregate<RoleId> {
         return roleInfoEntity;
     }
 
+    public static RoleInfoEntity build (
+            TenantId tenantId,
+            RoleCode roleCode,
+            String roleName,
+            String roleDesc,
+            Integer isDefault,
+            RoleId roleParentId
+    ) {
+        RoleInfoEntity roleInfoEntity = new RoleInfoEntity(RoleId.nextId());
+        roleInfoEntity.roleCode = roleCode;
+        roleInfoEntity.tenantId = tenantId;
+        roleInfoEntity.roleName = roleName;
+        roleInfoEntity.roleDesc = roleDesc;
+        roleInfoEntity.isDefault = isDefault;
+        roleInfoEntity.parentId = roleParentId;
+        return roleInfoEntity;
+    }
+
     // private Set<Permission> permissions; // 值对象集合
 
     // public void assignPermission(Permission permission) {

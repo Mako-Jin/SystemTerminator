@@ -75,26 +75,26 @@ public class UserInfoApplicationServiceImpl implements UserInfoApplicationServic
     @Transactional(rollbackFor = Exception.class)
     public String singleAdd(UserInfoDto userInfoDto) {
         // 验证租户存不存在
-        TenantId tenantId = TenantId.of(userInfoDto.getTenantId());
-        if (!tenantDomainService.validateTenantId(tenantId)) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
-        }
-        // 验证组织存不存在
-        OrganizationId organizationId = null;
-        if (Objects.nonNull(userInfoDto.getOrganizationId())) {
-            organizationId = OrganizationId.of(userInfoDto.getOrganizationId());
-            if (!organizationDomainService.validateOrganizationId(tenantId, organizationId)) {
-                throw new IllegalArgumentException("auth.params.data.not.exists");
-            }
-        }
-        // 验证用户组存不存在
-        UserGroupId userGroupId = null;
-        if (Objects.nonNull(userInfoDto.getUserGroupId())) {
-            userGroupId = UserGroupId.of(userInfoDto.getUserGroupId());
-            if (!userGroupDomainService.validateUserGroupId(userGroupId)) {
-                throw new IllegalArgumentException("auth.params.data.not.exists");
-            }
-        }
+        // TenantId tenantId = TenantId.of(userInfoDto.getTenantId());
+        // if (!tenantDomainService.validateTenantId(tenantId)) {
+        //     throw new IllegalArgumentException("auth.params.data.not.exists");
+        // }
+        // // 验证组织存不存在
+        // OrganizationId organizationId = null;
+        // if (Objects.nonNull(userInfoDto.getOrganizationId())) {
+        //     organizationId = OrganizationId.of(userInfoDto.getOrganizationId());
+        //     if (!organizationDomainService.validateOrganizationId(tenantId, organizationId)) {
+        //         throw new IllegalArgumentException("auth.params.data.not.exists");
+        //     }
+        // }
+        // // 验证用户组存不存在
+        // UserGroupId userGroupId = null;
+        // if (Objects.nonNull(userInfoDto.getUserGroupId())) {
+        //     userGroupId = UserGroupId.of(userInfoDto.getUserGroupId());
+        //     if (!userGroupDomainService.validateUserGroupId(userGroupId)) {
+        //         throw new IllegalArgumentException("auth.params.data.not.exists");
+        //     }
+        // }
 
         // 验证角色存不存在
         List<RoleId> roleIdList = new ArrayList<>();
@@ -107,9 +107,9 @@ public class UserInfoApplicationServiceImpl implements UserInfoApplicationServic
 
         // 验证租户内，用户名是否唯一
         Username username = Username.of(userInfoDto.getUsername());
-        if (!userInfoDomainService.isUsernameUnique(username, tenantId)) {
-            throw new IllegalArgumentException("当前用户名已经存在");
-        }
+        // if (!userInfoDomainService.isUsernameUnique(username, tenantId)) {
+        //     throw new IllegalArgumentException("当前用户名已经存在");
+        // }
 
         // DTO转为DO
         userInfoDto.setUserId(IdFactory.generate().toString());
@@ -123,24 +123,24 @@ public class UserInfoApplicationServiceImpl implements UserInfoApplicationServic
         // 保存用户信息
         UserId userId = userInfoRepository.save(userInfoEntity);
         // 关联租户信息
-        tenantDomainService.associatedTenantUser(tenantId, userId, UserAddTypeEnums.ADD);
-        if (Objects.nonNull(organizationId)) {
-            // 关联组织机构信息
-            organizationDomainService.associatedOrganizationUser(tenantId, organizationId, userId);
-        }
-        if (Objects.nonNull(userGroupId)) {
-            // 关联租户信息
-            userGroupDomainService.associatedUserGroupUser(tenantId, userGroupId, userId);
-        }
+        // tenantDomainService.associatedTenantUser(tenantId, userId, UserAddTypeEnums.ADD);
+        // if (Objects.nonNull(organizationId)) {
+        //     // 关联组织机构信息
+        //     organizationDomainService.associatedOrganizationUser(tenantId, organizationId, userId);
+        // }
+        // if (Objects.nonNull(userGroupId)) {
+        //     // 关联租户信息
+        //     userGroupDomainService.associatedUserGroupUser(tenantId, userGroupId, userId);
+        // }
         // 默认权限
-        Optional<RoleId> defaultRoleId = roleInfoRepository.getDefaultRole(tenantId);
-        if (defaultRoleId.isPresent()) {
-            roleIdList.add(defaultRoleId.get());
-        }
+        // Optional<RoleId> defaultRoleId = roleInfoRepository.getDefaultRole(tenantId);
+        // if (defaultRoleId.isPresent()) {
+        //     roleIdList.add(defaultRoleId.get());
+        // }
         // TODO 用户组和角色关联之后，用户组id不为空的时候，可能还得添加上用户组带的角色
         // 分配权限
         if (!CollectionUtils.isEmpty(roleIdList)) {
-            roleDomainService.associatedRole(tenantId, userId, roleIdList);
+            // roleDomainService.associatedRole(tenantId, userId, roleIdList);
         }
         // 发布用户新建的领域事件
         // domainEventPublisher.publishEvent(new UserCreateEvent(saveAuthorizeDO));

@@ -39,6 +39,10 @@ public class TenantInfoDto {
      */
     private Integer allowRegister;
     /**
+     * 租户层级
+     */
+    private Integer tenantLevel;
+    /**
      * 是否允许新增新用户
      */
     private Integer allowAdd;
