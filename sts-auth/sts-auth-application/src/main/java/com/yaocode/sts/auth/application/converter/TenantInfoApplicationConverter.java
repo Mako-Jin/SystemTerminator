@@ -5,7 +5,6 @@ import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 

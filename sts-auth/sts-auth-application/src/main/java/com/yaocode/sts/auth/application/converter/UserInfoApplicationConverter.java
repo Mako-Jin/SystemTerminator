@@ -126,10 +126,10 @@ public interface UserInfoApplicationConverter {
      * @param password String
      * @return Password
      */
-    @Named("stringToPassword")
-    default Password stringToPassword(String password) {
-        return password != null ? Password.fromPlainText(password) : null;
-    }
+    // @Named("stringToPassword")
+    // default Password stringToPassword(String password) {
+    //     return password != null ? Password.of(password) : null;
+    // }
 
     /**
      * 值对象与基本类型的转换方法

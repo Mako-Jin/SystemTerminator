@@ -7,7 +7,6 @@ import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
 import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.UserInfoApplicationService;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
-import com.yaocode.sts.auth.domain.enums.UserAddTypeEnums;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.OrganizationDomainService;
@@ -15,10 +14,7 @@ import com.yaocode.sts.auth.domain.service.RoleDomainService;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.service.UserGroupDomainService;
 import com.yaocode.sts.auth.domain.service.UserInfoDomainService;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.common.tools.id.IdFactory;
@@ -29,8 +25,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 用户信息业务应用层

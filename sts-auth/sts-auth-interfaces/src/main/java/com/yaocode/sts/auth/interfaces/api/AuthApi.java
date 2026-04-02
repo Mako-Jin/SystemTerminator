@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.interfaces.api;
 
-import com.yaocode.sts.auth.interfaces.model.params.LoginRequestParams;
+import com.yaocode.sts.auth.interfaces.model.params.login.LoginRequestParams;
 import com.yaocode.sts.common.web.model.ResultModel;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;

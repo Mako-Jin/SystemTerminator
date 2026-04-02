@@ -31,4 +31,14 @@ public enum GrantTypeEnums {
         this.value = value;
         this.description = description;
     }
+
+    public static GrantTypeEnums of(String value) {
+        for (GrantTypeEnums type : values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("不支持的认证类型: " + value);
+    }
+
 }
