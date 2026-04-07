@@ -123,7 +123,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             errorMessage = e.getMessage();
         }
         LocalDateTime endTime = LocalDateTime.now();
-        String insertSqlHistory = "insert into script_history (`file_name`, " +
+        String insertSqlHistory = "insert into aux_tbl_script_history (`file_name`, " +
                 "`script_content`, `script_type`, `security_level`, `status`, `error_message`, " +
                 "`execute_time`, " +
                 "`create_time`) " +
@@ -171,7 +171,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             logger.warn("数据库连接为空");
             return false;
         }
-        String scriptHistory = "select count(*) from script_history where script_content = ?";
+        String scriptHistory = "select count(*) from aux_tbl_script_history where script_content = ?";
         try (PreparedStatement prepareStatement = getConnection().prepareStatement(scriptHistory)) {
             prepareStatement.setString(1, sql);
             ResultSet resultSet = prepareStatement.executeQuery();

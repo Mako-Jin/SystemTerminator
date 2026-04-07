@@ -9,6 +9,6 @@ public interface CommonConstants {
 
     String JAR_PACKAGE_NAME = "sts-common-db";
 
-    String SCRIPT_CONTROL_TABLE_NAME = "script_history";
+    String SCRIPT_CONTROL_TABLE_NAME = "aux_tbl_script_history";
 
 }

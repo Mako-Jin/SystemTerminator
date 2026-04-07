@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `script_history` (
+CREATE TABLE IF NOT EXISTS `aux_tbl_script_history` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `file_name` varchar(64) DEFAULT NULL COMMENT '文件名',
   `script_content` text COMMENT '脚本内容',
