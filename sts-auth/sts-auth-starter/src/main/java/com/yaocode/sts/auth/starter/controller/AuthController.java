@@ -24,8 +24,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResultModel<?> login(LoginRequestParams loginRequestParams) {
-        logger.info("收到登录请求, grantType={}",
-                loginRequestParams.getCredential() != null ? loginRequestParams.getCredential().getGrantType() : "null");
+        logger.info("收到登录请求, grantType={}", loginRequestParams.getCredential() != null ? loginRequestParams.getCredential().getGrantType() : "null");
         return ResultUtils.ok(loginRequestParams);
     }
 

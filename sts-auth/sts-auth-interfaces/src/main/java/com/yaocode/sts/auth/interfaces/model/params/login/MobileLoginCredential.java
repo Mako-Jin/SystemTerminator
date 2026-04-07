@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params.login;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +13,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class MobileLoginCredential extends AbstractLoginCredential {
 
+    @NotBlank(message = "手机号不能为空")
     private String phoneNum;
 
+    @NotBlank(message = "验证码不能为空")
     private String verifyCode;
 }
