@@ -6,8 +6,6 @@ import com.yaocode.sts.common.resources.annotation.SystemResources;
 import com.yaocode.sts.common.web.annotation.EnableRestApiElapsed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.core.configuration.SpringDocConfiguration;
-import org.springdoc.webmvc.core.configuration.SpringDocWebMvcConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,10 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @date: 2025年10月07日 16:08
  */
 @EnableRestApiElapsed
-@SpringBootApplication(exclude = {
-        SpringDocConfiguration.class,
-        SpringDocWebMvcConfiguration.class  // 如果是Web项目
-})
+@SpringBootApplication
 @ComponentScan(basePackages = "com.yaocode.sts.auth")
 @SystemResources(code = "000", name = "权限管理系统", desc = "后台租户组织用户管理系统")
 @ServerResources(code = "000000", name = "权限控制服务", desc = "主要用户认证和权限控制服务", parent = {"000"})

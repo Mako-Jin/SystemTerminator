@@ -7,11 +7,11 @@ import com.yaocode.sts.common.resources.model.ContactInfoModel;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.services.handler.ResourcesHandler;
 import com.yaocode.sts.common.resources.utils.PropertyResolverUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
             PropertyResolverUtils propertyResolverUtils
     ) {
         String value = getProperty.get();
-        if (StringUtils.isNotBlank(value)) {
+        if (StringUtils.hasText(value)) {
             setProperty.accept(propertyResolverUtils.resolve(value));
         }
     }
@@ -154,7 +154,7 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
         }
         List<String> newParentCodeList = new ArrayList<>();
         for (String parentCode : parentCodeList) {
-            if (StringUtils.isBlank(parentCode)) {
+            if (!StringUtils.hasText(parentCode)) {
                 continue;
             }
             String resolveParentCode = getPropertyResolverUtils().resolve(parentCode);

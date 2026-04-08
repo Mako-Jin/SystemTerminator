@@ -25,7 +25,20 @@
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -43,7 +56,7 @@
                     <archive>
                         <manifestEntries>
                             <Automatic-Module-Name>
-                                yaocode.sts.common.resources
+                                yaocode.sts.common.i18n
                             </Automatic-Module-Name>
                         </manifestEntries>
                     </archive>

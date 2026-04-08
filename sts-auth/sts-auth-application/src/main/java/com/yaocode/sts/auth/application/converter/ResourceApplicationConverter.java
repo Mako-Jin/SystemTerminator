@@ -161,8 +161,8 @@ public interface ResourceApplicationConverter {
                         moduleResourcesModel.getVersion()
                 );
             } else if (resourcesModel instanceof ApiResourcesModel apiResourcesModel) {
-                List<String> requestMethods =
-                        apiResourcesModel.getRequestMethod().stream().map(Enum::name).toList();
+                List<String> requestMethods = apiResourcesModel.getRequestMethod().stream()
+                        .map(Enum::name).toList();
                 entity = ResourceEntity.build(
                         ResourceValue.of(apiResourcesModel.getCode()),
                         apiResourcesModel.getName(),
