@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.yaocode.sts.common.i18n.config.DatabaseI18nAutoConfiguration

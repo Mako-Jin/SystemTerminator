@@ -9,12 +9,12 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/yc-sts-db-auth?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: yc-sts-db-auth
     password: yc-sts-db-auth
-  messages:
-    basename: classpath*:i18n/messages
-    use-code-as-default-message: true
-    encoding: UTF-8
-    cache-duration: 3600
-    fallback-to-system-locale: false
+#  messages:
+#    basename: classpath*:i18n/messages
+#    use-code-as-default-message: true
+#    encoding: UTF-8
+#    cache-duration: 3600
+#    fallback-to-system-locale: false
 
 mybatis-plus:
   mapper-locations: classpath*:mappers/*.xml
@@ -35,6 +35,8 @@ logging:
     com.yaocode.sts.auth: INFO
     org.springframework: INFO
     org.apache.ibatis: debug
+    org.springframework.context.support.ResourceBundleMessageSource: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
   file:
     path: ./logs
 
@@ -43,7 +45,12 @@ yaocode:
     migrate:
       sqlScriptPath:
         - classpath*:/db/migration/mysql/*.sql
+  messages:
+    i18n:
+      enabled: true
 #  web:
 #    api:
 #      elapsed:
 #        enabled: false
+
+

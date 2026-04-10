@@ -165,6 +165,7 @@
                     <include>**/*.ftl</include>
                     <include>**/*.json</include>
                     <include>**/*.sql</include>
+                    <include>**/*.properties</include>
                 </includes>
             </resource>
             <resource>
