@@ -50,3 +50,5 @@ replay_pid*
 /sts-common/sts-common-resources/target/
 /sts-common/sts-common-i18n/sts-common-i18n.iml
 /sts-common/sts-common-i18n/target/
+/logs/
+/sts-common/sts-common-messages/target/

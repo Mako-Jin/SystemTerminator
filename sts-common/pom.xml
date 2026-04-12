@@ -31,7 +31,7 @@
         <module>sts-common-domain</module>
         <module>sts-common-db</module>
         <module>sts-common-resources</module>
-        <module>sts-common-i18n</module>
+        <module>sts-common-messages</module>
     </modules>
 
     <dependencyManagement>

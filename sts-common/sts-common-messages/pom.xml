@@ -10,12 +10,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sts-common-i18n</artifactId>
+    <artifactId>sts-common-messages</artifactId>
     <version>0.0.0</version>
     <packaging>jar</packaging>
 
-    <name>sts-common-i18n</name>
-    <description>Common i18n resources - 国际化资源管理公共服务</description>
+    <name>sts-common-messages</name>
+    <description>Common resources messages - 国际化资源管理公共服务</description>
 
     <properties>
         <java.version>21</java.version>

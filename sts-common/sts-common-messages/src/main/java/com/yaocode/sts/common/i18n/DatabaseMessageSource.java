@@ -3,14 +3,18 @@ package com.yaocode.sts.common.i18n;
 import com.yaocode.sts.common.i18n.properties.I18nMessageProperties;
 import com.yaocode.sts.common.i18n.repository.I18nMessageRepository;
 import jakarta.annotation.Nullable;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.AbstractMessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,7 @@ import java.util.Locale;
  * @author: Jin-LiangBo
  * @date: 2026年04月09日 11:29
  */
+@Getter
 public class DatabaseMessageSource extends AbstractMessageSource {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseMessageSource.class);
@@ -61,15 +66,38 @@ public class DatabaseMessageSource extends AbstractMessageSource {
      * 可以加载多个jar包内的 messages.properties
      */
     private MessageSource createModuleMessageSource() {
-        ResourceBundleMessageSource moduleSource = new ResourceBundleMessageSource();
+        ReloadableResourceBundleMessageSource moduleSource = new ReloadableResourceBundleMessageSource();
 
         // 支持多个基础名称（可以加载不同模块的消息）
-        String[] baseNames = new String[]{"i18n/messages", "META-INF/i18n/messages"};
-        moduleSource.setBasenames(baseNames);
+//        String[] baseNames = new String[]{"classpath:i18n/*/messages", "classpath:META-INF/i18n/*/messages"};
+//        moduleSource.setBasenames(baseNames);
+        List<String> baseNames = scanAllI18nModules();
+        moduleSource.setBasenames(baseNames.toArray(new String[0]));
         moduleSource.setDefaultEncoding(properties.getFallback().getEncoding());
         moduleSource.setFallbackToSystemLocale(false);
+        moduleSource.setUseCodeAsDefaultMessage(false);
 
         return moduleSource;
+    }
+
+    private List<String> scanAllI18nModules() {
+        List<String> baseNames = new ArrayList<>();
+
+        try {
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Resource[] resources = resolver.getResources("classpath*:i18n/*/messages.properties");
+
+            for (Resource resource : resources) {
+                String path = resource.getURL().toString();
+                // 提取路径：i18n/common/messages.properties -> i18n/common/messages
+                String basename = path.substring(path.indexOf("i18n"), path.lastIndexOf(".properties"));
+                baseNames.add(basename);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to scan i18n modules", e);
+        }
+
+        return baseNames;
     }
 
     @Override
@@ -94,11 +122,4 @@ public class DatabaseMessageSource extends AbstractMessageSource {
         return null;
     }
 
-    public I18nMessageRepository getRepository() {
-        return repository;
-    }
-
-    public I18nMessageProperties getProperties() {
-        return properties;
-    }
 }

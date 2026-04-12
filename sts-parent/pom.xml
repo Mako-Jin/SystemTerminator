@@ -134,7 +134,7 @@
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
-                <artifactId>sts-common-i18n</artifactId>
+                <artifactId>sts-common-messages</artifactId>
                 <version>0.0.0</version>
             </dependency>
             <!-- 自研包 end -->

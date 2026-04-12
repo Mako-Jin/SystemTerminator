@@ -24,7 +24,7 @@ public class TestController implements TestApi {
 
     @Override
     public Map<String, String> testI18nMessages(String code, String lang) {
-        Locale locale = Locale.of(lang);
+        Locale locale = new Locale(lang);
         Map<String, String> result = new HashMap<>(2);
         String message = messageSource.getMessage(code, null, "Not Found", locale);
         result.put("code", code);
