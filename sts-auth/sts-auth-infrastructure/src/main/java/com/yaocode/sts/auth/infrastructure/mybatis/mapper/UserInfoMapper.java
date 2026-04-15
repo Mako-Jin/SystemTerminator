@@ -11,4 +11,13 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserInfoMapper extends BaseMapper<UserInfoPo> {
+
+    /**
+     * 根据用户名查询用户信息
+     * @param tenantId 租户id
+     * @param username 用户名
+     * @return com.yaocode.sts.auth.infrastructure.po.UserInfoPo
+     */
+    UserInfoPo getByUsername(String tenantId, String username);
+
 }

@@ -1,7 +1,7 @@
 package com.yaocode.sts.common.domain;
 
 import com.yaocode.sts.common.domain.model.Aggregate;
-import com.yaocode.sts.common.domain.model.Identifier;
+import com.yaocode.sts.common.domain.valueobject.Identifier;
 
 import java.util.Optional;
 

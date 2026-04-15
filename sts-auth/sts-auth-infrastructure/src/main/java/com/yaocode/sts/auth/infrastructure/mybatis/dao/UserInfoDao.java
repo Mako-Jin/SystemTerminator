@@ -28,4 +28,12 @@ public interface UserInfoDao extends IService<UserInfoPo> {
      */
     UserInfoPo getByUsername(List<String> userIdList, String username);
 
+    /**
+     * 根据用户名查询用户
+     * @param tenantId 租户id
+     * @param username 用户名
+     * @return UserInfoPo
+     */
+    UserInfoPo getByUsername(String tenantId, String username);
+
 }

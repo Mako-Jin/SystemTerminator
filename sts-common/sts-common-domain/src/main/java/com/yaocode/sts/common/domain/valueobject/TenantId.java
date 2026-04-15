@@ -1,6 +1,5 @@
-package com.yaocode.sts.auth.domain.valueobjects.identifiers;
+package com.yaocode.sts.common.domain.valueobject;
 
-import com.yaocode.sts.common.domain.model.Identifier;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Value;

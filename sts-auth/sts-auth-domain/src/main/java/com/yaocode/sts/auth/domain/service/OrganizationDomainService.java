@@ -1,8 +1,8 @@
 package com.yaocode.sts.auth.domain.service;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 
 import java.util.List;

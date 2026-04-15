@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.domain.model;
+package com.yaocode.sts.common.domain.event;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

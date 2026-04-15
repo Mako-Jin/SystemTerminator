@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.domain.model;
 
-import com.yaocode.sts.common.domain.publisher.DomainEventPublisher;
+import com.yaocode.sts.common.domain.event.DomainEvent;
+import com.yaocode.sts.common.domain.event.publisher.DomainEventPublisher;
+import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.Getter;
 import lombok.Setter;
 

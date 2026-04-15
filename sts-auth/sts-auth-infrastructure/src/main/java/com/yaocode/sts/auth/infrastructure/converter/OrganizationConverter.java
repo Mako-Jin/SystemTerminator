@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.infrastructure.converter;
 
 import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
 import org.mapstruct.Mapper;

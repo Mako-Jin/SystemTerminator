@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.infrastructure.converter;
 
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
 import org.mapstruct.Mapper;

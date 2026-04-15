@@ -2,10 +2,10 @@ package com.yaocode.sts.auth.domain.events;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
-import com.yaocode.sts.common.domain.model.AbstractDomainEvent;
+import com.yaocode.sts.common.domain.valueobject.UserId;
+import com.yaocode.sts.common.domain.event.AbstractDomainEvent;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

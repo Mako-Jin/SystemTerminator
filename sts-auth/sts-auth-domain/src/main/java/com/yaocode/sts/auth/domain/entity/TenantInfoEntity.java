@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;

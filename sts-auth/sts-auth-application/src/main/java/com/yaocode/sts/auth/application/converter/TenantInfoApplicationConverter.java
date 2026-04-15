@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.application.converter;
 
 import com.yaocode.sts.auth.application.dto.TenantInfoDto;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;

@@ -2,8 +2,8 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.infrastructure.converter.TenantInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelTenantUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.TenantInfoDao;

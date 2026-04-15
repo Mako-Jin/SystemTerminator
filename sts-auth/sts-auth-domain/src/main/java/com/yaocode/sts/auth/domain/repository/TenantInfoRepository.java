@@ -1,8 +1,8 @@
 package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.common.domain.Repository;
 
 import java.util.Optional;

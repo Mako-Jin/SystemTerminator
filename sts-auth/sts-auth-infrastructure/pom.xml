@@ -35,6 +35,10 @@
         </dependency>
         <dependency>
             <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
             <artifactId>sts-common-messages</artifactId>
         </dependency>
         <!-- mapstruct start -->

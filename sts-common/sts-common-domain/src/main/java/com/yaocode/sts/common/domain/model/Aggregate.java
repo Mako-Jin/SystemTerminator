@@ -1,6 +1,9 @@
 package com.yaocode.sts.common.domain.model;
 
 
+import com.yaocode.sts.common.domain.event.DomainEvent;
+import com.yaocode.sts.common.domain.valueobject.Identifier;
+
 import java.util.Collection;
 
 /**

@@ -52,3 +52,6 @@ replay_pid*
 /sts-common/sts-common-i18n/target/
 /logs/
 /sts-common/sts-common-messages/target/
+/sts-common/sts-common-messages/sts-common-messages.iml
+/sts-common/sts-common-infrastructure/sts-common-infrastructure.iml
+/sts-common/sts-common-infrastructure/target/

@@ -8,7 +8,7 @@ import com.yaocode.sts.auth.domain.repository.OrganizationRepository;
 import com.yaocode.sts.auth.domain.service.OrganizationDomainService;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 import com.yaocode.sts.common.basic.exception.DataExistsException;
 import com.yaocode.sts.common.tools.id.IdFactory;

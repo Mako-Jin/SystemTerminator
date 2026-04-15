@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.starter.controller;
 
 import com.yaocode.sts.auth.application.dto.UserInfoDto;
 import com.yaocode.sts.auth.application.service.UserInfoApplicationService;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.interfaces.api.UserInfoApi;
 import com.yaocode.sts.auth.interfaces.assembler.UserInfoAssembler;
 import com.yaocode.sts.auth.interfaces.model.params.CreateUserParams;

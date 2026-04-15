@@ -2,8 +2,8 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.auth.infrastructure.converter.UserInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelOrganizationUserDao;
@@ -13,7 +13,7 @@ import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelUserGroupUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.UserInfoDao;
 import com.yaocode.sts.auth.infrastructure.po.RelTenantUserPo;
 import com.yaocode.sts.auth.infrastructure.po.UserInfoPo;
-import com.yaocode.sts.common.domain.model.Identifier;
+import com.yaocode.sts.common.domain.valueobject.Identifier;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +70,12 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
         return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(
                 userPo, tenantIdList, organizationIdList, roleIdList, userGroupIdList
         ));
+    }
+
+    @Override
+    public Optional<UserInfoEntity> findByUsername(TenantId tenantId, Username username) {
+        UserInfoPo userPo = userInfoDao.getByUsername(tenantId.getValue(), username.getValue());
+        return fillRelData(userPo);
     }
 
     @Override

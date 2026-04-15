@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
-import com.yaocode.sts.auth.domain.valueobjects.AuthCredential;
+import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Password;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.Getter;
  * @date: 2026年03月30日 19:07
  */
 @Getter
-public class PasswordAuthCredential extends AuthCredential {
+public class PasswordAuthCredential extends AbstractAuthCredential {
 
     /**
      * 用户名

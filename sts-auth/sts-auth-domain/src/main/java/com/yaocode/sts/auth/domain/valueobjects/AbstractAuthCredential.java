@@ -9,7 +9,7 @@ import lombok.Data;
  * @date: 2026年03月30日 16:56
  */
 @Data
-public abstract class AuthCredential implements Credential {
+public abstract class AbstractAuthCredential implements Credential {
 
     protected GrantTypeEnums grantType;
 

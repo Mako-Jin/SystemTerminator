@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.PasswordEncoder;
-import com.yaocode.sts.common.domain.model.Identifier;
+import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.springframework.util.StringUtils;

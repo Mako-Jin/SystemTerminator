@@ -1,8 +1,8 @@
 package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserId;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.common.domain.Repository;
 
@@ -31,6 +31,14 @@ public interface UserInfoRepository extends Repository<UserInfoEntity, UserId> {
      * @return java.util.Optional<UserInfoEntity>
      */
     Optional<UserInfoEntity> findByUsername(List<UserId> userIdList, Username username);
+
+    /**
+     * 通过用户名查询用户信息
+     * @param tenantId 租户id
+     * @param username 用户名
+     * @return java.util.Optional<UserInfoEntity>
+     */
+    Optional<UserInfoEntity> findByUsername(TenantId tenantId, Username username);
 
     /**
      * 获取租户下的用户列表

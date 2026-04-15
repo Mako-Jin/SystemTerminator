@@ -1,6 +1,6 @@
-package com.yaocode.sts.common.domain.publisher;
+package com.yaocode.sts.common.domain.event.publisher;
 
-import com.yaocode.sts.common.domain.model.DomainEvent;
+import com.yaocode.sts.common.domain.event.DomainEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Collection;

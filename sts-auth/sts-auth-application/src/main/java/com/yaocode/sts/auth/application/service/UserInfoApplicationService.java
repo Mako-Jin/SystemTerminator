@@ -24,6 +24,11 @@ public interface UserInfoApplicationService {
      */
     String singleAdd(UserInfoDto userInfoDto);
 
+    /**
+     * 注册用户
+     * @param userRegistrationDto 用户注册参数
+     * @return java.lang.String
+     */
     String register(UserRegistrationDto userRegistrationDto);
 
 }

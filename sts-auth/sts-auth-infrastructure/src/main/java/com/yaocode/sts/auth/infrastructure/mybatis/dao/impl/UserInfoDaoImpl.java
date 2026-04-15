@@ -35,4 +35,9 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfoPo> imp
         List<UserInfoPo> userInfoPoList = userInfoMapper.selectList(wrapper);
         return userInfoPoList.isEmpty() ? null : userInfoPoList.get(0);
     }
+
+    @Override
+    public UserInfoPo getByUsername(String tenantId, String username) {
+        return userInfoMapper.getByUsername(tenantId, username);
+    }
 }
