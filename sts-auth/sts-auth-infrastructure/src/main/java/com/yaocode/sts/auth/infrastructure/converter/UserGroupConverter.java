@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -52,6 +53,15 @@ public interface UserGroupConverter {
                 userGroupPo.getUserGroupDesc(), parentId,
                 tenantId, userGroupPo.getIsEnabled()
         );
+    }
+
+    /**
+     * Po转entity
+     * @param userGroupPoList List<UserGroupPo>
+     * @return UserGroupEntity
+     */
+    default List<UserGroupEntity> toEntityList(List<UserGroupPo> userGroupPoList) {
+        return userGroupPoList.stream().map(this::toEntity).toList();
     }
 
     /**

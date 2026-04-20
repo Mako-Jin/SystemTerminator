@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.yaocode.sts</groupId>
         <artifactId>sts-parent</artifactId>
-        <version>0.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <artifactId>sts-auth</artifactId>
-    <version>0.0.0</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>sts-auth</name>
@@ -37,22 +37,22 @@
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-auth-interfaces</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-auth-domain</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-auth-application</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-auth-infrastructure</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

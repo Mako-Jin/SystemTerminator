@@ -3,6 +3,8 @@ package com.yaocode.sts.auth.infrastructure.mybatis.dao;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
 
+import java.util.List;
+
 /**
  * 组织机构Dao
  * @author: Jin-LiangBo
@@ -17,6 +19,15 @@ public interface OrganizationInfoDao extends IService<OrganizationInfoPo> {
      * @return OrganizationInfoPo
      */
     OrganizationInfoPo getById(String tenantId, String organizationId);
+
+    /**
+     * 根据租户id和组织id查询数据
+     * @param tenantId 租户id
+     * @param organizationIdList 组织id
+     * @return OrganizationInfoPo
+     */
+    List<OrganizationInfoPo> getByIdList(String tenantId, List<String> organizationIdList);
+
     /**
      * 根据租户id和组织Code查询数据
      * @param tenantId 租户id

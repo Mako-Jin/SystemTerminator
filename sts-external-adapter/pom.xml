@@ -6,29 +6,22 @@
 
     <parent>
         <groupId>com.yaocode.sts</groupId>
-        <artifactId>sts-common</artifactId>
+        <artifactId>sts-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath/>
     </parent>
 
-    <artifactId>sts-common-basic</artifactId>
+    <artifactId>sts-external-adapter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>sts-common-basic</name>
-    <description>Common basic - 公共基础包</description>
+    <name>sts-external-adapter</name>
+    <description>external adapter -- 外部服务API对接适配层</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-
-    <dependencies>
-    </dependencies>
-
-    <build>
-
-    </build>
 
 </project>

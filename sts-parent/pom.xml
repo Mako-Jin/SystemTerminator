@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <groupId>com.yaocode.sts</groupId>
     <artifactId>sts-parent</artifactId>
-    <version>0.0.0</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>sts-parent</name>
     <description>dependency management -- 依赖管理包</description>
@@ -105,42 +105,42 @@
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-web</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-tools</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-basic</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-domain</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-infrastructure</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-db</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-resources</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts</groupId>
                 <artifactId>sts-common-messages</artifactId>
-                <version>0.0.0</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <!-- 自研包 end -->
         </dependencies>

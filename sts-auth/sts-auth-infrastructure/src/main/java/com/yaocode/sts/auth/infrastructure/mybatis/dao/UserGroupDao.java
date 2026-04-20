@@ -3,6 +3,8 @@ package com.yaocode.sts.auth.infrastructure.mybatis.dao;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
 
+import java.util.List;
+
 /**
  * 用户组Dao
  * @author: Jin-LiangBo
@@ -17,6 +19,14 @@ public interface UserGroupDao extends IService<UserGroupPo> {
      * @return UserGroupPo
      */
     UserGroupPo getById(String tenantId, String userGroupId);
+
+    /**
+     * 根据id查询数据
+     * @param tenantId 租户id
+     * @param userGroupIdList 用户组id
+     * @return UserGroupPo
+     */
+    List<UserGroupPo> getByIdList(String tenantId, List<String> userGroupIdList);
 
     /**
      * 根据用户组编码查询数据

@@ -40,8 +40,8 @@ public class OrganizationDomainServiceImpl implements OrganizationDomainService 
     }
 
     @Override
-    public boolean validateOrganizationId(List<OrganizationId> organizationIdList) {
-        return false;
+    public boolean validateOrganizationId(TenantId tenantId, List<OrganizationId> organizationIdList) {
+        return organizationRepository.findByIdList(tenantId, organizationIdList).map(List::isEmpty).orElse(false);
     }
 
     @Override

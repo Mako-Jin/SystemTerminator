@@ -31,7 +31,7 @@ public interface RoleInfoRepository extends Repository<RoleInfoEntity, RoleId> {
      * @param roleIdList 角色id列表
      * @return List<RoleInfoEntity>
      */
-    List<RoleInfoEntity> findByIdList(TenantId tenantId, List<RoleId> roleIdList);
+    Optional<List<RoleInfoEntity>> findByIdList(TenantId tenantId, List<RoleId> roleIdList);
 
     /**
      * 通过角色编码查询角色信息

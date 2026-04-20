@@ -119,7 +119,7 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
     // public void changePhoneNum(String newPassword, PasswordEncoder encoder) {
     //     this.password = encoder.encode(newPassword);
     // }
-    //
+
     // public void changeEmail(String newEmail) {
     //     this.email = newEmail;
     //     registerEvent(new UserEmailChangedEvent(this.id, newEmail));
@@ -128,7 +128,7 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
     // public void deactivate() {
     //     this.status = UserStatus.INACTIVE;
     // }
-    //
+
     // public void activate() {
     //     this.status = UserStatus.ACTIVE;
     //     registerEvent(new UserActivatedEvent(this.id));

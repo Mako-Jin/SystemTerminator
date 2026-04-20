@@ -8,6 +8,8 @@ import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 用户组DaoImpl
  * @author: Jin-LiangBo
@@ -25,6 +27,14 @@ public class UserGroupDaoImpl extends ServiceImpl<UserGroupMapper, UserGroupPo> 
         wrapper.eq(UserGroupPo::getTenantId, tenantId);
         wrapper.eq(UserGroupPo::getUserGroupId, userGroupId);
         return userGroupMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public List<UserGroupPo> getByIdList(String tenantId, List<String> userGroupIdList) {
+        LambdaQueryWrapper<UserGroupPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserGroupPo::getTenantId, tenantId);
+        wrapper.in(UserGroupPo::getUserGroupId, userGroupIdList);
+        return userGroupMapper.selectList(wrapper);
     }
 
     @Override

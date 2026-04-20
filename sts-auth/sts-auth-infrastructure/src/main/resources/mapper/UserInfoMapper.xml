@@ -17,4 +17,23 @@
             and auth_user.username = #{username}
     </select>
 
+    <!-- 根据用户名查询用户信息 -->
+    <select id="getByUsernameInTenantIdList" resultType="com.yaocode.sts.auth.infrastructure.po.UserInfoPo">
+        SELECT
+            user_id
+        FROM
+            `auth_tbl_user` auth_user
+        inner join
+            `auth_tbl_rel_tenant_users` rel_tenant_user
+        on
+            auth_user.user_id = rel_tenant_user.user_id
+        where auth_user.username = #{username}
+        <if test="tenantIdList ！= null and tenantIdList.length > 0">
+            and rel_tenant_user.tenant_id in
+            <foreach collection="tenantIdList" open="(" close=")" item="tenantId" separator=",">
+                 #{tenantId}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>

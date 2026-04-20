@@ -10,6 +10,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -46,6 +48,15 @@ public interface RoleInfoConverter {
                 roleInfoPo.getIsDefault(),
                 stringToRoleId(roleInfoPo.getParentId())
         );
+    }
+
+    /**
+     * Po转entity
+     * @param roleInfoPoList RoleInfoPo
+     * @return RoleInfoPo
+     */
+    default List<RoleInfoEntity> toEntityList(List<RoleInfoPo> roleInfoPoList) {
+        return roleInfoPoList.stream().map(this::toEntity).toList();
     }
 
     /**

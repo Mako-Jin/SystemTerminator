@@ -45,8 +45,8 @@ public class UserGroupDomainServiceImpl implements UserGroupDomainService {
     }
 
     @Override
-    public boolean validateUserGroupId(List<UserGroupId> userGroupIdList) {
-        return false;
+    public boolean validateUserGroupId(TenantId tenantId, List<UserGroupId> userGroupIdList) {
+        return userGroupRepository.findByIdList(tenantId, userGroupIdList).map(List::isEmpty).orElse(false);
     }
 
     @Override

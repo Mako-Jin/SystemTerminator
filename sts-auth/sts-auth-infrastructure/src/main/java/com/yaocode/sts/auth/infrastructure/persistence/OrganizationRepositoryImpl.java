@@ -15,6 +15,7 @@ import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -71,6 +72,14 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     public Optional<OrganizationInfoEntity> findById(TenantId tenantId, OrganizationId id) {
         OrganizationInfoPo po = organizationInfoDao.getById(tenantId.getValue(), id.getValue());
         return Optional.ofNullable(OrganizationConverter.INSTANCE.toEntity(po));
+    }
+
+    @Override
+    public Optional<List<OrganizationInfoEntity>> findByIdList(TenantId tenantId, List<OrganizationId> organizationIdList) {
+        List<String> organizationIdStrList = organizationIdList.stream().map(OrganizationId::getValue).toList();
+        List<OrganizationInfoPo> poList = organizationInfoDao.getByIdList(tenantId.getValue(), organizationIdStrList);
+        List<OrganizationInfoEntity> entityList = OrganizationConverter.INSTANCE.toEntityList(poList);
+        return Optional.ofNullable(entityList);
     }
 
     @Override

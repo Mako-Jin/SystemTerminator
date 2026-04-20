@@ -3,6 +3,8 @@ package com.yaocode.sts.auth.infrastructure.mybatis.dao;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
 
+import java.util.List;
+
 /**
  * 角色信息Dao
  * @author: Jin-LiangBo
@@ -17,6 +19,14 @@ public interface RoleInfoDao extends IService<RoleInfoPo> {
      * @return RoleInfoPo
      */
     RoleInfoPo getByRoleId(String tenantId, String roleId);
+
+    /**
+     * 角色id查角色
+     * @param tenantId 租户id
+     * @param roleIdList 角色id
+     * @return RoleInfoPo
+     */
+    List<RoleInfoPo> getByIdList(String tenantId, List<String> roleIdList);
 
     /**
      * 查询租户下的默认权限

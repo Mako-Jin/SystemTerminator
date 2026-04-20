@@ -32,10 +32,11 @@ public interface RoleDomainService {
 
     /**
      * 验证角色id有效性
+     * @param tenantId 租户id
      * @param roleIdList 角色id列表
      * @return boolean
      */
-    boolean validateRoleId(List<RoleId> roleIdList);
+    boolean validateRoleId(TenantId tenantId, List<RoleId> roleIdList);
 
     /**
      * 给用户分配角色权限

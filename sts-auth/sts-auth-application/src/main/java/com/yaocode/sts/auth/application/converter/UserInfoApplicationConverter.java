@@ -1,6 +1,7 @@
 package com.yaocode.sts.auth.application.converter;
 
 import com.yaocode.sts.auth.application.dto.UserInfoDto;
+import com.yaocode.sts.auth.domain.command.CreateUserCommand;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
@@ -62,6 +63,23 @@ public interface UserInfoApplicationConverter {
                 stringToPhoneNum(user.getPhoneNum()),
                 user.getIsEnabled()
         );
+    }
+
+    /**
+     * DTO转Command
+     * @param userInfoDto dto
+     * @return CreateUserCommand
+     */
+    default CreateUserCommand toCommand(UserInfoDto userInfoDto) {
+        return CreateUserCommand.builder()
+                .username(stringToUsername(userInfoDto.getUsername()))
+                .tenantIdList(stringListToTenantIdList(userInfoDto.getTenantIdList()))
+                .email(stringToEmail(userInfoDto.getEmail()))
+                .phoneNum(stringToPhoneNum(userInfoDto.getPhoneNum()))
+                .organizationIdList(stringListToOrganizationIdList(userInfoDto.getOrganizationIdList()))
+                .userGroupIdList(stringListToUserGroupIdList(userInfoDto.getUserGroupIdList()))
+                .roleIdList(stringListToRoleIdList(userInfoDto.getRoleIdList()))
+                .build();
     }
 
     /**

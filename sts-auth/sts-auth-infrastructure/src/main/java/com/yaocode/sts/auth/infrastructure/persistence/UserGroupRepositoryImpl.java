@@ -1,7 +1,11 @@
 package com.yaocode.sts.auth.infrastructure.persistence;
 
+import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
 import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
 import com.yaocode.sts.auth.domain.repository.UserGroupRepository;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
+import com.yaocode.sts.auth.infrastructure.converter.OrganizationConverter;
+import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -15,6 +19,7 @@ import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -73,6 +78,14 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     public Optional<UserGroupEntity> findById(TenantId tenantId, UserGroupId userGroupId) {
         UserGroupPo userGroupPo = userGroupDao.getById(tenantId.getValue(), userGroupId.getValue());
         return Optional.ofNullable(userGroupConverter.toEntity(userGroupPo));
+    }
+
+    @Override
+    public Optional<List<UserGroupEntity>> findByIdList(TenantId tenantId, List<UserGroupId> userGroupIdList) {
+        List<String> userGroupIdStrList = userGroupIdList.stream().map(UserGroupId::getValue).toList();
+        List<UserGroupPo> poList = userGroupDao.getByIdList(tenantId.getValue(), userGroupIdStrList);
+        List<UserGroupEntity> entityList = userGroupConverter.toEntityList(poList);
+        return Optional.ofNullable(entityList);
     }
 
     @Override

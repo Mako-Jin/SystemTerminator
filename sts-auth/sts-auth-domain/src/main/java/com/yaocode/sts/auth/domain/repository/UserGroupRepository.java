@@ -7,6 +7,7 @@ import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
 import com.yaocode.sts.common.domain.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +32,14 @@ public interface UserGroupRepository extends Repository<UserGroupEntity, UserGro
      * @return java.util.Optional<UserGroupEntity>
      */
     Optional<UserGroupEntity> findById(TenantId tenantId, UserGroupId userGroupId);
+
+    /**
+     * 根据id查询数据
+     * @param tenantId 租户id
+     * @param userGroupIdList 用户组id
+     * @return java.util.Optional<UserGroupEntity>
+     */
+    Optional<List<UserGroupEntity>> findByIdList(TenantId tenantId, List<UserGroupId> userGroupIdList);
 
     /**
      * 根据用户组code查询数据

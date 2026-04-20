@@ -6,6 +6,7 @@ import com.yaocode.sts.auth.application.dto.UserRegistrationDto;
 import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
 import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.UserInfoApplicationService;
+import com.yaocode.sts.auth.domain.command.CreateUserCommand;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
@@ -90,54 +91,68 @@ public class UserInfoApplicationServiceImpl implements UserInfoApplicationServic
         //     }
         // }
 
-        // 验证角色存不存在
-        List<RoleId> roleIdList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(userInfoDto.getRoleIdList())) {
-            roleIdList = userInfoDto.getRoleIdList().stream().map(RoleId::of).distinct().toList();
-            if (!roleDomainService.validateRoleId(roleIdList)) {
-                throw new IllegalArgumentException("auth.params.data.not.exists");
-            }
-        }
+        // // 验证角色存不存在
+        // List<RoleId> roleIdList = new ArrayList<>();
+        // if (!CollectionUtils.isEmpty(userInfoDto.getRoleIdList())) {
+        //     roleIdList = userInfoDto.getRoleIdList().stream().map(RoleId::of).distinct().toList();
+        //     if (!roleDomainService.validateRoleId(roleIdList)) {
+        //         throw new IllegalArgumentException("auth.params.data.not.exists");
+        //     }
+        // }
+        //
+        // // 验证租户内，用户名是否唯一
+        // Username username = Username.of(userInfoDto.getUsername());
+        // // if (!userInfoDomainService.isUsernameUnique(username, tenantId)) {
+        // //     throw new IllegalArgumentException("当前用户名已经存在");
+        // // }
+        //
+        // // DTO转为DO
+        // userInfoDto.setUserId(IdFactory.generate().toString());
+        // UserInfoEntity userInfoEntity = userInfoApplicationConverter.toEntity(userInfoDto);
+        // // 设置默认密码
+        // // String defaultPassword = passwordPolicy.generateDefaultPassword();
+        // // String encryptedPassword = passwordEncoder.encode(defaultPassword);
+        // // userInfoEntity.setPassword(encryptedPassword);
+        // // // 标记需要首次登录修改密码
+        // // userInfoEntity.setNeedPasswordChange(true);
+        // // 保存用户信息
+        // UserId userId = userInfoRepository.save(userInfoEntity);
+        // // 关联租户信息
+        // // tenantDomainService.associatedTenantUser(tenantId, userId, UserAddTypeEnums.ADD);
+        // // if (Objects.nonNull(organizationId)) {
+        // //     // 关联组织机构信息
+        // //     organizationDomainService.associatedOrganizationUser(tenantId, organizationId, userId);
+        // // }
+        // // if (Objects.nonNull(userGroupId)) {
+        // //     // 关联租户信息
+        // //     userGroupDomainService.associatedUserGroupUser(tenantId, userGroupId, userId);
+        // // }
+        // // 默认权限
+        // // Optional<RoleId> defaultRoleId = roleInfoRepository.getDefaultRole(tenantId);
+        // // if (defaultRoleId.isPresent()) {
+        // //     roleIdList.add(defaultRoleId.get());
+        // // }
+        // // TODO 用户组和角色关联之后，用户组id不为空的时候，可能还得添加上用户组带的角色
+        // // 分配权限
+        // if (!CollectionUtils.isEmpty(roleIdList)) {
+        //     // roleDomainService.associatedRole(tenantId, userId, roleIdList);
+        // }
+        // // 发布用户新建的领域事件
+        // // domainEventPublisher.publishEvent(new UserCreateEvent(saveAuthorizeDO));
+        // return userId.getValue();
+        // ✅ 1. DTO转Command对象（更语义化）
+        CreateUserCommand command = userInfoApplicationConverter.toCommand(userInfoDto);
 
-        // 验证租户内，用户名是否唯一
-        Username username = Username.of(userInfoDto.getUsername());
-        // if (!userInfoDomainService.isUsernameUnique(username, tenantId)) {
-        //     throw new IllegalArgumentException("当前用户名已经存在");
-        // }
+        // ✅ 2. 调用领域服务执行业务逻辑（包含所有验证和规则）
+        UserInfoEntity user = userInfoDomainService.createUser(command);
 
-        // DTO转为DO
-        userInfoDto.setUserId(IdFactory.generate().toString());
-        UserInfoEntity userInfoEntity = userInfoApplicationConverter.toEntity(userInfoDto);
-        // 设置默认密码
-        // String defaultPassword = passwordPolicy.generateDefaultPassword();
-        // String encryptedPassword = passwordEncoder.encode(defaultPassword);
-        // userInfoEntity.setPassword(encryptedPassword);
-        // // 标记需要首次登录修改密码
-        // userInfoEntity.setNeedPasswordChange(true);
-        // 保存用户信息
-        UserId userId = userInfoRepository.save(userInfoEntity);
-        // 关联租户信息
-        // tenantDomainService.associatedTenantUser(tenantId, userId, UserAddTypeEnums.ADD);
-        // if (Objects.nonNull(organizationId)) {
-        //     // 关联组织机构信息
-        //     organizationDomainService.associatedOrganizationUser(tenantId, organizationId, userId);
-        // }
-        // if (Objects.nonNull(userGroupId)) {
-        //     // 关联租户信息
-        //     userGroupDomainService.associatedUserGroupUser(tenantId, userGroupId, userId);
-        // }
-        // 默认权限
-        // Optional<RoleId> defaultRoleId = roleInfoRepository.getDefaultRole(tenantId);
-        // if (defaultRoleId.isPresent()) {
-        //     roleIdList.add(defaultRoleId.get());
-        // }
-        // TODO 用户组和角色关联之后，用户组id不为空的时候，可能还得添加上用户组带的角色
-        // 分配权限
-        if (!CollectionUtils.isEmpty(roleIdList)) {
-            // roleDomainService.associatedRole(tenantId, userId, roleIdList);
-        }
-        // 发布用户新建的领域事件
-        // domainEventPublisher.publishEvent(new UserCreateEvent(saveAuthorizeDO));
+        // ✅ 3. 持久化聚合根
+        UserId userId = userInfoRepository.save(user);
+
+        // ✅ 4. 发布领域事件（由基础设施层自动处理）
+        // 事件还没想好怎么处理
+        // user.publishEvents(eventPublisher);
+
         return userId.getValue();
     }
 

@@ -7,6 +7,7 @@ import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
 import com.yaocode.sts.common.domain.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +32,14 @@ public interface OrganizationRepository extends Repository<OrganizationInfoEntit
      * @return java.util.Optional<OrganizationInfoEntity>
      */
     Optional<OrganizationInfoEntity> findById(TenantId tenantId, OrganizationId id);
+
+    /**
+     * 根据id查询数据
+     * @param tenantId 租户id
+     * @param organizationIdList 主键id
+     * @return java.util.Optional<OrganizationInfoEntity>
+     */
+    Optional<List<OrganizationInfoEntity>> findByIdList(TenantId tenantId, List<OrganizationId> organizationIdList);
 
     /**
      * 根据id查询数据

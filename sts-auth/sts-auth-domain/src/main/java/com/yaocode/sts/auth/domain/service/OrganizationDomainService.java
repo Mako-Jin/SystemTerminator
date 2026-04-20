@@ -24,10 +24,11 @@ public interface OrganizationDomainService {
 
     /**
      * 验证组织结构id有效性
+     * @param tenantId 租户id
      * @param organizationIdList 组织结构id列表
      * @return boolean
      */
-    boolean validateOrganizationId(List<OrganizationId> organizationIdList);
+    boolean validateOrganizationId(TenantId tenantId, List<OrganizationId> organizationIdList);
 
     /**
      * 组织分配用户

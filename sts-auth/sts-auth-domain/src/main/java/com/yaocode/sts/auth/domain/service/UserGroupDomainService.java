@@ -31,10 +31,11 @@ public interface UserGroupDomainService {
 
     /**
      * 验证用户组id有效性
+     * @param tenantId 租户id
      * @param userGroupIdList 用户组id列表
      * @return boolean
      */
-    boolean validateUserGroupId(List<UserGroupId> userGroupIdList);
+    boolean validateUserGroupId(TenantId tenantId, List<UserGroupId> userGroupIdList);
 
     /**
      * 用户组分配用户

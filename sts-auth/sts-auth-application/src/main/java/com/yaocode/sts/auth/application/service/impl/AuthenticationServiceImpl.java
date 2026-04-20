@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.application.service.impl;
 
+import com.yaocode.sts.auth.application.dto.AuthenticationDto;
+import com.yaocode.sts.auth.application.dto.AuthenticationResultDto;
 import com.yaocode.sts.auth.application.service.AuthenticationService;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
+    @Override
+    public AuthenticationResultDto authentication(AuthenticationDto authenticationDto) {
+        return null;
+    }
 
     // public AuthenticationResult authenticate(LoginCommand command) {
     //     try {

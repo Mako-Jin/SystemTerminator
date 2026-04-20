@@ -8,6 +8,8 @@ import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 组织机构DaoImpl
  * @author: Jin-LiangBo
@@ -25,6 +27,14 @@ public class OrganizationInfoDaoImpl extends ServiceImpl<OrganizationInfoMapper,
         wrapper.eq(OrganizationInfoPo::getTenantId, tenantId);
         wrapper.eq(OrganizationInfoPo::getOrganizationId, organizationId);
         return organizationInfoMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public List<OrganizationInfoPo> getByIdList(String tenantId, List<String> organizationIdList) {
+        LambdaQueryWrapper<OrganizationInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrganizationInfoPo::getTenantId, tenantId);
+        wrapper.in(OrganizationInfoPo::getOrganizationId, organizationIdList);
+        return organizationInfoMapper.selectList(wrapper);
     }
 
     @Override

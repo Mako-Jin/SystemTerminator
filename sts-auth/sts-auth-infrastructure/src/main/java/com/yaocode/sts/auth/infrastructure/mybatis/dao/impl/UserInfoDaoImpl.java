@@ -40,4 +40,9 @@ public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfoPo> imp
     public UserInfoPo getByUsername(String tenantId, String username) {
         return userInfoMapper.getByUsername(tenantId, username);
     }
+
+    @Override
+    public UserInfoPo getByUsernameInTenantIdList(List<String> tenantIdList, String username) {
+        return userInfoMapper.getByUsernameInTenantIdList(tenantIdList, username);
+    }
 }

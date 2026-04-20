@@ -10,6 +10,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  *
  * @author: Jin-LiangBo
@@ -36,9 +38,6 @@ public interface OrganizationConverter {
      * @param organizationInfoPo OrganizationInfoPo
      * @return OrganizationInfoEntity
      */
-    @Mapping(target = "organizationId", source = "organizationInfoPo.organizationId", qualifiedByName = "stringToOrganizationId")
-    @Mapping(target = "organizationCode", source = "organizationInfoPo.organizationCode", qualifiedByName = "stringToOrganizationCode")
-    @Mapping(target = "tenantId", source = "organizationInfoPo.tenantId", qualifiedByName = "stringToTenantId")
     default OrganizationInfoEntity toEntity(OrganizationInfoPo organizationInfoPo) {
         return OrganizationInfoEntity.build(
                 stringToOrganizationId(organizationInfoPo.getOrganizationId()),
@@ -49,6 +48,15 @@ public interface OrganizationConverter {
                 organizationInfoPo.getSort(),
                 stringToOrganizationId(organizationInfoPo.getParentId())
         );
+    }
+
+    /**
+     * Po转entity
+     * @param organizationInfoPoList List<OrganizationInfoPo>
+     * @return OrganizationInfoEntity
+     */
+    default List<OrganizationInfoEntity> toEntityList(List<OrganizationInfoPo> organizationInfoPoList) {
+        return organizationInfoPoList.stream().map(this::toEntity).toList();
     }
 
     /**

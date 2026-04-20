@@ -52,8 +52,8 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     }
 
     @Override
-    public boolean validateRoleId(List<RoleId> roleIdList) {
-        return false;
+    public boolean validateRoleId(TenantId tenantId, List<RoleId> roleIdList) {
+        return roleInfoRepository.findByIdList(tenantId, roleIdList).map(List::isEmpty).orElse(false);
     }
 
     @Override
@@ -64,8 +64,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             throw new IllegalArgumentException("auth.params.data.not.exists");
         }
         // 验证角色id存在不存在
-        List<RoleInfoEntity> roleInfoList = roleInfoRepository.findByIdList(tenantId, roleIdList);
-        if (roleInfoList.size() != roleIdList.size()) {
+        if (!validateRoleId(tenantId, roleIdList)) {
             throw new IllegalArgumentException("auth.params.data.not.exists");
         }
         // 检查用户存在不存在

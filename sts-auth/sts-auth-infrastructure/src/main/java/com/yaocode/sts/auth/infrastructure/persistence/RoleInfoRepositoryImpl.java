@@ -1,8 +1,11 @@
 package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
+import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
+import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
@@ -60,8 +63,11 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
     }
 
     @Override
-    public List<RoleInfoEntity> findByIdList(TenantId tenantId, List<RoleId> roleIdList) {
-        return null;
+    public Optional<List<RoleInfoEntity>> findByIdList(TenantId tenantId, List<RoleId> roleIdList) {
+        List<String> roleIdStrList = roleIdList.stream().map(RoleId::getValue).toList();
+        List<RoleInfoPo> poList = roleInfoDao.getByIdList(tenantId.getValue(), roleIdStrList);
+        List<RoleInfoEntity> entityList = RoleInfoConverter.INSTANCE.toEntityList(poList);
+        return Optional.ofNullable(entityList);
     }
 
     @Override

@@ -7,13 +7,13 @@
     <parent>
         <groupId>com.yaocode.sts</groupId>
         <artifactId>sts-auth</artifactId>
-        <version>0.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <packaging>jar</packaging>
     <artifactId>sts-auth-domain</artifactId>
-    <version>0.0.0</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>sts-auth-domain</name>
     <description>authentication and authority[domain] -- 认证和授权服务【领域层 - 纯业务逻辑】</description>

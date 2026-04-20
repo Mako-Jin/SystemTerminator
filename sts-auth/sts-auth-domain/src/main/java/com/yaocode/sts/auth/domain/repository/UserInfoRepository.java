@@ -41,6 +41,14 @@ public interface UserInfoRepository extends Repository<UserInfoEntity, UserId> {
     Optional<UserInfoEntity> findByUsername(TenantId tenantId, Username username);
 
     /**
+     * 通过用户名查询用户信息
+     * @param tenantIdList 租户id
+     * @param username 用户名
+     * @return java.util.Optional<UserInfoEntity>
+     */
+    Optional<UserInfoEntity> findByUsernameInTenantIdList(List<TenantId> tenantIdList, Username username);
+
+    /**
      * 获取租户下的用户列表
      * @param tenantId 租户id
      * @return java.util.List<UserId>

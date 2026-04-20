@@ -9,6 +9,8 @@ import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 角色DaoImpl
  * @author: Jin-LiangBo
@@ -26,6 +28,14 @@ public class RoleInfoDaoImpl extends ServiceImpl<RoleInfoMapper, RoleInfoPo> imp
         wrapper.eq(RoleInfoPo::getTenantId, tenantId);
         wrapper.eq(RoleInfoPo::getRoleId, roleId);
         return roleInfoMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public List<RoleInfoPo> getByIdList(String tenantId, List<String> roleIdList) {
+        LambdaQueryWrapper<RoleInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleInfoPo::getTenantId, tenantId);
+        wrapper.in(RoleInfoPo::getRoleId, roleIdList);
+        return roleInfoMapper.selectList(wrapper);
     }
 
     @Override

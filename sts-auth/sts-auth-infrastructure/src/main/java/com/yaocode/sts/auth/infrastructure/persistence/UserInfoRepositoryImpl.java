@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 仓库接口
@@ -63,6 +64,20 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     }
 
     private Optional<UserInfoEntity> fillRelData(UserInfoPo userPo) {
+        // String userId = userPo.getUserId();
+        // CompletableFuture<List<String>> tenants =
+        //         CompletableFuture.supplyAsync(() -> relTenantUserDao.getByUserId(userId));
+        // CompletableFuture<List<String>> organizations =
+        //         CompletableFuture.supplyAsync(() -> relOrganizationUserDao.getByUserId(userId));
+        // CompletableFuture<List<String>> roles =
+        //         CompletableFuture.supplyAsync(() -> relRoleUserDao.getByUserId(userId));
+        // CompletableFuture<List<String>> groups =
+        //         CompletableFuture.supplyAsync(() -> relUserGroupUserDao.getByUserId(userId));
+        //
+        // CompletableFuture.allOf(tenants, organizations, roles, groups).join();
+        // return Optional.ofNullable(UserInfoConverter.INSTANCE.toEntity(
+        //         userPo, tenants.get(), organizations.get(),  roles.get(), groups.get()
+        // ));
         List<String> tenantIdList = relTenantUserDao.getByUserId(userPo.getUserId());
         List<String> organizationIdList = relOrganizationUserDao.getByUserId(userPo.getUserId());
         List<String> roleIdList = relRoleUserDao.getByUserId(userPo.getUserId());
@@ -75,6 +90,13 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     @Override
     public Optional<UserInfoEntity> findByUsername(TenantId tenantId, Username username) {
         UserInfoPo userPo = userInfoDao.getByUsername(tenantId.getValue(), username.getValue());
+        return fillRelData(userPo);
+    }
+
+    @Override
+    public Optional<UserInfoEntity> findByUsernameInTenantIdList(List<TenantId> tenantIdList, Username username) {
+        List<String> tenantIdStrList = tenantIdList.stream().map(TenantId::getValue).toList();
+        UserInfoPo userPo = userInfoDao.getByUsernameInTenantIdList(tenantIdStrList, username.getValue());
         return fillRelData(userPo);
     }
 
