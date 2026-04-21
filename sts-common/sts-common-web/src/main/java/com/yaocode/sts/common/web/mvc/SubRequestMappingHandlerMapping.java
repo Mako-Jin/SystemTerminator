@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.mvc;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotationPredicates;
@@ -32,12 +33,12 @@ import java.util.stream.Stream;
  */
 public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
 
-    private Map<String, Predicate<Class<?>>> pathPrefixes = Collections.emptyMap();
+    private final Map<String, Predicate<Class<?>>> pathPrefixes = Collections.emptyMap();
 
     @Nullable
     private StringValueResolver embeddedValueResolver;
 
-    private RequestMappingInfo.BuilderConfiguration config = new RequestMappingInfo.BuilderConfiguration();
+    private final RequestMappingInfo.BuilderConfiguration config = new RequestMappingInfo.BuilderConfiguration();
 
     private static List<AnnotationDescriptor> getAnnotationDescriptors(AnnotatedElement element) {
         return MergedAnnotations.from(element, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY, RepeatableContainers.none())
@@ -58,7 +59,7 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
                 info = typeInfo.combine(info);
             }
             if (info.isEmptyMapping()) {
-                info = info.mutate().paths("", "/").options(this.config).build();
+                info = info.mutate().paths(SymbolConstants.EMPTY_STR, SymbolConstants.FORWARD_SLASH).options(this.config).build();
             }
             String prefix = getPathPrefix(handlerType);
             if (prefix != null) {

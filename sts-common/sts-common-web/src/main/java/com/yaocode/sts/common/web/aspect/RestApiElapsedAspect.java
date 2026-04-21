@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.aspect;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.web.properties.RestApiElapsedProperties;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ public class RestApiElapsedAspect {
         this.attributes = attributes;
     }
 
-    private static final String SPLIT = "#";
+    private static final String SPLIT = SymbolConstants.NUMBER_SIGN;
 
     @Pointcut(value = "execution(* com.yaocode.sts..*.controller..*(..))")
     public void allControllerMethod() {}
@@ -47,9 +48,16 @@ public class RestApiElapsedAspect {
         }
 
         long startTime = System.currentTimeMillis();
-        String invoke = "[" + point.getSignature().getDeclaringType().getSimpleName()
-                + SPLIT + point.getSignature().getName() + "]" + "->"
-                + this.request.getMethod().toUpperCase() + "::" + this.request.getServletPath();
+        StringBuilder invoke = new StringBuilder();
+        invoke.append(SymbolConstants.LEFT_BRACKETS);
+        invoke.append(point.getSignature().getDeclaringType().getSimpleName());
+        invoke.append(SPLIT);
+        invoke.append(point.getSignature().getName());
+        invoke.append(SymbolConstants.RIGHT_BRACKETS);
+        invoke.append(SymbolConstants.RIGHT_ARROW);
+        invoke.append(this.request.getMethod().toUpperCase());
+        invoke.append(SymbolConstants.DOUBLE_COLON);
+        invoke.append(this.request.getServletPath());
         logger.info("{} invoke start...", invoke);
         try {
             Object result = point.proceed();

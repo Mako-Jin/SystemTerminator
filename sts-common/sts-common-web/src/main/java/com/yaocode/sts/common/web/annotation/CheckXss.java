@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.annotation;
 
+import com.yaocode.sts.common.web.constants.WebI18nConstants;
 import com.yaocode.sts.common.web.validator.XssValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -22,7 +23,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 public @interface CheckXss {
 
-    String message() default "包含非法字符";
+    String message() default WebI18nConstants.SQL_INJECTION_DEFAULT_MESSAGE;
 
     Class<?>[] groups() default {};
 

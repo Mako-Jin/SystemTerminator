@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.exception;
 
+import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.common.web.enums.ResultEnums;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +13,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ServerException extends RuntimeException {
+public class ServerException extends BusinessException {
 
     private String code;
 

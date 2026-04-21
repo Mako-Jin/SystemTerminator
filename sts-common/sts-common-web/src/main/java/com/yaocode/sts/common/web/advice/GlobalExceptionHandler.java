@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.advice;
 
+import com.yaocode.sts.common.basic.exception.ParamCheckException;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.enums.ResultEnums;
 import com.yaocode.sts.common.web.model.ResultModel;
@@ -30,10 +31,10 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler({IllegalArgumentException.class, ParamCheckException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResultModel<?> handleIllegalArgumentException(IllegalArgumentException exception) {
-        logger.error("参数校验异常 ==> {}", exception.getMessage());
+    public ResultModel<?> handleIllegalArgumentException(RuntimeException exception) {
+        logger.error("param check error ==> {}", exception.getMessage());
         return handle(ResultEnums.PARAM_ERROR, exception);
     }
 
@@ -41,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResultModel<?> handleException(Exception exception) {
-        logger.error("服务内部异常 ==> {}", exception.getMessage());
+        logger.error("server internal error ==> {}", exception.getMessage());
         return handle(ResultEnums.SYSTEM_ERROR, exception);
     }
 
