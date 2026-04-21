@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.domain.valueobject;
 
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -20,7 +21,7 @@ public class TenantId extends Identifier<String> {
 
     public static TenantId of(String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException("auth.identifier.value.null");
+            throw new IllegalArgumentException(DomainI18nKeyConstants.TENANT_ID_NULL);
         }
         return new TenantId(value);
     }

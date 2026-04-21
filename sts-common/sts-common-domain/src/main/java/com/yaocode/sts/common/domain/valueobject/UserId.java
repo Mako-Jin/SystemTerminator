@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.domain.valueobject;
 
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -20,7 +21,7 @@ public class UserId extends Identifier<String> {
 
     public static UserId of(String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException("用户ID不能为空！");
+            throw new IllegalArgumentException(DomainI18nKeyConstants.USER_ID_NULL);
         }
         return new UserId(value);
     }

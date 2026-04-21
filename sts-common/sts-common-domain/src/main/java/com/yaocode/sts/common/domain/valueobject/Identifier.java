@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.domain.valueobject;
 
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
+
 import java.util.Objects;
 
 /**
@@ -16,7 +18,7 @@ public abstract class Identifier<T> implements ValueObject {
 
     protected T validate(T value) {
         if (value == null) {
-            throw new IllegalArgumentException("common.domain.identifier.value.null");
+            throw new IllegalArgumentException(DomainI18nKeyConstants.COMMON_DOMAIN_IDENTIFIER_VALUE_NULL);
         }
         return value;
     }

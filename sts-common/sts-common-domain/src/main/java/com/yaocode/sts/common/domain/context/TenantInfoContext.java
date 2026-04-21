@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.domain.context;
 
-import com.yaocode.sts.common.basic.exception.DataNotFoundException;
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
+import com.yaocode.sts.common.domain.exception.TenantIdNullException;
+import com.yaocode.sts.common.domain.exception.TenantNotFoundException;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +47,10 @@ public final class TenantInfoContext {
      */
     public static void setTenantId(TenantId tenantId) {
         if (Objects.isNull(tenantId)) {
-            throw new IllegalArgumentException("租户ID不能为空");
+            throw new TenantIdNullException(DomainI18nKeyConstants.TENANT_ID_NULL);
         }
         CURRENT_TENANT_INFO.get().tenantId = tenantId;
-        logger.debug("设置当前租户: {}", tenantId);
+        logger.debug("set current tenant id: {}", tenantId);
     }
 
     /**
@@ -57,7 +59,7 @@ public final class TenantInfoContext {
     public static TenantId getTenantId() {
         TenantId tenantId = getInstance().tenantId;
         if (Objects.isNull(tenantId)) {
-            throw new DataNotFoundException("未找到租户上下文，请检查请求头X-Tenant-Id");
+            throw new TenantNotFoundException(DomainI18nKeyConstants.TENANT_INFO_NOT_FOUND);
         }
         return tenantId;
     }
