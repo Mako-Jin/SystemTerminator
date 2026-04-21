@@ -102,16 +102,16 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
                 requestPath -> subPaths.stream().map(subPath -> combinePath(requestPath, subPath))
         ).collect(Collectors.toList());
         if (combinePathList.isEmpty()) {
-            logger.warn("扫描路径为空");
+            logger.warn("scanning path is empty.");
             return Collections.emptyList();
         }
         if (annotationPathList.stream().filter(StringUtils::hasText).toList().isEmpty()) {
-            logger.warn("配置路径为空，已设置扫描路径");
+            logger.warn("The configuration path is empty. It has been set to the default scanning path.");
             return combinePathList;
         }
         List<String> finalResultPathList = annotationPathList.stream().filter(combinePathList::contains).toList();
         if (finalResultPathList.size() != annotationPathList.size()) {
-            logger.warn("已过滤掉{}个不生效路径", annotationPathList.size() - finalResultPathList.size());
+            logger.warn("The {} ineffective paths have been filtered out.", annotationPathList.size() - finalResultPathList.size());
         }
         return finalResultPathList;
     }

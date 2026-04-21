@@ -35,8 +35,10 @@ import org.springframework.web.client.RestTemplate;
 @ConditionalOnWebApplication
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(ResourcesConfigProperties.class)
-@ConditionalOnProperty(name = "yaocode.web.resources.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = ResourcesConfig.RESOURCE_ENABLE_PREFIX, matchIfMissing = true)
 public class ResourcesConfig {
+
+    public static final String RESOURCE_ENABLE_PREFIX = "yaocode.web.resources.enabled";
 
     @Bean
     @ConditionalOnMissingBean

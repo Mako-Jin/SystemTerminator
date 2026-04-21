@@ -111,7 +111,7 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
 
     public void addResources(ApiResourcesModel resource) {
         if (isExist(resource)) {
-            logger.warn("Api编码={}已存在", resource.getCode());
+            logger.warn("Api resource code={} exists", resource.getCode());
             return;
         }
         apiResourcesModelList.add(resource);
@@ -173,11 +173,12 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
                 // 检查是否是直接匹配
                 if (newRequestPathSet.contains(apiPath) || requestPathSet.contains(apiPath)) {
                     String combinePath = combinePath(parentPath, apiPath);
-                    logger.warn("方法路径 {} 已自动修改成全路径 {}", apiPath, combinePath);
+                    logger.warn("method path: {} has change to full path: {}", apiPath,
+                            combinePath);
                     finalPathListResult.add(combinePath(parentPath, apiPath));
                     continue;
                 }
-                logger.warn("路径配置错误，已自动忽略。API路径: {}", apiPath);
+                logger.warn("Path configuration error has been automatically ignored. API path: {}", apiPath);
             }
         }
         return new ArrayList<>(new LinkedHashSet<>(finalPathListResult));

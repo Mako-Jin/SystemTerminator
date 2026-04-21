@@ -97,7 +97,7 @@ public class ResourcesBuilder implements ApplicationContextAware, ApplicationLis
             ResourcesService serviceBean = applicationContext.getBean(ResourcesService.class);
             serviceBean.batchSaveResources(resourcesModelList);
         } catch (NoSuchBeanDefinitionException exception) {
-            logger.debug("没有发现Bean：ResourceService, 远程调用");
+            logger.debug("Bean：ResourceService not found, remote call");
             resourcesServiceClient.batchSaveResources(resourcesModelList);
         }
     }

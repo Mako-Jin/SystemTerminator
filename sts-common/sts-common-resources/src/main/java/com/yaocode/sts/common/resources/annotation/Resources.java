@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.resources.annotation;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.resources.constants.IConstants;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import org.springframework.core.annotation.AliasFor;
 
@@ -26,20 +28,20 @@ import java.lang.annotation.Target;
 public @interface Resources {
 
     @AliasFor(annotation = Resources.class, attribute = "code")
-    String value() default "";
+    String value() default SymbolConstants.EMPTY_STR;
 
     @AliasFor(annotation = Resources.class, attribute = "value")
-    String code() default "";
+    String code() default SymbolConstants.EMPTY_STR;
 
-    String name() default "";
+    String name() default SymbolConstants.EMPTY_STR;
 
-    String desc() default "";
+    String desc() default SymbolConstants.EMPTY_STR;
 
     ResourceTypeEnums type();
 
-    String version() default "0.0.0.0";
+    String version() default IConstants.DEFAULT_RESOURCE_VERSION;
 
-    String icon() default "";
+    String icon() default SymbolConstants.EMPTY_STR;
 
     boolean isEnabled() default true;
 

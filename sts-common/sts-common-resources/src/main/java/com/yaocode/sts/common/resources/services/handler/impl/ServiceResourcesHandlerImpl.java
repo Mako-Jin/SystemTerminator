@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.resources.services.handler.impl;
 
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.constants.IConstants;
@@ -83,9 +84,9 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
 
     private void checkAndSetServicePath(ServiceResourcesModel serviceResourcesModel) {
         String servletPath = getApplicationContext().getEnvironment()
-                .getProperty(IConstants.SERVLET_CONTEXT_PATH_KEY, "");
+                .getProperty(IConstants.SERVLET_CONTEXT_PATH_KEY, SymbolConstants.EMPTY_STR);
         if (!Objects.equals(serviceResourcesModel.getPath(), servletPath)) {
-            logger.warn("路径配置错误，已更新成生效路径");
+            logger.warn("Path configuration error has been corrected and updated to the effective path.");
             serviceResourcesModel.setPath(servletPath);
         }
     }

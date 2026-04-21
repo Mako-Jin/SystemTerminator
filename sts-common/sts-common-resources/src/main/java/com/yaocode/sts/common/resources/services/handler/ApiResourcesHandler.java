@@ -29,10 +29,4 @@ public interface ApiResourcesHandler extends ResourcesHandler<ApiResources, ApiR
      */
     void build(Class<?> beanClazz, ModuleResourcesModel moduleResourcesModel);
 
-    /**
-     * 获取当前接口资源集合
-     * @return java.util.List<ApiResourcesModel>
-     */
-    List<ApiResourcesModel> getResources();
-
 }
