@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.tools;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +20,7 @@ public class StringUtils {
      * @return java.util.List<java.lang.String>
      */
     public static List<String> convertStringToList(String str) {
-        return convertStringToList(str, ",");
+        return convertStringToList(str, SymbolConstants.COMMA);
     }
 
     /**
