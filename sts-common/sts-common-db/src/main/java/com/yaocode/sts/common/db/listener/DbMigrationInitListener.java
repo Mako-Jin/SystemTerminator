@@ -52,7 +52,7 @@ public class DbMigrationInitListener {
         try {
             List<Resource> resources = scriptLoader.loadScript(defaultSqlLocation, this::defaultPredict);
             if (resources.isEmpty()) {
-                logger.info("版本控制的脚本加载为空");
+                logger.info("The version control script is empty.");
                 return;
             }
             List<SqlStatement> statements = new ArrayList<>();
@@ -81,7 +81,7 @@ public class DbMigrationInitListener {
                 sqlScriptExecutor.executeScript(statement);
             }
         } catch (IOException | URISyntaxException ioException) {
-            logger.info("版本控制的脚本加载出错 => {}", ioException.getMessage());
+            logger.info("The script for version control failed to load properly. => {}", ioException.getMessage());
         }
     }
 
@@ -89,7 +89,7 @@ public class DbMigrationInitListener {
         try {
             return resource.getURL().getPath().contains(CommonConstants.JAR_PACKAGE_NAME);
         } catch (IOException ioException) {
-            logger.info("版本控制的脚本加载出错 => {}", ioException.getMessage());
+            logger.info("The script for version control failed to load properly. => {}", ioException.getMessage());
             return false;
         }
     }

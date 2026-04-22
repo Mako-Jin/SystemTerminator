@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.db.parser;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.db.enums.StatementEnums;
 import com.yaocode.sts.common.db.statement.AlterStatement;
 import com.yaocode.sts.common.db.statement.CreateTableStatement;
@@ -55,7 +56,7 @@ public class MysqlParse extends AbstractSqlParser {
                 continue;
             }
 
-            currentStatement.append(line).append(" ");
+            currentStatement.append(line).append(SymbolConstants.SPACE_STR);
 
             // 检查语句结束
             if (line.endsWith(";")) {

@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.db.statement;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.db.constants.SqlConstants;
 import com.yaocode.sts.common.db.enums.SqlScriptTypeEnums;
 import com.yaocode.sts.common.db.enums.SqlSecurityLevelEnums;
@@ -11,13 +12,13 @@ import com.yaocode.sts.common.db.enums.SqlSecurityLevelEnums;
  */
 public class SelectStatement extends AbstractSqlStatement {
 
-    private static final String FROM_KEY_WORLD = " " + SqlConstants.FROM + " ";
+    private static final String FROM_KEY_WORLD = SymbolConstants.SPACE_STR + SqlConstants.FROM + SymbolConstants.SPACE_STR;
 
     public SelectStatement() {
     }
 
     public SelectStatement(String sql, SqlSecurityLevelEnums securityLevel, SqlScriptTypeEnums category) {
-        super(sql, securityLevel, category, "");
+        super(sql, securityLevel, category, SymbolConstants.EMPTY_STR);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.db.statement;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.db.constants.SqlConstants;
 import com.yaocode.sts.common.db.enums.SqlScriptTypeEnums;
 import com.yaocode.sts.common.db.enums.SqlSecurityLevelEnums;
@@ -38,22 +39,22 @@ public abstract class AbstractSqlStatement implements SqlStatement {
         String trimmed = sqlPart.trim();
 
         // 处理反引号 `table_name`
-        if (trimmed.startsWith("`")) {
-            int endIndex = trimmed.indexOf("`", 1);
+        if (trimmed.startsWith(SymbolConstants.BACKTICK)) {
+            int endIndex = trimmed.indexOf(SymbolConstants.BACKTICK, 1);
             if (endIndex != -1) {
                 return trimmed.substring(1, endIndex);
             }
         }
         // 处理方括号 [table_name]
-        else if (trimmed.startsWith("[")) {
-            int endIndex = trimmed.indexOf("]", 1);
+        else if (trimmed.startsWith(SymbolConstants.LEFT_BRACKETS)) {
+            int endIndex = trimmed.indexOf(SymbolConstants.RIGHT_BRACKETS, 1);
             if (endIndex != -1) {
                 return trimmed.substring(1, endIndex);
             }
         }
         // 处理双引号 "table_name"
-        else if (trimmed.startsWith("\"")) {
-            int endIndex = trimmed.indexOf("\"", 1);
+        else if (trimmed.startsWith(SymbolConstants.DOUBLE_QUOTES)) {
+            int endIndex = trimmed.indexOf(SymbolConstants.DOUBLE_QUOTES, 1);
             if (endIndex != -1) {
                 return trimmed.substring(1, endIndex);
             }
@@ -62,7 +63,7 @@ public abstract class AbstractSqlStatement implements SqlStatement {
         // 普通表名，取第一个单词（遇到空格、分号、括号等结束）
         StringBuilder tableName = new StringBuilder();
         for (char c : trimmed.toCharArray()) {
-            if (Character.isWhitespace(c) || c == '(' || c == ';') {
+            if (Character.isWhitespace(c) || c == SymbolConstants.LEFT_PARENTHESIS || c == SymbolConstants.SEMICOLON) {
                 break;
             }
             tableName.append(c);

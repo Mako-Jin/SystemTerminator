@@ -43,7 +43,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
         String checkSql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?";
         try {
             if (Objects.isNull(getSystemConnection())) {
-                logger.error("数据库系统连接为空");
+                logger.error("The database connection is empty.");
                 return false;
             }
             PreparedStatement stmt = getSystemConnection().prepareStatement(checkSql);
@@ -52,7 +52,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             return rs.next();
 
         } catch (SQLException e) {
-            logger.error("检查数据库存在性失败", e);
+            logger.error("Failed to check the existence of the database", e);
             return false;
         }
     }
@@ -65,13 +65,13 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
         );
         try {
             if (Objects.isNull(getSystemConnection())) {
-                logger.error("数据库系统连接为空");
+                logger.error("The database connection is null.");
                 return;
             }
             Statement stmt = getSystemConnection().createStatement();
             stmt.execute(createSql);
         } catch (SQLException e) {
-            logger.error("数据库创建失败", e);
+            logger.error("Database connection creation failed", e);
         }
     }
 
@@ -84,7 +84,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
                 "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
         try {
             if (Objects.isNull(getConnection())) {
-                logger.error("数据库系统连接为空");
+                logger.error("The database connection is null.");
                 return false;
             }
             try (
@@ -106,7 +106,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
     @Override
     public void executeScript(SqlStatement sqlStatement) {
         if (Objects.isNull(getConnection())) {
-            logger.warn("数据库连接为空");
+            logger.warn("The database connection is null.");
             return;
         }
         if (this.checkSqlExecuteStatus(sqlStatement.getSql())) {
@@ -119,7 +119,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             stmt.execute(sqlStatement.getSql());
             status = 1;
         } catch (SQLException e) {
-            logger.error("初始化执行记录表失败: " + e.getMessage());
+            logger.error("Initialization of the execution record table failed: " + e.getMessage());
             errorMessage = e.getMessage();
         }
         LocalDateTime endTime = LocalDateTime.now();
@@ -140,14 +140,14 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
 
             prepareStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("执行记录数据插入失败: " + e.getMessage());
+            logger.error("Data insertion for the execution record failed: " + e.getMessage());
         }
     }
 
     @Override
     public long getTableDataCount(String tableName) {
         if (Objects.isNull(getConnection())) {
-            logger.warn("数据库连接为空");
+            logger.warn("The database connection is null.");
             return 1;
         }
         if (tableName == null || SqlConstants.UNKNOWN.equals(tableName)) {
@@ -168,7 +168,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
     @Override
     public boolean checkSqlExecuteStatus(String sql) {
         if (Objects.isNull(getConnection())) {
-            logger.warn("数据库连接为空");
+            logger.warn("The database connection is null.");
             return false;
         }
         String scriptHistory = "select count(*) from aux_tbl_script_history where script_content = ?";
@@ -179,7 +179,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
                 return resultSet.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            logger.error("执行记录数据插入失败: " + e.getMessage());
+            logger.error("Data insertion for the execution record failed: " + e.getMessage());
         }
         return false;
     }

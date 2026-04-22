@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.db.statement;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.db.constants.SqlConstants;
 import com.yaocode.sts.common.db.enums.SqlScriptTypeEnums;
 import com.yaocode.sts.common.db.enums.SqlSecurityLevelEnums;
@@ -12,7 +13,12 @@ import com.yaocode.sts.common.db.enums.SqlSecurityLevelEnums;
 public class UnknownSqlStatement extends AbstractSqlStatement {
 
     public UnknownSqlStatement() {
-        super("", SqlSecurityLevelEnums.UNKNOWN, SqlScriptTypeEnums.UNKNOWN, SqlConstants.UNKNOWN);
+        super(
+                SymbolConstants.EMPTY_STR,
+                SqlSecurityLevelEnums.UNKNOWN,
+                SqlScriptTypeEnums.UNKNOWN,
+                SqlConstants.UNKNOWN
+        );
     }
 
     @Override

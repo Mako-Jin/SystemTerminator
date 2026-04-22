@@ -56,7 +56,7 @@ public class DbMigrationStartListener {
             allResources.addAll(resources);
         }
         if (allResources.isEmpty()) {
-            logger.info("sql脚本加载为空");
+            logger.info("The version control script is empty.");
             return;
         }
         List<SqlStatement> statements = new ArrayList<>();
@@ -75,7 +75,7 @@ public class DbMigrationStartListener {
                 // 需要检查表存在，数据是不是空
                 if (sqlScriptExecutor.checkTableExists(statement.getTableName())) {
                     if (sqlScriptExecutor.getTableDataCount(statement.getTableName()) > 0) {
-                        logger.warn("当前表={}的数据不为空，不执行删除", statement.getTableName());
+                        logger.warn("The current table data = {} is not empty, so the deletion will not be executed.", statement.getTableName());
                         continue;
                     }
                 }
@@ -96,7 +96,7 @@ public class DbMigrationStartListener {
         try {
             return !resource.getURL().getPath().contains(CommonConstants.JAR_PACKAGE_NAME);
         } catch (IOException ioException) {
-            logger.info("版本控制的脚本加载出错 => {}", ioException.getMessage());
+            logger.info("The script for version control failed to load properly. => {}", ioException.getMessage());
             return false;
         }
     }

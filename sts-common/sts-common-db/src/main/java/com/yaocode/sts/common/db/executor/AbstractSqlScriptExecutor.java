@@ -1,5 +1,8 @@
 package com.yaocode.sts.common.db.executor;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.db.enums.DBTypeEnums;
+import com.yaocode.sts.common.db.exception.UnsupportedDbTypeException;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +37,7 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         try {
             return dataSource.getConnection();
         } catch (SQLException sqlException) {
-            logger.error("获取数据库连接失败 => {}", sqlException.getMessage());
+            logger.error("Failed to obtain database connection => {}", sqlException.getMessage());
         }
         return null;
     }
@@ -43,24 +46,24 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         try {
             return dataSource.getConnection();
         } catch (SQLException sqlException) {
-            logger.error("获取数据库连接失败 => {}", sqlException.getMessage());
+            logger.error("Failed to obtain database connection => {}", sqlException.getMessage());
         }
         return null;
     }
 
     private String extractBaseUrl(String url) {
-        if (url.contains("?")) {
-            return url.split("\\?")[0];
+        if (url.contains(SymbolConstants.QUESTION_MARKS)) {
+            return url.split(SymbolConstants.QUESTION_MARKS)[0];
         }
         return url;
     }
 
     private String extractDatabaseName(String url) {
         String baseUrl = extractBaseUrl(url);
-        if (baseUrl.contains("/")) {
-            return baseUrl.substring(baseUrl.lastIndexOf("/") + 1);
+        if (baseUrl.contains(SymbolConstants.FORWARD_SLASH)) {
+            return baseUrl.substring(baseUrl.lastIndexOf(SymbolConstants.FORWARD_SLASH) + 1);
         }
-        return "";
+        return SymbolConstants.EMPTY_STR;
     }
 
     protected String getDatabaseName() {
@@ -77,14 +80,14 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         if (dataSource instanceof HikariDataSource hikariDataSource) {
             return hikariDataSource.getJdbcUrl();
         }
-        return "";
+        return SymbolConstants.EMPTY_STR;
     }
 
     private String createSystemDatabaseUrl(String datasourceUrl) {
-        if (datasourceUrl.contains("mysql")) {
+        if (datasourceUrl.contains(DBTypeEnums.MYSQL.getName())) {
             // 替换数据库名为 mysql 系统数据库，或者移除数据库名
             return addPublicKeyRetrieval(datasourceUrl.replaceFirst("/[^/?]+([?]|$)", "/mysql$1"));
-        } else if (datasourceUrl.contains("postgresql")) {
+        } else if (datasourceUrl.contains(DBTypeEnums.POSTGRESQL.getName())) {
             // PostgreSQL 连接到 postgres 系统数据库
             return datasourceUrl.replaceFirst("/[^/?]+([?]|$)", "/postgres$1");
         }
@@ -100,7 +103,7 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         StringBuilder modifiedUrl = new StringBuilder(originalUrl);
 
         // 检查是否已有参数
-        boolean hasParams = originalUrl.contains("?");
+        boolean hasParams = originalUrl.contains(SymbolConstants.QUESTION_MARKS);
 
         // 添加 allowPublicKeyRetrieval
         if (!originalUrl.contains("allowPublicKeyRetrieval")) {
@@ -127,13 +130,13 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
      */
     private String removeDatabaseFromUrl(String url) {
         // 处理 jdbc:mysql://host:port/dbname?params
-        if (url.contains("/")) {
-            String base = url.substring(0, url.lastIndexOf("/"));
-            if (url.contains("?")) {
-                String params = url.substring(url.indexOf("?"));
-                return base + "/" + params;
+        if (url.contains(SymbolConstants.FORWARD_SLASH)) {
+            String base = url.substring(0, url.lastIndexOf(SymbolConstants.FORWARD_SLASH));
+            if (url.contains(SymbolConstants.QUESTION_MARKS)) {
+                String params = url.substring(url.indexOf(SymbolConstants.QUESTION_MARKS));
+                return base + SymbolConstants.FORWARD_SLASH + params;
             }
-            return base + "/";
+            return base + SymbolConstants.FORWARD_SLASH;
         }
         return url;
     }
@@ -148,7 +151,7 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
             copyDataSource.setDriverClassName(hikariDataSource.getDriverClassName());
             return copyDataSource;
         }
-        throw new IllegalArgumentException("暂不支持其他DataSource类型");
+        throw new UnsupportedDbTypeException("Currently, other types of DataSources are not supported.");
     }
 
     public DataSource getDataSource() {

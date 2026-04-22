@@ -5,7 +5,7 @@ package com.yaocode.sts.common.basic.exception;
  * @author: Jin-LiangBo
  * @date: 2025年10月22日 23:06
  */
-public class NotAllowedException extends RuntimeException {
+public class NotAllowedException extends BusinessException {
     public NotAllowedException(String message) {
         super(message);
     }
