@@ -1,16 +1,13 @@
-package com.yaocode.sts.auth.application.service.provider;
+package com.yaocode.sts.auth.domain.service.provider;
 
-import com.yaocode.sts.auth.application.dto.AuthenticationResultDto;
-import com.yaocode.sts.auth.application.exception.AuthenticationException;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
+import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordAuthCredential;
 import com.yaocode.sts.common.domain.context.TenantInfoContext;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * 密码模式认证provider
@@ -29,7 +26,12 @@ public class PasswordAuthenticationProvider extends AbstractAuthenticationProvid
     }
 
     @Override
-    public AuthenticationResultDto authenticate(PasswordAuthCredential credential) {
+    public boolean supports(AbstractAuthCredential credential) {
+        return super.supports(credential);
+    }
+
+    @Override
+    protected UserInfoEntity doAuthenticate(AuthenticationToken authentication) {
         // 查询用户
         UserInfoEntity user = userInfoRepository.findByUsername(TenantInfoContext.getTenantId(), credential.getUsername())
                 .orElseThrow(() -> new AuthenticationException("用户名或密码错误"));

@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.interfaces.advice;
 
 import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
 import com.yaocode.sts.auth.application.exception.AuthServerException;
-import com.yaocode.sts.auth.application.exception.AuthenticationException;
+import com.yaocode.sts.auth.domain.exception.AuthenticationException;
 import com.yaocode.sts.auth.application.exception.PermissionException;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.advice.GlobalExceptionHandler;

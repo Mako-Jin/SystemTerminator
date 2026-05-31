@@ -1,4 +1,4 @@
-package com.yaocode.sts.auth.application.exception;
+package com.yaocode.sts.auth.domain.exception;
 
 /**
  * 认证异常

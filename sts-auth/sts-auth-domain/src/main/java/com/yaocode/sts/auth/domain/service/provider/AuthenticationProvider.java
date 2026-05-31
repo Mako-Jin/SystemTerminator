@@ -1,4 +1,4 @@
-package com.yaocode.sts.auth.application.service.provider;
+package com.yaocode.sts.auth.domain.service.provider;
 
 import com.yaocode.sts.auth.application.dto.AuthenticationResultDto;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
