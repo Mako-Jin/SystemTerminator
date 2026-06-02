@@ -33,6 +33,7 @@
         <module>sts-common-db</module>
         <module>sts-common-resources</module>
         <module>sts-common-messages</module>
+        <module>sts-common-crypto</module>
     </modules>
 
     <dependencyManagement>
