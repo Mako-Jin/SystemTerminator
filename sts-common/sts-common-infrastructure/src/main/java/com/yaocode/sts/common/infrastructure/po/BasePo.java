@@ -1,4 +1,4 @@
-package com.yaocode.sts.auth.infrastructure.po;
+package com.yaocode.sts.common.infrastructure.po;
 
 import lombok.Data;
 

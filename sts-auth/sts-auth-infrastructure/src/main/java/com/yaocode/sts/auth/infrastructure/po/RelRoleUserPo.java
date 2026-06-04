@@ -25,9 +25,13 @@ public class RelRoleUserPo {
      */
     private String roleId;
     /**
-     * 用户id
+     * 可指向用户或用户组
      */
-    private String userId;
+    private String memberId;
+    /**
+     * "USER" 或 "GROUP"
+     */
+    private String dataType;
     /**
      * 租户id
      */

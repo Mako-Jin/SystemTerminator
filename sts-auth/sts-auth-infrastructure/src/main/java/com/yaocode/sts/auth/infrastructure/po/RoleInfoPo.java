@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * 角色持久化对象
@@ -45,5 +46,20 @@ public class RoleInfoPo extends BasePo {
      * 是否是租户下的默认权限
      */
     private Integer isDefault;
+
+    /**
+     * 角色分类：dynamic-动态角色；static-静态角色；app-应用角色
+     */
+    private String category;
+
+    /**
+     * 过滤条件（动态角色使用）
+     */
+    private String filters;
+
+    /**
+     * 状态：0-禁用；1-启用
+     */
+    private Integer status;
 
 }

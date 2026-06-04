@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.infrastructure.po;
 
+import com.yaocode.sts.common.infrastructure.po.BasePo;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;

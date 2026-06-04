@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * 用户组持久化对象
@@ -46,5 +47,24 @@ public class UserGroupPo extends BasePo {
      * 状态是否可用
      */
     private Integer isEnabled;
+    /**
+     * 分组分类（dynamic/static/app）
+     */
+    private String category;
+
+    /**
+     * 过滤条件
+     */
+    private String filters;
+
+    /**
+     * 组织ID列表
+     */
+    private String orgIdsList;
+
+    /**
+     * 是否默认分组
+     */
+    private Integer isDefault;
 
 }

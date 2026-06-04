@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * 租户持久化对象
@@ -38,7 +39,7 @@ public class TenantInfoPo extends BasePo {
      */
     private Integer tenantStatus;
     /**
-     * 租户状态
+     * 租户层级
      */
     private Integer tenantLevel;
     /**
@@ -53,5 +54,15 @@ public class TenantInfoPo extends BasePo {
      * 父id
      */
     private String parentId;
+
+    /**
+     * 编码路径（层级路径，便于查询）
+     */
+    private String tenantCodePath;
+
+    /**
+     * 是否有子租户
+     */
+    private String hasChild;
 
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * 用户持久化对象
@@ -30,6 +31,10 @@ public class UserInfoPo extends BasePo {
      * 密码
      */
     private String password;
+    /**
+     * 可逆加密的密码  采用非对称加密，并且公钥加密，私钥不公开
+     */
+    private String decipherable;
     /**
      * 盐
      */

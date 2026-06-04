@@ -3,6 +3,7 @@ package com.yaocode.sts.auth.infrastructure.po;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * 资源联系人持久化对象

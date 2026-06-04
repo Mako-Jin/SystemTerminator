@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 // 用户证件表（支持多个证件）
 @Data

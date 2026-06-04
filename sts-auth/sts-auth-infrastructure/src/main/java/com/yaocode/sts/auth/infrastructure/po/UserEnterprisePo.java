@@ -1,76 +1,80 @@
 package com.yaocode.sts.auth.infrastructure.po;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.yaocode.sts.common.infrastructure.po.BasePo;
 
-
+/**
+ * 用户企业属性持久化对象
+ * 记录员工在企业中的职位、部门、经理等信息
+ */
 @Data
-@TableName("auth_tbl_user_employment")
+@TableName("auth_tbl_user_enterprise")
 @EqualsAndHashCode(callSuper = true)
-public class UserEmploymentPo extends BasePo {
+public class UserEnterprisePo extends BasePo {
 
     @TableId
     private String id;
+
     /**
-     * 用户ID
+     * 关联用户ID
      */
     private String userId;
-    /**
-     * 组织/公司
-     */
-    private String organization;
-    /**
-     * 事业部
-     */
-    private String division;
-    /**
-     * 部门ID
-     */
-    private String departmentId;
-    /**
-     * 部门名称
-     */
-    private String department;
 
     /**
      * 员工编号
      */
     private String employeeNumber;
-    /**
-     * 职位
-     */
-    private String jobTitle;
-    /**
-     * 职级
-     */
-    private String jobLevel;
+
     /**
      * 成本中心
      */
     private String costCenter;
 
     /**
-     * 上级ID
+     * 组织
+     */
+    private String organization;
+
+    /**
+     * 事业部
+     */
+    private String division;
+
+    /**
+     * 部门ID
+     */
+    private String departmentId;
+
+    /**
+     * 部门名称
+     */
+    private String department;
+
+    /**
+     * 职位
+     */
+    private String title;
+
+    /**
+     * 经理ID
      */
     private String managerId;
+
     /**
-     * 上级姓名
+     * 经理姓名
      */
     private String manager;
 
     /**
-     * 入职日期
+     * 助理ID
      */
-    private String entryDate;
+    private String assistantId;
+
     /**
-     * 离职日期
+     * 助理姓名
      */
-    private String quitDate;
-    /**
-     * 试用期结束日期
-     */
-    private String probationEndDate;
+    private String assistant;
 }

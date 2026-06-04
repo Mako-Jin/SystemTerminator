@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * @author: Jin-LiangBo
