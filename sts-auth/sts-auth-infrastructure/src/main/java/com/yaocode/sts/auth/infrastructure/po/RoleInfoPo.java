@@ -46,6 +46,10 @@ public class RoleInfoPo extends BasePo {
      * 是否是租户下的默认权限
      */
     private Integer isDefault;
+    /**
+     * 继承的策略 枚举值
+     */
+    private String inheritStrategy;
 
     /**
      * 角色分类：dynamic-动态角色；static-静态角色；app-应用角色
@@ -61,5 +65,9 @@ public class RoleInfoPo extends BasePo {
      * 状态：0-禁用；1-启用
      */
     private Integer status;
+    /**
+     * 角色层级
+     */
+    private Integer roleLevel;
 
 }

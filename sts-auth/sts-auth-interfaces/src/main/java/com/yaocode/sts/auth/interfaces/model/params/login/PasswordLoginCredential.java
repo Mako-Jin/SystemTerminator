@@ -19,4 +19,12 @@ public class PasswordLoginCredential extends AbstractLoginCredential {
     @NotBlank(message = "密码不能为空")
     private String password;
 
+    private Boolean rememberMe;
+
+    private String captcha;
+    private String captchaKey;
+
+    private String state;
+    private String scope;
+
 }

@@ -1,11 +1,17 @@
-package com.yaocode.sts.auth.domain.valueobjects.primitives;
+package com.yaocode.sts.auth.infrastructure.po;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 import java.util.Map;
 
 @Data
-public class DeviceInfo {
+@TableName("auth_tbl_device_info")
+@EqualsAndHashCode(callSuper = true)
+public class DeviceInfoPo extends BasePo {
 
     /**
      * 设备ID

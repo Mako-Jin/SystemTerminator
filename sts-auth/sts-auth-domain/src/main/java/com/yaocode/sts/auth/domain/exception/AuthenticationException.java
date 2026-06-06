@@ -5,7 +5,7 @@ package com.yaocode.sts.auth.domain.exception;
  * @author: Jin-LiangBo
  * @date: 2025年10月08日 17:55
  */
-public class AuthenticationException extends RuntimeException {
+public class AuthenticationException extends AuthException {
 
     public AuthenticationException(String message) {
         super(message);

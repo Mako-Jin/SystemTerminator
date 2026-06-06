@@ -9,7 +9,7 @@ import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
-import com.yaocode.sts.common.domain.DomainException;
+import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
 

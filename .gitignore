@@ -56,3 +56,5 @@ replay_pid*
 /sts-common/sts-common-infrastructure/sts-common-infrastructure.iml
 /sts-common/sts-common-infrastructure/target/
 /sts-external-adapter/sts-external-adapter.iml
+/sts-common/sts-common-crypto/target/
+

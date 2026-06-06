@@ -142,6 +142,11 @@
                 <artifactId>sts-common-messages</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-common-crypto</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
             <!-- 自研包 end -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>

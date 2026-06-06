@@ -7,10 +7,4 @@ package com.yaocode.sts.auth.domain.valueobjects;
  */
 public interface Credential {
 
-    /**
-     * 凭证校验接口
-     * @return boolean 校验通过没
-     */
-    // boolean validate();
-
 }

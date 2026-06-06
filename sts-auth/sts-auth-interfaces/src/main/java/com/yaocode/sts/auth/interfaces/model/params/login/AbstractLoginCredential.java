@@ -27,4 +27,13 @@ public abstract class AbstractLoginCredential implements Credential {
     @NotBlank(message = "授权类型不能为空")
     private String grantType;
 
+    // ========== 客户端信息 ==========
+    private String clientId;      // web_app / mobile_app
+    private String clientType;    // WEB / APP / MINI_PROGRAM
+    private String clientVersion;
+
+    // ========== 设备信息 ==========
+    private String deviceId;      // 设备指纹
+    private String deviceType;    // IOS / ANDROID / WEB
+
 }

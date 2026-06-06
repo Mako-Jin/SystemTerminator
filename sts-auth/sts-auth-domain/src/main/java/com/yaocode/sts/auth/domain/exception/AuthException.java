@@ -1,12 +1,13 @@
 package com.yaocode.sts.auth.domain.exception;
 
+import com.yaocode.sts.common.basic.exception.BusinessException;
+
 /**
- * TODO
- *
- * @version 1.0
- * @Author: Jin-LiangBo
- * @Date: 2026年04月20日 10:41
- * @Description:
+ * 认证授权服务异常
+ * @author: Jin-LiangBo
+ * @date: 2026年04月20日 10:41
  */
-public class AuthException extends RuntimeException {
+public class AuthException extends BusinessException {
+    public AuthException(String message) {
+    }
 }

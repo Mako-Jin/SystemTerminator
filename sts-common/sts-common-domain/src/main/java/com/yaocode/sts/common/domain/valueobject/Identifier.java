@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.domain.valueobject;
 
 import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
+import lombok.Getter;
 
 import java.util.Objects;
 
@@ -9,22 +10,19 @@ import java.util.Objects;
  * @author: Jin-LiangBo
  * @date: 2025年10月12日 11:43
  */
+@Getter
 public abstract class Identifier<T> implements ValueObject {
     private final T value;
 
     protected Identifier(T value) {
-        this.value = validate(value);
+        validate(value);
+        this.value = value;
     }
 
-    protected T validate(T value) {
+    public void validate(T value) {
         if (value == null) {
             throw new IllegalArgumentException(DomainI18nKeyConstants.COMMON_DOMAIN_IDENTIFIER_VALUE_NULL);
         }
-        return value;
-    }
-
-    public T getValue() {
-        return value;
     }
 
     @Override

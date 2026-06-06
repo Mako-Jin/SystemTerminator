@@ -17,7 +17,7 @@ public class PhoneNum extends Identifier<String> {
 
     private static final Pattern PHONE_PATTERN = Pattern.compile("^1[2-9]\\d{9}$");
 
-    protected PhoneNum(String value) {
+    private PhoneNum(String value) {
         super(value);
     }
 
@@ -33,7 +33,7 @@ public class PhoneNum extends Identifier<String> {
         if (!PHONE_PATTERN.matcher(normalized).matches()) {
             throw new IllegalArgumentException("手机号码格式不正确: " + value);
         }
-        return new PhoneNum(value);
+        return new PhoneNum(normalized);
     }
 
     private static String normalizePhoneNumber(String phoneNumber) {
