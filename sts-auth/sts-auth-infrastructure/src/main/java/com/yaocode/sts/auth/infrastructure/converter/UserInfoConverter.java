@@ -37,8 +37,6 @@ public interface UserInfoConverter {
      */
     @Mapping(target = "userId", source = "user.id", qualifiedByName = "userIdToString")
     @Mapping(target = "username", source = "user.username", qualifiedByName = "usernameToString")
-    @Mapping(target = "email", source = "user.email", qualifiedByName = "emailToString")
-    @Mapping(target = "phoneNum", source = "user.phoneNum", qualifiedByName = "phoneNumToString")
     UserInfoPo toPo(UserInfoEntity user);
 
     /**
@@ -64,8 +62,8 @@ public interface UserInfoConverter {
                 stringToOrganizationId(organizationIdList),
                 stringToRoleId(roleIdList),
                 stringToUserGroupId(userGroupIdList),
-                stringToEmail(userPo.getEmail()),
-                stringToPhoneNum(userPo.getPhoneNum()),
+//                stringToEmail(userPo.getEmail()),
+//                stringToPhoneNum(userPo.getPhoneNum()),
                 userPo.getIsEnabled()
         );
     }

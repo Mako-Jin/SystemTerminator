@@ -99,7 +99,7 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
             relRoleUserPo.setRelId(IdFactory.generate());
             relRoleUserPo.setTenantId(tenantId.getValue());
             relRoleUserPo.setRoleId(e);
-            relRoleUserPo.setUserId(userId.getValue());
+            relRoleUserPo.setMemberId(userId.getValue());
             relRoleUserPoList.add(relRoleUserPo);
         });
         relRoleUserDao.saveBatch(relRoleUserPoList);

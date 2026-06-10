@@ -1,7 +1,10 @@
 package com.yaocode.sts.auth.interfaces.assembler;
 
-import com.yaocode.sts.auth.application.dto.AuthenticationDto;
+import com.yaocode.sts.auth.application.dto.request.AuthenticationRequestDto;
+import com.yaocode.sts.auth.application.dto.request.PreLoginRequestDto;
+import com.yaocode.sts.auth.interfaces.model.params.PreLoginParams;
 import com.yaocode.sts.auth.interfaces.model.params.login.LoginRequestParams;
+import com.yaocode.sts.common.web.utils.WebHttpRequestUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -20,6 +23,27 @@ public interface AuthenticationAssembler {
      * @param loginRequestParams 参数对象
      * @return AuthenticationDto
      */
-    AuthenticationDto toDto(LoginRequestParams loginRequestParams);
+    AuthenticationRequestDto toDto(LoginRequestParams loginRequestParams);
+
+    /**
+     * 转换为应用层命令
+     * 自动补充服务端参数
+     */
+    default PreLoginRequestDto toPreLoginDto(PreLoginParams params) {
+        PreLoginRequestDto preLoginDto = new PreLoginRequestDto();
+        preLoginDto.setClientId(params.getClientId());
+        preLoginDto.setDeviceId(params.getDeviceId());
+        preLoginDto.setSessionId(params.getSessionId());
+        preLoginDto.setRememberMe(params.getRememberMe());
+        preLoginDto.setClientType(params.getClientType());
+        preLoginDto.setClientVersion(params.getClientVersion());
+        preLoginDto.setDeviceType(params.getDeviceType());
+        preLoginDto.setOsVersion(params.getOsVersion());
+        preLoginDto.setLanguage(params.getLanguage());
+        preLoginDto.setRedirectUri(params.getRedirectUri());
+        preLoginDto.setIpAddress(WebHttpRequestUtils.getClientIp());
+        preLoginDto.setUserAgent(WebHttpRequestUtils.getUserAgent());
+        return preLoginDto;
+    }
 
 }

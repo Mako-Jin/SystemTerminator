@@ -74,8 +74,8 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
             List<OrganizationId> organizationIdList,
             List<RoleId> roleIdList,
             List<UserGroupId> userGroupIdList,
-            Email email,
-            PhoneNum phoneNum,
+//            Email email,
+//            PhoneNum phoneNum,
             Integer isEnabled
     ) {
         UserInfoEntity entity = new UserInfoEntity(userId);
@@ -84,8 +84,8 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
         entity.organizationIdList = organizationIdList;
         entity.roleIdList = roleIdList;
         entity.userGroupIdList = userGroupIdList;
-        entity.email = email;
-        entity.phoneNum = phoneNum;
+//        entity.email = email;
+//        entity.phoneNum = phoneNum;
         entity.isEnabled = isEnabled;
         return entity;
     }
@@ -96,8 +96,8 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
             List<OrganizationId> organizationIdList,
             List<RoleId> roleIdList,
             List<UserGroupId> userGroupIdList,
-            Email email,
-            PhoneNum phoneNum,
+//            Email email,
+//            PhoneNum phoneNum,
             Integer isEnabled
     ) {
         UserInfoEntity entity = new UserInfoEntity(UserId.nextId());
@@ -106,8 +106,8 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
         entity.organizationIdList = organizationIdList;
         entity.roleIdList = roleIdList;
         entity.userGroupIdList = userGroupIdList;
-        entity.email = email;
-        entity.phoneNum = phoneNum;
+//        entity.email = email;
+//        entity.phoneNum = phoneNum;
         entity.isEnabled = isEnabled;
         return entity;
     }

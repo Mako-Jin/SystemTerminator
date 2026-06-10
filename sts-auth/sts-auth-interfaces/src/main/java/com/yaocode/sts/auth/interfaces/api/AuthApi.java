@@ -1,8 +1,10 @@
 package com.yaocode.sts.auth.interfaces.api;
 
+import com.yaocode.sts.auth.interfaces.model.params.PreLoginParams;
 import com.yaocode.sts.auth.interfaces.model.params.login.LoginRequestParams;
 import com.yaocode.sts.common.web.model.ResultModel;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @RequestMapping("/auth")
 public interface AuthApi {
+
+    /**
+     * 获取登录状态
+     */
+    @GetMapping("/preLogin")
+    ResultModel<?> preLogin(@Valid PreLoginParams params);
 
     /**
      * 登录认证接口

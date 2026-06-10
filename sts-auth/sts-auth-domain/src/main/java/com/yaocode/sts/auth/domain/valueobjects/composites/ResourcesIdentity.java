@@ -1,5 +1,6 @@
-package com.yaocode.sts.auth.domain.valueobjects.primitives;
+package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.common.tools.IntegerUtils;
 import lombok.Getter;
 

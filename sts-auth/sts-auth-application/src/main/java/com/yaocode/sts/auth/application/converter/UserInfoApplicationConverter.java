@@ -59,8 +59,8 @@ public interface UserInfoApplicationConverter {
                 stringListToOrganizationIdList(user.getOrganizationIdList()),
                 stringListToRoleIdList(user.getRoleIdList()),
                 stringListToUserGroupIdList(user.getUserGroupIdList()),
-                stringToEmail(user.getEmail()),
-                stringToPhoneNum(user.getPhoneNum()),
+//                stringToEmail(user.getEmail()),
+//                stringToPhoneNum(user.getPhoneNum()),
                 user.getIsEnabled()
         );
     }

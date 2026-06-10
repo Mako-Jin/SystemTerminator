@@ -20,7 +20,7 @@ public class Username extends Identifier<String> {
     private static final int USERNAME_MAX_LENGTH = 30;
     private static final String USERNAME_REGEX = "^[a-zA-Z0-9_]+$";
 
-    protected Username(String value) {
+    private Username(String value) {
         super(value);
     }
 

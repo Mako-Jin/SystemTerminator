@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
-import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourcesIdentity;
+import com.yaocode.sts.auth.domain.valueobjects.composites.ResourcesIdentity;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Version;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;

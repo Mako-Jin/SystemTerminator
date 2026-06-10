@@ -2,8 +2,10 @@ package com.yaocode.sts.auth.domain.service.provider;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
+import com.yaocode.sts.auth.domain.exception.AuthenticationException;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
+import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordAuthCredential;
 import com.yaocode.sts.common.domain.context.TenantInfoContext;
 import jakarta.annotation.Resource;
@@ -30,11 +32,16 @@ public class PasswordAuthenticationProvider extends AbstractAuthenticationProvid
         return super.supports(credential);
     }
 
+//    @Override
+//    protected UserInfoEntity doAuthenticate(AuthenticationToken authentication) {
+//        // 查询用户
+//        UserInfoEntity user = userInfoRepository.findByUsername(TenantInfoContext.getTenantId(), credential.getUsername())
+//                .orElseThrow(() -> new AuthenticationException("用户名或密码错误"));
+//        return null;
+//    }
+
     @Override
-    protected UserInfoEntity doAuthenticate(AuthenticationToken authentication) {
-        // 查询用户
-        UserInfoEntity user = userInfoRepository.findByUsername(TenantInfoContext.getTenantId(), credential.getUsername())
-                .orElseThrow(() -> new AuthenticationException("用户名或密码错误"));
+    protected UserInfoEntity doAuthenticate(PasswordAuthCredential credential) {
         return null;
     }
 }

@@ -26,15 +26,15 @@ public class RelUserGroupUserDaoImpl extends ServiceImpl<RelUserGroupUserMapper,
         LambdaQueryWrapper<RelUserGroupUserPo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RelUserGroupUserPo::getTenantId, tenantId);
         wrapper.eq(RelUserGroupUserPo::getUserGroupId, userGroupId);
-        wrapper.eq(RelUserGroupUserPo::getUserId, userId);
+        wrapper.eq(RelUserGroupUserPo::getMemberId, userId);
         return relUserGroupUserMapper.selectOne(wrapper);
     }
 
     @Override
     public List<String> getByUserId(String userId) {
         LambdaQueryWrapper<RelUserGroupUserPo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(RelUserGroupUserPo::getUserId, userId);
+        wrapper.eq(RelUserGroupUserPo::getMemberId, userId);
         List<RelUserGroupUserPo> relList = relUserGroupUserMapper.selectList(wrapper);
-        return relList.stream().map(RelUserGroupUserPo::getUserId).toList();
+        return relList.stream().map(RelUserGroupUserPo::getMemberId).toList();
     }
 }

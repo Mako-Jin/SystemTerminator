@@ -70,7 +70,7 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
         relUserGroupUserPo.setRelId(IdFactory.generate());
         relUserGroupUserPo.setTenantId(tenantId.getValue());
         relUserGroupUserPo.setUserGroupId(userGroupId.getValue());
-        relUserGroupUserPo.setUserId(userId.getValue());
+        relUserGroupUserPo.setMemberId(userId.getValue());
         relUserGroupUserDao.save(relUserGroupUserPo);
     }
 

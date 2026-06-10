@@ -1,10 +1,13 @@
 package com.yaocode.sts.auth.starter.controller;
 
-import com.yaocode.sts.auth.application.dto.AuthenticationDto;
-import com.yaocode.sts.auth.application.dto.AuthenticationResultDto;
-import com.yaocode.sts.auth.application.service.AuthenticationService;
+import com.yaocode.sts.auth.application.dto.request.AuthenticationRequestDto;
+import com.yaocode.sts.auth.application.dto.response.AuthenticationResponseDto;
+import com.yaocode.sts.auth.application.dto.request.PreLoginRequestDto;
+import com.yaocode.sts.auth.application.dto.response.PreLoginResponseDto;
+import com.yaocode.sts.auth.application.service.AuthApplicationService;
 import com.yaocode.sts.auth.interfaces.api.AuthApi;
 import com.yaocode.sts.auth.interfaces.assembler.AuthenticationAssembler;
+import com.yaocode.sts.auth.interfaces.model.params.PreLoginParams;
 import com.yaocode.sts.auth.interfaces.model.params.login.LoginRequestParams;
 import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
@@ -31,13 +34,20 @@ public class AuthController implements AuthApi {
     private AuthenticationAssembler authenticationAssembler;
 
     @Resource
-    private AuthenticationService authenticationService;
+    private AuthApplicationService authenticationService;
+
+    @Override
+    public ResultModel<PreLoginResponseDto> preLogin(PreLoginParams params) {
+        PreLoginRequestDto preLoginDto = authenticationAssembler.toPreLoginDto(params);
+        PreLoginResponseDto preLogin = authenticationService.preLogin(preLoginDto);
+        return ResultUtils.ok(preLogin);
+    }
 
     @Override
     public ResultModel<?> login(LoginRequestParams loginRequestParams) {
         logger.info("收到登录请求, grantType={}", loginRequestParams.getCredential() != null ? loginRequestParams.getCredential().getGrantType() : "null");
-        AuthenticationDto authenticationDto = authenticationAssembler.toDto(loginRequestParams);
-        AuthenticationResultDto authenticationResultDto = authenticationService.authentication(authenticationDto);
+        AuthenticationRequestDto authenticationDto = authenticationAssembler.toDto(loginRequestParams);
+        AuthenticationResponseDto authenticationResultDto = authenticationService.authentication(authenticationDto);
         return ResultUtils.ok(authenticationResultDto);
     }
 

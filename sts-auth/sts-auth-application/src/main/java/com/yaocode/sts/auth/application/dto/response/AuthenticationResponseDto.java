@@ -1,4 +1,4 @@
-package com.yaocode.sts.auth.application.dto;
+package com.yaocode.sts.auth.application.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
  * @author: Jin-LiangBo
  * @date: 2026年04月14日 10:45
  */
-public class AuthenticationResultDto {
+public class AuthenticationResponseDto {
 
     /**
      * 访问令牌

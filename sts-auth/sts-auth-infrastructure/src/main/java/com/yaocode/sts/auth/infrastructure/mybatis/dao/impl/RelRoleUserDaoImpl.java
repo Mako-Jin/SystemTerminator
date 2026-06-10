@@ -24,7 +24,7 @@ public class RelRoleUserDaoImpl extends ServiceImpl<RelRoleUserMapper, RelRoleUs
     public List<RelRoleUserPo> getByUserIdAndRoleIdList(String tenantId, String userId, List<String> roleIdlIst) {
         LambdaQueryWrapper<RelRoleUserPo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RelRoleUserPo::getTenantId, tenantId);
-        wrapper.eq(RelRoleUserPo::getUserId, userId);
+        wrapper.eq(RelRoleUserPo::getMemberId, userId);
         wrapper.in(RelRoleUserPo::getRoleId, roleIdlIst);
         return relRoleUserMapper.selectList(wrapper);
     }
@@ -32,8 +32,8 @@ public class RelRoleUserDaoImpl extends ServiceImpl<RelRoleUserMapper, RelRoleUs
     @Override
     public List<String> getByUserId(String userId) {
         LambdaQueryWrapper<RelRoleUserPo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(RelRoleUserPo::getUserId, userId);
+        wrapper.eq(RelRoleUserPo::getMemberId, userId);
         List<RelRoleUserPo> relList = relRoleUserMapper.selectList(wrapper);
-        return relList.stream().map(RelRoleUserPo::getUserId).toList();
+        return relList.stream().map(RelRoleUserPo::getMemberId).toList();
     }
 }

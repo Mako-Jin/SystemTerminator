@@ -1,8 +1,8 @@
 package com.yaocode.sts.auth.domain.service.provider;
 
-import com.yaocode.sts.auth.application.dto.AuthenticationResultDto;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
+import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 
 import java.util.Objects;
 
@@ -24,7 +24,7 @@ public interface AuthenticationProvider<T extends AbstractAuthCredential> {
      * @param credential 认证参数
      * @return AuthenticationResultDto
      */
-    AuthenticationResultDto authenticate(T credential);
+    AuthenticationToken authenticate(T credential);
 
     /**
      * 检查当前provider是否支持

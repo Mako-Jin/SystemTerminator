@@ -1,7 +1,8 @@
 package com.yaocode.sts.auth.domain.service.provider;
 
-import com.yaocode.sts.auth.application.dto.AuthenticationResultDto;import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
+import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
+import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
     private static final Logger logger = LoggerFactory.getLogger(AbstractAuthenticationProvider.class);
 
     @Override
-    public AuthenticationResultDto authenticate(T credential) {
+    public AuthenticationToken authenticate(T credential) {
         // 1. 前置检查
         preAuthenticateCheck(credential);
 
@@ -26,12 +27,13 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
         postAuthenticateValidate(user);
 
         // 4. 构建认证成功的令牌
-        AuthenticationResultDto result = buildSuccessToken(user, credential);
-
-        // 5. 记录认证日志
-        logAuthenticationSuccess(user, AuthenticationResultDto);
-
-        return result;
+//        AuthenticationToken result = buildSuccessToken(user, credential);
+//
+//        // 5. 记录认证日志
+//        logAuthenticationSuccess(user, AuthenticationToken);
+//
+//        return result;
+        return null;
     }
 
     /**
@@ -73,18 +75,19 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      * 构建成功令牌
      */
     protected AuthenticationToken buildSuccessToken(UserInfoEntity user, AuthenticationToken original) {
-        return AuthenticationToken.authenticated(user, original.getGrantType());
+//        return AuthenticationToken.authenticated(user, original.getGrantType());
+        return null;
     }
 
     /**
      * 记录认证成功日志
      */
     protected void logAuthenticationSuccess(UserInfoEntity user, AuthenticationToken authentication) {
-        logger.info("认证成功: userId={}, username={}, provider={}, ip={}",
-                user.getId(),
-                user.getUsername(),
-                getName(),
-                authentication.getClientIp());
+//        logger.info("认证成功: userId={}, username={}, provider={}, ip={}",
+//                user.getId(),
+//                user.getUsername(),
+//                getName(),
+//                authentication.getClientIp());
     }
 
 }

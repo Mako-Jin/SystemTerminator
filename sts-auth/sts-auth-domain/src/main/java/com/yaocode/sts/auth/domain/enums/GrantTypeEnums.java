@@ -14,6 +14,10 @@ public enum GrantTypeEnums {
     /**
      * 用户名密码认证
      */
+    REMEMBER_ME("rememberMe", "记住我"),
+    /**
+     * 用户名密码认证
+     */
     PASSWORD("password", "用户名密码认证"),
     /**
      * 手机验证码

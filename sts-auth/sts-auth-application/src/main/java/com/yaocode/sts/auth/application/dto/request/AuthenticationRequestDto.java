@@ -1,4 +1,4 @@
-package com.yaocode.sts.auth.application.dto;
+package com.yaocode.sts.auth.application.dto.request;
 
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
  * @date: 2026年04月14日 10:38
  */
 @Data
-public class AuthenticationDto {
+public class AuthenticationRequestDto {
 }

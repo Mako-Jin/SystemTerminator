@@ -121,8 +121,8 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
                 command.getOrganizationIdList(),
                 command.getRoleIdList(),
                 command.getUserGroupIdList(),
-                command.getEmail(),
-                command.getPhoneNum(),
+//                command.getEmail(),
+//                command.getPhoneNum(),
                 OppositeEnums.YES.getCode()
         );
 

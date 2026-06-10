@@ -43,7 +43,7 @@ public class Email extends Identifier<String> {
 
     private static final Integer EMAIL_MAX_LENGTH = 254;
 
-    protected Email(String value) {
+    private Email(String value) {
         super(value);
     }
 
