@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.yaocode.sts</groupId>
+        <artifactId>sts-components</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <packaging>jar</packaging>
+    <artifactId>sts-components-flow</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>sts-components-flow</name>
+    <description>flow -- 工作流引擎组件</description>
+
+    <dependencies>
+        <!-- spring boot starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- common -->
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-basic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-domain</artifactId>
+        </dependency>
+
+
+    </dependencies>
+
+</project>
