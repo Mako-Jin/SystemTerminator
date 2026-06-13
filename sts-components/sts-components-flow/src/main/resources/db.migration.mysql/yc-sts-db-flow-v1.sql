@@ -178,7 +178,7 @@ CREATE TABLE `flow_tbl_event_subscription_definition`  (
     UNIQUE INDEX `uk_definition_event`(`process_id` ASC, `event_type` ASC, `event_name` ASC) USING BTREE,
     INDEX `idx_event_name_type`(`event_name` ASC, `event_type` ASC) USING BTREE,
     INDEX `idx_target_node_key`(`target_node_key` ASC) USING BTREE,
-    INDEX `idx_definition_id`(`process_id` ASC) USING BTREE,
+    INDEX `idx_process_id`(`process_id` ASC) USING BTREE,
     INDEX `idx_tenant_id`(`tenant_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '事件订阅定义表' ROW_FORMAT = Dynamic;
 
@@ -354,7 +354,7 @@ CREATE TABLE `flow_tbl_hist_activity`  (
     INDEX `idx_assignee`(`assignee` ASC) USING BTREE,
     INDEX `idx_removal_time`(`removal_time` ASC) USING BTREE,
     INDEX `idx_tenant_id`(`tenant_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '历史活动实例表(参考Camunda: ACT_HI_ACTINST)' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '历史活动实例表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for flow_tbl_hist_external_task_log
@@ -702,7 +702,7 @@ CREATE TABLE `flow_tbl_identity_link`  (
     INDEX `idx_group_id`(`group_id` ASC) USING BTREE,
     INDEX `idx_task_id`(`task_id` ASC) USING BTREE,
     INDEX `idx_process_instance`(`process_instance_id` ASC) USING BTREE,
-    INDEX `idx_definition_id`(`process_id` ASC) USING BTREE,
+    INDEX `idx_process_id`(`process_id` ASC) USING BTREE,
     INDEX `idx_link_type`(`link_type` ASC) USING BTREE,
     INDEX `idx_status`(`status` ASC) USING BTREE,
     INDEX `idx_tenant_id`(`tenant_id` ASC) USING BTREE,
@@ -876,7 +876,7 @@ CREATE TABLE `flow_tbl_node_definition`  (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`node_id`) USING BTREE,
     UNIQUE INDEX `uk_definition_node_key_version`(`process_id` ASC, `node_key` ASC, `node_version` ASC) USING BTREE,
-    INDEX `idx_definition_id`(`process_id` ASC) USING BTREE,
+    INDEX `idx_process_id`(`process_id` ASC) USING BTREE,
     INDEX `idx_node_type`(`node_type` ASC) USING BTREE,
     INDEX `idx_node_key`(`node_key` ASC) USING BTREE,
     INDEX `idx_is_multi_instance`(`is_multi_instance` ASC) USING BTREE,
@@ -906,7 +906,7 @@ CREATE TABLE `flow_tbl_process_definition`  (
     `deploy_user_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '部署人ID',
     `deploy_user_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '部署人名称',
     `source_type` tinyint NOT NULL DEFAULT 1 COMMENT '来源类型(1=BPMN XML,2=JSON)',
-    `source_file_id` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '源文件对象存储URL(替代Camunda的二进制存储)',
+    `source_file_id` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '源文件对象存储URL',
     `diagram_file_id` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '流程图对象存储URL',
     `history_ttl` int NULL DEFAULT NULL COMMENT '历史数据保留天数(覆盖全局配置)',
     `rev` int NOT NULL DEFAULT 0 COMMENT '乐观锁版本号',
@@ -961,7 +961,7 @@ CREATE TABLE `flow_tbl_process_instance`  (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`process_instance_id`) USING BTREE,
     INDEX `idx_business_key`(`business_key` ASC) USING BTREE,
-    INDEX `idx_definition_id`(`process_id` ASC) USING BTREE,
+    INDEX `idx_process_id`(`process_id` ASC) USING BTREE,
     INDEX `idx_definition_key`(`process_key` ASC) USING BTREE,
     INDEX `idx_status`(`status` ASC) USING BTREE,
     INDEX `idx_start_time`(`start_time` ASC) USING BTREE,
@@ -1081,8 +1081,8 @@ CREATE TABLE `flow_tbl_task`  (
     `task_desc` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '任务名称(对应BPMN中userTask的name)',
     `process_instance_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程实例ID',
     `execution_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '执行路径ID',
-    `definition_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程定义ID',
-    `definition_key` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程定义KEY(冗余)',
+    `process_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程定义ID',
+    `process_key` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程定义KEY(冗余)',
     `node_key` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '节点KEY',
     `node_name` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '节点名称(快照)',
     `assignee` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '处理人ID',
@@ -1127,12 +1127,12 @@ CREATE TABLE `flow_tbl_task`  (
     INDEX `idx_status_create_time`(`status` ASC, `create_time` ASC) USING BTREE,
     INDEX `idx_assignee_due_date`(`assignee` ASC, `due_date` ASC) USING BTREE,
     INDEX `idx_process_status`(`process_instance_id` ASC, `status` ASC) USING BTREE,
-    INDEX `definition_id`(`definition_id` ASC) USING BTREE,
+    INDEX `process_id`(`process_id` ASC) USING BTREE,
     CONSTRAINT `flow_tbl_task_ibfk_1` FOREIGN KEY (`process_instance_id`) REFERENCES `flow_tbl_process_instance` (`process_instance_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
     CONSTRAINT `flow_tbl_task_ibfk_2` FOREIGN KEY (`execution_id`) REFERENCES `flow_tbl_execution` (`execution_id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-    CONSTRAINT `flow_tbl_task_ibfk_3` FOREIGN KEY (`definition_id`) REFERENCES `flow_tbl_process_definition` (`process_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT `flow_tbl_task_ibfk_3` FOREIGN KEY (`process_id`) REFERENCES `flow_tbl_process_definition` (`process_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `flow_tbl_task_ibfk_4` FOREIGN KEY (`parent_task_id`) REFERENCES `flow_tbl_task` (`task_id`) ON DELETE SET NULL ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '任务表-待办(参考Camunda: ACT_RU_TASK)' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '任务表-待办' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for flow_tbl_task_meter_log
