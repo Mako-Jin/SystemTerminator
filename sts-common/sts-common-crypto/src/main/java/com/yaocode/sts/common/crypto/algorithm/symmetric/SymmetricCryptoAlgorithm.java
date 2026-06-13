@@ -1,4 +1,7 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.symmetric;
+
+import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.algorithm.hash.DigestAlgorithm;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -12,7 +15,7 @@ import java.security.SecureRandom;
  * @author: Jin-LiangBo
  * @date: 2026年06月01日
  */
-public final class SymmetricCryptoUtils {
+public final class SymmetricCryptoAlgorithm {
 
     /**
      * AES 算法名称
@@ -42,7 +45,7 @@ public final class SymmetricCryptoUtils {
     /**
      * 私有构造函数，防止实例化
      */
-    private SymmetricCryptoUtils() {
+    private SymmetricCryptoAlgorithm() {
     }
 
     // ==================== AES 加密/解密方法 ====================
@@ -119,7 +122,7 @@ public final class SymmetricCryptoUtils {
             System.arraycopy(iv, 0, result, 0, iv.length);
             System.arraycopy(encrypted, 0, result, iv.length, encrypted.length);
 
-            return Base64Utils.encryptByBase64(result);
+            return Base64Algorithm.encryptByBase64(result);
         } catch (Exception e) {
             throw new IllegalArgumentException("AES-GCM 加密失败", e);
         }
@@ -134,7 +137,7 @@ public final class SymmetricCryptoUtils {
     public static byte[] aesGcmDecrypt(String ciphertext, byte[] key) {
         try {
             // 解码密文
-            byte[] data = Base64Utils.decryptByBase64(ciphertext);
+            byte[] data = Base64Algorithm.decryptByBase64(ciphertext);
 
             // 分离 IV 和密文
             byte[] iv = new byte[GCM_IV_LENGTH];
@@ -163,7 +166,7 @@ public final class SymmetricCryptoUtils {
      * @return 32字节密钥
      */
     public static byte[] deriveAes256Key(String password) {
-        return DigestUtils.sha256Hex(password).getBytes(StandardCharsets.UTF_8);
+        return DigestAlgorithm.sha256Hex(password).getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -176,7 +179,7 @@ public final class SymmetricCryptoUtils {
         byte[] saltedPassword = new byte[password.length() + salt.length];
         System.arraycopy(password.getBytes(StandardCharsets.UTF_8), 0, saltedPassword, 0, password.length());
         System.arraycopy(salt, 0, saltedPassword, password.length(), salt.length);
-        return DigestUtils.sha256Hex(new String(saltedPassword, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
+        return DigestAlgorithm.sha256Hex(new String(saltedPassword, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8);
     }
 
     /**

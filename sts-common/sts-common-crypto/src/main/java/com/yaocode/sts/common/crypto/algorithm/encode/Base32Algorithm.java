@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.encode;
 
 import java.nio.charset.StandardCharsets;
 
@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * @author: Jin-LiangBo
  * @date: 2026年06月02日
  */
-public final class Base32Utils {
+public final class Base32Algorithm {
 
     /**
      * Base32 标准字符集（RFC 4648）
@@ -29,7 +29,7 @@ public final class Base32Utils {
     /**
      * 私有构造函数，防止实例化
      */
-    private Base32Utils() {
+    private Base32Algorithm() {
     }
 
     // ==================== 编码方法 ====================

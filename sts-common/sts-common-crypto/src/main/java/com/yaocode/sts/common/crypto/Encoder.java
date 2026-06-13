@@ -1,7 +1,5 @@
 package com.yaocode.sts.common.crypto;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 public interface Encoder {
 
     /**

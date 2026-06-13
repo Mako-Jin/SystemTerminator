@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>com.yaocode.sts</groupId>
-            <artifactId>sts-common-basic</artifactId>
+            <artifactId>sts-common-tools</artifactId>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
         <dependency>

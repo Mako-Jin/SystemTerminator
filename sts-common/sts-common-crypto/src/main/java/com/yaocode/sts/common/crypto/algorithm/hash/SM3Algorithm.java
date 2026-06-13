@@ -1,5 +1,6 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.hash;
 
+import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -13,7 +14,7 @@ import java.util.Arrays;
  * @author: Jin-LiangBo
  * @date: 2026年06月01日
  */
-public final class SM3Utils {
+public final class SM3Algorithm {
 
     /**
      * SM3 摘要长度（32字节）
@@ -23,7 +24,7 @@ public final class SM3Utils {
     /**
      * 私有构造函数，防止实例化
      */
-    private SM3Utils() {
+    private SM3Algorithm() {
     }
 
     // ==================== SM3 哈希计算 ====================
@@ -77,7 +78,7 @@ public final class SM3Utils {
      */
     public static String digestBase64(String data) {
         byte[] hash = digest(data);
-        return Base64Utils.encryptByBase64(hash);
+        return Base64Algorithm.encryptByBase64(hash);
     }
 
     /**
@@ -87,7 +88,7 @@ public final class SM3Utils {
      */
     public static String digestBase64(byte[] data) {
         byte[] hash = digest(data);
-        return Base64Utils.encryptByBase64(hash);
+        return Base64Algorithm.encryptByBase64(hash);
     }
 
     /**
@@ -97,7 +98,7 @@ public final class SM3Utils {
      */
     public static String digestBase64Url(String data) {
         byte[] hash = digest(data);
-        return Base64Utils.encodeUrlSafe(hash);
+        return Base64Algorithm.encodeUrlSafe(hash);
     }
 
     // ==================== SM3 验证 ====================
@@ -184,7 +185,7 @@ public final class SM3Utils {
      */
     public static String hmacBase64(byte[] key, String data) {
         byte[] hmac = hmac(key, data);
-        return Base64Utils.encryptByBase64(hmac);
+        return Base64Algorithm.encryptByBase64(hmac);
     }
 
     // ==================== 辅助方法 ====================

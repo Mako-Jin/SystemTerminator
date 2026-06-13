@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.password;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
@@ -8,6 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  * @author: Jin-LiangBo
  * @date: 2026年06月02日
  */
-public final class BcryptUtils extends BCrypt {
+public final class BcryptAlgorithm extends BCrypt {
 
 }

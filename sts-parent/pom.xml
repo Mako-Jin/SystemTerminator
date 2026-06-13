@@ -36,6 +36,9 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <aspectj.version>1.9.24</aspectj.version>
+        <fastjson2.version>2.0.62</fastjson2.version>
+        <password4j.version>1.8.4</password4j.version>
+        <bcprov-jdk18on.version>1.84</bcprov-jdk18on.version>
     </properties>
 
     <dependencyManagement>
@@ -151,15 +154,19 @@
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
-                <version>1.84</version>
+                <version>${bcprov-jdk18on.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.password4j</groupId>
                 <artifactId>password4j</artifactId>
-                <version>1.8.4</version>
+                <version>${password4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
 
     <dependencies>

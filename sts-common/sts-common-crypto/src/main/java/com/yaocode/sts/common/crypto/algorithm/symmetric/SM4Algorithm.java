@@ -1,5 +1,7 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.symmetric;
 
+import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.algorithm.hash.SM3Algorithm;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -19,7 +21,7 @@ import java.security.SecureRandom;
  * @author: Jin-LiangBo
  * @date: 2026年06月02日
  */
-public final class SM4Utils {
+public final class SM4Algorithm {
 
     /**
      * SM4 算法名称
@@ -49,7 +51,7 @@ public final class SM4Utils {
     /**
      * 私有构造函数，防止实例化
      */
-    private SM4Utils() {
+    private SM4Algorithm() {
     }
 
     // ==================== SM4 加密/解密 ====================
@@ -71,7 +73,7 @@ public final class SM4Utils {
         System.arraycopy(iv, 0, result, 0, iv.length);
         System.arraycopy(encrypted, 0, result, iv.length, encrypted.length);
 
-        return Base64Utils.encryptByBase64(result);
+        return Base64Algorithm.encryptByBase64(result);
     }
 
     /**
@@ -82,7 +84,7 @@ public final class SM4Utils {
      */
     public static String decrypt(String ciphertext, byte[] key) {
         validateKey(key);
-        byte[] data = Base64Utils.decryptByBase64(ciphertext);
+        byte[] data = Base64Algorithm.decryptByBase64(ciphertext);
 
         // 分离 IV 和密文
         byte[] iv = new byte[IV_LENGTH];
@@ -154,7 +156,7 @@ public final class SM4Utils {
      * @return 16字节密钥
      */
     public static byte[] deriveKey(String password) {
-        byte[] hash = SM3Utils.digest(password);
+        byte[] hash = SM3Algorithm.digest(password);
         byte[] key = new byte[KEY_LENGTH];
         System.arraycopy(hash, 0, key, 0, KEY_LENGTH);
         return key;

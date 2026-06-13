@@ -1,5 +1,6 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.hash;
 
+import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
 
 import java.nio.charset.StandardCharsets;
@@ -12,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
  * @author: Jin-LiangBo
  * @date: 2026年06月01日
  */
-public final class DigestUtils {
+public final class DigestAlgorithm {
 
     /**
      * SHA-256 算法名称
@@ -32,7 +33,7 @@ public final class DigestUtils {
     /**
      * 私有构造函数，防止实例化
      */
-    private DigestUtils() {
+    private DigestAlgorithm() {
     }
 
     // ==================== SHA-256 ====================
@@ -197,7 +198,7 @@ public final class DigestUtils {
      */
     private static String digestBase64(byte[] input, String algorithm) {
         byte[] digest = digest(input, algorithm);
-        return Base64Utils.encryptByBase64(digest);
+        return Base64Algorithm.encryptByBase64(digest);
     }
 
     /**
@@ -208,7 +209,7 @@ public final class DigestUtils {
      */
     private static String digestBase64Url(byte[] input, String algorithm) {
         byte[] digest = digest(input, algorithm);
-        return Base64Utils.encryptByBase64(digest);
+        return Base64Algorithm.encryptByBase64(digest);
     }
 
     /**

@@ -1,5 +1,6 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.asymmetric;
 
+import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -24,7 +25,7 @@ import java.security.Security;
  * @author: Jin-LiangBo
  * @date: 2026年06月02日
  */
-public final class SM2Utils {
+public final class SM2Algorithm {
 
     /**
      * SM2 曲线名称
@@ -58,7 +59,7 @@ public final class SM2Utils {
     /**
      * 私有构造函数，防止实例化
      */
-    private SM2Utils() {
+    private SM2Algorithm() {
     }
 
     // ==================== 密钥对生成 ====================
@@ -107,7 +108,7 @@ public final class SM2Utils {
             signer.update(data, 0, data.length);
 
             byte[] signature = signer.generateSignature();
-            return Base64Utils.encryptByBase64(signature);
+            return Base64Algorithm.encryptByBase64(signature);
         } catch (Exception e) {
             throw new IllegalArgumentException("SM2 签名失败", e);
         }
@@ -145,7 +146,7 @@ public final class SM2Utils {
     public static boolean verify(byte[] data, String signatureStr,
             ECPublicKeyParameters publicKey, String userId) {
         try {
-            byte[] signature = Base64Utils.decryptByBase64(signatureStr);
+            byte[] signature = Base64Algorithm.decryptByBase64(signatureStr);
 
             SM2Signer signer = new SM2Signer();
             CipherParameters params = new org.bouncycastle.crypto.params.ParametersWithID(

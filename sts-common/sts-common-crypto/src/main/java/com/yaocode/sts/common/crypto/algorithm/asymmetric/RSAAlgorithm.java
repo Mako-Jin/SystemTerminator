@@ -1,4 +1,6 @@
-package com.yaocode.sts.common.crypto.utils;
+package com.yaocode.sts.common.crypto.algorithm.asymmetric;
+
+import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +22,7 @@ import java.util.Base64;
  * @author: Jin-LiangBo
  * @date: 2026年06月01日
  */
-public final class RSAUtils {
+public final class RSAAlgorithm {
 
     /**
      * RSA 算法名称
@@ -66,7 +68,7 @@ public final class RSAUtils {
     /**
      * 私有构造函数，防止实例化
      */
-    private RSAUtils() {
+    private RSAAlgorithm() {
     }
 
     // ==================== 密钥对生成 ====================
@@ -125,7 +127,7 @@ public final class RSAUtils {
      * @throws Exception 异常
      */
     public static PublicKey getPublicKeyFromBase64(String base64Key) throws Exception {
-        byte[] keyBytes = Base64Utils.decryptByBase64(base64Key);
+        byte[] keyBytes = Base64Algorithm.decryptByBase64(base64Key);
         return getPublicKey(keyBytes);
     }
 
@@ -136,7 +138,7 @@ public final class RSAUtils {
      * @throws Exception 异常
      */
     public static PrivateKey getPrivateKeyFromBase64(String base64Key) throws Exception {
-        byte[] keyBytes = Base64Utils.decryptByBase64(base64Key);
+        byte[] keyBytes = Base64Algorithm.decryptByBase64(base64Key);
         return getPrivateKey(keyBytes);
     }
 
@@ -151,7 +153,7 @@ public final class RSAUtils {
      */
     public static String encryptByPublicKeyOAEP(String plaintext, PublicKey publicKey) throws Exception {
         byte[] encrypted = encryptByPublicKeyOAEP(plaintext.getBytes(StandardCharsets.UTF_8), publicKey);
-        return Base64Utils.encryptByBase64(encrypted);
+        return Base64Algorithm.encryptByBase64(encrypted);
     }
 
     /**
@@ -175,7 +177,7 @@ public final class RSAUtils {
      * @throws Exception 异常
      */
     public static String decryptByPrivateKeyOAEP(String ciphertext, PrivateKey privateKey) throws Exception {
-        byte[] decrypted = decryptByPrivateKeyOAEP(Base64Utils.decryptByBase64(ciphertext), privateKey);
+        byte[] decrypted = decryptByPrivateKeyOAEP(Base64Algorithm.decryptByBase64(ciphertext), privateKey);
         return new String(decrypted, StandardCharsets.UTF_8);
     }
 
@@ -203,7 +205,7 @@ public final class RSAUtils {
      */
     public static String encryptByPublicKeyPKCS1(String plaintext, PublicKey publicKey) throws Exception {
         byte[] encrypted = encryptByPublicKeyPKCS1(plaintext.getBytes(StandardCharsets.UTF_8), publicKey);
-        return Base64Utils.encryptByBase64(encrypted);
+        return Base64Algorithm.encryptByBase64(encrypted);
     }
 
     /**
@@ -227,7 +229,7 @@ public final class RSAUtils {
      * @throws Exception 异常
      */
     public static String decryptByPrivateKeyPKCS1(String ciphertext, PrivateKey privateKey) throws Exception {
-        byte[] decrypted = decryptByPrivateKeyPKCS1(Base64Utils.decryptByBase64(ciphertext), privateKey);
+        byte[] decrypted = decryptByPrivateKeyPKCS1(Base64Algorithm.decryptByBase64(ciphertext), privateKey);
         return new String(decrypted, StandardCharsets.UTF_8);
     }
 
@@ -257,7 +259,7 @@ public final class RSAUtils {
         Signature signature = Signature.getInstance(SIGNATURE_SHA256_RSA);
         signature.initSign(privateKey);
         signature.update(data);
-        return Base64Utils.encryptByBase64(signature.sign());
+        return Base64Algorithm.encryptByBase64(signature.sign());
     }
 
     /**
@@ -282,7 +284,7 @@ public final class RSAUtils {
         Signature signature = Signature.getInstance(SIGNATURE_SHA512_RSA);
         signature.initSign(privateKey);
         signature.update(data);
-        return Base64Utils.encryptByBase64(signature.sign());
+        return Base64Algorithm.encryptByBase64(signature.sign());
     }
 
     /**
@@ -308,7 +310,7 @@ public final class RSAUtils {
         Signature signature = Signature.getInstance(SIGNATURE_SHA256_RSA);
         signature.initVerify(publicKey);
         signature.update(data);
-        byte[] sigBytes = Base64Utils.decryptByBase64(signatureStr);
+        byte[] sigBytes = Base64Algorithm.decryptByBase64(signatureStr);
         return signature.verify(sigBytes);
     }
 
@@ -336,7 +338,7 @@ public final class RSAUtils {
         Signature signature = Signature.getInstance(SIGNATURE_SHA512_RSA);
         signature.initVerify(publicKey);
         signature.update(data);
-        byte[] sigBytes = Base64Utils.decryptByBase64(signatureStr);
+        byte[] sigBytes = Base64Algorithm.decryptByBase64(signatureStr);
         return signature.verify(sigBytes);
     }
 
