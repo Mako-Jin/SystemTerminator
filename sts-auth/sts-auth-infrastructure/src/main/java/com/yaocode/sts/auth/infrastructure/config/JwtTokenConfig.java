@@ -88,7 +88,7 @@ public class JwtTokenConfig {
     public JwtTokenPort stateTokenPort() {
         JwtTokenProviderConfig config = properties.getState();
         logger.info("Creating StateTokenPort with algorithm: {}", config.getAlgorithm());
-        return createTokenPort(config, TokenTypeEnums.STATE);
+        return createTokenPort(config, TokenTypeEnums.STATE_TOKEN);
     }
 
 

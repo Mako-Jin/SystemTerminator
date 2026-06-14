@@ -26,7 +26,7 @@ public enum TokenTypeEnums {
     /**
      * 状态令牌
      */
-    STATE("STATE"),
+    STATE_TOKEN("STATE_TOKEN"),
     ;
 
     private final String tokenType;

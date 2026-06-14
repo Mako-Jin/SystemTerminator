@@ -32,4 +32,20 @@ public abstract class AbstractAuthCredential implements Credential {
 
     public void destroy() {}
 
+    /**
+     * 是否启用记住我功能
+     * 子类可重写，默认 false
+     */
+    public boolean isRememberMe() {
+        return false;
+    }
+
+    /**
+     * 是否需要生成 Refresh Token
+     * 默认 true，子类可重写
+     */
+    public boolean needRefreshToken() {
+        return true;
+    }
+
 }

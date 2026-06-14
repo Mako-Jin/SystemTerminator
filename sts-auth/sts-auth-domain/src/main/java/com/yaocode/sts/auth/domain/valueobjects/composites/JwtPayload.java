@@ -70,6 +70,8 @@ public class JwtPayload extends Identifier<TokenId> {
      */
     TokenTypeEnums tokenType;
 
+    String series;
+
     /**
      * 其他扩展字段
      */
@@ -78,9 +80,10 @@ public class JwtPayload extends Identifier<TokenId> {
     public JwtPayload(
             TokenId jwtId, Instant issuedAt, Instant expiresAt, String issuer,
             String audience, UserId userId, Username username, ClientId clientId,
-            DeviceId deviceId, TokenTypeEnums tokenType, Map<String, Object> claims
+            DeviceId deviceId, TokenTypeEnums tokenType, String series, Map<String, Object> claims
     ) {
         super(jwtId);
+        this.series = series;
         this.subject = Objects.isNull(userId) ? username.getValue() : userId.getValue();
         this.issuedAt = issuedAt;
         this.expiresAt = expiresAt;

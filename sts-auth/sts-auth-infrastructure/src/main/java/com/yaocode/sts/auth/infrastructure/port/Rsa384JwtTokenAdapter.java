@@ -45,7 +45,7 @@ public class Rsa384JwtTokenAdapter implements JwtTokenPort {
     }
 
     @Override
-    public String generate(Map<String, Object> payload, Duration ttl) {
+    public String generate(Map<String, Object> payload) {
         return "";
     }
 

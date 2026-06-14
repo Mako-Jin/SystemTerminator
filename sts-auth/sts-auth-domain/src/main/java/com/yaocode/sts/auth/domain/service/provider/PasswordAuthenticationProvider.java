@@ -2,7 +2,10 @@ package com.yaocode.sts.auth.domain.service.provider;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
+import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
+import com.yaocode.sts.auth.domain.repository.RememberMeRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
+import com.yaocode.sts.auth.domain.service.JwtTokenService;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordAuthCredential;
 import jakarta.annotation.Resource;
@@ -20,6 +23,14 @@ public class PasswordAuthenticationProvider extends AbstractAuthenticationProvid
 
     @Resource
     private UserInfoRepository userInfoRepository;
+
+    protected PasswordAuthenticationProvider(
+            JwtTokenService jwtTokenService,
+            RememberMeRepository rememberMeRepository,
+            RefreshTokenRepository refreshTokenRepository
+    ) {
+        super(jwtTokenService, refreshTokenRepository, rememberMeRepository);
+    }
 
     @Override
     public GrantTypeEnums getGrantType() {

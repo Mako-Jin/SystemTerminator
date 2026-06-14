@@ -41,10 +41,12 @@ public class RememberMeTokenEntity extends AbstractAggregate<TokenId> {
      * 过期时间
      */
     private final Instant expirationTime;
+    private final String series;
     /**
      * 是否已被撤销
      */
     private boolean revoked;
+    private String revokedReason;
     /**
      * 撤销时间
      */
@@ -57,15 +59,16 @@ public class RememberMeTokenEntity extends AbstractAggregate<TokenId> {
             ClientId clientId,
             DeviceId deviceId,
             Instant lastLoginTime,
-            Instant expirationTime
+            Instant expirationTime, String series
     ) {
         super(tokenId);
         this.userId = userId;
         this.username = username;
         this.clientId = clientId;
         this.deviceId = deviceId;
+        this.series = series;
         this.createdAt = Instant.now();
-        this.lastLoginTime = this.createdAt;
+        this.lastLoginTime = lastLoginTime;
         this.expirationTime = expirationTime;
     }
 
@@ -74,15 +77,18 @@ public class RememberMeTokenEntity extends AbstractAggregate<TokenId> {
             Username username,
             ClientId clientId,
             DeviceId deviceId,
-            Instant expirationTime
+            Instant lastLoginTime,
+            Instant expirationTime,
+            String series
     ) {
         super(TokenId.nextId());
         this.userId = userId;
         this.username = username;
         this.clientId = clientId;
         this.deviceId = deviceId;
+        this.series = series;
         this.createdAt = Instant.now();
-        this.lastLoginTime = this.createdAt;
+        this.lastLoginTime = lastLoginTime;
         this.expirationTime = expirationTime;
     }
 
@@ -104,16 +110,18 @@ public class RememberMeTokenEntity extends AbstractAggregate<TokenId> {
                 this.clientId,
                 this.deviceId,
                 Instant.now(),
-                Instant.now().plusSeconds(validityDays * 86400L)
+                Instant.now().plusSeconds(validityDays * 86400L),
+                this.series
         );
     }
 
     /**
      * 撤销令牌
      */
-    public void revoke() {
+    public void revoke(String reason) {
         this.revoked = true;
         this.revokedAt = Instant.now();
+        this.revokedReason = reason;
     }
 
 }

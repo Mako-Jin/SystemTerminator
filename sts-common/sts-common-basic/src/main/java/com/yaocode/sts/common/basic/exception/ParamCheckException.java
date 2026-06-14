@@ -6,4 +6,6 @@ package com.yaocode.sts.common.basic.exception;
  * @date: 2025年10月21日 21:28
  */
 public class ParamCheckException extends IllegalArgumentException {
+    public ParamCheckException(String s) {
+    }
 }

@@ -13,7 +13,6 @@ import com.yaocode.sts.common.domain.valueobject.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +47,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
     private static final String CLAIM_USERNAME = "username";
     private static final String CLAIM_CLIENT_ID = "clientId";
     private static final String CLAIM_DEVICE_ID = "deviceId";
+    private static final String CLAIM_SERIES = "series";
     private static final String CLAIM_TOKEN_TYPE = "tokenType";
 
     private final AlgorithmTypeEnums algorithm;
@@ -80,7 +80,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
     }
 
     @Override
-    public String generate(Map<String, Object> payload, Duration ttl) {
+    public String generate(Map<String, Object> payload) {
         // 参数校验
         if (payload == null) {
             throw new IllegalArgumentException("payload 不能为空");
@@ -90,7 +90,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
         }
 
         // 使用默认 TTL 如果未指定
-        long effectiveTtl = (ttl != null) ? ttl.getSeconds() : ttlSeconds;
+        long effectiveTtl = ttlSeconds;
 
         try {
             // 构建完整的 JWT 载荷
@@ -202,6 +202,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
             String clientId = getString(claims, CLAIM_CLIENT_ID);
             String deviceId = getString(claims, CLAIM_DEVICE_ID);
             String tokenType = getString(claims, CLAIM_TOKEN_TYPE);
+            String series = getString(claims, CLAIM_SERIES);
 
             // 构建额外的 claims（移除已解析的字段）
             Map<String, Object> extraClaims = buildExtraClaims(claims);
@@ -214,6 +215,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
             DeviceId device = deviceId != null ? DeviceId.of(deviceId) : null;
             TokenTypeEnums type = tokenType != null ? TokenTypeEnums.valueOf(tokenType) : null;
 
+
             return new JwtPayload(
                     tokenId,
                     iat != null ? iat : Instant.now(),
@@ -225,6 +227,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
                     client,
                     device,
                     type,
+                    series,
                     extraClaims
             );
         } catch (Exception e) {

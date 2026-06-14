@@ -3,7 +3,6 @@ package com.yaocode.sts.auth.domain.port;
 
 import com.yaocode.sts.auth.domain.valueobjects.composites.JwtPayload;
 
-import java.time.Duration;
 import java.util.Map;
 
 /**
@@ -18,7 +17,7 @@ public interface JwtTokenPort {
      * @param ttl 有效期
      * @return JWT 字符串
      */
-    String generate(Map<String, Object> payload, Duration ttl);
+    String generate(Map<String, Object> payload);
 
     /**
      * 验证 JWT
