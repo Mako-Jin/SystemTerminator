@@ -6,7 +6,8 @@ import com.yaocode.sts.auth.application.dto.response.AuthenticationResponseDto;
 import com.yaocode.sts.auth.application.dto.response.PreLoginResponseDto;
 import com.yaocode.sts.auth.application.service.AuthApplicationService;
 import com.yaocode.sts.auth.domain.service.AuthDomainService;
-import com.yaocode.sts.auth.domain.service.RememberMeService;
+import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
+import com.yaocode.sts.auth.domain.valueobjects.composites.RememberMeAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import jakarta.annotation.Resource;
@@ -14,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 /**
  * 认证服务实现层
@@ -28,9 +31,6 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
     @Resource
     private AuthDomainService authDomainService;
 
-    @Resource
-    private RememberMeService rememberMeService;
-
     @Override
     @Transactional
     public PreLoginResponseDto preLogin(PreLoginRequestDto preLoginDto) {
@@ -38,9 +38,10 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
         ClientId clientId = ClientId.of(preLoginDto.getClientId());
         DeviceId deviceId = DeviceId.of(preLoginDto.getDeviceId());
 
-        if (preLoginDto.getRememberMe() != null) {
-//            AutoLoginResult autoLoginResult = authDomainService.validateJwtToken(preLoginDto.getRememberMe());
-//
+        if (!Objects.isNull(preLoginDto.getRememberMe())) {
+            RememberMeAuthCredential rememberMeAuthCredential = new RememberMeAuthCredential(preLoginDto.getRememberMe(), clientId, deviceId);
+            AuthenticationToken authenticationToken = authDomainService.authenticate(rememberMeAuthCredential);
+
 //            if (autoLoginResult != null) {
 //                log.info("记住我自动登录成功: userId={}", autoLoginResult.getUserInfo().getId());
 //                return PreLoginResponseDto.autoLogin(autoLoginResult);

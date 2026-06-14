@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.tools;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import org.springframework.lang.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,6 +67,10 @@ public class StringUtils {
 
     public static boolean isBlank(String str) {
         return str == null || str.trim().isEmpty();
+    }
+
+    public static boolean hasText(@Nullable String str) {
+        return (str != null && !str.isBlank());
     }
 
 }

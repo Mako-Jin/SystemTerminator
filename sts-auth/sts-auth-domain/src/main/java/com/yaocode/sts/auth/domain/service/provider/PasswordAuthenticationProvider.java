@@ -2,14 +2,13 @@ package com.yaocode.sts.auth.domain.service.provider;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
-import com.yaocode.sts.auth.domain.exception.AuthenticationException;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
-import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordAuthCredential;
-import com.yaocode.sts.common.domain.context.TenantInfoContext;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * 密码模式认证provider
@@ -41,7 +40,7 @@ public class PasswordAuthenticationProvider extends AbstractAuthenticationProvid
 //    }
 
     @Override
-    protected UserInfoEntity doAuthenticate(PasswordAuthCredential credential) {
-        return null;
+    protected Optional<UserInfoEntity> doAuthenticate(PasswordAuthCredential credential) {
+        return Optional.empty();
     }
 }

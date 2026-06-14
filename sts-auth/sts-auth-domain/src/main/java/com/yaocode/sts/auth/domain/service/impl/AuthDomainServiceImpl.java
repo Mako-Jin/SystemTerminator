@@ -3,8 +3,10 @@ package com.yaocode.sts.auth.domain.service.impl;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.service.AuthDomainService;
 import com.yaocode.sts.auth.domain.service.provider.AuthenticationProvider;
+import com.yaocode.sts.auth.domain.service.provider.ProviderManager;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,15 +23,18 @@ public class AuthDomainServiceImpl implements AuthDomainService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthDomainServiceImpl.class);
 
+    @Resource
+    private ProviderManager providerManager;
+
     @Override
     public AuthenticationToken authenticate(AbstractAuthCredential credential) {
         GrantTypeEnums grantType = credential.getGrantType();
 
-//        AuthenticationProvider<?> provider = providerMap.get(grantType);
-//
-//        if (Objects.equals(grantType, GrantTypeEnums.REMEMBER_ME)) {
-//            return (AuthenticationToken) provider.authenticate(credential);
-//        }
+        AuthenticationProvider<AbstractAuthCredential> provider = providerManager.getProvider(grantType);
+
+        if (Objects.equals(grantType, GrantTypeEnums.REMEMBER_ME)) {
+            return provider.authenticate(credential);
+        }
 //
 //        // 1. 验证 State（CSRF 防护）
 //        if (!stateService.consume(token.getState(), token.getSessionId())) {

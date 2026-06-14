@@ -2,6 +2,9 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
 import com.yaocode.sts.auth.domain.repository.RememberMeRepository;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,7 +18,7 @@ public class RememberMeRepositoryImpl implements RememberMeRepository {
     }
 
     @Override
-    public Optional<RememberMeTokenEntity> findRememberMeToken(String userId, String clientId, String deviceId) {
+    public Optional<RememberMeTokenEntity> findRememberMeToken(ClientId clientId, DeviceId deviceId, UserId userId) {
         return Optional.empty();
     }
 

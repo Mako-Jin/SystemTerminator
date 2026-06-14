@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 @Component
 public class ProviderManager {
 
-    private final Map<GrantTypeEnums, AuthenticationProvider<? extends AbstractAuthCredential>> providerMap;
+    private final Map<GrantTypeEnums, AuthenticationProvider<AbstractAuthCredential>> providerMap;
 
-    public ProviderManager(List<AuthenticationProvider<? extends AbstractAuthCredential>> providers) {
+    public ProviderManager(List<AuthenticationProvider<AbstractAuthCredential>> providers) {
         this.providerMap = providers.stream()
                 .collect(Collectors.toMap(
                         AuthenticationProvider::getGrantType,
@@ -25,7 +25,7 @@ public class ProviderManager {
     /**
      * 根据授权类型获取对应的Provider
      */
-    public AuthenticationProvider<?> getProvider(GrantTypeEnums grantType) {
+    public AuthenticationProvider<AbstractAuthCredential> getProvider(GrantTypeEnums grantType) {
         return providerMap.get(grantType);
     }
 

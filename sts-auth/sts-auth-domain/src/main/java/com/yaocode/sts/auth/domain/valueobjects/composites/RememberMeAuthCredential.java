@@ -7,14 +7,14 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import lombok.Getter;
 
 @Getter
-public class RememberAuthCredential extends AbstractAuthCredential {
+public class RememberMeAuthCredential extends AbstractAuthCredential {
 
     /**
      * 用户名
      */
     private final String rememberMeToken;
 
-    public RememberAuthCredential(String rememberMeToken, ClientId clientId, DeviceId deviceId) {
+    public RememberMeAuthCredential(String rememberMeToken, ClientId clientId, DeviceId deviceId) {
         super(GrantTypeEnums.REMEMBER_ME, clientId, deviceId);
         this.rememberMeToken = rememberMeToken;
     }

@@ -6,6 +6,9 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+import java.util.Optional;
+
 /**
  * provider抽象实现类
  * @author: Jin-LiangBo
@@ -21,10 +24,12 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
         preAuthenticateCheck(credential);
 
         // 2. 执行具体认证逻辑
-        UserInfoEntity user = doAuthenticate(credential);
-
+        Optional<UserInfoEntity> userInfoEntityOptional = doAuthenticate(credential);
+        if (userInfoEntityOptional.isEmpty()) {
+            throw new IllegalStateException("认证失败：用户不存在");
+        }
         // 3. 后置验证
-        postAuthenticateValidate(user);
+        postAuthenticateValidate(userInfoEntityOptional.get());
 
         // 4. 构建认证成功的令牌
 //        AuthenticationToken result = buildSuccessToken(user, credential);
@@ -40,27 +45,24 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      * 前置检查
      */
     protected void preAuthenticateCheck(T credential) {
-        if (credential == null) {
+        if (Objects.isNull(credential)) {
             throw new IllegalArgumentException("认证令牌不能为空");
         }
-//        if (credential == null) {
-//            throw new IllegalArgumentException("认证凭证不能为空");
-//        }
     }
 
     /**
      * 执行具体认证逻辑（子类实现）
      */
-    protected abstract UserInfoEntity doAuthenticate(T credential);
+    protected abstract Optional<UserInfoEntity> doAuthenticate(T credential);
 
     /**
      * 后置验证
      */
-    protected void postAuthenticateValidate(UserInfoEntity user) {
-        if (user == null) {
+    protected void postAuthenticateValidate(UserInfoEntity userInfoEntity) {
+        if (Objects.isNull(userInfoEntity)) {
             throw new IllegalStateException("认证失败：用户不存在");
         }
-        validateUserStatus(user);
+        validateUserStatus(userInfoEntity);
     }
 
     /**

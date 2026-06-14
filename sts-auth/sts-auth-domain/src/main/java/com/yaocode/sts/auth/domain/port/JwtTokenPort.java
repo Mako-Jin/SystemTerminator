@@ -35,32 +35,8 @@ public interface JwtTokenPort {
     JwtPayload parse(String jwt);
 
     /**
-     * 验证并解析 JWT
-     * @param jwt JWT 字符串
-     * @return 载荷，无效返回 null
+     * 获取算法类型
      */
-    JwtPayload verifyAndParse(String jwt);
-
-    // ========== 类型化方法（推荐） ==========
-
-    /**
-     * 生成记住我 JWT
-     */
-    String generateRememberMeToken(JwtPayload payload);
-
-    /**
-     * 验证并解析记住我 JWT
-     */
-    JwtPayload verifyAndParseRememberMe(String jwt);
-
-    /**
-     * 生成 State JWT
-     */
-    String generateStateToken(JwtPayload payload);
-
-    /**
-     * 验证并解析 State JWT
-     */
-    JwtPayload verifyAndParseState(String jwt);
+    String getAlgorithm();
 
 }

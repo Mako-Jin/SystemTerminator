@@ -52,5 +52,25 @@ yaocode:
 #    api:
 #      elapsed:
 #        enabled: false
+  jwt:
+    access:
+      algorithm: HS512
+      secret: ${JWT_ACCESS_SECRET:access-secret-64bytes...}
+      ttl: 3600
 
+    refresh:
+      algorithm: RS256
+      public-key: ${JWT_REFRESH_PUBLIC_KEY}
+      private-key: ${JWT_REFRESH_PRIVATE_KEY}
+      ttl: 604800
 
+    remember-me:
+      algorithm: ED25519
+      public-key: ${JWT_REMEMBER_PUBLIC_KEY}
+      private-key: ${JWT_REMEMBER_PRIVATE_KEY}
+      ttl: 2592000
+
+    state:
+      algorithm: HS256
+      secret: ${JWT_STATE_SECRET:state-secret-32bytes...}
+      ttl: 300

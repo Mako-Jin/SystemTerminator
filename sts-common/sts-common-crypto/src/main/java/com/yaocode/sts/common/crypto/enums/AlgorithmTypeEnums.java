@@ -195,6 +195,17 @@ public enum AlgorithmTypeEnums {
             "Java标准算法"
     ),
 
+    HMAC_SHA384(
+            "HMAC-SHA384",
+            "HmacSHA384",
+            AlgorithmCategoryEnums.MAC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "基于SHA-384的消息认证码",
+            "Java标准算法"
+    ),
+
     HMAC_SHA512(
             "HMAC-SHA512",
             "HmacSHA512",
@@ -260,6 +271,143 @@ public enum AlgorithmTypeEnums {
             false,
             "基于HMAC-SHA256的密钥派生函数，NIST标准",
             "Java标准算法"
+    ),
+
+    // ----- HMAC 系列 -----
+    HS256(
+            "HS256",
+            "HmacSHA256",
+            AlgorithmCategoryEnums.MAC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "HMAC with SHA-256 (JWT签名算法)",
+            "Java标准算法"
+    ),
+
+    HS384(
+            "HS384",
+            "HmacSHA384",
+            AlgorithmCategoryEnums.MAC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "HMAC with SHA-384 (JWT签名算法)",
+            "Java标准算法"
+    ),
+
+    HS512(
+            "HS512",
+            "HmacSHA512",
+            AlgorithmCategoryEnums.MAC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "HMAC with SHA-512 (JWT签名算法)",
+            "Java标准算法"
+    ),
+
+    // ----- RSA 系列（RSA + SHA）-----
+    RS256(
+            "RS256",
+            "SHA256withRSA",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "RSA with SHA-256 (JWT签名算法)，推荐密钥2048位",
+            "Java标准算法"
+    ),
+
+    RS384(
+            "RS384",
+            "SHA384withRSA",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "RSA with SHA-384 (JWT签名算法)，推荐密钥2048位",
+            "Java标准算法"
+    ),
+
+    RS512(
+            "RS512",
+            "SHA512withRSA",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "RSA with SHA-512 (JWT签名算法)，推荐密钥2048位",
+            "Java标准算法"
+    ),
+
+    // ----- ECDSA 系列 -----
+    ES256(
+            "ES256",
+            "SHA256withECDSA",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "ECDSA with SHA-256 (JWT签名算法)，推荐密钥256位",
+            "Java标准算法"
+    ),
+
+    ES384(
+            "ES384",
+            "SHA384withECDSA",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "ECDSA with SHA-384 (JWT签名算法)，推荐密钥384位",
+            "Java标准算法"
+    ),
+
+    ES512(
+            "ES512",
+            "SHA512withECDSA",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "ECDSA with SHA-512 (JWT签名算法)，推荐密钥521位",
+            "Java标准算法"
+    ),
+
+    // ----- EdDSA 系列 -----
+    ED25519(
+            "Ed25519",
+            "Ed25519",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "Edwards-curve Digital Signature Algorithm (JWT签名算法)，密钥32字节",
+            "BouncyCastle/Java 15+"
+    ),
+
+    ED448(
+            "Ed448",
+            "Ed448",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "Edwards-curve Digital Signature Algorithm (JWT签名算法)，密钥57字节",
+            "BouncyCastle/Java 15+"
+    ),
+
+    // ----- 国密系列 -----
+    SM2_WITH_SM3(
+            "SM2-SM3",
+            "SM3withSM2",
+            AlgorithmCategoryEnums.ASYMMETRIC,
+            SecurityLevelEnums.HIGH,
+            true,
+            true,
+            "国密SM2 with SM3 (JWT签名算法)",
+            "BouncyCastle"
     ),
     ;
 

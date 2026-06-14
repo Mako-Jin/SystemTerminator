@@ -1,6 +1,9 @@
 package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 
 import java.util.Optional;
 
@@ -22,7 +25,7 @@ public interface RememberMeRepository {
      * @param clientId 客户端ID
      * @param deviceId 设备ID
      */
-    Optional<RememberMeTokenEntity> findRememberMeToken(String userId, String clientId, String deviceId);
+    Optional<RememberMeTokenEntity> findRememberMeToken(ClientId clientId, DeviceId deviceId, UserId userId);
 
     /**
      * 严格匹配查找（所有维度必须完全匹配）
