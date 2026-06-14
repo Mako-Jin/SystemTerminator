@@ -11,12 +11,63 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <artifactId>sts-components-flow</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <name>sts-components-flow</name>
     <description>flow -- 工作流引擎组件</description>
+
+    <!-- 子模块 -->
+    <modules>
+        <module>sts-components-flow-core</module>
+        <module>sts-components-flow-service</module>
+        <module>sts-components-flow-api</module>
+        <module>sts-components-flow-web</module>
+        <module>sts-components-flow-infrastructure</module>
+        <module>sts-components-flow-client</module>
+        <module>sts-components-flow-starter</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-core</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-api</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-client</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-infrastructure</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-service</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-web</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts</groupId>
+                <artifactId>sts-components-flow-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- spring boot starter -->
