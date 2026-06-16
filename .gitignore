@@ -59,3 +59,11 @@ replay_pid*
 /sts-common/sts-common-crypto/target/
 
 /MaxKey-main/
+
+/sts-components/sts-components-flow/sts-components-flow-api/target/
+/sts-components/sts-components-flow/sts-components-flow-client/target/
+/sts-components/sts-components-flow/sts-components-flow-core/target/
+/sts-components/sts-components-flow/sts-components-flow-infrastructure/target/
+/sts-components/sts-components-flow/sts-components-flow-service/target/
+/sts-components/sts-components-flow/sts-components-flow-starter/target/
+/sts-components/sts-components-flow/sts-components-flow-web/target/
