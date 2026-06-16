@@ -117,10 +117,10 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
         // ✅ 3. 通过实体工厂方法创建（触发领域事件）
         UserInfoEntity user = UserInfoEntity.build(
                 command.getUsername(),
-                command.getTenantIdList(),
-                command.getOrganizationIdList(),
-                command.getRoleIdList(),
-                command.getUserGroupIdList(),
+//                command.getTenantIdList(),
+//                command.getOrganizationIdList(),
+//                command.getRoleIdList(),
+//                command.getUserGroupIdList(),
 //                command.getEmail(),
 //                command.getPhoneNum(),
                 OppositeEnums.YES.getCode()

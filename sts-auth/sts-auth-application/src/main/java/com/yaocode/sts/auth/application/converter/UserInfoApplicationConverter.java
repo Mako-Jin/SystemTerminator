@@ -39,12 +39,12 @@ public interface UserInfoApplicationConverter {
     @Mapping(target = "userId", source = "user.id", qualifiedByName = "userIdToString")
     @Mapping(target = "username", source = "user.username", qualifiedByName = "usernameToString")
     // @Mapping(target = "password", source = "user.password", qualifiedByName = "passwordToString")
-    @Mapping(target = "email", source = "user.email", qualifiedByName = "emailToString")
-    @Mapping(target = "phoneNum", source = "user.phoneNum", qualifiedByName = "phoneNumToString")
-    @Mapping(target = "roleIdList", source = "user.roleIdList", qualifiedByName = "roleIdListToStringList")
-    @Mapping(target = "tenantIdList", source = "user.tenantIdList", qualifiedByName = "tenantIdListToStringList")
-    @Mapping(target = "organizationIdList", source = "user.organizationIdList", qualifiedByName = "organizationIdListToStringList")
-    @Mapping(target = "userGroupIdList", source = "user.userGroupIdList", qualifiedByName = "userGroupIdListToStringList")
+//    @Mapping(target = "email", source = "user.email", qualifiedByName = "emailToString")
+//    @Mapping(target = "phoneNum", source = "user.phoneNum", qualifiedByName = "phoneNumToString")
+//    @Mapping(target = "roleIdList", source = "user.roleIdList", qualifiedByName = "roleIdListToStringList")
+//    @Mapping(target = "tenantIdList", source = "user.tenantIdList", qualifiedByName = "tenantIdListToStringList")
+//    @Mapping(target = "organizationIdList", source = "user.organizationIdList", qualifiedByName = "organizationIdListToStringList")
+//    @Mapping(target = "userGroupIdList", source = "user.userGroupIdList", qualifiedByName = "userGroupIdListToStringList")
     UserInfoDto toDto(UserInfoEntity user);
 
     /**
@@ -55,10 +55,10 @@ public interface UserInfoApplicationConverter {
     default UserInfoEntity toEntity(UserInfoDto user) {
         return UserInfoEntity.build(
                 stringToUsername(user.getUsername()),
-                stringListToTenantIdList(user.getTenantIdList()),
-                stringListToOrganizationIdList(user.getOrganizationIdList()),
-                stringListToRoleIdList(user.getRoleIdList()),
-                stringListToUserGroupIdList(user.getUserGroupIdList()),
+//                stringListToTenantIdList(user.getTenantIdList()),
+//                stringListToOrganizationIdList(user.getOrganizationIdList()),
+//                stringListToRoleIdList(user.getRoleIdList()),
+//                stringListToUserGroupIdList(user.getUserGroupIdList()),
 //                stringToEmail(user.getEmail()),
 //                stringToPhoneNum(user.getPhoneNum()),
                 user.getIsEnabled()
@@ -73,12 +73,12 @@ public interface UserInfoApplicationConverter {
     default CreateUserCommand toCommand(UserInfoDto userInfoDto) {
         return CreateUserCommand.builder()
                 .username(stringToUsername(userInfoDto.getUsername()))
-                .tenantIdList(stringListToTenantIdList(userInfoDto.getTenantIdList()))
-                .email(stringToEmail(userInfoDto.getEmail()))
-                .phoneNum(stringToPhoneNum(userInfoDto.getPhoneNum()))
-                .organizationIdList(stringListToOrganizationIdList(userInfoDto.getOrganizationIdList()))
-                .userGroupIdList(stringListToUserGroupIdList(userInfoDto.getUserGroupIdList()))
-                .roleIdList(stringListToRoleIdList(userInfoDto.getRoleIdList()))
+//                .tenantIdList(stringListToTenantIdList(userInfoDto.getTenantIdList()))
+//                .email(stringToEmail(userInfoDto.getEmail()))
+//                .phoneNum(stringToPhoneNum(userInfoDto.getPhoneNum()))
+//                .organizationIdList(stringListToOrganizationIdList(userInfoDto.getOrganizationIdList()))
+//                .userGroupIdList(stringListToUserGroupIdList(userInfoDto.getUserGroupIdList()))
+//                .roleIdList(stringListToRoleIdList(userInfoDto.getRoleIdList()))
                 .build();
     }
 

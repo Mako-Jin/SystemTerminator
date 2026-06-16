@@ -5,6 +5,8 @@ import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Builder;
 import lombok.Value;
 
+import java.time.Instant;
+
 /**
  * 认证令牌值对象
  * 封装认证请求的所有参数
@@ -23,12 +25,41 @@ public class AuthenticationToken {
 
     String accessToken;
 
+    /**
+     * Access Token 有效期（秒）
+     */
+    Instant accessTokenExpiresAt;
+
     String refreshToken;
 
+    /**
+     * Refresh Token 有效期（秒）
+     */
+    Instant refreshTokenExpiresAt;
+
+    /**
+     * 记住我令牌
+     */
     String rememberMeToken;
 
+    /**
+     * 记住我令牌有效期（秒）
+     */
+    Instant rememberMeTokenExpiresAt;
+
+    /**
+     * 状态令牌
+     */
     String stateToken;
 
-    Boolean authenticated;
+    /**
+     * 状态令牌有效期（秒）
+     */
+    Long stateTokenExpiresIn;
+
+    /**
+     * 是否认证成功
+     */
+    Boolean isAuthenticated;
 
 }

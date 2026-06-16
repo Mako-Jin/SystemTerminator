@@ -70,20 +70,20 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
     public static UserInfoEntity build(
             UserId userId,
             Username username,
-            List<TenantId> tenantIdList,
-            List<OrganizationId> organizationIdList,
-            List<RoleId> roleIdList,
-            List<UserGroupId> userGroupIdList,
+//            List<TenantId> tenantIdList,
+//            List<OrganizationId> organizationIdList,
+//            List<RoleId> roleIdList,
+//            List<UserGroupId> userGroupIdList,
 //            Email email,
 //            PhoneNum phoneNum,
             Integer isEnabled
     ) {
         UserInfoEntity entity = new UserInfoEntity(userId);
         entity.username = username;
-        entity.tenantIdList = tenantIdList;
-        entity.organizationIdList = organizationIdList;
-        entity.roleIdList = roleIdList;
-        entity.userGroupIdList = userGroupIdList;
+//        entity.tenantIdList = tenantIdList;
+//        entity.organizationIdList = organizationIdList;
+//        entity.roleIdList = roleIdList;
+//        entity.userGroupIdList = userGroupIdList;
 //        entity.email = email;
 //        entity.phoneNum = phoneNum;
         entity.isEnabled = isEnabled;
@@ -92,20 +92,20 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
 
     public static UserInfoEntity build(
             Username username,
-            List<TenantId> tenantIdList,
-            List<OrganizationId> organizationIdList,
-            List<RoleId> roleIdList,
-            List<UserGroupId> userGroupIdList,
+//            List<TenantId> tenantIdList,
+//            List<OrganizationId> organizationIdList,
+//            List<RoleId> roleIdList,
+//            List<UserGroupId> userGroupIdList,
 //            Email email,
 //            PhoneNum phoneNum,
             Integer isEnabled
     ) {
         UserInfoEntity entity = new UserInfoEntity(UserId.nextId());
         entity.username = username;
-        entity.tenantIdList = tenantIdList;
-        entity.organizationIdList = organizationIdList;
-        entity.roleIdList = roleIdList;
-        entity.userGroupIdList = userGroupIdList;
+//        entity.tenantIdList = tenantIdList;
+//        entity.organizationIdList = organizationIdList;
+//        entity.roleIdList = roleIdList;
+//        entity.userGroupIdList = userGroupIdList;
 //        entity.email = email;
 //        entity.phoneNum = phoneNum;
         entity.isEnabled = isEnabled;

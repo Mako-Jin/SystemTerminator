@@ -58,10 +58,10 @@ public interface UserInfoConverter {
         return UserInfoEntity.build(
                 stringToUserId(userPo.getUserId()),
                 stringToUsername(userPo.getUsername()),
-                stringToTenantId(tenantIdList),
-                stringToOrganizationId(organizationIdList),
-                stringToRoleId(roleIdList),
-                stringToUserGroupId(userGroupIdList),
+//                stringToTenantId(tenantIdList),
+//                stringToOrganizationId(organizationIdList),
+//                stringToRoleId(roleIdList),
+//                stringToUserGroupId(userGroupIdList),
 //                stringToEmail(userPo.getEmail()),
 //                stringToPhoneNum(userPo.getPhoneNum()),
                 userPo.getIsEnabled()

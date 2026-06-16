@@ -24,27 +24,11 @@ public class UserInfoDto {
     /**
      * 邮箱
      */
-    private String email;
-    /**
-     * 手机
-     */
-    private String phoneNum;
-    /**
-     * 租户id
-     */
-    private List<String> tenantIdList;
-    /**
-     * 组织id
-     */
-    private List<String> organizationIdList;
-    /**
-     * 用户组id
-     */
-    private List<String> userGroupIdList;
-    /**
-     * 角色id列表
-     */
-    private List<String> roleIdList;
+//    private String email;
+//    /**
+//     * 手机
+//     */
+//    private String phoneNum;
     /**
      * 是否激活：0：没有；1：有
      */

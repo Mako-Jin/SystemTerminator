@@ -1,12 +1,13 @@
 package com.yaocode.sts.auth.application.service.impl;
 
-import com.yaocode.sts.auth.application.converter.UserInfoApplicationConverter;
+import com.yaocode.sts.auth.application.converter.AuthApplicationConverter;
 import com.yaocode.sts.auth.application.dto.request.AuthenticationRequestDto;
 import com.yaocode.sts.auth.application.dto.request.PreLoginRequestDto;
 import com.yaocode.sts.auth.application.dto.response.AuthenticationResponseDto;
 import com.yaocode.sts.auth.application.dto.response.PreLoginResponseDto;
 import com.yaocode.sts.auth.application.exception.AuthException;
 import com.yaocode.sts.auth.application.service.AuthApplicationService;
+import com.yaocode.sts.auth.domain.entity.LoginSuccessEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.AuthDomainService;
@@ -40,7 +41,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
     private UserInfoRepository userInfoRepository;
 
     @Resource
-    private UserInfoApplicationConverter userInfoApplicationConverter;
+    private AuthApplicationConverter authApplicationConverter;
 
     @Override
     @Transactional
@@ -53,20 +54,14 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
             RememberMeAuthCredential rememberMeAuthCredential = new RememberMeAuthCredential(preLoginDto.getRememberMe(), clientId, deviceId);
             AuthenticationToken authenticationToken = authDomainService.authenticate(rememberMeAuthCredential);
 
-            if (authenticationToken.getAuthenticated()) {
+            if (authenticationToken.getIsAuthenticated()) {
                 logger.info("记住我自动登录成功: userId={}", authenticationToken.getUserId());
-                PreLoginResponseDto preLoginResponseDto = new PreLoginResponseDto();
                 Optional<UserInfoEntity> userInfoEntityOptional = userInfoRepository.findById(authenticationToken.getUserId());
                 if (userInfoEntityOptional.isEmpty()) {
                     throw new AuthException("用户不存在");
                 }
-                preLoginResponseDto.setIsAuthenticated(true);
-                preLoginResponseDto.setAccessToken(authenticationToken.getAccessToken());
-                preLoginResponseDto.setRefreshToken(authenticationToken.getRefreshToken());
-                preLoginResponseDto.setRememberMeToken(authenticationToken.getRememberMeToken());
-                preLoginResponseDto.setStateToken(authenticationToken.getStateToken());
-                preLoginResponseDto.setUserInfoDto(userInfoApplicationConverter.toDto(userInfoEntityOptional.get()));
-                return preLoginResponseDto;
+                LoginSuccessEntity loginSuccessEntity = authDomainService.loginSuccess(authenticationToken);
+                return authApplicationConverter.toLoginSuccessDto(loginSuccessEntity);
             }
             logger.debug("记住我令牌无效或已过期，继续返回登录页面");
         }

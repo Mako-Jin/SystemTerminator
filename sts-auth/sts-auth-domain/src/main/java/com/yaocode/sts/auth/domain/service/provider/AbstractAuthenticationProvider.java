@@ -36,11 +36,14 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
 
     protected RememberMeRepository rememberMeRepository;
 
-    @Value("${yaocode.jwt.remember-me.ttl:30*24*60*60}")
+    @Value("${yaocode.jwt.remember-me.ttl:2592000}")
     protected long rememberMeTokenTtlSeconds;
 
     @Value("${yaocode.jwt.refresh.ttl:604800}")
     protected long refreshTokenTtlSeconds;
+
+    @Value("${yaocode.jwt.access.ttl:1800}")
+    protected long accessTokenTtlSeconds;
 
     protected AbstractAuthenticationProvider(
             JwtTokenService jwtTokenService,
@@ -114,28 +117,32 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      * 构建成功令牌
      */
     protected AuthenticationToken buildSuccessToken(UserInfoEntity userInfoEntity, T  credential) {
+        Instant accessTokenExpiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
         String accessToken = jwtTokenService.generateAccessToken(userInfoEntity, credential.getClientId(), credential.getDeviceId());
-        String refreshToken = generateAndSaveRefreshToken(userInfoEntity, credential);
-        String rememberMeToken = generateAndSaveRememberMeToken(userInfoEntity, credential);
+        Instant refreshTokenExpiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
+        String refreshToken = generateAndSaveRefreshToken(userInfoEntity, credential, refreshTokenExpiresAt);
+        Instant rememberMeTokenExpiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
+        String rememberMeToken = generateAndSaveRememberMeToken(userInfoEntity, credential, rememberMeTokenExpiresAt);
         return AuthenticationToken.builder()
                 .userId(userInfoEntity.getId())
                 .grantType(credential.getGrantType().getValue())
                 .accessToken(accessToken)
+                .accessTokenExpiresAt(accessTokenExpiresAt)
                 .refreshToken(refreshToken)
+                .refreshTokenExpiresAt(refreshTokenExpiresAt)
                 .rememberMeToken(rememberMeToken)
-                .authenticated(true)
+                .rememberMeTokenExpiresAt(rememberMeTokenExpiresAt)
+                .isAuthenticated(true)
                 .build();
     }
 
     /**
      * 生成并保存 RememberMe Token
      */
-    protected String generateAndSaveRememberMeToken(UserInfoEntity userInfoEntity, T credential) {
+    protected String generateAndSaveRememberMeToken(UserInfoEntity userInfoEntity, T credential, Instant expiresAt) {
         if (!credential.isRememberMe()) {
             return "";
         }
-
-        Instant expiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
 
         RememberMeTokenEntity entity = new RememberMeTokenEntity(
                 userInfoEntity.getId(),
@@ -157,12 +164,10 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
     /**
      * 生成并保存 Refresh Token
      */
-    protected String generateAndSaveRefreshToken(UserInfoEntity userInfoEntity, T credential) {
+    protected String generateAndSaveRefreshToken(UserInfoEntity userInfoEntity, T credential, Instant expiresAt) {
         if (!credential.needRefreshToken()) {
             return "";
         }
-
-        Instant expiresAt = Instant.now().plusSeconds(refreshTokenTtlSeconds);
 
         RefreshTokenEntity entity = new RefreshTokenEntity(
                 userInfoEntity.getId(),

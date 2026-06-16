@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.entity.LoginSuccessEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.service.AuthDomainService;
 import com.yaocode.sts.auth.domain.service.provider.AuthenticationProvider;
@@ -56,6 +57,11 @@ public class AuthDomainServiceImpl implements AuthDomainService {
 //
 //        // 4. 执行认证
 //        return provider.authenticate(token);
+        return null;
+    }
+
+    @Override
+    public LoginSuccessEntity loginSuccess(AuthenticationToken authenticationToken) {
         return null;
     }
 
