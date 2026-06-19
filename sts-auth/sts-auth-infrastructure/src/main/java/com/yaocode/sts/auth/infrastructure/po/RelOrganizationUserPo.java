@@ -33,6 +33,30 @@ public class RelOrganizationUserPo {
      */
     private String tenantId;
     /**
+     * 是否为该组织的主要职位
+     */
+    private Boolean isPrimaryPosition;
+
+    /**
+     * 职位名称
+     */
+    private String positionName;
+
+    /**
+     * 关系类型：MANAGER, MEMBER, TEMPORARY
+     */
+    private String relationType;
+
+    /**
+     * 生效时间
+     */
+    private LocalDateTime effectiveFrom;
+
+    /**
+     * 失效时间
+     */
+    private LocalDateTime effectiveTo;
+    /**
      * 创建者id
      */
     private String createUserId;

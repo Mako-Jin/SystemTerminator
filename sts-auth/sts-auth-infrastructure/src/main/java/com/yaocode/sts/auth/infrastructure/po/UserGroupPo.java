@@ -50,10 +50,12 @@ public class UserGroupPo extends BasePo {
     /**
      * 分组分类（dynamic/static/app）
      */
-    private String category;
+    private Integer category;
 
     /**
      * 过滤条件
+     * 动态用户组过滤条件（JSON格式）
+     * 格式：{"field": "value"}
      */
     private String filters;
 
@@ -61,6 +63,10 @@ public class UserGroupPo extends BasePo {
      * 组织ID列表
      */
     private String orgIdsList;
+    /**
+     * 排序号
+     */
+    private Integer sort;
 
     /**
      * 是否默认分组

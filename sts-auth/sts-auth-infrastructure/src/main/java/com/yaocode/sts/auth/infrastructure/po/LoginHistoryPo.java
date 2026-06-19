@@ -13,23 +13,35 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 @TableName("auth_tbl_login_history")
 @EqualsAndHashCode(callSuper = true)
 public class LoginHistoryPo extends BasePo {
+
     @TableId
     private String id;
-
+    /**
+     * 用户ID
+     */
     private String userId;
+    /**
+     * 所属租户
+     */
+    private String tenantId;
+    /**
+     * 用户名
+     */
     private String username;
 
     /**
      * 登录来源：web、mobile、desktop、小程序、三方、其他
      */
-    private String loginSource;
+    private Integer loginSource;
 
     /**
      * 认证方式：PASSWORD-密码、SMS-短信、TOTP-双因素、SOCIAL-社交
      */
-    private String authMethod;
+    private Integer authMethod;
 
-    private String clientIp;
+    private String loginIp;
+    private String deviceId;
+    private String clientId;
     private String userAgent;
     private LocalDateTime loginTime;
     private LocalDateTime logoutTime;
@@ -41,9 +53,13 @@ public class LoginHistoryPo extends BasePo {
     /**
      * SUCCESS-成功、FAILED-失败
      */
-    private String status;
+    private Integer status;
     /**
      * 失败原因
      */
     private String failReason;
+    /**
+     * 会话ID（关联到当前会话）
+     */
+    private String sessionId;
 }

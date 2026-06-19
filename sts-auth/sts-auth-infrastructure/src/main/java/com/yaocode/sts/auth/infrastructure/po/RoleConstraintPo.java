@@ -32,7 +32,7 @@ public class RoleConstraintPo extends BasePo {
     /**
      * 约束类型：MUTEX-互斥约束、CARDINALITY-基数约束
      */
-    private String constraintType;
+    private Integer constraintType;
 
     /**
      * 互斥角色列表（逗号分隔）

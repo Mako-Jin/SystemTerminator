@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 @Data
-@TableName("auth_tbl_resource_contact")
+@TableName("auth_tbl_instance_info")
 @EqualsAndHashCode(callSuper = true)
 public class InstanceInfoPo extends BasePo {
 
@@ -45,12 +45,12 @@ public class InstanceInfoPo extends BasePo {
     /**
      * 实例类型（prod/test/dev）
      */
-    private String instanceType;
+    private Integer instanceType;
 
     /**
-     * 环境标识
+     * 环境标识 -- production, staging, development
      */
-    private String environment;
+    private Integer environment;
 
     /**
      * 版本号

@@ -19,7 +19,10 @@ public class UserSecretQuestionPo extends BasePo {
      * 用户ID
      */
     private String userId;
-
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 问题类型（可配置的问题列表）
      * 如：您的出生地是？、您的第一辆车品牌是？
@@ -32,9 +35,9 @@ public class UserSecretQuestionPo extends BasePo {
     private String customQuestion;
 
     /**
-     * 答案（加密存储）
+     * 答案（AES加密存储）
      */
-    private String answer;
+    private String encryptedAnswer;
 
     /**
      * 排序号（支持多个密保问题）

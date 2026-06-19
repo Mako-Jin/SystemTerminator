@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.yaocode.sts.common.infrastructure.po.BasePo;
 
+import java.time.LocalDate;
+
 
 @Data
 @TableName("auth_tbl_user_education")
@@ -13,11 +15,15 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 public class UserEducationPo extends BasePo {
 
     @TableId
-    private String id;
+    private String educationId;
     /**
      * 用户ID
      */
     private String userId;
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 学校名称
      */
@@ -33,11 +39,11 @@ public class UserEducationPo extends BasePo {
     /**
      * 入学日期
      */
-    private String startDate;
+    private LocalDate startDate;
     /**
      * 毕业日期
      */
-    private String endDate;
+    private LocalDate endDate;
     /**
      * 毕业证书编号
      */

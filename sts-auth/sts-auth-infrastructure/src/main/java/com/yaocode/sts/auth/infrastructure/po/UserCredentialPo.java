@@ -12,25 +12,28 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 @EqualsAndHashCode(callSuper = true)
 public class UserCredentialPo extends BasePo {
     @TableId
-    private String id;
+    private String credentialId;
 
     /**
      * 用户ID
      */
     private String userId;
-
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 证件类型：IDCARD-身份证、PASSPORT-护照、STUDENT_CARD-学生证、MILITARY_CARD-军人证
      */
-    private String credentialType;
+    private Integer credentialType;
 
     /**
-     * 证件号码（加密存储）
+     * 证件号码（AES加密存储）
      */
-    private String credentialNumber;
+    private String encryptedCredentialNumber;
 
     /**
-     * 证件姓名（与证件上一致）
+     * 证件姓名（与证件一致）
      */
     private String credentialName;
 
@@ -47,7 +50,7 @@ public class UserCredentialPo extends BasePo {
     /**
      * 是否主证件：0-否、1-是
      */
-    private Integer primary;
+    private Integer isPrimary;
 
     /**
      * 证件照片/扫描件路径

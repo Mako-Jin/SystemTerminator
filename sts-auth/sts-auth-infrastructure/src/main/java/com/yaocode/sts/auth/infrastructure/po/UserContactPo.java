@@ -12,13 +12,16 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 public class UserContactPo extends BasePo {
 
     @TableId
-    private String id;
+    private String contactId;
 
     /**
      * 用户ID
      */
     private String userId;
-
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 联系方式类型：MOBILE-手机、EMAIL-邮箱、PHONE-座机
      */
@@ -37,7 +40,7 @@ public class UserContactPo extends BasePo {
     /**
      * 是否主联系方式：0-否、1-是（用户可能有多个手机号，但只有一个主号）
      */
-    private Integer primary;
+    private Integer isPrimary;
 
     /**
      * 备注（如：工作手机、个人手机）

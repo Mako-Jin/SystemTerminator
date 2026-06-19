@@ -39,9 +39,13 @@ public class ResourcePo extends BasePo {
     private String resourceDesc;
 
     /**
-     * 资源类型：0：系统；1：服务；2：模块；3：页面；4：接口
+     * 资源类型：0：系统；1：服务；2：模块；3：页面；4：接口, BUTTON（按钮）
      */
     private Integer resourceType;
+    /**
+     * 资源分类：MENU（菜单）, API（接口）, DATA（数据）, FILE（文件）
+     */
+    private String resourceCategory;
 
     /**
      * 接口请求地址
@@ -62,7 +66,10 @@ public class ResourcePo extends BasePo {
      * 是否白名单；0：不是；1：是
      */
     private Integer isWhiteList;
-
+    /**
+     * 排序号
+     */
+    private Integer sort;
     /**
      * 菜单显示图标
      */
@@ -82,5 +89,8 @@ public class ResourcePo extends BasePo {
      * 父资源编码列表，逗号分割
      */
     private String parentCode;
-
+    /**
+     * 租户ID（null 表示平台级资源）
+     */
+    private String tenantId;
 }

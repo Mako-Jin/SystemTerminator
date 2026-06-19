@@ -13,11 +13,15 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 public class UserEmergencyContactPo extends BasePo {
 
     @TableId
-    private String id;
+    private String emergencyContactId;
     /**
      * 用户ID
      */
     private String userId;
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 紧急联系人姓名
      */
@@ -25,7 +29,7 @@ public class UserEmergencyContactPo extends BasePo {
     /**
      * 关系（父母/配偶/朋友）
      */
-    private String relationship;
+    private Integer relationship;
     /**
      * 联系电话
      */

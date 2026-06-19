@@ -39,12 +39,12 @@ public class RelRoleResourcePo {
     /**
      * 生效时间
      */
-    private LocalDateTime effectiveTime;
+    private LocalDateTime effectiveFrom;
 
     /**
      * 失效时间
      */
-    private LocalDateTime expireTime;
+    private LocalDateTime effectiveTo;
 
     /**
      * 权限效果：1-允许、0-拒绝

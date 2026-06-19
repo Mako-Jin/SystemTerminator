@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@TableName("auth_tbl_company")
+@TableName("auth_tbl_company_info")
 @EqualsAndHashCode(callSuper = true)
 public class CompanyInfoPo extends BasePo {
 

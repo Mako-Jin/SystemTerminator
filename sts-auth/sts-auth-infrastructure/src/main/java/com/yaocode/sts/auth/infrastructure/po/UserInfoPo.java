@@ -14,7 +14,7 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
  * @date: 2025年10月07日 23:41
  */
 @Data
-@TableName("auth_tbl_user")
+@TableName("auth_tbl_user_info")
 @EqualsAndHashCode(callSuper = true)
 public class UserInfoPo extends BasePo {
 
@@ -27,18 +27,12 @@ public class UserInfoPo extends BasePo {
      * 用户名
      */
     private String username;
+
     /**
-     * 密码
+     * 在线状态：0-离线、1-在线
      */
-    private String password;
-    /**
-     * 可逆加密的密码  采用非对称加密，并且公钥加密，私钥不公开
-     */
-    private String decipherable;
-    /**
-     * 盐
-     */
-    private String salt;
+    private Integer online;
+
     /**
      * 是否激活：0：未激活；1：已激活
      */
@@ -48,16 +42,34 @@ public class UserInfoPo extends BasePo {
      */
     private Integer isLocked;
     /**
+     * 锁定时间
+     */
+    private LocalDateTime lockTime;
+    /**
      * 解锁时间
      */
     private LocalDateTime unlockTime;
     /**
+     * 是否已绑定MFA
+     */
+    private Boolean mfaBound;
+
+    /**
+     * MFA类型：TOTP, SMS, EMAIL
+     */
+    private Integer mfaType;
+    /**
+     * 注册来源：REGISTER, ADMIN, SOCIAL, IMPORT
+     */
+    private Integer registerSource;
+
+    /**
+     * 注册时间
+     */
+    private LocalDateTime registeredAt;
+    /**
      * 是否被删：0：删了，1没有删
      */
     private Integer isDeleted;
-    /**
-     * 在线状态：0-离线、1-在线
-     */
-    private Integer online;
 
 }

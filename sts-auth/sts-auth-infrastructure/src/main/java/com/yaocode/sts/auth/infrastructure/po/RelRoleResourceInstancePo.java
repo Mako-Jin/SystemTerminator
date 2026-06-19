@@ -27,6 +27,10 @@ public class RelRoleResourceInstancePo {
      * 资源ID
      */
     private String resourceId;
+    /**
+     * 资源类型：API, MENU, BUTTON, DATA
+     */
+    private Integer resourceType;
 
     /**
      * 资源实例ID（如：特定文档ID、特定订单ID）
@@ -51,12 +55,12 @@ public class RelRoleResourceInstancePo {
     /**
      * 生效时间
      */
-    private LocalDateTime effectiveTime;
+    private LocalDateTime effectiveFrom;
 
     /**
      * 失效时间
      */
-    private LocalDateTime expireTime;
+    private LocalDateTime effectiveTo;
 
     /**
      * 租户ID

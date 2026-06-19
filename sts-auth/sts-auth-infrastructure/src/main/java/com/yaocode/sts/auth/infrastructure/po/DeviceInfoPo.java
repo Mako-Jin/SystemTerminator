@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.yaocode.sts.common.infrastructure.po.BasePo;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
@@ -16,11 +17,21 @@ public class DeviceInfoPo extends BasePo {
     /**
      * 设备ID
      */
+    @TableId
     private String deviceId;
     /**
      * IOS, ANDROID, WEB, WECHAT_MINI
      */
-    private String deviceType;
+    private Integer deviceType;
+    /**
+     * 所属用户
+     */
+    private String userId;
+
+    /**
+     * 所属租户
+     */
+    private String tenantId;
     /**
      * 设备名称
      */
@@ -40,7 +51,11 @@ public class DeviceInfoPo extends BasePo {
     /**
      * IP地址
      */
-    private String ipAddress;
+    private String lastIpAddress;
+    /**
+     * 最后活跃时间
+     */
+    private LocalDateTime lastActiveTime;
     /**
      * User Agent
      */
@@ -50,12 +65,20 @@ public class DeviceInfoPo extends BasePo {
      */
     private String deviceFingerprint;
     /**
+     * 是否信任设备
+     */
+    private Integer isTrusted;
+    /**
      * 是否越狱/root
      */
-    private Boolean jailbroken;
+    private Integer jailbroken;
+    /**
+     * 设备状态：ACTIVE, INACTIVE, BLOCKED
+     */
+    private Integer status;
     /**
      * 扩展信息
      */
-    private Map<String, Object> extras;
+    private String extras;
 
 }

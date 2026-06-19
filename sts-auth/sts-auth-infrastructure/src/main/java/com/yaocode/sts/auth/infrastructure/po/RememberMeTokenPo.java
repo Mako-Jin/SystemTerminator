@@ -23,7 +23,10 @@ public class RememberMeTokenPo extends BasePo {
      * 关联用户ID
      */
     private String userId;
-
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 关联用户名
      */
@@ -38,21 +41,34 @@ public class RememberMeTokenPo extends BasePo {
      * 绑定的设备ID
      */
     private String deviceId;
-
+    /**
+     * Token 哈希值（不存储明文）
+     */
+    private String tokenHash;
     /**
      * 创建时间
      */
     private LocalDateTime createdAt;
-
+    /**
+     * 最后使用时间
+     */
+    private LocalDateTime lastUsedAt;
+    /**
+     * 最后使用IP
+     */
+    private String lastUsedIp;
     /**
      * 最后登录时间
      */
     private LocalDateTime lastLoginTime;
-
+    /**
+     * 最后使用 UserAgent
+     */
+    private String lastUsedUserAgent;
     /**
      * 过期时间
      */
-    private LocalDateTime expirationTime;
+    private LocalDateTime expiresAt;
 
     /**
      * 系列号（用于Remember Me令牌序列检测）

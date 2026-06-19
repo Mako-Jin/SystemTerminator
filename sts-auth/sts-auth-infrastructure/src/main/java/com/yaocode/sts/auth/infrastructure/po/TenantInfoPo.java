@@ -63,6 +63,6 @@ public class TenantInfoPo extends BasePo {
     /**
      * 是否有子租户
      */
-    private String hasChild;
+    private Integer hasChild;
 
 }

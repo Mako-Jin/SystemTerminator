@@ -37,7 +37,7 @@ public class PermissionStrategyPo extends BasePo {
     /**
      * 策略类型：ROLE_BASED-角色型、GROUP_BASED-组型、USER_BASED-用户型
      */
-    private String strategyType;
+    private Integer strategyType;
 
     /**
      * 关联的角色ID列表（逗号分隔）

@@ -14,18 +14,48 @@ public class ClientInfoPo extends BasePo {
     /**
      * 客户端ID
      */
+    @TableId
     private String clientId;
+    /**
+     * 客户端名称
+     */
+    private String clientName;
     /**
      * web, mobile, desktop, mini_program
      */
-    private String clientType;
+    private Integer clientType;
     /**
      * 客户端版本
      */
     private String clientVersion;
     /**
-     * 应用ID（第三方）
+     * 客户端密钥（OAuth2）
+     */
+    private String clientSecret;
+
+    /**
+     * 授权类型：password, authorization_code, client_credentials, refresh_token
+     */
+    private String grantTypes;
+
+    /**
+     * 重定向URI（OAuth2）
+     */
+    private String redirectUris;
+
+    /**
+     * 授权范围
+     */
+    private String scope;
+
+    /**
+     * 应用ID（第三方应用的标识）
      */
     private String appId;
+
+    /**
+     * 是否启用
+     */
+    private Boolean enabled;
 
 }

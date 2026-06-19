@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.infrastructure.po;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,11 +14,12 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 @Data
 @TableName("auth_tbl_resource_contact")
 @EqualsAndHashCode(callSuper = true)
-public class ContactInfoPo extends BasePo {
+public class ResourceContactPo extends BasePo {
 
     /**
      * 主键id
      */
+    @TableId
     private String contactId;
     /**
      * 联系人姓名
@@ -31,6 +33,14 @@ public class ContactInfoPo extends BasePo {
      * 联系人邮箱
      */
     private String contactEmail;
+    /**
+     * 联系人手机
+     */
+    private String contactPhone;
+    /**
+     * 是否为主要联系人
+     */
+    private Boolean isPrimary;
     /**
      * 关联资源id
      */

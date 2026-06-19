@@ -12,7 +12,7 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
  * @date: 2025年10月14日 19:08
  */
 @Data
-@TableName("auth_tbl_org")
+@TableName("auth_tbl_org_info")
 @EqualsAndHashCode(callSuper = true)
 public class OrganizationInfoPo extends BasePo {
 
@@ -53,7 +53,7 @@ public class OrganizationInfoPo extends BasePo {
     /**
      * 组织类型（entity/virtual）
      */
-    private String organizationType;
+    private Integer organizationType;
     /**
      * 编码路径
      */
@@ -66,7 +66,7 @@ public class OrganizationInfoPo extends BasePo {
     /**
      * 是否有子节点
      */
-    private String hasChild;
+    private Integer hasChild;
     /**
      * 联系人
      */

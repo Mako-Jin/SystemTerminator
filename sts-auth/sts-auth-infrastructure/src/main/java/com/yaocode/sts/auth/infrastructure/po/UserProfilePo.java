@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.yaocode.sts.common.infrastructure.po.BasePo;
 
+import java.time.LocalDate;
+
 
 @Data
 @TableName("auth_tbl_user_profile")
@@ -23,9 +25,9 @@ public class UserProfilePo extends BasePo {
      */
     private String displayName;
     /**
-     * 昵称
+     * 真实姓名
      */
-    private String nickName;
+    private String realName;
     /**
      * 性别
      */
@@ -33,7 +35,7 @@ public class UserProfilePo extends BasePo {
     /**
      * 出生日期
      */
-    private String birthDate;
+    private LocalDate birthDate;
     /**
      * 婚姻状态
      */
@@ -53,7 +55,7 @@ public class UserProfilePo extends BasePo {
     /**
      * 主题
      */
-    private String theme;
+    private Integer theme;
 
     /**
      * JSON格式

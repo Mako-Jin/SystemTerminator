@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
  * @date: 2025年10月23日 21:21
  */
 @Data
-@TableName("auth_tbl_rel_user_group_user")
-public class RelUserGroupUserPo {
+@TableName("auth_tbl_rel_user_group_member")
+public class RelUserGroupMemberPo {
 
     /**
      * 关联id
@@ -31,11 +31,20 @@ public class RelUserGroupUserPo {
     /**
      * "USER" 或 "GROUP"
      */
-    private String dataType;
+    private Integer memberType;
     /**
      * 租户id
      */
     private String tenantId;
+    /**
+     * 生效时间
+     */
+    private LocalDateTime effectiveFrom;
+
+    /**
+     * 失效时间
+     */
+    private LocalDateTime effectiveTo;
     /**
      * 创建者id
      */

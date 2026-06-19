@@ -18,12 +18,23 @@ public class RefreshTokenPo extends BasePo {
 
     @TableId
     private String tokenId;
+    /**
+     * JWT ID（对应 JWT 中的 jti 声明）
+     */
+    private String jti;
 
+    /**
+     * Token 哈希值（不存储明文）
+     */
+    private String tokenHash;
     /**
      * 关联用户ID
      */
     private String userId;
-
+    /**
+     * 租户ID
+     */
+    private String tenantId;
     /**
      * 关联客户端ID
      */
@@ -68,4 +79,8 @@ public class RefreshTokenPo extends BasePo {
      * 最后使用时间
      */
     private LocalDateTime lastUsedAt;
+    /**
+     * 使用次数（用于检测异常）
+     */
+    private Integer useCount;
 }
