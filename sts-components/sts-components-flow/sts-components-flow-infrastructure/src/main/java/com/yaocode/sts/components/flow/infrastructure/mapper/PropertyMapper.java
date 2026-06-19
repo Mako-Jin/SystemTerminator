@@ -20,6 +20,8 @@ public interface PropertyMapper extends BaseFlowMapper<PropertyEntity> {
     /**
      * 根据属性名称更新值
      */
-    int updateValueByName(@Param("propertyName") String propertyName,
-                          @Param("propertyValue") String propertyValue);
+    int updateValueByName(
+            @Param("propertyName") String propertyName,
+            @Param("propertyValue") String propertyValue
+    );
 }
