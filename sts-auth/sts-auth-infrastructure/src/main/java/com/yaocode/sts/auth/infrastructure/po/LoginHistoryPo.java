@@ -49,7 +49,7 @@ public class LoginHistoryPo extends BasePo {
     /**
      * 主动退出/超时/被踢
      */
-    private String logoutReason;
+    private Integer logoutReason;
     /**
      * SUCCESS-成功、FAILED-失败
      */

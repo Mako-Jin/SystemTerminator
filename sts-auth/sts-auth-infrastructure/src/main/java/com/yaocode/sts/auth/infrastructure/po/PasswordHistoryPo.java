@@ -34,7 +34,7 @@ public class PasswordHistoryPo extends BasePo {
     /**
      * 修改来源：SELF-自行修改、ADMIN-管理员重置
      */
-    private String changeSource;
+    private Integer changeSource;
     /**
      * 是否为当前有效密码（同一个用户+租户下，只有一条为 true）
      */

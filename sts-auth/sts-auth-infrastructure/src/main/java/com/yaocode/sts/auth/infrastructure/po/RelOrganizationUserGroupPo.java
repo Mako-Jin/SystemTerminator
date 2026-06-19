@@ -29,7 +29,7 @@ public class RelOrganizationUserGroupPo {
     /**
      * 关联类型：INHERIT（组织成员自动继承）, MANUAL（手动分配）
      */
-    private String relationType;
+    private Integer relationType;
 
     /**
      * 是否自动同步组织成员到用户组

@@ -36,7 +36,7 @@ public class ClientInfoPo extends BasePo {
     /**
      * 授权类型：password, authorization_code, client_credentials, refresh_token
      */
-    private String grantTypes;
+    private Integer grantTypes;
 
     /**
      * 重定向URI（OAuth2）
@@ -56,6 +56,6 @@ public class ClientInfoPo extends BasePo {
     /**
      * 是否启用
      */
-    private Boolean enabled;
+    private Integer enabled;
 
 }

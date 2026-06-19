@@ -31,7 +31,7 @@ public class UserEducationPo extends BasePo {
     /**
      * 学历（学士/硕士/博士）
      */
-    private String degree;
+    private Integer degree;
     /**
      * 专业
      */

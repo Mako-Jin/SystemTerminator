@@ -25,7 +25,7 @@ public class UserContactPo extends BasePo {
     /**
      * 联系方式类型：MOBILE-手机、EMAIL-邮箱、PHONE-座机
      */
-    private String contactType;
+    private Integer contactType;
 
     /**
      * 联系方式值（手机号/邮箱地址）
@@ -35,7 +35,7 @@ public class UserContactPo extends BasePo {
     /**
      * 是否验证：0-未验证、1-已验证
      */
-    private Integer verified;
+    private Integer isVerified;
 
     /**
      * 是否主联系方式：0-否、1-是（用户可能有多个手机号，但只有一个主号）

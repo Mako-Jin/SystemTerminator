@@ -45,7 +45,7 @@ public class RelOrganizationUserPo {
     /**
      * 关系类型：MANAGER, MEMBER, TEMPORARY
      */
-    private String relationType;
+    private Integer relationType;
 
     /**
      * 生效时间
