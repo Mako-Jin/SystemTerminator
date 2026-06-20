@@ -13,7 +13,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 public class ContactId extends Identifier<String> {
 
-    protected ContactId(String value) {
+    private ContactId(String value) {
         super(value);
     }
 

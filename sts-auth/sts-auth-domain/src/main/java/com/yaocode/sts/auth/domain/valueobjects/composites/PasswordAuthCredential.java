@@ -90,4 +90,6 @@ public class PasswordAuthCredential extends AbstractAuthCredential {
         password.validate(password.getValue());
     }
 
+    public static class ResourcesIdentity {
+    }
 }

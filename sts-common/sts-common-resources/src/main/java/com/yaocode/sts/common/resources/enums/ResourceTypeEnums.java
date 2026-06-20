@@ -89,4 +89,13 @@ public enum ResourceTypeEnums {
         throw new IllegalArgumentException();
     }
 
+    public static ResourceTypeEnums fromCode(Integer code) {
+        for (ResourceTypeEnums type : ResourceTypeEnums.values()) {
+            if (type.getCode().equals(code)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown resource type: " + code);
+       }
+
 }

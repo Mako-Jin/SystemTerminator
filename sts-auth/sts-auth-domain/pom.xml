@@ -51,7 +51,10 @@
             <groupId>com.yaocode.sts</groupId>
             <artifactId>sts-common-crypto</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.yaocode.sts</groupId>
+            <artifactId>sts-common-resources</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>

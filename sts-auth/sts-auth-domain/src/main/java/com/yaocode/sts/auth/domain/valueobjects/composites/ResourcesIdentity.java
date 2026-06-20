@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
-import com.yaocode.sts.common.tools.IntegerUtils;
+import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Getter;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class ResourcesIdentity {
     /**
      * 资源类型：0：系统；1：服务；2：模块；3：页面；4：接口
      */
-    private final Integer resourceType;
+    private final ResourceTypeEnums resourceType;
     /**
      * 接口请求地址
      */
@@ -32,22 +32,35 @@ public class ResourcesIdentity {
     private final List<String> requestMethod;
 
     private ResourcesIdentity(
-            ResourceValue resourceValue, Integer resourceType,
+            ResourceValue resourceValue, ResourceTypeEnums resourceType,
             List<String> requestUrl, List<String> requestMethod
     ) {
         this.resourceValue = Objects.requireNonNull(resourceValue, "资源值不能为空");
-        // TODO 最大最小值，魔法值需要修改
-        this.resourceType = IntegerUtils.requireBetween(resourceType, 0, 7, "资源类型不合规！");
+        this.resourceType = resourceType;
         this.requestUrl = requestUrl;
         this.requestMethod = requestMethod;
     }
 
     public static ResourcesIdentity of(
-            ResourceValue resourceValue, Integer resourceType,
-            List<String> requestUrl, List<String> requestMethod
+            ResourceValue resourceValue,
+            ResourceTypeEnums resourceType,
+            List<String> requestUrl,
+            List<String> requestMethod
+    ) {
+        return new ResourcesIdentity(resourceValue, resourceType, requestUrl, requestMethod);
+    }
+
+    public static ResourcesIdentity of(
+            String resourceValue,
+            Integer resourceTypeCode,
+            List<String> requestUrl,
+            List<String> requestMethod
     ) {
         return new ResourcesIdentity(
-                resourceValue, resourceType, requestUrl, requestMethod
+                new ResourceValue(resourceValue),
+                ResourceTypeEnums.fromCode(resourceTypeCode),
+                requestUrl,
+                requestMethod
         );
     }
 
@@ -76,11 +89,7 @@ public class ResourcesIdentity {
 
     @Override
     public int hashCode() {
-        int result = resourceValue != null ? resourceValue.hashCode() : 0;
-        result = 31 * result + (resourceType != null ? resourceType.hashCode() : 0);
-        result = 31 * result + (requestUrl != null ? requestUrl.hashCode() : 0);
-        result = 31 * result + (requestMethod != null ? requestMethod.hashCode() : 0);
-        return result;
+        return Objects.hash(resourceValue, resourceType, requestUrl, requestMethod);
     }
 
     @Override

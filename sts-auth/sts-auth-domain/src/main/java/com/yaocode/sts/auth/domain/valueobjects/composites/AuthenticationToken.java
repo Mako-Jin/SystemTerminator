@@ -55,7 +55,7 @@ public class AuthenticationToken {
     /**
      * 状态令牌有效期（秒）
      */
-    Long stateTokenExpiresIn;
+    Instant stateTokenExpiresAt;
 
     /**
      * 是否认证成功
