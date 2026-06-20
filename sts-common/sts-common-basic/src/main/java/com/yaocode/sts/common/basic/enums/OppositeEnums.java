@@ -34,7 +34,9 @@ public enum OppositeEnums {
     /**
      * 启用
      */
-    ENABLED(1, "启用");
+    ENABLED(1, "启用"),
+    FAILED(0, "失败"),
+    SUCCESS(1, "成功"),
     ;
 
     private final Integer code;

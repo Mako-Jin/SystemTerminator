@@ -5,12 +5,14 @@ import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.annotation.ServerResources;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.annotation.SystemResources;
+import lombok.Getter;
 
 /**
  * 资源类型枚举类
  * @author: Jin-LiangBo
  * @date: 2025年11月15日 15:21
  */
+@Getter
 public enum ResourceTypeEnums {
 
     /**
@@ -49,9 +51,18 @@ public enum ResourceTypeEnums {
     API(6, "接口"),
 
     /**
+     * 按钮
+     */
+    BUTTON(7, "按钮"),
+
+    /**
      * 数据
      */
-    DATA(7, "数据"),
+    DATA(8, "数据"),
+    /**
+     * 文件
+     */
+    FILE(9, "文件"),
     ;
 
     private final Integer code;
@@ -61,14 +72,6 @@ public enum ResourceTypeEnums {
     ResourceTypeEnums(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     public static String createDefaultResourceCode(Class<?> clazz) {

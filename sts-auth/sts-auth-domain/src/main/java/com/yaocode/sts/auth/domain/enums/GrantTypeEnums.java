@@ -10,21 +10,18 @@ import lombok.Getter;
  */
 @Getter
 public enum GrantTypeEnums {
-
     /**
      * 用户名密码认证
      */
-    REMEMBER_ME("rememberMe", "记住我"),
-    /**
-     * 用户名密码认证
-     */
-    PASSWORD("password", "用户名密码认证"),
-    /**
-     * 手机验证码
-     */
-    MOBILE("mobile", "移动端认证"),
+    PASSWORD(1, "password", "资源拥有者密码"),
+    AUTHORIZATION_CODE(2, "authorization_code", "授权码"),
+    CLIENT_CREDENTIALS(3, "client_credentials", "客户端凭证"),
+    REFRESH_TOKEN(4, "refresh_token", "刷新Token"),
+    IMPLICIT(5, "implicit", "隐式授权"),          // OAuth2.0
+    DEVICE_CODE(6, "device_code", "设备码"),
     ;
 
+    private final Integer code;
     /**
      * 授权类型值
      */
@@ -35,7 +32,8 @@ public enum GrantTypeEnums {
      */
     private final String description;
 
-    GrantTypeEnums(String value, String description) {
+    GrantTypeEnums(Integer code, String value, String description) {
+        this.code = code;
         this.value = value;
         this.description = description;
     }

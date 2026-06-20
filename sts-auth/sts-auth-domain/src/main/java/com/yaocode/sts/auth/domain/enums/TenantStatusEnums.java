@@ -9,6 +9,7 @@ import lombok.Getter;
  */
 @Getter
 public enum TenantStatusEnums {
+    INACTIVE(0, "未激活"),
     /**
      * 激活状态
      */
@@ -21,10 +22,11 @@ public enum TenantStatusEnums {
      * 异常状态
      */
     ABNORMAL(3, "异常状态"),
+    SUSPENDED(4, "已停用"),
     /**
      * 删除状态
      */
-    DELETE(4, "删除状态"),
+    DELETE(5, "删除状态"),
     ;
 
     private final Integer code;
@@ -35,4 +37,14 @@ public enum TenantStatusEnums {
         this.code = code;
         this.desc = desc;
     }
+
+    public static TenantStatusEnums fromCode(int code) {
+        for (TenantStatusEnums status : values()) {
+            if (status.code == code) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Unknown tenant status: " + code);
+    }
+
 }
