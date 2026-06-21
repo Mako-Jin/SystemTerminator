@@ -52,6 +52,6 @@ public class RoleConstraintPo extends BasePo {
     /**
      * 状态：0-禁用、1-启用
      */
-    private Integer status;
+    private Integer isEnabled;
 
 }

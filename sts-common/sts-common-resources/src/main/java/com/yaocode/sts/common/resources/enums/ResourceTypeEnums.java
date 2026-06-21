@@ -96,6 +96,14 @@ public enum ResourceTypeEnums {
             }
         }
         throw new IllegalArgumentException("Unknown resource type: " + code);
-       }
+    }
+
+    public boolean isMenu() {
+        return this == PAGES || this == MODULE;
+    }
+
+    public boolean isApi() {
+        return this == API;
+    }
 
 }

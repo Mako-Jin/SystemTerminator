@@ -4,7 +4,6 @@ import com.yaocode.sts.common.domain.event.DomainEvent;
 import com.yaocode.sts.common.domain.event.publisher.DomainEventPublisher;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,10 +17,9 @@ import java.util.Objects;
  * @date: 2025年10月12日 11:04
  */
 @Getter
-@Setter
 public abstract class AbstractAggregate<ID extends Identifier<?>> implements Aggregate<ID> {
 
-    private ID id;
+    private final ID id;
     private final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected AbstractAggregate(ID id) {

@@ -28,5 +28,14 @@ public interface DomainEvent extends Serializable {
      */
     String getEventType();
 
+    /**
+     * 获取聚合根ID（事件所属的聚合根标识）
+     */
+    String getAggregateId();
+
+    /**
+     * 获取聚合根类型（如：USER、TENANT、ROLE等）
+     */
+    String getAggregateType();
 
 }

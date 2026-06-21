@@ -1,0 +1,287 @@
+package com.yaocode.sts.auth.domain.aggregate;
+
+import com.yaocode.sts.auth.domain.enums.ClientTypeEnums;
+import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
+import com.yaocode.sts.auth.domain.events.client.ClientCreatedEvent;
+import com.yaocode.sts.auth.domain.events.client.ClientDisabledEvent;
+import com.yaocode.sts.auth.domain.events.client.ClientEnabledEvent;
+import com.yaocode.sts.auth.domain.events.client.ClientSecretRotatedEvent;
+import com.yaocode.sts.auth.domain.events.client.GrantTypeAddedEvent;
+import com.yaocode.sts.auth.domain.events.client.GrantTypeRemovedEvent;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
+import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.exception.DomainException;
+import com.yaocode.sts.common.domain.model.AbstractAggregate;
+import lombok.Getter;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * OAuth2客户端聚合根
+ * 管理OAuth2客户端的配置、密钥和授权类型
+ * 对应表：auth_tbl_client_info
+ */
+@Getter
+public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
+
+    // ============ 核心属性 ============
+    private String clientName;
+    private ClientTypeEnums clientType;
+    private String clientVersion;
+    private String clientSecret;      // 加密存储
+    private Set<GrantTypeEnums> grantTypes;
+    private Set<String> redirectUris;
+    private Set<String> scope;
+    private String appId;
+    private OppositeEnums enabled;
+
+    // ============ 构造函数 ============
+    private ClientInfoAggregate(ClientId clientId) {
+        super(clientId);
+        this.grantTypes = new HashSet<>();
+        this.redirectUris = new HashSet<>();
+        this.scope = new HashSet<>();
+        this.enabled = OppositeEnums.YES;
+    }
+
+    // ============ 工厂方法 ============
+
+    /**
+     * 创建OAuth2客户端
+     */
+    public static ClientInfoAggregate create(
+            String clientName,
+            ClientTypeEnums clientType,
+            String clientVersion,
+            String clientSecret,
+            Set<GrantTypeEnums> grantTypes,
+            Set<String> redirectUris,
+            Set<String> scope,
+            String appId
+    ) {
+        if (grantTypes == null || grantTypes.isEmpty()) {
+            throw new DomainException("至少需要指定一个授权类型");
+        }
+
+        ClientInfoAggregate client = new ClientInfoAggregate(ClientId.nextId());
+        client.clientName = clientName;
+        client.clientType = clientType != null ? clientType : ClientTypeEnums.WEB;
+        client.clientVersion = clientVersion;
+        client.clientSecret = clientSecret;
+        client.grantTypes = new HashSet<>(grantTypes);
+        client.redirectUris = redirectUris != null ? new HashSet<>(redirectUris) : new HashSet<>();
+        client.scope = scope != null ? new HashSet<>(scope) : new HashSet<>();
+        client.appId = appId;
+
+        // 验证redirectUris
+        if (grantTypes.contains(GrantTypeEnums.AUTHORIZATION_CODE) && client.redirectUris.isEmpty()) {
+            throw new DomainException("授权码模式必须配置重定向URI");
+        }
+
+        client.registerEvent(new ClientCreatedEvent(client.getId(), clientName));
+
+        return client;
+    }
+
+    /**
+     * 从数据库重建客户端聚合
+     */
+    public static ClientInfoAggregate reconstruct(
+            ClientId clientId,
+            String clientName,
+            ClientTypeEnums clientType,
+            String clientVersion,
+            String clientSecret,
+            Set<GrantTypeEnums> grantTypes,
+            Set<String> redirectUris,
+            Set<String> scope,
+            String appId,
+            OppositeEnums enabled
+    ) {
+        ClientInfoAggregate client = new ClientInfoAggregate(clientId);
+        client.clientName = clientName;
+        client.clientType = clientType != null ? clientType : ClientTypeEnums.WEB;
+        client.clientVersion = clientVersion;
+        client.clientSecret = clientSecret;
+        client.grantTypes = grantTypes != null ? new HashSet<>(grantTypes) : new HashSet<>();
+        client.redirectUris = redirectUris != null ? new HashSet<>(redirectUris) : new HashSet<>();
+        client.scope = scope != null ? new HashSet<>(scope) : new HashSet<>();
+        client.appId = appId;
+        client.enabled = enabled != null ? enabled : OppositeEnums.YES;
+        return client;
+    }
+
+    // ============ 业务行为 ============
+
+    // ----- 基本信息管理 -----
+
+    /**
+     * 更新客户端名称
+     */
+    public void updateName(String clientName) {
+        if (clientName == null || clientName.trim().isEmpty()) {
+            throw new DomainException("客户端名称不能为空");
+        }
+        this.clientName = clientName.trim();
+    }
+
+    /**
+     * 更新客户端版本
+     */
+    public void updateVersion(String clientVersion) {
+        this.clientVersion = clientVersion;
+    }
+
+    /**
+     * 更新应用ID
+     */
+    public void updateAppId(String appId) {
+        this.appId = appId;
+    }
+
+    // ----- 密钥管理 -----
+
+    /**
+     * 轮换客户端密钥
+     */
+    public void rotateSecret(String newSecret) {
+        if (newSecret == null || newSecret.trim().isEmpty()) {
+            throw new DomainException("客户端密钥不能为空");
+        }
+        this.clientSecret = newSecret.trim();
+        registerEvent(new ClientSecretRotatedEvent(this.getId()));
+    }
+
+    // ----- 授权类型管理 -----
+
+    /**
+     * 添加授权类型
+     */
+    public void addGrantType(GrantTypeEnums grantType) {
+        if (grantTypes.contains(grantType)) {
+            throw new DomainException("授权类型已存在");
+        }
+        // 如果是授权码模式，需要检查redirectUris
+        if (grantType == GrantTypeEnums.AUTHORIZATION_CODE && redirectUris.isEmpty()) {
+            throw new DomainException("添加授权码模式前，请先配置重定向URI");
+        }
+        grantTypes.add(grantType);
+        registerEvent(new GrantTypeAddedEvent(this.getId(), grantType));
+    }
+
+    /**
+     * 移除授权类型
+     */
+    public void removeGrantType(GrantTypeEnums grantType) {
+        if (!grantTypes.contains(grantType)) {
+            throw new DomainException("授权类型不存在");
+        }
+        if (grantTypes.size() == 1) {
+            throw new DomainException("至少保留一个授权类型");
+        }
+        grantTypes.remove(grantType);
+        registerEvent(new GrantTypeRemovedEvent(this.getId(), grantType));
+    }
+
+    // ----- 重定向URI管理 -----
+
+    /**
+     * 添加重定向URI
+     */
+    public void addRedirectUri(String redirectUri) {
+        if (redirectUri == null || redirectUri.trim().isEmpty()) {
+            throw new DomainException("重定向URI不能为空");
+        }
+        redirectUris.add(redirectUri.trim());
+    }
+
+    /**
+     * 移除重定向URI
+     */
+    public void removeRedirectUri(String redirectUri) {
+        if (!redirectUris.contains(redirectUri)) {
+            throw new DomainException("重定向URI不存在");
+        }
+        if (grantTypes.contains(GrantTypeEnums.AUTHORIZATION_CODE) && redirectUris.size() <= 1) {
+            throw new DomainException("授权码模式至少需要一个重定向URI");
+        }
+        redirectUris.remove(redirectUri);
+    }
+
+    // ----- Scope管理 -----
+
+    /**
+     * 添加Scope
+     */
+    public void addScope(String scope) {
+        if (scope == null || scope.trim().isEmpty()) {
+            throw new DomainException("Scope不能为空");
+        }
+        this.scope.add(scope.trim());
+    }
+
+    /**
+     * 移除Scope
+     */
+    public void removeScope(String scope) {
+        this.scope.remove(scope);
+    }
+
+    // ----- 状态管理 -----
+
+    /**
+     * 启用客户端
+     */
+    public void enable() {
+        if (this.enabled == OppositeEnums.YES) {
+            throw new DomainException("客户端已启用");
+        }
+        this.enabled = OppositeEnums.YES;
+        registerEvent(new ClientEnabledEvent(this.getId()));
+    }
+
+    /**
+     * 禁用客户端
+     */
+    public void disable() {
+        if (this.enabled == OppositeEnums.NO) {
+            throw new DomainException("客户端已禁用");
+        }
+        this.enabled = OppositeEnums.NO;
+        registerEvent(new ClientDisabledEvent(this.getId()));
+    }
+
+    // ----- 查询方法 -----
+
+    /**
+     * 判断客户端是否启用
+     */
+    public boolean isEnabled() {
+        return enabled == OppositeEnums.YES;
+    }
+
+    /**
+     * 判断是否支持指定的授权类型
+     */
+    public boolean supportsGrantType(GrantTypeEnums grantType) {
+        return grantTypes.contains(grantType);
+    }
+
+    /**
+     * 判断是否支持指定的Scope
+     */
+    public boolean supportsScope(String scope) {
+        return this.scope.isEmpty() || this.scope.contains(scope);
+    }
+
+    /**
+     * 验证重定向URI
+     */
+    public boolean validateRedirectUri(String redirectUri) {
+        if (redirectUris.isEmpty()) {
+            return true;
+        }
+        return redirectUris.contains(redirectUri);
+    }
+}
