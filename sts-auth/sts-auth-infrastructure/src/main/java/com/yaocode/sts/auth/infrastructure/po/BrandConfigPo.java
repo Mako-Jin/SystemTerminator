@@ -75,7 +75,7 @@ public class BrandConfigPo extends BasePo {
     private String version;
 
     /**
-     * 是否删除
+     * 是否删除0：没有删，1：被删
      */
     private Integer isDeleted;
 }

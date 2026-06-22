@@ -126,7 +126,7 @@ public class RelTenantUserPo {
      */
     private LocalDateTime unlockTime;
     /**
-     * 是否被删：0：删了，1没有删
+     * 是否被删：0：没有删，1：被删
      */
     private Integer isDeleted;
 

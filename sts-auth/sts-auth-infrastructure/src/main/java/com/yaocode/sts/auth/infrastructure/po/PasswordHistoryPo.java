@@ -14,7 +14,7 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 @EqualsAndHashCode(callSuper = true)
 public class PasswordHistoryPo extends BasePo {
     @TableId
-    private String id;
+    private String historyId;
     /**
      * 用户ID
      */

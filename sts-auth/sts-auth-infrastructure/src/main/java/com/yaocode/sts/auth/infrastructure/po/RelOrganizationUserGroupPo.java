@@ -34,6 +34,6 @@ public class RelOrganizationUserGroupPo {
     /**
      * 是否自动同步组织成员到用户组
      */
-    private Boolean autoSync;
+    private Integer autoSync;
 
 }

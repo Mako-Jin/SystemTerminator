@@ -35,7 +35,7 @@ public class RelOrganizationUserPo {
     /**
      * 是否为该组织的主要职位
      */
-    private Boolean isPrimaryPosition;
+    private Integer isPrimaryPosition;
 
     /**
      * 职位名称

@@ -40,7 +40,7 @@ public class ResourceContactPo extends BasePo {
     /**
      * 是否为主要联系人
      */
-    private Boolean isPrimary;
+    private Integer isPrimary;
     /**
      * 关联资源id
      */

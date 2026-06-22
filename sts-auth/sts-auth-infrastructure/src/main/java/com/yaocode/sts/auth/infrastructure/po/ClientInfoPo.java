@@ -21,6 +21,10 @@ public class ClientInfoPo extends BasePo {
      */
     private String clientName;
     /**
+     * 租户ID
+     */
+    private String tenantId;
+    /**
      * web, mobile, desktop, mini_program
      */
     private Integer clientType;

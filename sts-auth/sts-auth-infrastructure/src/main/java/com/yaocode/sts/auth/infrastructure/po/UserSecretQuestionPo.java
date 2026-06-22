@@ -13,7 +13,7 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 public class UserSecretQuestionPo extends BasePo {
 
     @TableId
-    private String id;
+    private String questionId;
 
     /**
      * 用户ID

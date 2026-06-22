@@ -15,7 +15,7 @@ import com.yaocode.sts.common.infrastructure.po.BasePo;
 public class LoginHistoryPo extends BasePo {
 
     @TableId
-    private String id;
+    private String historyId;
     /**
      * 用户ID
      */

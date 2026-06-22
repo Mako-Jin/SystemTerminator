@@ -52,7 +52,7 @@ public class UserInfoPo extends BasePo {
     /**
      * 是否已绑定MFA
      */
-    private Boolean mfaBound;
+    private Integer mfaBound;
 
     /**
      * MFA类型：TOTP, SMS, EMAIL
@@ -68,7 +68,7 @@ public class UserInfoPo extends BasePo {
      */
     private LocalDateTime registeredAt;
     /**
-     * 是否被删：0：删了，1没有删
+     * 是否被删：0：没有删，1：被删
      */
     private Integer isDeleted;
 
