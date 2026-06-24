@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.web.properties;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -7,6 +9,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author: Jin-LiangBo
  * @date: 2025年10月30日 20:53
  */
+@Setter
+@Getter
 @ConfigurationProperties(prefix = RestApiElapsedProperties.REST_API_ELAPSED_PREFIX)
 public class RestApiElapsedProperties {
 
@@ -37,43 +41,4 @@ public class RestApiElapsedProperties {
      */
     private boolean recordAllRequests = false;
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public long getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(long threshold) {
-        this.threshold = threshold;
-    }
-
-    public boolean isEnableDbStorage() {
-        return enableDbStorage;
-    }
-
-    public void setEnableDbStorage(boolean enableDbStorage) {
-        this.enableDbStorage = enableDbStorage;
-    }
-
-    public long getDbStorageThreshold() {
-        return dbStorageThreshold;
-    }
-
-    public void setDbStorageThreshold(long dbStorageThreshold) {
-        this.dbStorageThreshold = dbStorageThreshold;
-    }
-
-    public boolean isRecordAllRequests() {
-        return recordAllRequests;
-    }
-
-    public void setRecordAllRequests(boolean recordAllRequests) {
-        this.recordAllRequests = recordAllRequests;
-    }
 }
