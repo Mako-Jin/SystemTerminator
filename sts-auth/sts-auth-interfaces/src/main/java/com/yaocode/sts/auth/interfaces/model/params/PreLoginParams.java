@@ -1,104 +1,48 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class PreLoginParams {
 
     /**
-     * 客户端ID
+     * 租户编码（从域名或参数中获取）
      */
-    @NotBlank(message = "客户端ID不能为空")
-    private String clientId;
+    private String tenantCode;
 
     /**
-     * 客户端类型
-     * WEB / APP / MINI_PROGRAM / H5
+     * 租户ID（如果已知）
      */
-    private String clientType;
+    private String tenantId;
 
     /**
-     * 客户端版本号
-     * 用于版本兼容性处理
+     * 用户名/手机号/邮箱（用于识别用户关联的租户列表）
      */
-    private String clientVersion;
+    private String identifier;
 
     /**
-     * 设备ID（用于设备指纹）
-     */
-    private String deviceId;
-
-    /**
-     * 设备类型
-     * IOS / ANDROID / WINDOWS / MAC / LINUX
-     */
-    private String deviceType;
-
-    /**
-     * 设备名称
-     * 如：iPhone 15 Pro / Xiaomi 14
-     */
-    private String deviceName;
-
-    /**
-     * 会话ID（如果已有）
-     */
-    private String sessionId;
-
-    /**
-     * 记住我令牌（自动登录场景）
-     */
-    private String rememberMe;
-
-    /**
-     * 操作系统版本
-     */
-    private String osVersion;
-
-    /**
-     * 应用版本
-     */
-    private String appVersion;
-
-    /**
-     * 屏幕分辨率
-     * 用于行为分析/风控
-     */
-    private String screenResolution;
-
-    /**
-     * 语言设置
-     * zh-CN / en-US
-     */
-    private String language;
-
-    /**
-     * 时区
-     * Asia/Shanghai
-     */
-    private String timezone;
-
-    /**
-     * 用户代理（服务端可自动获取，也可由前端传递）
-     */
-    private String userAgent;
-
-    /**
-     * IP地址（服务端可自动获取）
-     */
-    private String ipAddress;
-
-    /**
-     * 来源页面URL
-     * 用于登录成功后跳转回原页面
+     * 重定向URI（登录成功后跳转）
      */
     private String redirectUri;
 
     /**
-     * 验证码key（如果需要预获取验证码）
-     * 某些验证码方案需要先获取captchaKey
+     * 记住我令牌（自动登录场景）
      */
-    private String captchaKey;
+    private String rememberMeToken;
+
+    /**
+     * 语言偏好（zh-CN/en-US）
+     */
+    private String language;
+
+    /**
+     * 域名（前端可传，服务端也可从RequestContext获取）
+     */
+    private String domain;
+
+    /**
+     * 请求时间戳（防重放攻击）
+     */
+    private Long timestamp;
 
 }

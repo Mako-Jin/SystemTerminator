@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.vo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
  * @date: 2025年10月07日 21:45
  */
 @Data
+@Builder
 public class UserInfoVo {
 
     /**
@@ -20,6 +22,10 @@ public class UserInfoVo {
      * 用户名
      */
     private String username;
+    private String displayName;
+    private String avatar;
+    private String email;
+    private String mobile;
     /**
      * 创建时间
      */
