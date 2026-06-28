@@ -2,7 +2,8 @@ package com.yaocode.sts.common.resources.services.handler.impl;
 
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.constants.IConstants;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
@@ -111,8 +112,8 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
         resourcesModel.setPath(annotatedResource.path());
-        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
+        resourcesModel.setIsDeprecated(YesNoEnums.fromBoolean(annotatedResource.isDeprecated()).getCode());
+        resourcesModel.setIsEnabled(EnableEnums.fromBoolean(annotatedResource.isEnabled()).getCode());
         resourcesModel.setParentCode(Arrays.asList(annotatedResource.parent()));
     }
 

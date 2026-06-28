@@ -4,10 +4,10 @@ import com.yaocode.sts.auth.domain.enums.MFATypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
  * @date: 2025年10月07日 21:55
  */
 @Getter
-@Builder
 public class UserInfoEntity extends AbstractAggregate<UserId> {
 
     private UserId userId;
@@ -30,7 +29,7 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
     /**
      * 用户名
      */
-    private Username username;
+    private final Username username;
     /**
      * 邮箱
      */
@@ -42,11 +41,11 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
     /**
      * 是否激活：0：没有；1：有
      */
-    private OppositeEnums isEnabled;
+    private EnableEnums enabled;
     /**
      * 是否已绑定MFA
      */
-    private OppositeEnums mfaBound;
+    private YesNoEnums mfaBound;
 
     /**
      * MFA类型：TOTP, SMS, EMAIL
@@ -60,6 +59,26 @@ public class UserInfoEntity extends AbstractAggregate<UserId> {
      * 更新时间
      */
     private LocalDateTime updateTime;
+
+    private UserInfoEntity(UserId userId, Username username, EnableEnums enabled) {
+        super(userId);
+        this.username = username;
+        this.enabled = enabled;
+    }
+
+    public static UserInfoEntity create(Username username) {
+        return new UserInfoEntity(UserId.nextId(), username, EnableEnums.DISABLED);
+    }
+
+    public static UserInfoEntity create(Username username, EnableEnums enabled) {
+        return new UserInfoEntity(UserId.nextId(), username, enabled);
+    }
+
+    public static UserInfoEntity reconstruct(UserId userId, Username username, EnableEnums enabled) {
+        return new UserInfoEntity(userId, username, enabled);
+    }
+
+
 
     // public void changePassword(String newPassword, PasswordEncoder encoder) {
     //     this.password = encoder.encode(newPassword);

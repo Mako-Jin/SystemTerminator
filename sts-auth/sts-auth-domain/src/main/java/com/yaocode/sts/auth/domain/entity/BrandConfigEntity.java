@@ -3,7 +3,7 @@ package com.yaocode.sts.auth.domain.entity;
 import com.yaocode.sts.auth.domain.enums.BrandTargetTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.composites.Branding;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.BrandConfigId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
     private final BrandTargetTypeEnums targetType;
     private final String targetId;          // 关联目标ID（租户ID/公司ID）
     private Branding branding;
-    private OppositeEnums isEnabled;
+    private EnableEnums enabled;
     private Integer priority;
     private final String logoUrl;
     private final String loginTitle;
@@ -48,7 +48,7 @@ public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
         this.copyright = copyright;
         this.primaryColor = primaryColor;
         this.loginBackgroundUrl = loginBackgroundUrl;
-        this.isEnabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
         this.priority = 0;
     }
 
@@ -80,7 +80,7 @@ public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
             BrandTargetTypeEnums targetType,
             String targetId,
             Branding branding,
-            OppositeEnums isEnabled,
+            EnableEnums enabled,
             Integer priority
     ) {
         BrandConfigEntity entity = new BrandConfigEntity(
@@ -90,7 +90,7 @@ public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
                 branding.getPrimaryColor(), branding.getLoginBackgroundUrl()
         );
         entity.branding = branding;
-        entity.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.YES;
+        entity.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         entity.priority = priority != null ? priority : 0;
         return entity;
     }
@@ -102,11 +102,11 @@ public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
     }
 
     public void enable() {
-        this.isEnabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     public void disable() {
-        this.isEnabled = OppositeEnums.NO;
+        this.enabled = EnableEnums.DISABLED;
     }
 
     public void updatePriority(Integer priority) {
@@ -114,7 +114,7 @@ public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
     }
 
     public boolean isEnabled() {
-        return isEnabled == OppositeEnums.YES;
+        return enabled == EnableEnums.ENABLED;
     }
 
 }

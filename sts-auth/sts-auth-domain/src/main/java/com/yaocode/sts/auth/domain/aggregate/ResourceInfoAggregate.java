@@ -13,7 +13,8 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Version;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -39,9 +40,9 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
     private String resourceDesc;
     private String requestUrl;
     private String requestMethod;
-    private OppositeEnums isDeprecated;
-    private OppositeEnums isWhiteList;
-    private OppositeEnums isEnabled;
+    private YesNoEnums isDeprecated;
+    private YesNoEnums isWhiteList;
+    private EnableEnums enabled;
     private String icon;
     private Version version;
     private List<String> parentCode;
@@ -53,9 +54,9 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
     // ============ 构造函数 ============
     private ResourceInfoAggregate(ResourceId resourceId) {
         super(resourceId);
-        this.isDeprecated = OppositeEnums.NO;
-        this.isWhiteList = OppositeEnums.NO;
-        this.isEnabled = OppositeEnums.YES;
+        this.isDeprecated = YesNoEnums.NO;
+        this.isWhiteList = YesNoEnums.NO;
+        this.enabled = EnableEnums.ENABLED;
         this.version = Version.initial();
     }
 
@@ -155,9 +156,9 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
             String resourceDesc,
             String requestUrl,
             String requestMethod,
-            OppositeEnums isDeprecated,
-            OppositeEnums isWhiteList,
-            OppositeEnums isEnabled,
+            YesNoEnums isDeprecated,
+            YesNoEnums isWhiteList,
+            EnableEnums enabled,
             String icon,
             Version version,
             List<String> parentCode,
@@ -171,9 +172,9 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
         resource.resourceDesc = resourceDesc;
         resource.requestUrl = requestUrl;
         resource.requestMethod = requestMethod;
-        resource.isDeprecated = isDeprecated != null ? isDeprecated : OppositeEnums.NO;
-        resource.isWhiteList = isWhiteList != null ? isWhiteList : OppositeEnums.NO;
-        resource.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.YES;
+        resource.isDeprecated = isDeprecated != null ? isDeprecated : YesNoEnums.NO;
+        resource.isWhiteList = isWhiteList != null ? isWhiteList : YesNoEnums.NO;
+        resource.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         resource.icon = icon;
         resource.version = version != null ? version : Version.initial();
         resource.parentCode = parentCode;
@@ -219,10 +220,10 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 启用资源
      */
     public void enable() {
-        if (this.isEnabled == OppositeEnums.YES) {
+        if (this.enabled == EnableEnums.ENABLED) {
             throw new DomainException("资源已启用");
         }
-        this.isEnabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
         this.version = version.bumpBuild();
         registerEvent(new ResourceEnabledEvent(this.getId()));
     }
@@ -231,10 +232,10 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 停用资源
      */
     public void disable() {
-        if (this.isEnabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.DISABLED) {
             throw new DomainException("资源已停用");
         }
-        this.isEnabled = OppositeEnums.NO;
+        this.enabled = EnableEnums.DISABLED;
         this.version = version.bumpBuild();
         registerEvent(new ResourceDisabledEvent(this.getId()));
     }
@@ -243,10 +244,10 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 标记为废弃
      */
     public void markDeprecated() {
-        if (this.isDeprecated == OppositeEnums.YES) {
+        if (this.isDeprecated == YesNoEnums.YES) {
             throw new DomainException("资源已标记为废弃");
         }
-        this.isDeprecated = OppositeEnums.YES;
+        this.isDeprecated = YesNoEnums.YES;
         this.version = version.bumpMajor();
         registerEvent(new ResourceDeprecatedEvent(this.getId()));
     }
@@ -255,10 +256,10 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 取消废弃标记
      */
     public void unmarkDeprecated() {
-        if (this.isDeprecated == OppositeEnums.NO) {
+        if (this.isDeprecated == YesNoEnums.NO) {
             throw new DomainException("资源未标记为废弃");
         }
-        this.isDeprecated = OppositeEnums.NO;
+        this.isDeprecated = YesNoEnums.NO;
         this.version = version.bumpPatch();
     }
 
@@ -266,10 +267,10 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 加入白名单
      */
     public void addToWhiteList() {
-        if (this.isWhiteList == OppositeEnums.YES) {
+        if (this.isWhiteList == YesNoEnums.YES) {
             throw new DomainException("资源已在白名单中");
         }
-        this.isWhiteList = OppositeEnums.YES;
+        this.isWhiteList = YesNoEnums.YES;
         this.version = version.bumpPatch();
         registerEvent(new ResourceAddedToWhiteListEvent(this.getId()));
     }
@@ -278,10 +279,10 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 移出白名单
      */
     public void removeFromWhiteList() {
-        if (this.isWhiteList == OppositeEnums.NO) {
+        if (this.isWhiteList == YesNoEnums.NO) {
             throw new DomainException("资源不在白名单中");
         }
-        this.isWhiteList = OppositeEnums.NO;
+        this.isWhiteList = YesNoEnums.NO;
         this.version = version.bumpPatch();
         registerEvent(new ResourceRemovedFromWhiteListEvent(this.getId()));
     }
@@ -353,21 +354,21 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      * 判断资源是否启用
      */
     public boolean isEnabled() {
-        return isEnabled == OppositeEnums.YES;
+        return enabled == EnableEnums.ENABLED;
     }
 
     /**
      * 判断资源是否废弃
      */
     public boolean isDeprecated() {
-        return isDeprecated == OppositeEnums.YES;
+        return isDeprecated == YesNoEnums.YES;
     }
 
     /**
      * 判断资源是否在白名单中
      */
     public boolean isWhiteListed() {
-        return isWhiteList == OppositeEnums.YES;
+        return isWhiteList == YesNoEnums.YES;
     }
 
     /**

@@ -4,7 +4,8 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.ResourcesIdentity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Version;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import com.yaocode.sts.common.tools.StringUtils;
@@ -39,17 +40,17 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
     /**
      * 是否已弃用；0：未；1：已
      */
-    private Integer isDeprecated;
+    private YesNoEnums isDeprecated;
 
     /**
      * 是否启用；0：未；1：已
      */
-    private Integer isEnabled;
+    private EnableEnums enabled;
 
     /**
      * 是否白名单；0：不是；1：是
      */
-    private Integer isWhiteList;
+    private YesNoEnums isWhiteList;
 
     /**
      * 菜单显示图标
@@ -97,9 +98,9 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         entity.icon = icon;
         entity.version = version;
         entity.parentCode = parentCode;
-        entity.isEnabled = OppositeEnums.YES.getCode();
-        entity.isDeprecated = OppositeEnums.FALSE.getCode();
-        entity.isWhiteList = OppositeEnums.FALSE.getCode();
+        entity.enabled = EnableEnums.ENABLED;
+        entity.isDeprecated = YesNoEnums.NO;
+        entity.isWhiteList = YesNoEnums.NO;
         return entity;
     }
 
@@ -128,9 +129,9 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         entity.icon = icon;
         entity.version = version;
         entity.parentCode = parentCode;
-        entity.isEnabled = OppositeEnums.YES.getCode();
-        entity.isDeprecated = OppositeEnums.FALSE.getCode();
-        entity.isWhiteList = OppositeEnums.FALSE.getCode();
+        entity.enabled = EnableEnums.ENABLED;
+        entity.isDeprecated = YesNoEnums.NO;
+        entity.isWhiteList = YesNoEnums.NO;
         return entity;
     }
 
@@ -141,7 +142,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         upgraded.resourceName = newResourceEntity.resourceName;
         upgraded.resourceDesc = newResourceEntity.resourceDesc;
         upgraded.isDeprecated = newResourceEntity.isDeprecated;
-        upgraded.isEnabled = newResourceEntity.isEnabled;
+        upgraded.enabled = newResourceEntity.enabled;
         upgraded.isWhiteList = newResourceEntity.isWhiteList;
         upgraded.icon = newResourceEntity.icon;
         upgraded.version = newVersion;
@@ -159,8 +160,6 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
                 newVersion = this.version.bumpMajor();
             } else if (
                 Objects.equals(this.isDeprecated, newResourceEntity.getIsDeprecated())
-                && Objects.equals(this.isDeprecated, newResourceEntity.getIsDeprecated())
-                && Objects.equals(this.isDeprecated, newResourceEntity.getIsDeprecated())
             ) {
                 newVersion = this.version.bumpMinor();
             } else if (
@@ -202,7 +201,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 开启白名单
      */
     public void activateWhiteList() {
-        this.isWhiteList = OppositeEnums.TRUE.getCode();
+        this.isWhiteList = YesNoEnums.YES;
         // 版本号+1
         this.version = version.bumpPatch();
     }
@@ -211,7 +210,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 关闭白名单
      */
     public void deactivateWhiteList() {
-        this.isWhiteList = OppositeEnums.FALSE.getCode();
+        this.isWhiteList = YesNoEnums.NO;
         // 版本号+1
         this.version = version.bumpPatch();
     }
@@ -220,14 +219,14 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 设置白名单参数  PO转Entity的时候版本是不加1的
      */
     public void reconstructionWhiteList(Integer isWhiteList) {
-        this.isWhiteList = isWhiteList;
+        this.isWhiteList = YesNoEnums.fromCode(isWhiteList);
     }
 
     /**
      * 启用
      */
     public void enable() {
-        this.isEnabled = OppositeEnums.TRUE.getCode();
+        this.enabled = EnableEnums.ENABLED;
         // 版本号+1
         this.version = version.bumpBuild();
     }
@@ -236,7 +235,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 停用
      */
     public void disable() {
-        this.isEnabled = OppositeEnums.FALSE.getCode();
+        this.enabled = EnableEnums.DISABLED;
         // 版本号+1
         this.version = version.bumpBuild();
     }
@@ -245,14 +244,14 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 设置白名单参数
      */
     public void reconstructionEnable(Integer isEnabled) {
-        this.isEnabled = isEnabled;
+        this.enabled = EnableEnums.fromCode(isEnabled);
     }
 
     /**
      * 标记过期
      */
     public void markDeprecated() {
-        this.isDeprecated = OppositeEnums.TRUE.getCode();
+        this.isDeprecated = YesNoEnums.YES;
         // 版本号+1
         this.version = version.bumpPatch();
     }
@@ -261,7 +260,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 停用
      */
     public void markNotDeprecated() {
-        this.isDeprecated = OppositeEnums.FALSE.getCode();
+        this.isDeprecated = YesNoEnums.NO;
         // 版本号+1
         this.version = version.bumpPatch();
     }
@@ -270,7 +269,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
      * 设置白名单参数
      */
     public void reconstructionDeprecated(Integer isDeprecated) {
-        this.isDeprecated = isDeprecated;
+        this.isDeprecated = YesNoEnums.fromCode(isDeprecated);
     }
 
     @Override
@@ -296,7 +295,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         if (!Objects.equals(isDeprecated, entity.isDeprecated)) {
             return false;
         }
-        if (!Objects.equals(isEnabled, entity.isEnabled)) {
+        if (!Objects.equals(enabled, entity.enabled)) {
             return false;
         }
         if (!Objects.equals(isWhiteList, entity.isWhiteList)) {
@@ -320,7 +319,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         result = 31 * result + (resourceName != null ? resourceName.hashCode() : 0);
         result = 31 * result + (resourceDesc != null ? resourceDesc.hashCode() : 0);
         result = 31 * result + (isDeprecated != null ? isDeprecated.hashCode() : 0);
-        result = 31 * result + (isEnabled != null ? isEnabled.hashCode() : 0);
+        result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
         result = 31 * result + (isWhiteList != null ? isWhiteList.hashCode() : 0);
         result = 31 * result + (icon != null ? icon.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);

@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class RoleInfoEntity extends AbstractAggregate<RoleId> {
     /**
      * 是否默认角色
      */
-    private OppositeEnums isDefault;
+    private YesNoEnums isDefault;
     /**
      * 父角色id
      */
@@ -49,7 +49,7 @@ public class RoleInfoEntity extends AbstractAggregate<RoleId> {
             RoleCode roleCode,
             String roleName,
             String roleDesc,
-            OppositeEnums isDefault,
+            YesNoEnums isDefault,
             RoleId roleParentId
     ) {
         RoleInfoEntity roleInfoEntity = new RoleInfoEntity(RoleId.nextId());
@@ -68,7 +68,7 @@ public class RoleInfoEntity extends AbstractAggregate<RoleId> {
             RoleCode roleCode,
             String roleName,
             String roleDesc,
-            OppositeEnums isDefault,
+            YesNoEnums isDefault,
             RoleId roleParentId
     ) {
         RoleInfoEntity roleInfoEntity = new RoleInfoEntity(roleId);

@@ -42,8 +42,6 @@ public class UserGroupApplicationServiceImpl implements UserGroupApplicationServ
         UserGroupCode userGroupCode = UserGroupCode.of(userGroupDto.getUserGroupCode());
         UserGroupId parentId = UserGroupId.of(userGroupDto.getUserGroupId());
         UserGroupEntity entity = UserGroupEntity.build(
-                tenantDomainService,
-                userGroupDomainService,
                 tenantId,
                 userGroupCode,
                 userGroupDto.getUserGroupName(),

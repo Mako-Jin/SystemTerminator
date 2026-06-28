@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.enums.CredentialTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.CredentialId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
@@ -24,13 +24,13 @@ public class UserCredentialEntity {
     private String credentialName;
     private String issueDate;
     private String expireDate;
-    private OppositeEnums isPrimary;
+    private YesNoEnums isPrimary;
     private String credentialImage;
 
     private UserCredentialEntity(CredentialId credentialId, UserId userId) {
         this.credentialId = credentialId;
         this.userId = userId;
-        this.isPrimary = OppositeEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     // ========== 工厂方法 ==========
@@ -65,7 +65,7 @@ public class UserCredentialEntity {
             String credentialName,
             String issueDate,
             String expireDate,
-            OppositeEnums isPrimary,
+            YesNoEnums isPrimary,
             String credentialImage
     ) {
         UserCredentialEntity entity = new UserCredentialEntity(credentialId, userId);
@@ -75,7 +75,7 @@ public class UserCredentialEntity {
         entity.credentialName = credentialName;
         entity.issueDate = issueDate;
         entity.expireDate = expireDate;
-        entity.isPrimary = isPrimary != null ? isPrimary : OppositeEnums.NO;
+        entity.isPrimary = isPrimary != null ? isPrimary : YesNoEnums.NO;
         entity.credentialImage = credentialImage;
         return entity;
     }
@@ -83,15 +83,15 @@ public class UserCredentialEntity {
     // ========== 业务行为 ==========
 
     public void markPrimary() {
-        this.isPrimary = OppositeEnums.YES;
+        this.isPrimary = YesNoEnums.YES;
     }
 
     public void unmarkPrimary() {
-        this.isPrimary = OppositeEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     public boolean isPrimaryCredential() {
-        return isPrimary == OppositeEnums.YES;
+        return isPrimary == YesNoEnums.YES;
     }
 
     public boolean isExpired() {

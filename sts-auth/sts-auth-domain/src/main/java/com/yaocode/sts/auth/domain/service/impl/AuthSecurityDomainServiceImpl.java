@@ -14,7 +14,9 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.SecurityStatus;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.common.tools.StringUtils;
@@ -53,7 +55,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
 
         // 2. 检查账户是否锁定
         if (attempt != null && attempt.getIsLocked() != null
-                && Objects.equals(attempt.getIsLocked(), OppositeEnums.YES)) {
+                && Objects.equals(attempt.getIsLocked(), YesNoEnums.YES)) {
             return SecurityStatus.builder()
                     .locked(true)
                     .lockReason(attempt.getLockReason())
@@ -79,7 +81,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         if (Objects.nonNull(deviceId)) {
             Optional<DeviceInfoEntity> device = deviceInfoRepository.findByDeviceIdAndTenantId(deviceId, tenantId);
             if (device.isPresent() && device.get().getIsTrusted() != null
-                    && Objects.equals(device.get().getIsTrusted(), OppositeEnums.YES)) {
+                    && Objects.equals(device.get().getIsTrusted(), YesNoEnums.YES)) {
                 trustedDevice = true;
             }
         }
@@ -115,7 +117,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         }
 
         // 检查是否锁定
-        if (Objects.equals(attempt.getIsLocked(), OppositeEnums.YES)) {
+        if (Objects.equals(attempt.getIsLocked(), YesNoEnums.YES)) {
             return false;
         }
 
@@ -133,13 +135,8 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
                 .findByUserIdAndTenantId(userId, tenantId);
 
         if (attempt == null) {
-            attempt = LoginAttemptEntity.builder()
-                    .userId(userId)
-                    .tenantId(tenantId)
-                    .failedAttempts(1)
-                    .lastFailedTime(LocalDateTime.now())
-                    .isLocked(OppositeEnums.NO)
-                    .build();
+            attempt = LoginAttemptEntity.create(userId, tenantId);
+            attempt.recordFailedAttempt();
         } else {
             attempt.recordFailedAttempt();
         }
@@ -187,11 +184,11 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         // 3. 逐条匹配
         for (BlackWhiteListEntity rule : allRules) {
             if (matchesRule(rule, ipAddress, deviceId, clientId, identifier)) {
-                if (Objects.equals(rule.getAction(), OppositeEnums.DENY)) {
+                if (Objects.equals(rule.getAction(), AllowDenyEnums.DENY)) {
                     // DENY
                     return BlackWhiteCheckResult.blocked(
                             "规则匹配: " + rule.getListType() + "=" + rule.getListValue());
-                } else if (Objects.equals(rule.getAction(), OppositeEnums.ALLOW)) {
+                } else if (Objects.equals(rule.getAction(), AllowDenyEnums.ALLOW)) {
                     // ALLOW
                     return BlackWhiteCheckResult.allowed();
                 }
@@ -212,7 +209,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
             String identifier) {
 
         // 检查是否启用
-        if (Objects.equals(rule.getIsEnabled(), OppositeEnums.ENABLED)) {
+        if (Objects.equals(rule.getEnabled(), EnableEnums.ENABLED)) {
             return false;
         }
 

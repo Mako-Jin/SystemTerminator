@@ -4,7 +4,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -22,12 +22,12 @@ public class ResourceContactEntity {
     private String docsUrl;
     private Email contactEmail;
     private PhoneNum contactPhone;
-    private OppositeEnums isPrimary;
+    private YesNoEnums isPrimary;
 
     private ResourceContactEntity(ContactId contactId, ResourceId resourceId) {
         this.contactId = contactId;
         this.resourceId = resourceId;
-        this.isPrimary = OppositeEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     // ========== 工厂方法 ==========
@@ -54,14 +54,14 @@ public class ResourceContactEntity {
             String docsUrl,
             Email contactEmail,
             PhoneNum contactPhone,
-            OppositeEnums isPrimary
+            YesNoEnums isPrimary
     ) {
         ResourceContactEntity entity = new ResourceContactEntity(contactId, resourceId);
         entity.contactName = contactName;
         entity.docsUrl = docsUrl;
         entity.contactEmail = contactEmail;
         entity.contactPhone = contactPhone;
-        entity.isPrimary = isPrimary != null ? isPrimary : OppositeEnums.NO;
+        entity.isPrimary = isPrimary != null ? isPrimary : YesNoEnums.NO;
         return entity;
     }
 
@@ -87,15 +87,15 @@ public class ResourceContactEntity {
     }
 
     public void markPrimary() {
-        this.isPrimary = OppositeEnums.YES;
+        this.isPrimary = YesNoEnums.YES;
     }
 
     public void unmarkPrimary() {
-        this.isPrimary = OppositeEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     public boolean isPrimaryContact() {
-        return isPrimary == OppositeEnums.YES;
+        return isPrimary == YesNoEnums.YES;
     }
 
     @Override

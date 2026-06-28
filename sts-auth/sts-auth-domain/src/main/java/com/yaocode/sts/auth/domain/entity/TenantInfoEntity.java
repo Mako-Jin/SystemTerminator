@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
@@ -40,11 +40,11 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
     /**
      * 是否允许注册新用户
      */
-    private OppositeEnums allowRegister;
+    private AllowDenyEnums allowRegister;
     /**
      * 是否允许注册新用户
      */
-    private OppositeEnums allowAdd;
+    private AllowDenyEnums allowAdd;
     /**
      * 父id
      */
@@ -89,8 +89,8 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
             String tenantDesc,
             TenantStatusEnums tenantStatus,
             Integer tenantLevel,
-            OppositeEnums allowRegister,
-            OppositeEnums allowAdd,
+            AllowDenyEnums allowRegister,
+            AllowDenyEnums allowAdd,
             TenantId parentId
     ) {
         TenantInfoEntity entity = new TenantInfoEntity(tenantId);
@@ -107,8 +107,8 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
             String tenantDesc,
             TenantStatusEnums tenantStatus,
             Integer tenantLevel,
-            OppositeEnums allowRegister,
-            OppositeEnums allowAdd,
+            AllowDenyEnums allowRegister,
+            AllowDenyEnums allowAdd,
             TenantId parentId
     ) {
         TenantInfoEntity entity = new TenantInfoEntity(TenantId.nextId());
@@ -126,8 +126,8 @@ public class TenantInfoEntity extends AbstractAggregate<TenantId> {
             String tenantDesc,
             TenantStatusEnums tenantStatus,
             Integer tenantLevel,
-            OppositeEnums allowRegister,
-            OppositeEnums allowAdd,
+            AllowDenyEnums allowRegister,
+            AllowDenyEnums allowAdd,
             TenantId parentId
     ) {
         entity.tenantName = tenantName;

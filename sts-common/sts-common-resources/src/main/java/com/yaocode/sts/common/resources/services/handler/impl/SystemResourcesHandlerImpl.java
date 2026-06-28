@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.resources.services.handler.impl;
 
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.annotation.SystemResources;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.model.SystemResourcesModel;
@@ -83,8 +84,8 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
         resourcesModel.setDesc(annotatedResource.desc());
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
-        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
+        resourcesModel.setIsDeprecated(YesNoEnums.fromBoolean(annotatedResource.isDeprecated()).getCode());
+        resourcesModel.setIsEnabled(EnableEnums.fromBoolean(annotatedResource.isEnabled()).getCode());
     }
 
     @Override

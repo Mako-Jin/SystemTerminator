@@ -30,7 +30,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.common.tools.id.IdFactory;
@@ -155,30 +155,30 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
     /**
      * 根据identifier查询用户关联的租户
      */
-    private List<RelTenantUserEntity> findTenantUsers(PreLoginRequestDto request) {
-        if (!StringUtils.hasText(request.getIdentifier())) {
+    private List<RelTenantUserEntity> findTenantUsers(PreLoginRequestDto preLoginRequestDto) {
+        if (!StringUtils.hasText(preLoginRequestDto.getIdentifier())) {
             return new ArrayList<>();
         }
 
         // 尝试通过用户名/手机号/邮箱查询
-        List<RelTenantUserEntity> tenantUsers = relTenantUserRepository.findByIdentifier(request.getIdentifier());
+        List<RelTenantUserEntity> tenantUsers = relTenantUserRepository.findByIdentifier(preLoginRequestDto.getIdentifier());
 
         if (tenantUsers == null) {
             return new ArrayList<>();
         }
 
         // 如果指定了租户，只返回该租户
-        if (StringUtils.hasText(request.getTenantId())) {
+        if (StringUtils.hasText(preLoginRequestDto.getTenantId())) {
             return tenantUsers.stream()
-                    .filter(tu -> tu.getTenantId().getValue().equals(request.getTenantId()))
+                    .filter(tu -> tu.getTenantId().getValue().equals(preLoginRequestDto.getTenantId()))
                     .collect(Collectors.toList());
         }
 
-        if (StringUtils.hasText(request.getTenantCode())) {
+        if (StringUtils.hasText(preLoginRequestDto.getTenantCode())) {
             // 需要先通过tenantCode查询tenantId
-            Optional<TenantInfoEntity> tenant = tenantInfoRepository.getByTenantCode(request.getTenantCode());
+            Optional<TenantInfoEntity> tenant = tenantInfoRepository.getByTenantCode(TenantCode.of(preLoginRequestDto.getTenantCode()));
             if (tenant.isPresent()) {
-                String tenantId = tenant.get().getTenantId().getValue();
+                String tenantId = tenant.get().getId().getValue();
                 return tenantUsers.stream()
                         .filter(tu -> tu.getTenantId().getValue().equals(tenantId))
                         .collect(Collectors.toList());
@@ -203,7 +203,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
         }
 
         UserInfoEntity user = userOpt.get();
-        Optional<UserProfileEntity> userProfileOpt = userProfileRepository.findById(user.getUserId());
+        Optional<UserProfileEntity> userProfileOpt = userProfileRepository.findByUserId(user.getUserId());
 
         // 查询用户关联的租户
         List<RelTenantUserEntity> tenantUsers = relTenantUserRepository.findByUserId(authenticationToken.getUserId());
@@ -237,7 +237,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
             Optional<UserInfoEntity> userOpt = userInfoRepository.findById(tenantUsers.get(0).getUserId());
             if (userOpt.isPresent()) {
                 user = userOpt.get();
-                userProfileOpt = userProfileRepository.findById(user.getUserId());
+                userProfileOpt = userProfileRepository.findByUserId(user.getUserId());
             }
         }
 
@@ -332,7 +332,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
                 brand,
                 configOpt.orElse(null),
                 securityStatus,
-                tenantUser != null && Objects.equals(tenantUser.getMfaBound(), OppositeEnums.YES.getCode())
+                tenantUser != null && Objects.equals(tenantUser.getMfaBound(), YesNoEnums.YES)
         );
     }
 

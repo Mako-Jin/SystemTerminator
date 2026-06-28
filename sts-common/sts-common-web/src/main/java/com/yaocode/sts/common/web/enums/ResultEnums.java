@@ -1,11 +1,13 @@
 package com.yaocode.sts.common.web.enums;
 
 import com.yaocode.sts.common.web.constants.WebI18nConstants;
+import lombok.Getter;
 
 /**
  * @author: Jin-LiangBo
  * @date: 2025年10月07日 21:04
  */
+@Getter
 public enum ResultEnums {
 
     /**
@@ -33,11 +35,4 @@ public enum ResultEnums {
         this.msg = msg;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
 }

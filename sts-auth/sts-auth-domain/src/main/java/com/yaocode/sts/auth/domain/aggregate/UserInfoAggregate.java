@@ -41,7 +41,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -67,10 +67,10 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
     // ============ 核心属性（来自 UserInfoPo） ============
     private Username username;
     private UserStatusEnums status;
-    private OppositeEnums onlineStatus;
+    private YesNoEnums onlineStatus;
     private LocalDateTime lockTime;
     private LocalDateTime unlockTime;
-    private OppositeEnums mfaBound;
+    private YesNoEnums mfaBound;
     private MFATypeEnums mfaType;
     private RegisterSourceEnums registerSource;
 
@@ -93,7 +93,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
     private List<UserSecretQuestionEntity> secretQuestions = new ArrayList<>();
     private List<PasswordHistoryEntity> passwordHistories = new ArrayList<>();
 
-    private List<LoginAttemptEntity> loginAttemptInfoEntityList = new ArrayList<>();
+    private final List<LoginAttemptEntity> loginAttemptInfoEntityList = new ArrayList<>();
 
     // ============ 跨聚合引用（通过ID） ============
     private Set<TenantId> tenantIds = new HashSet<>();
@@ -106,8 +106,8 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
     private UserInfoAggregate(UserId userId) {
         super(userId);
         this.status = UserStatusEnums.INACTIVE;
-        this.onlineStatus = OppositeEnums.NO;
-        this.mfaBound = OppositeEnums.NO;
+        this.onlineStatus = YesNoEnums.NO;
+        this.mfaBound = YesNoEnums.NO;
         this.createdAt = LocalDateTime.now();
         this.registerSource = RegisterSourceEnums.REGISTER;
     }
@@ -164,10 +164,10 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
             UserId userId,
             Username username,
             UserStatusEnums status,
-            OppositeEnums onlineStatus,
+            YesNoEnums onlineStatus,
             LocalDateTime lockTime,
             LocalDateTime unlockTime,
-            OppositeEnums mfaBound,
+            YesNoEnums mfaBound,
             MFATypeEnums mfaType,
             RegisterSourceEnums registerSource,
             LocalDateTime registeredAt,
@@ -188,10 +188,10 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         UserInfoAggregate user = new UserInfoAggregate(userId);
         user.username = username;
         user.status = status != null ? status : UserStatusEnums.INACTIVE;
-        user.onlineStatus = onlineStatus != null ? onlineStatus : OppositeEnums.NO;
+        user.onlineStatus = onlineStatus != null ? onlineStatus : YesNoEnums.NO;
         user.lockTime = lockTime;
         user.unlockTime = unlockTime;
-        user.mfaBound = mfaBound != null ? mfaBound : OppositeEnums.NO;
+        user.mfaBound = mfaBound != null ? mfaBound : YesNoEnums.NO;
         user.mfaType = mfaType;
         user.registerSource = registerSource != null ? registerSource : RegisterSourceEnums.REGISTER;
         user.createdAt = registeredAt != null ? registeredAt : LocalDateTime.now();
@@ -264,7 +264,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
     /**
      * 更新在线状态
      */
-    public void updateOnlineStatus(OppositeEnums onlineStatus) {
+    public void updateOnlineStatus(YesNoEnums onlineStatus) {
         this.onlineStatus = onlineStatus;
     }
 
@@ -466,7 +466,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      * 绑定MFA
      */
     public void bindMFA(MFATypeEnums mfaType) {
-        this.mfaBound = OppositeEnums.YES;
+        this.mfaBound = YesNoEnums.YES;
         this.mfaType = mfaType;
         registerEvent(new MFABoundEvent(this.getId(), mfaType));
     }
@@ -475,7 +475,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      * 解绑MFA
      */
     public void unbindMFA() {
-        this.mfaBound = OppositeEnums.NO;
+        this.mfaBound = YesNoEnums.NO;
         this.mfaType = null;
         registerEvent(new MFAUnboundEvent(this.getId()));
     }

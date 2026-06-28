@@ -5,7 +5,7 @@ import com.yaocode.sts.auth.domain.enums.DeviceTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.DeviceFingerprint;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -30,21 +30,24 @@ public class DeviceInfoEntity extends AbstractAggregate<DeviceId> {
     private String appVersion;
     private IpAddress lastIpAddress;
     private String userAgent;
-    private OppositeEnums isTrusted;
-    private OppositeEnums jailBroken;
+    private YesNoEnums isTrusted;
+    private YesNoEnums jailBroken;
     private DeviceStatusEnums status;
     private Instant lastActiveTime;
     private String extras;
     private Instant createTime;
     private Instant updateTime;
 
-    private DeviceInfoEntity(DeviceId deviceId, UserId userId, TenantId tenantId, DeviceFingerprint deviceFingerprint) {
+    private DeviceInfoEntity(
+            DeviceId deviceId, UserId userId, TenantId tenantId,
+            DeviceFingerprint deviceFingerprint
+    ) {
         super(deviceId);
         this.userId = userId;
         this.tenantId = tenantId;
         this.deviceFingerprint = deviceFingerprint;
-        this.isTrusted = OppositeEnums.NO;
-        this.jailBroken = OppositeEnums.NO;
+        this.isTrusted = YesNoEnums.NO;
+        this.jailBroken = YesNoEnums.NO;
         this.status = DeviceStatusEnums.ACTIVE;
         this.lastActiveTime = Instant.now();
         this.createTime = Instant.now();
@@ -90,8 +93,8 @@ public class DeviceInfoEntity extends AbstractAggregate<DeviceId> {
             String appVersion,
             IpAddress lastIpAddress,
             String userAgent,
-            OppositeEnums isTrusted,
-            OppositeEnums jailBroken,
+            YesNoEnums isTrusted,
+            YesNoEnums jailBroken,
             DeviceStatusEnums status,
             Instant lastActiveTime,
             String extras,
@@ -106,8 +109,8 @@ public class DeviceInfoEntity extends AbstractAggregate<DeviceId> {
         entity.appVersion = appVersion;
         entity.lastIpAddress = lastIpAddress;
         entity.userAgent = userAgent;
-        entity.isTrusted = isTrusted != null ? isTrusted : OppositeEnums.NO;
-        entity.jailBroken = jailBroken != null ? jailBroken : OppositeEnums.NO;
+        entity.isTrusted = isTrusted != null ? isTrusted : YesNoEnums.NO;
+        entity.jailBroken = jailBroken != null ? jailBroken : YesNoEnums.NO;
         entity.status = status != null ? status : DeviceStatusEnums.ACTIVE;
         entity.lastActiveTime = lastActiveTime;
         entity.extras = extras;
@@ -129,12 +132,12 @@ public class DeviceInfoEntity extends AbstractAggregate<DeviceId> {
     }
 
     public void trust() {
-        this.isTrusted = OppositeEnums.YES;
+        this.isTrusted = YesNoEnums.YES;
         this.updateTime = Instant.now();
     }
 
     public void unTrust() {
-        this.isTrusted = OppositeEnums.NO;
+        this.isTrusted = YesNoEnums.NO;
         this.updateTime = Instant.now();
     }
 
@@ -174,7 +177,7 @@ public class DeviceInfoEntity extends AbstractAggregate<DeviceId> {
     }
 
     public boolean isTrustedDevice() {
-        return isTrusted == OppositeEnums.YES;
+        return isTrusted == YesNoEnums.YES;
     }
 
 }

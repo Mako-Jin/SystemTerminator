@@ -13,7 +13,8 @@ import com.yaocode.sts.auth.domain.events.usergroup.UsersAddedToGroupEvent;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -38,11 +39,11 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
     private String userGroupDesc;
     private UserGroupId parentId;
     private UserGroupCategoryEnums category;
-    private OppositeEnums isEnabled;
+    private EnableEnums enabled;
     private String filters;           // 动态用户组过滤条件（JSON）
     private String orgIdsList;        // 组织ID列表
     private Integer sort;
-    private OppositeEnums isDefault;
+    private YesNoEnums isDefault;
 
     // ============ 跨聚合引用 ============
     private Set<UserId> userIds = new HashSet<>();
@@ -54,8 +55,8 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
     // ============ 构造函数 ============
     private UserGroupAggregate(UserGroupId userGroupId) {
         super(userGroupId);
-        this.isEnabled = OppositeEnums.YES;
-        this.isDefault = OppositeEnums.NO;
+        this.enabled = EnableEnums.ENABLED;
+        this.isDefault = YesNoEnums.NO;
         this.category = UserGroupCategoryEnums.STATIC;
         this.sort = 0;
     }
@@ -126,11 +127,11 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
             String userGroupDesc,
             UserGroupCategoryEnums category,
             UserGroupId parentId,
-            OppositeEnums isEnabled,
+            EnableEnums enabled,
             String filters,
             String orgIdsList,
             Integer sort,
-            OppositeEnums isDefault,
+            YesNoEnums isDefault,
             Set<UserId> userIds,
             Set<RoleId> roleIds,
             Set<UserGroupId> childGroupIds
@@ -142,11 +143,11 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
         group.userGroupDesc = userGroupDesc;
         group.category = category != null ? category : UserGroupCategoryEnums.STATIC;
         group.parentId = parentId;
-        group.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.YES;
+        group.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         group.filters = filters;
         group.orgIdsList = orgIdsList;
         group.sort = sort != null ? sort : 0;
-        group.isDefault = isDefault != null ? isDefault : OppositeEnums.NO;
+        group.isDefault = isDefault != null ? isDefault : YesNoEnums.NO;
         group.userIds = userIds != null ? new HashSet<>(userIds) : new HashSet<>();
         group.roleIds = roleIds != null ? new HashSet<>(roleIds) : new HashSet<>();
         group.childGroupIds = childGroupIds != null ? new HashSet<>(childGroupIds) : new HashSet<>();
@@ -197,10 +198,10 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 启用用户组
      */
     public void enable() {
-        if (this.isEnabled == OppositeEnums.YES) {
+        if (this.enabled == EnableEnums.ENABLED) {
             throw new DomainException("用户组已启用");
         }
-        this.isEnabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
         registerEvent(new UserGroupEnabledEvent(this.getId()));
     }
 
@@ -208,10 +209,10 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 禁用用户组
      */
     public void disable() {
-        if (this.isEnabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.DISABLED) {
             throw new DomainException("用户组已禁用");
         }
-        this.isEnabled = OppositeEnums.NO;
+        this.enabled = EnableEnums.DISABLED;
         registerEvent(new UserGroupDisabledEvent(this.getId()));
     }
 
@@ -219,14 +220,14 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 设为默认用户组
      */
     public void setDefault() {
-        this.isDefault = OppositeEnums.YES;
+        this.isDefault = YesNoEnums.YES;
     }
 
     /**
      * 取消默认用户组
      */
     public void unsetDefault() {
-        this.isDefault = OppositeEnums.NO;
+        this.isDefault = YesNoEnums.NO;
     }
 
     // ----- 成员管理 -----
@@ -235,7 +236,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 添加用户
      */
     public void addUser(UserId userId) {
-        if (this.isEnabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.ENABLED) {
             throw new DomainException("用户组已禁用，不能添加用户");
         }
         if (userIds.contains(userId)) {
@@ -260,7 +261,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 批量添加用户
      */
     public void addUsers(Set<UserId> userIds) {
-        if (this.isEnabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.DISABLED) {
             throw new DomainException("用户组已禁用，不能添加用户");
         }
         this.userIds.addAll(userIds);
@@ -273,7 +274,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 绑定角色
      */
     public void bindRole(RoleId roleId) {
-        if (this.isEnabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.DISABLED) {
             throw new DomainException("用户组已禁用，不能绑定角色");
         }
         if (roleIds.contains(roleId)) {
@@ -298,7 +299,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 批量绑定角色
      */
     public void bindRoles(Set<RoleId> roleIds) {
-        if (this.isEnabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.DISABLED) {
             throw new DomainException("用户组已禁用，不能绑定角色");
         }
         this.roleIds.addAll(roleIds);
@@ -311,7 +312,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 判断用户组是否启用
      */
     public boolean isEnabled() {
-        return isEnabled == OppositeEnums.YES;
+        return enabled == EnableEnums.ENABLED;
     }
 
     /**
@@ -325,7 +326,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      * 判断是否为默认用户组
      */
     public boolean isDefaultGroup() {
-        return isDefault == OppositeEnums.YES;
+        return isDefault == YesNoEnums.YES;
     }
 
     /**

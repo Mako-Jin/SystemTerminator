@@ -114,16 +114,7 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
         // Password encryptedPassword = Password.encode(defaultPassword, passwordEncoder);
 
         // ✅ 3. 通过实体工厂方法创建（触发领域事件）
-        UserInfoEntity user = UserInfoEntity.builder()
-                .username(command.getUsername())
-//                command.getTenantIdList(),
-//                command.getOrganizationIdList(),
-//                command.getRoleIdList(),
-//                command.getUserGroupIdList(),
-//                command.getEmail(),
-//                command.getPhoneNum(),
-                .build();
-
+        UserInfoEntity user = UserInfoEntity.create(command.getUsername());
         // ✅ 4. 分配角色（触发角色分配事件）
         // 分配角色得查询租户，组织，用户组，关联的默认基础角色，或者权限
         // if (!command.getRoleIds().isEmpty()) {

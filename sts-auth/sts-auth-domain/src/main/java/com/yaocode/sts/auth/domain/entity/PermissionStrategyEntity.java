@@ -4,7 +4,8 @@ import com.yaocode.sts.auth.domain.enums.StrategyTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.StrategyId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
 
@@ -28,17 +29,17 @@ public class PermissionStrategyEntity {
     private Set<RoleId> roleIds;
     private Set<ResourceId> resourceIds;
     private Integer priority;
-    private OppositeEnums isDefault;
+    private YesNoEnums isDefault;
     private String conditions;        // JSON格式
-    private OppositeEnums isEnabled;
+    private EnableEnums enabled;
 
     private PermissionStrategyEntity(StrategyId strategyId, TenantId tenantId) {
         this.strategyId = strategyId;
         this.tenantId = tenantId;
         this.roleIds = new HashSet<>();
         this.resourceIds = new HashSet<>();
-        this.isDefault = OppositeEnums.NO;
-        this.isEnabled = OppositeEnums.ENABLED;
+        this.isDefault = YesNoEnums.NO;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     // ========== 工厂方法 ==========
@@ -76,9 +77,9 @@ public class PermissionStrategyEntity {
             Set<RoleId> roleIds,
             Set<ResourceId> resourceIds,
             Integer priority,
-            OppositeEnums isDefault,
+            YesNoEnums isDefault,
             String conditions,
-            OppositeEnums isEnabled
+            EnableEnums enabled
     ) {
         PermissionStrategyEntity entity = new PermissionStrategyEntity(strategyId, tenantId);
         entity.strategyName = strategyName;
@@ -88,9 +89,9 @@ public class PermissionStrategyEntity {
         entity.roleIds = roleIds != null ? new HashSet<>(roleIds) : new HashSet<>();
         entity.resourceIds = resourceIds != null ? new HashSet<>(resourceIds) : new HashSet<>();
         entity.priority = priority != null ? priority : 0;
-        entity.isDefault = isDefault != null ? isDefault : OppositeEnums.NO;
+        entity.isDefault = isDefault != null ? isDefault : YesNoEnums.NO;
         entity.conditions = conditions;
-        entity.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.ENABLED;
+        entity.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         return entity;
     }
 
@@ -113,27 +114,27 @@ public class PermissionStrategyEntity {
     }
 
     public void markDefault() {
-        this.isDefault = OppositeEnums.YES;
+        this.isDefault = YesNoEnums.YES;
     }
 
     public void unmarkDefault() {
-        this.isDefault = OppositeEnums.NO;
+        this.isDefault = YesNoEnums.NO;
     }
 
     public void enable() {
-        this.isEnabled = OppositeEnums.ENABLED;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     public void disable() {
-        this.isEnabled = OppositeEnums.DISABLED;
+        this.enabled = EnableEnums.DISABLED;
     }
 
     public boolean isEnabled() {
-        return isEnabled == OppositeEnums.ENABLED;
+        return enabled == EnableEnums.ENABLED;
     }
 
     public boolean isDefaultStrategy() {
-        return isDefault == OppositeEnums.YES;
+        return isDefault == YesNoEnums.YES;
     }
 
     @Override

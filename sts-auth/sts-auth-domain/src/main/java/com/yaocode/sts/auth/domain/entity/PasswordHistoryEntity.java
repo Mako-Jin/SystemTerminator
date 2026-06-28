@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.enums.PasswordChangeSourceEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.PasswordHistoryId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class PasswordHistoryEntity {
     private final String passwordHash;
     private final Instant changeTime;
     private final PasswordChangeSourceEnums changeSource;
-    private final OppositeEnums isActive;
+    private final YesNoEnums isActive;
     private final Instant expiresAt;
 
     private PasswordHistoryEntity(Builder builder) {
@@ -53,7 +53,7 @@ public class PasswordHistoryEntity {
                 .passwordHash(passwordHash)
                 .changeTime(Instant.now())
                 .changeSource(changeSource)
-                .isActive(OppositeEnums.YES)
+                .isActive(YesNoEnums.YES)
                 .expiresAt(expiresAt)
                 .build();
     }
@@ -65,7 +65,7 @@ public class PasswordHistoryEntity {
             String passwordHash,
             Instant changeTime,
             PasswordChangeSourceEnums changeSource,
-            OppositeEnums isActive,
+            YesNoEnums isActive,
             Instant expiresAt
     ) {
         return new Builder()
@@ -87,7 +87,7 @@ public class PasswordHistoryEntity {
     }
 
     public boolean isEffective() {
-        return Objects.equals(isActive, OppositeEnums.YES) && !isExpired();
+        return Objects.equals(isActive, YesNoEnums.YES) && !isExpired();
     }
 
     // ========== Builder ==========
@@ -99,7 +99,7 @@ public class PasswordHistoryEntity {
         private String passwordHash;
         private Instant changeTime;
         private PasswordChangeSourceEnums changeSource;
-        private OppositeEnums isActive;
+        private YesNoEnums isActive;
         private Instant expiresAt;
 
         public Builder passwordHistoryId(PasswordHistoryId passwordHistoryId) {
@@ -132,7 +132,7 @@ public class PasswordHistoryEntity {
             return this;
         }
 
-        public Builder isActive(OppositeEnums isActive) {
+        public Builder isActive(YesNoEnums isActive) {
             this.isActive = isActive;
             return this;
         }

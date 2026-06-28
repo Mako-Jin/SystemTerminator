@@ -4,7 +4,7 @@ import com.yaocode.sts.auth.domain.enums.TokenRevokeReasonEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TokenId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
 
@@ -26,7 +26,7 @@ public class RefreshTokenEntity {
     private final String tokenHash;          // Token哈希值
     private final Instant createdAt;
     private final Instant expiresAt;
-    private OppositeEnums revoked;
+    private YesNoEnums revoked;
     private Instant revokedAt;
     private TokenRevokeReasonEnums revokedReason;
     private String replacedBy;               // 被哪个新Token替换
@@ -69,7 +69,7 @@ public class RefreshTokenEntity {
                 .tokenHash(tokenHash)
                 .createdAt(Instant.now())
                 .expiresAt(expiresAt)
-                .revoked(OppositeEnums.NO)
+                .revoked(YesNoEnums.NO)
                 .lastUsedAt(Instant.now())
                 .useCount(0)
                 .build();
@@ -93,7 +93,7 @@ public class RefreshTokenEntity {
                 .tokenHash(tokenHash)
                 .createdAt(Instant.now())
                 .expiresAt(expiresAt)
-                .revoked(OppositeEnums.NO)
+                .revoked(YesNoEnums.NO)
                 .lastUsedAt(Instant.now())
                 .useCount(0)
                 .build();
@@ -108,7 +108,7 @@ public class RefreshTokenEntity {
             String tokenHash,
             Instant createdAt,
             Instant expiresAt,
-            OppositeEnums revoked,
+            YesNoEnums revoked,
             Instant revokedAt,
             TokenRevokeReasonEnums revokedReason,
             String replacedBy,
@@ -136,13 +136,13 @@ public class RefreshTokenEntity {
     // ========== 业务行为 ==========
 
     public void revoke(TokenRevokeReasonEnums reason) {
-        this.revoked = OppositeEnums.YES;
+        this.revoked = YesNoEnums.YES;
         this.revokedAt = Instant.now();
         this.revokedReason = reason;
     }
 
     public void revoke(TokenRevokeReasonEnums reason, String replacedByTokenId) {
-        this.revoked = OppositeEnums.YES;
+        this.revoked = YesNoEnums.YES;
         this.revokedAt = Instant.now();
         this.revokedReason = reason;
         this.replacedBy = replacedByTokenId;
@@ -158,7 +158,7 @@ public class RefreshTokenEntity {
     }
 
     public boolean isValid() {
-        return !Objects.equals(revoked, OppositeEnums.YES) && !isExpired();
+        return !Objects.equals(revoked, YesNoEnums.YES) && !isExpired();
     }
 
     // ========== Builder ==========
@@ -172,7 +172,7 @@ public class RefreshTokenEntity {
         private String tokenHash;
         private Instant createdAt;
         private Instant expiresAt;
-        private OppositeEnums revoked;
+        private YesNoEnums revoked;
         private Instant revokedAt;
         private TokenRevokeReasonEnums revokedReason;
         private String replacedBy;
@@ -219,7 +219,7 @@ public class RefreshTokenEntity {
             return this;
         }
 
-        public Builder revoked(OppositeEnums revoked) {
+        public Builder revoked(YesNoEnums revoked) {
             this.revoked = revoked;
             return this;
         }

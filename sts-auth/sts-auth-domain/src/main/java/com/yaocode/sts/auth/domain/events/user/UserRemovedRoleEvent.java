@@ -18,13 +18,13 @@ public class UserRemovedRoleEvent extends AggregateDomainEvent<UserId> {
     private final RoleId roleId;
 
     public UserRemovedRoleEvent(UserInfoAggregate user, RoleId roleId) {
-        super(user, EventTypeEnums.USER_REMOVED_ROLE.getCode());
+        super(user, EventTypeEnums.USER_REMOVE_ROLE.getCode());
         this.userId = user.getId();
         this.roleId = roleId;
     }
 
     public UserRemovedRoleEvent(UserId userId, RoleId roleId) {
-        super(userId.getValue(), AggregateTypeEnums.USER.getCode(), EventTypeEnums.USER_REMOVED_ROLE.getCode());
+        super(userId.getValue(), AggregateTypeEnums.USER.getCode(), EventTypeEnums.USER_REMOVE_ROLE.getCode());
         this.userId = userId;
         this.roleId = roleId;
     }

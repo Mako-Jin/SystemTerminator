@@ -6,7 +6,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TokenId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
 
@@ -33,7 +33,7 @@ public class RememberMeTokenEntity {
     private String lastUsedUserAgent;
     private Instant lastLoginTime;
     private Instant expiresAt;
-    private OppositeEnums isRevoked;
+    private YesNoEnums isRevoked;
     private TokenRevokeReasonEnums revokedReason;
     private Instant revokedAt;
 
@@ -84,7 +84,7 @@ public class RememberMeTokenEntity {
                 .lastUsedUserAgent(userAgent)
                 .lastLoginTime(now)
                 .expiresAt(expiresAt)
-                .revoked(OppositeEnums.NO)
+                .revoked(YesNoEnums.NO)
                 .build();
     }
 
@@ -102,7 +102,7 @@ public class RememberMeTokenEntity {
             String lastUsedUserAgent,
             Instant lastLoginTime,
             Instant expiresAt,
-            OppositeEnums revoked,
+            YesNoEnums revoked,
             TokenRevokeReasonEnums revokedReason,
             Instant revokedAt
     ) {
@@ -145,13 +145,13 @@ public class RememberMeTokenEntity {
     }
 
     public void revoke(TokenRevokeReasonEnums reason) {
-        this.isRevoked = OppositeEnums.YES;
+        this.isRevoked = YesNoEnums.YES;
         this.revokedAt = Instant.now();
         this.revokedReason = reason;
     }
 
     public boolean isValid() {
-        return !Objects.equals(isRevoked, OppositeEnums.YES) && Instant.now().isBefore(expiresAt);
+        return !Objects.equals(isRevoked, YesNoEnums.YES) && Instant.now().isBefore(expiresAt);
     }
 
     public boolean isExpired() {
@@ -174,7 +174,7 @@ public class RememberMeTokenEntity {
         private String lastUsedUserAgent;
         private Instant lastLoginTime;
         private Instant expiresAt;
-        private OppositeEnums revoked;
+        private YesNoEnums revoked;
         private TokenRevokeReasonEnums revokedReason;
         private Instant revokedAt;
 
@@ -243,7 +243,7 @@ public class RememberMeTokenEntity {
             return this;
         }
 
-        public Builder revoked(OppositeEnums revoked) {
+        public Builder revoked(YesNoEnums revoked) {
             this.revoked = revoked;
             return this;
         }

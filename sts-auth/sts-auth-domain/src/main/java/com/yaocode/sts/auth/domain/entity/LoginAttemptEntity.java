@@ -1,20 +1,19 @@
 package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.LoginAttemptId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@EqualsAndHashCode(callSuper = true)
+
 @Getter
-@Builder
+@EqualsAndHashCode(callSuper = true)
 public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
 
     /**
@@ -33,15 +32,15 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
     private static final int MAX_LOCK_MINUTES = 1440; // 24小时
 
     private String attemptId;
-    private UserId userId;
-    private TenantId tenantId;
+    private final UserId userId;
+    private final TenantId tenantId;
     private Integer failedAttempts;
     private LocalDateTime firstFailedTime;
     private LocalDateTime lastFailedTime;
     private LocalDateTime lockedUntil;
     private String lastFailedIp;
     private String lastFailReason;
-    private OppositeEnums isLocked;
+    private YesNoEnums isLocked;
     private LocalDateTime lockTime;
     private LocalDateTime unlockTime;
     private String lockReason;
@@ -58,6 +57,16 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
      * 租户配置的最大允许失败次数（冗余存储，避免每次查询配置）
      */
     private Integer maxAllowedFailures;
+
+    private LoginAttemptEntity(LoginAttemptId loginAttemptId, UserId userId, TenantId tenantId) {
+        super(loginAttemptId);
+        this.userId = userId;
+        this.tenantId = tenantId;
+    }
+
+    public static LoginAttemptEntity create(UserId userId, TenantId tenantId) {
+        return new LoginAttemptEntity(LoginAttemptId.nextId(), userId, tenantId);
+    }
 
     /**
      * 记录失败尝试
@@ -85,7 +94,7 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
      * 锁定用户
      */
     public void lock(String reason) {
-        this.isLocked = OppositeEnums.YES;
+        this.isLocked = YesNoEnums.YES;
         this.lockReason = reason;
         long lockMinutes = calculateLockDuration();
         this.lockedUntil = LocalDateTime.now().plusMinutes(lockMinutes);
@@ -95,7 +104,7 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
      * 解锁用户
      */
     public void unlock() {
-        this.isLocked = OppositeEnums.NO;
+        this.isLocked = YesNoEnums.NO;
         this.lockReason = null;
         this.lockedUntil = null;
     }
@@ -111,7 +120,7 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
      * 检查是否已锁定且未解锁
      */
     public boolean isLocked() {
-        if (Objects.equals(this.isLocked, OppositeEnums.NO)) {
+        if (Objects.equals(this.isLocked, YesNoEnums.NO)) {
             return false;
         }
 
@@ -128,7 +137,7 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
      * 获取剩余锁定时间（分钟）
      */
     public long getRemainingLockMinutes() {
-        if (Objects.equals(this.isLocked, OppositeEnums.NO) || lockedUntil == null) {
+        if (Objects.equals(this.isLocked, YesNoEnums.NO) || lockedUntil == null) {
             return 0;
         }
 

@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.application.converter;
 
 import com.yaocode.sts.auth.application.dto.TenantInfoDto;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
+import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import org.mapstruct.Mapper;
@@ -28,10 +30,10 @@ public interface TenantInfoApplicationConverter {
                 tenantInfoDto.getTenantName(),
                 stringToTenantCode(tenantInfoDto.getTenantCode()),
                 tenantInfoDto.getTenantDesc(),
-                tenantInfoDto.getTenantStatus(),
+                TenantStatusEnums.fromCode(tenantInfoDto.getTenantStatus()),
                 tenantInfoDto.getTenantLevel(),
-                tenantInfoDto.getAllowRegister(),
-                tenantInfoDto.getAllowAdd(),
+                AllowDenyEnums.fromCode(tenantInfoDto.getAllowRegister()),
+                AllowDenyEnums.fromCode(tenantInfoDto.getAllowAdd()),
                 stringToTenantId(tenantInfoDto.getParentId())
         );
     }
@@ -46,11 +48,11 @@ public interface TenantInfoApplicationConverter {
                 tenantInfoDto.getTenantName(),
                 stringToTenantCode(tenantInfoDto.getTenantCode()),
                 tenantInfoDto.getTenantDesc(),
-                tenantInfoDto.getTenantStatus(),
+                TenantStatusEnums.fromCode(tenantInfoDto.getTenantStatus()),
                 tenantInfoDto.getTenantLevel(),
-                tenantInfoDto.getAllowRegister(),
-                tenantInfoDto.getAllowAdd(),
-                stringToTenantId(tenantInfoDto.getTenantId())
+                AllowDenyEnums.fromCode(tenantInfoDto.getAllowRegister()),
+                AllowDenyEnums.fromCode(tenantInfoDto.getAllowAdd()),
+                stringToTenantId(tenantInfoDto.getParentId())
         );
     }
 

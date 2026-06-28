@@ -7,6 +7,7 @@ import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
 import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.UserInfoApplicationService;
 import com.yaocode.sts.auth.domain.command.CreateUserCommand;
+import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.OrganizationDomainService;

@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
 import com.yaocode.sts.common.web.annotation.CheckXss;
 import jakarta.validation.constraints.NotBlank;
@@ -38,12 +38,12 @@ public class CreateTenantParams {
      * 是否允许注册新用户
      */
     @Range(min = 0, max = 1, message = "allowRegister只支持0和1")
-    private Integer allowRegister = OppositeEnums.NO.getCode();
+    private Integer allowRegister = YesNoEnums.NO.getCode();
     /**
      * 是否允许新增新用户
      */
     @Range(min = 0, max = 1, message = "allowAdd只支持0和1")
-    private Integer allowAdd = OppositeEnums.YES.getCode();
+    private Integer allowAdd = YesNoEnums.YES.getCode();
     /**
      * 父id
      */

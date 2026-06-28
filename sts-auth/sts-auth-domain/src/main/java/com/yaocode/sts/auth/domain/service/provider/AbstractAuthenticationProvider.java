@@ -11,7 +11,7 @@ import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TokenId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.common.web.context.RequestContextHolder;
@@ -50,6 +50,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
         this.jwtTokenService = jwtTokenService;
         this.refreshTokenRepository = refreshTokenRepository;
         this.rememberMeRepository = rememberMeRepository;
+        this.jwtTokenConfigPort = jwtTokenConfigPort;
     }
 
     @Override
@@ -102,7 +103,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      * 验证用户状态（子类可扩展）
      */
     protected void validateUserStatus(UserInfoEntity userInfoEntity) {
-        if (Objects.equals(userInfoEntity.getIsEnabled(), OppositeEnums.DISABLED)) {
+        if (Objects.equals(userInfoEntity.getEnabled(), EnableEnums.DISABLED)) {
             throw new IllegalStateException("用户已被禁用");
         }
 //        if (userInfoEntity.get()) {

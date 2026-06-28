@@ -19,7 +19,9 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -48,8 +50,8 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     private RoleCategoryEnums category;
     private InheritStrategyEnums inheritStrategy;
     private RoleId parentId;
-    private OppositeEnums isDefault;
-    private OppositeEnums status;
+    private YesNoEnums isDefault;
+    private EnableEnums enabled;
     private Integer roleLevel;
     private String filters;      // 动态角色过滤条件（JSON）
 
@@ -64,10 +66,10 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     // ============ 构造函数 ============
     private RoleInfoAggregate(RoleId roleId) {
         super(roleId);
-        this.status = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
         this.category = RoleCategoryEnums.STATIC;
         this.inheritStrategy = InheritStrategyEnums.NONE;
-        this.isDefault = OppositeEnums.NO;
+        this.isDefault = YesNoEnums.NO;
         this.roleLevel = 1;
     }
 
@@ -140,8 +142,8 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
             RoleCategoryEnums category,
             InheritStrategyEnums inheritStrategy,
             RoleId parentId,
-            OppositeEnums isDefault,
-            OppositeEnums status,
+            YesNoEnums isDefault,
+            EnableEnums enabled,
             Integer roleLevel,
             String filters,
             List<RoleResourceEntity> resources,
@@ -157,8 +159,8 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
         role.category = category != null ? category : RoleCategoryEnums.STATIC;
         role.inheritStrategy = inheritStrategy != null ? inheritStrategy : InheritStrategyEnums.NONE;
         role.parentId = parentId;
-        role.isDefault = isDefault != null ? isDefault : OppositeEnums.NO;
-        role.status = status != null ? status : OppositeEnums.YES;
+        role.isDefault = isDefault != null ? isDefault : YesNoEnums.NO;
+        role.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         role.roleLevel = roleLevel != null ? roleLevel : 1;
         role.filters = filters;
         role.resources = resources != null ? new ArrayList<>(resources) : new ArrayList<>();
@@ -213,7 +215,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      * 启用角色
      */
     public void enable() {
-        this.status = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
         registerEvent(new RoleEnabledEvent(this.getId()));
     }
 
@@ -221,7 +223,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      * 禁用角色
      */
     public void disable() {
-        this.status = OppositeEnums.NO;
+        this.enabled = EnableEnums.DISABLED;
         registerEvent(new RoleDisabledEvent(this.getId()));
     }
 
@@ -229,14 +231,14 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      * 设为默认角色
      */
     public void setDefault() {
-        this.isDefault = OppositeEnums.YES;
+        this.isDefault = YesNoEnums.YES;
     }
 
     /**
      * 取消默认角色
      */
     public void unsetDefault() {
-        this.isDefault = OppositeEnums.NO;
+        this.isDefault = YesNoEnums.NO;
     }
 
     // ----- 资源管理 -----
@@ -244,7 +246,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     /**
      * 分配资源
      */
-    public void assignResource(ResourceId resourceId, OppositeEnums effect, Integer priority) {
+    public void assignResource(ResourceId resourceId, AllowDenyEnums effect, Integer priority) {
         boolean exists = resources.stream()
                 .anyMatch(r -> r.getResourceId().equals(resourceId));
         if (exists) {
@@ -254,7 +256,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
         resources.add(RoleResourceEntity.create(
                 this.getId(),
                 resourceId,
-                effect != null ? effect : OppositeEnums.YES,
+                effect != null ? effect : AllowDenyEnums.ALLOW,
                 priority != null ? priority : 0
         ));
         registerEvent(new ResourceAssignedToRoleEvent(this.getId(), resourceId));
@@ -274,8 +276,8 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     /**
      * 批量分配资源
      */
-    public void assignResources(Map<ResourceId, OppositeEnums> resourceEffects) {
-        for (Map.Entry<ResourceId, OppositeEnums> entry : resourceEffects.entrySet()) {
+    public void assignResources(Map<ResourceId, AllowDenyEnums> resourceEffects) {
+        for (Map.Entry<ResourceId, AllowDenyEnums> entry : resourceEffects.entrySet()) {
             boolean exists = resources.stream()
                     .anyMatch(r -> r.getResourceId().equals(entry.getKey()));
             if (!exists) {
@@ -377,14 +379,14 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      * 判断角色是否启用
      */
     public boolean isEnabled() {
-        return status == OppositeEnums.YES;
+        return enabled == EnableEnums.ENABLED;
     }
 
     /**
      * 判断是否为默认角色
      */
     public boolean isDefaultRole() {
-        return isDefault == OppositeEnums.YES;
+        return isDefault == YesNoEnums.YES;
     }
 
     /**
@@ -400,7 +402,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     public boolean hasPermission(ResourceId resourceId) {
         return resources.stream()
                 .anyMatch(r ->
-                        r.getResourceId().equals(resourceId) && r.getEffect() == OppositeEnums.YES
+                        r.getResourceId().equals(resourceId) && r.getEffect() == AllowDenyEnums.ALLOW
                 );
     }
 
@@ -409,7 +411,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      */
     public List<ResourceId> getAllowedResources() {
         return resources.stream()
-                .filter(r -> r.getEffect() == OppositeEnums.YES)
+                .filter(r -> r.getEffect() == AllowDenyEnums.ALLOW)
                 .map(RoleResourceEntity::getResourceId)
                 .toList();
     }

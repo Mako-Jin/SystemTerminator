@@ -11,7 +11,7 @@ import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.RoleDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import jakarta.annotation.Resource;
@@ -96,7 +96,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
                 roleCode,
                 roleName,
                 roleName,
-                OppositeEnums.YES,
+                YesNoEnums.YES,
                 null
         );
         roleInfoRepository.save(roleInfoEntity);

@@ -4,7 +4,7 @@ import com.yaocode.sts.auth.domain.entity.TenantConfigEntity;
 import com.yaocode.sts.auth.domain.enums.LoginMethodEnums;
 import com.yaocode.sts.auth.domain.repository.TenantConfigRepository;
 import com.yaocode.sts.auth.domain.service.LoginConfigDomainService;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -33,16 +33,16 @@ public class LoginConfigDomainServiceImpl implements LoginConfigDomainService {
             return methods;
         }
 
-        if (Objects.equals(tenantConfig.getPasswordLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(tenantConfig.getPasswordLoginEnabled(), EnableEnums.ENABLED)) {
             methods.add(LoginMethodEnums.PASSWORD);
         }
-        if (Objects.equals(tenantConfig.getSmsLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(tenantConfig.getSmsLoginEnabled(), EnableEnums.ENABLED)) {
             methods.add(LoginMethodEnums.SMS);
         }
-        if (Objects.equals(tenantConfig.getEmailLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(tenantConfig.getEmailLoginEnabled(), EnableEnums.ENABLED)) {
             methods.add(LoginMethodEnums.EMAIL);
         }
-        if (Objects.equals(tenantConfig.getQrCodeLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(tenantConfig.getQrCodeLoginEnabled(), EnableEnums.ENABLED)) {
             methods.add(LoginMethodEnums.QRCODE);
         }
 
@@ -60,13 +60,13 @@ public class LoginConfigDomainServiceImpl implements LoginConfigDomainService {
             return LoginMethodEnums.PASSWORD;
         }
 
-        if (Objects.equals(config.getQrCodeLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getQrCodeLoginEnabled(), EnableEnums.ENABLED)) {
             return LoginMethodEnums.QRCODE;
         }
-        if (Objects.equals(config.getSmsLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getSmsLoginEnabled(), EnableEnums.ENABLED)) {
             return LoginMethodEnums.SMS;
         }
-        if (Objects.equals(config.getEmailLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getEmailLoginEnabled(), EnableEnums.ENABLED)) {
             return LoginMethodEnums.EMAIL;
         }
         return LoginMethodEnums.PASSWORD;

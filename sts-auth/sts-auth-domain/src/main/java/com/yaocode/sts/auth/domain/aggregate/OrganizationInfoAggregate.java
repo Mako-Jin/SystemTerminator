@@ -11,7 +11,8 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -40,13 +41,13 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
     private OrganizationId parentId;
     private String organizationCodePath;
     private Integer level;
-    private OppositeEnums hasChild;
+    private YesNoEnums hasChild;
     private String contact;
     private String phone;
     private String fax;
     private String email;
-    private OppositeEnums status;
-    private OppositeEnums isPrimary;
+    private EnableEnums status;
+    private YesNoEnums isPrimary;
     private UserId managerId;
     private String managerName;
     private CompanyId companyId;
@@ -62,9 +63,9 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
     // ============ 构造函数 ============
     private OrganizationInfoAggregate(OrganizationId organizationId) {
         super(organizationId);
-        this.status = OppositeEnums.YES;
-        this.hasChild = OppositeEnums.NO;
-        this.isPrimary = OppositeEnums.NO;
+        this.status = EnableEnums.ENABLED;
+        this.hasChild = YesNoEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
         this.level = 1;
         this.organizationType = OrganizationTypeEnums.ENTITY;
     }
@@ -131,7 +132,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
         org.email = email;
 
         // 更新父组织的有子节点标记
-        parentOrg.hasChild = OppositeEnums.YES;
+        parentOrg.hasChild = YesNoEnums.YES;
         parentOrg.childOrganizationIds.add(org.getId());
 
         org.registerEvent(new OrganizationCreatedEvent(org.getId(), organizationName));
@@ -154,13 +155,13 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
             OrganizationId parentId,
             String organizationCodePath,
             Integer level,
-            OppositeEnums hasChild,
+            YesNoEnums hasChild,
             String contact,
             String phone,
             String fax,
             String email,
-            OppositeEnums status,
-            OppositeEnums isPrimary,
+            EnableEnums status,
+            YesNoEnums isPrimary,
             UserId managerId,
             String managerName,
             CompanyId companyId,
@@ -180,13 +181,13 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
         org.parentId = parentId;
         org.organizationCodePath = organizationCodePath;
         org.level = level != null ? level : 1;
-        org.hasChild = hasChild != null ? hasChild : OppositeEnums.NO;
+        org.hasChild = hasChild != null ? hasChild : YesNoEnums.NO;
         org.contact = contact;
         org.phone = phone;
         org.fax = fax;
         org.email = email;
-        org.status = status != null ? status : OppositeEnums.YES;
-        org.isPrimary = isPrimary != null ? isPrimary : OppositeEnums.NO;
+        org.status = status != null ? status : EnableEnums.ENABLED;
+        org.isPrimary = isPrimary != null ? isPrimary : YesNoEnums.NO;
         org.managerId = managerId;
         org.managerName = managerName;
         org.companyId = companyId;
@@ -256,7 +257,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      * 启用组织
      */
     public void enable() {
-        this.status = OppositeEnums.YES;
+        this.status = EnableEnums.ENABLED;
         registerEvent(new OrganizationEnabledEvent(this.getId()));
     }
 
@@ -264,7 +265,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      * 禁用组织
      */
     public void disable() {
-        this.status = OppositeEnums.NO;
+        this.status = EnableEnums.DISABLED;
         registerEvent(new OrganizationDisabledEvent(this.getId()));
     }
 
@@ -272,14 +273,14 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      * 标记为主组织
      */
     public void markPrimary() {
-        this.isPrimary = OppositeEnums.YES;
+        this.isPrimary = YesNoEnums.YES;
     }
 
     /**
      * 取消主组织标记
      */
     public void unmarkPrimary() {
-        this.isPrimary = OppositeEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     // ----- 成员管理 -----
@@ -360,7 +361,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      * 判断是否有子组织
      */
     public boolean hasChildren() {
-        return hasChild == OppositeEnums.YES;
+        return hasChild == YesNoEnums.YES;
     }
 
     // ----- 查询方法 -----
@@ -369,14 +370,14 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      * 判断组织是否启用
      */
     public boolean isEnabled() {
-        return status == OppositeEnums.YES;
+        return status == EnableEnums.ENABLED;
     }
 
     /**
      * 判断是否为主组织
      */
     public boolean isPrimaryOrganization() {
-        return isPrimary == OppositeEnums.YES;
+        return isPrimary == YesNoEnums.YES;
     }
 
     /**

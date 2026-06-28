@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -18,7 +18,7 @@ public class RoleResourceEntity {
     private final Long relId;              // 关联ID（数据库自增ID）
     private final RoleId roleId;
     private final ResourceId resourceId;
-    private OppositeEnums effect;                  // 允许/拒绝
+    private AllowDenyEnums effect;                  // 允许/拒绝
     private Integer priority;              // 优先级
     private final String createUserId;
     private final String createUserName;
@@ -28,7 +28,7 @@ public class RoleResourceEntity {
         this.relId = builder.relId;
         this.roleId = builder.roleId;
         this.resourceId = builder.resourceId;
-        this.effect = builder.effect != null ? builder.effect : OppositeEnums.YES;
+        this.effect = builder.effect != null ? builder.effect : AllowDenyEnums.ALLOW;
         this.priority = builder.priority != null ? builder.priority : 0;
         this.createUserId = builder.createUserId;
         this.createUserName = builder.createUserName;
@@ -40,7 +40,7 @@ public class RoleResourceEntity {
     public static RoleResourceEntity create(
             RoleId roleId,
             ResourceId resourceId,
-            OppositeEnums effect,
+            AllowDenyEnums effect,
             Integer priority
     ) {
         return new Builder()
@@ -52,18 +52,18 @@ public class RoleResourceEntity {
     }
 
     public static RoleResourceEntity createAllow(RoleId roleId, ResourceId resourceId) {
-        return create(roleId, resourceId, OppositeEnums.YES, 0);
+        return create(roleId, resourceId, AllowDenyEnums.ALLOW, 0);
     }
 
     public static RoleResourceEntity createDeny(RoleId roleId, ResourceId resourceId) {
-        return create(roleId, resourceId, OppositeEnums.NO, 0);
+        return create(roleId, resourceId, AllowDenyEnums.DENY, 0);
     }
 
     public static RoleResourceEntity reconstruct(
             Long relId,
             RoleId roleId,
             ResourceId resourceId,
-            OppositeEnums effect,
+            AllowDenyEnums effect,
             Integer priority,
             String createUserId,
             String createUserName,
@@ -84,11 +84,11 @@ public class RoleResourceEntity {
     // ========== 业务行为 ==========
 
     public void setAllow() {
-        this.effect = OppositeEnums.YES;
+        this.effect = AllowDenyEnums.ALLOW;
     }
 
     public void setDeny() {
-        this.effect = OppositeEnums.NO;
+        this.effect = AllowDenyEnums.DENY;
     }
 
     public void updatePriority(Integer priority) {
@@ -96,11 +96,11 @@ public class RoleResourceEntity {
     }
 
     public boolean isAllowed() {
-        return effect == OppositeEnums.YES;
+        return effect == AllowDenyEnums.ALLOW;
     }
 
     public boolean isDenied() {
-        return effect == OppositeEnums.NO;
+        return effect == AllowDenyEnums.DENY;
     }
 
     // ========== Builder ==========
@@ -109,7 +109,7 @@ public class RoleResourceEntity {
         private Long relId;
         private RoleId roleId;
         private ResourceId resourceId;
-        private OppositeEnums effect;
+        private AllowDenyEnums effect;
         private Integer priority;
         private String createUserId;
         private String createUserName;
@@ -130,7 +130,7 @@ public class RoleResourceEntity {
             return this;
         }
 
-        public Builder effect(OppositeEnums effect) {
+        public Builder effect(AllowDenyEnums effect) {
             this.effect = effect;
             return this;
         }

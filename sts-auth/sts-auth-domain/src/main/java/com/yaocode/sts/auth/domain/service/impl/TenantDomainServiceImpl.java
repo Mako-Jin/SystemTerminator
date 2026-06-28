@@ -7,7 +7,7 @@ import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.basic.exception.NotAllowedException;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -61,12 +61,12 @@ public class TenantDomainServiceImpl implements TenantDomainService {
             throw new IllegalArgumentException("auth.params.data.not.exists");
         }
         if (RegisterSourceEnums.REGISTER == userAddType
-                && Objects.equals(tenantInfoEntity.get().getAllowRegister(), OppositeEnums.NO)
+                && Objects.equals(tenantInfoEntity.get().getAllowRegister(), AllowDenyEnums.DENY)
         ) {
             throw new NotAllowedException("当前租户不允许注册");
         }
         if (RegisterSourceEnums.ADMIN == userAddType
-                && Objects.equals(tenantInfoEntity.get().getAllowAdd(), OppositeEnums.NO)
+                && Objects.equals(tenantInfoEntity.get().getAllowAdd(), AllowDenyEnums.DENY)
         ) {
             throw new NotAllowedException("当前租户不允许添加用户");
         }

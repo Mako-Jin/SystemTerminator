@@ -28,7 +28,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -55,8 +55,8 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
     private String tenantDesc;
     private TenantStatusEnums tenantStatus;
     private Integer tenantLevel;
-    private OppositeEnums allowRegister;
-    private OppositeEnums allowAdd;
+    private YesNoEnums allowRegister;
+    private YesNoEnums allowAdd;
     private TenantId parentId;
 
     // ============ 子实体 ============
@@ -64,7 +64,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
     private List<BrandConfigEntity> brandConfigs = new ArrayList<>();
     private List<CompanyInfoEntity> companies = new ArrayList<>();
     private List<InstanceInfoEntity> instances = new ArrayList<>();
-    private List<TenantSecurityEntity> securityConfigs = new ArrayList<>();
+    private final List<TenantSecurityEntity> securityConfigs = new ArrayList<>();
 
     // ============ 跨聚合引用 ============
     private Set<UserId> userIds = new HashSet<>();
@@ -193,14 +193,14 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
     /**
      * 更新允许注册
      */
-    public void updateAllowRegister(OppositeEnums allowRegister) {
+    public void updateAllowRegister(YesNoEnums allowRegister) {
         this.allowRegister = allowRegister;
     }
 
     /**
      * 更新允许添加用户
      */
-    public void updateAllowAdd(OppositeEnums allowAdd) {
+    public void updateAllowAdd(YesNoEnums allowAdd) {
         this.allowAdd = allowAdd;
     }
 
@@ -265,7 +265,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void enableBrandConfig(BrandConfigId brandConfigId) {
         BrandConfigEntity brandConfig = brandConfigs.stream()
-                .filter(b -> b.getBrandConfigId().equals(brandConfigId))
+                .filter(b -> b.getId().equals(brandConfigId))
                 .findFirst()
                 .orElseThrow(() -> new DomainException("品牌配置不存在"));
         brandConfig.enable();
@@ -276,7 +276,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void disableBrandConfig(BrandConfigId brandConfigId) {
         BrandConfigEntity brandConfig = brandConfigs.stream()
-                .filter(b -> b.getBrandConfigId().equals(brandConfigId))
+                .filter(b -> b.getId().equals(brandConfigId))
                 .findFirst()
                 .orElseThrow(() -> new DomainException("品牌配置不存在"));
         brandConfig.disable();

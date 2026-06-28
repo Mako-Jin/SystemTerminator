@@ -3,7 +3,7 @@ package com.yaocode.sts.auth.domain.entity;
 import com.yaocode.sts.auth.domain.enums.ConstraintTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ConstraintId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
 
@@ -25,13 +25,13 @@ public class RoleConstraintEntity {
     private ConstraintTypeEnums constraintType;
     private Set<RoleId> roleIds;        // 互斥角色列表
     private Integer maxAssign;           // 基数约束使用
-    private OppositeEnums isEnabled;
+    private EnableEnums enabled;
 
     private RoleConstraintEntity(ConstraintId constraintId, TenantId tenantId) {
         this.constraintId = constraintId;
         this.tenantId = tenantId;
         this.roleIds = new HashSet<>();
-        this.isEnabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     // ========== 工厂方法 ==========
@@ -89,7 +89,7 @@ public class RoleConstraintEntity {
             ConstraintTypeEnums constraintType,
             Set<RoleId> roleIds,
             Integer maxAssign,
-            OppositeEnums isEnabled
+            EnableEnums enabled
     ) {
         RoleConstraintEntity entity = new RoleConstraintEntity(constraintId, tenantId);
         entity.constraintName = constraintName;
@@ -97,7 +97,7 @@ public class RoleConstraintEntity {
         entity.constraintType = constraintType;
         entity.roleIds = roleIds != null ? new HashSet<>(roleIds) : new HashSet<>();
         entity.maxAssign = maxAssign;
-        entity.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.YES;
+        entity.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         return entity;
     }
 
@@ -121,15 +121,15 @@ public class RoleConstraintEntity {
     }
 
     public void enable() {
-        this.isEnabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     public void disable() {
-        this.isEnabled = OppositeEnums.NO;
+        this.enabled = EnableEnums.DISABLED;
     }
 
     public boolean isEnabled() {
-        return isEnabled == OppositeEnums.YES;
+        return enabled == EnableEnums.ENABLED;
     }
 
     public boolean isMutex() {
@@ -144,8 +144,8 @@ public class RoleConstraintEntity {
      * 校验是否违反约束
      */
     public boolean validate(Set<RoleId> assignedRoles) {
-        if (isEnabled == OppositeEnums.NO) {
-            return true;
+        if (enabled == EnableEnums.DISABLED) {
+            return false;
         }
 
         if (constraintType == ConstraintTypeEnums.MUTEX) {

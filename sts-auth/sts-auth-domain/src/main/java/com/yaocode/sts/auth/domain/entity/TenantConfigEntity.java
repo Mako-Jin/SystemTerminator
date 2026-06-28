@@ -7,7 +7,7 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.MFAConfig;
 import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordPolicy;
 import com.yaocode.sts.auth.domain.valueobjects.composites.SessionConfig;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantConfigId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
@@ -29,12 +29,12 @@ public class TenantConfigEntity extends AbstractAggregate<TenantConfigId> {
     private LoginConfig loginConfig;
     private CaptchaTypeEnums captchaType;
     private CaptchaTriggerEnums captchaTrigger;
-    private OppositeEnums isEnabled;
+    private EnableEnums enabled;
 
-    private OppositeEnums passwordLoginEnabled;
-    private OppositeEnums smsLoginEnabled;
-    private OppositeEnums emailLoginEnabled;
-    private OppositeEnums qrCodeLoginEnabled;
+    private EnableEnums passwordLoginEnabled;
+    private EnableEnums smsLoginEnabled;
+    private EnableEnums emailLoginEnabled;
+    private EnableEnums qrCodeLoginEnabled;
 
     private Integer maxLoginAttempts;
 
@@ -42,7 +42,7 @@ public class TenantConfigEntity extends AbstractAggregate<TenantConfigId> {
         super(configId);
         this.configId = configId;
         this.tenantId = tenantId;
-        this.isEnabled = OppositeEnums.ENABLED;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     // ========== 工厂方法 ==========
@@ -75,7 +75,7 @@ public class TenantConfigEntity extends AbstractAggregate<TenantConfigId> {
             LoginConfig loginConfig,
             CaptchaTypeEnums captchaType,
             CaptchaTriggerEnums captchaTrigger,
-            OppositeEnums isEnabled
+            EnableEnums enabled
     ) {
         TenantConfigEntity entity = new TenantConfigEntity(configId, tenantId);
         entity.passwordPolicy = passwordPolicy;
@@ -84,7 +84,7 @@ public class TenantConfigEntity extends AbstractAggregate<TenantConfigId> {
         entity.loginConfig = loginConfig;
         entity.captchaType = captchaType;
         entity.captchaTrigger = captchaTrigger;
-        entity.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.ENABLED;
+        entity.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         return entity;
     }
 
@@ -112,15 +112,15 @@ public class TenantConfigEntity extends AbstractAggregate<TenantConfigId> {
     }
 
     public void enable() {
-        this.isEnabled = OppositeEnums.ENABLED;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     public void disable() {
-        this.isEnabled = OppositeEnums.DISABLED;
+        this.enabled = EnableEnums.DISABLED;
     }
 
     public boolean isActive() {
-        return isEnabled == OppositeEnums.ENABLED;
+        return enabled == EnableEnums.ENABLED;
     }
 
     @Override

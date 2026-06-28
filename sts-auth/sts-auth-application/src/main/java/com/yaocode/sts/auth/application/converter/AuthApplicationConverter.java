@@ -149,7 +149,7 @@ public interface AuthApplicationConverter {
 
         return TenantConfigDto.builder()
                 // 租户基本信息
-                .tenantId(tenant.getTenantId().getValue())
+                .tenantId(tenant.getId().getValue())
                 .tenantName(tenant.getTenantName())
                 .tenantCode(tenant.getTenantCode() != null ? tenant.getTenantCode().getValue() : null)
                 .tenantLogo(brand != null ? brand.getLogoUrl() : null)

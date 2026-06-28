@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.application.converter;
 
 import com.yaocode.sts.auth.application.dto.ResourceDto;
-import com.yaocode.sts.auth.domain.entity.ResourceEntity;
+import com.yaocode.sts.auth.domain.entity.ResourceInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.common.resources.model.ApiResourcesModel;
@@ -34,10 +34,10 @@ public interface ResourceApplicationConverter {
     /**
      * dto转Entity
      * @param resourceDto dto
-     * @return ResourceEntity
+     * @return ResourceInfoEntity
      */
-    default ResourceEntity toEntity(ResourceDto resourceDto) {
-        return ResourceEntity.build(
+    default ResourceInfoEntity toEntity(ResourceDto resourceDto) {
+        return ResourceInfoEntity.build(
                 ResourceValue.of(resourceDto.getResourceValue()),
                 resourceDto.getResourceName(),
                 resourceDto.getResourceDesc(),
@@ -53,9 +53,9 @@ public interface ResourceApplicationConverter {
     /**
      * 批量转换 to Entity
      * @param resourceDtoList 资源Dto列表
-     * @return List<ResourceEntity> entity列表
+     * @return List<ResourceInfoEntity> entity列表
      */
-    List<ResourceEntity> toEntityList(List<ResourceDto> resourceDtoList);
+    List<ResourceInfoEntity> toEntityList(List<ResourceDto> resourceDtoList);
 
     /**
      * 值对象与基本类型的转换方法
@@ -100,17 +100,17 @@ public interface ResourceApplicationConverter {
     /**
      * 批量转换 to Entity
      * @param resourcesModelList 资源模型列表
-     * @return List<ResourceEntity> entity列表
+     * @return List<ResourceInfoEntity> entity列表
      */
-    default List<ResourceEntity> batchToEntity(List<ResourcesModel> resourcesModelList) {
+    default List<ResourceInfoEntity> batchToEntity(List<ResourcesModel> resourcesModelList) {
         if (CollectionUtils.isEmpty(resourcesModelList)) {
             return Collections.emptyList();
         }
-        List<ResourceEntity> result = new ArrayList<>();
+        List<ResourceInfoEntity> result = new ArrayList<>();
         resourcesModelList.forEach(resourcesModel -> {
-            ResourceEntity entity;
+            ResourceInfoEntity entity;
             if (resourcesModel instanceof SystemResourcesModel systemResourcesModel) {
-                entity = ResourceEntity.build(
+                entity = ResourceInfoEntity.build(
                         ResourceValue.of(systemResourcesModel.getCode()),
                         systemResourcesModel.getName(),
                         systemResourcesModel.getDesc(),
@@ -122,7 +122,7 @@ public interface ResourceApplicationConverter {
                         systemResourcesModel.getVersion()
                 );
             } else if (resourcesModel instanceof ServerResourcesModel serverResourcesModel) {
-                entity = ResourceEntity.build(
+                entity = ResourceInfoEntity.build(
                         ResourceValue.of(serverResourcesModel.getCode()),
                         serverResourcesModel.getName(),
                         serverResourcesModel.getDesc(),
@@ -134,7 +134,7 @@ public interface ResourceApplicationConverter {
                         serverResourcesModel.getVersion()
                 );
             } else if (resourcesModel instanceof ServiceResourcesModel serviceResourcesModel) {
-                entity = ResourceEntity.build(
+                entity = ResourceInfoEntity.build(
                         ResourceValue.of(serviceResourcesModel.getCode()),
                         serviceResourcesModel.getName(),
                         serviceResourcesModel.getDesc(),
@@ -148,7 +148,7 @@ public interface ResourceApplicationConverter {
                         serviceResourcesModel.getVersion()
                 );
             } else if (resourcesModel instanceof ModuleResourcesModel moduleResourcesModel) {
-                entity = ResourceEntity.build(
+                entity = ResourceInfoEntity.build(
                         ResourceValue.of(moduleResourcesModel.getCode()),
                         moduleResourcesModel.getName(),
                         moduleResourcesModel.getDesc(),
@@ -163,7 +163,7 @@ public interface ResourceApplicationConverter {
             } else if (resourcesModel instanceof ApiResourcesModel apiResourcesModel) {
                 List<String> requestMethods = apiResourcesModel.getRequestMethod().stream()
                         .map(Enum::name).toList();
-                entity = ResourceEntity.build(
+                entity = ResourceInfoEntity.build(
                         ResourceValue.of(apiResourcesModel.getCode()),
                         apiResourcesModel.getName(),
                         apiResourcesModel.getDesc(),

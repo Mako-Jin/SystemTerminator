@@ -9,7 +9,7 @@ import com.yaocode.sts.auth.domain.events.client.ClientSecretRotatedEvent;
 import com.yaocode.sts.auth.domain.events.client.GrantTypeAddedEvent;
 import com.yaocode.sts.auth.domain.events.client.GrantTypeRemovedEvent;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
     private Set<String> redirectUris;
     private Set<String> scope;
     private String appId;
-    private OppositeEnums enabled;
+    private EnableEnums enabled;
 
     // ============ 构造函数 ============
     private ClientInfoAggregate(ClientId clientId) {
@@ -42,7 +42,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
         this.grantTypes = new HashSet<>();
         this.redirectUris = new HashSet<>();
         this.scope = new HashSet<>();
-        this.enabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
     }
 
     // ============ 工厂方法 ============
@@ -97,7 +97,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
             Set<String> redirectUris,
             Set<String> scope,
             String appId,
-            OppositeEnums enabled
+            EnableEnums enabled
     ) {
         ClientInfoAggregate client = new ClientInfoAggregate(clientId);
         client.clientName = clientName;
@@ -108,7 +108,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
         client.redirectUris = redirectUris != null ? new HashSet<>(redirectUris) : new HashSet<>();
         client.scope = scope != null ? new HashSet<>(scope) : new HashSet<>();
         client.appId = appId;
-        client.enabled = enabled != null ? enabled : OppositeEnums.YES;
+        client.enabled = enabled != null ? enabled : EnableEnums.ENABLED;
         return client;
     }
 
@@ -234,10 +234,10 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      * 启用客户端
      */
     public void enable() {
-        if (this.enabled == OppositeEnums.YES) {
+        if (this.enabled == EnableEnums.ENABLED) {
             throw new DomainException("客户端已启用");
         }
-        this.enabled = OppositeEnums.YES;
+        this.enabled = EnableEnums.ENABLED;
         registerEvent(new ClientEnabledEvent(this.getId()));
     }
 
@@ -245,10 +245,10 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      * 禁用客户端
      */
     public void disable() {
-        if (this.enabled == OppositeEnums.NO) {
+        if (this.enabled == EnableEnums.ENABLED) {
             throw new DomainException("客户端已禁用");
         }
-        this.enabled = OppositeEnums.NO;
+        this.enabled = EnableEnums.ENABLED;
         registerEvent(new ClientDisabledEvent(this.getId()));
     }
 
@@ -258,7 +258,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      * 判断客户端是否启用
      */
     public boolean isEnabled() {
-        return enabled == OppositeEnums.YES;
+        return enabled == EnableEnums.ENABLED;
     }
 
     /**

@@ -3,7 +3,7 @@ package com.yaocode.sts.auth.application.service.impl;
 import com.yaocode.sts.auth.application.converter.ResourceApplicationConverter;
 import com.yaocode.sts.auth.application.dto.ResourceDto;
 import com.yaocode.sts.auth.application.service.ResourceApplicationService;
-import com.yaocode.sts.auth.domain.entity.ResourceEntity;
+import com.yaocode.sts.auth.domain.entity.ResourceInfoEntity;
 import com.yaocode.sts.auth.domain.repository.ResourceRepository;
 import com.yaocode.sts.auth.domain.service.ResourceDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
@@ -36,33 +36,33 @@ public class ResourceApplicationServiceImpl implements ResourceApplicationServic
     @Transactional(rollbackFor = Exception.class)
     public String singleAdd(ResourceDto resourceDto) {
         resourceDto.setResourceId(IdFactory.generate().toString());
-        ResourceEntity resourceEntity = resourceApplicationConverter.toEntity(resourceDto);
-        if (!resourceDomainService.checkResourceEntity(resourceEntity)) {
+        ResourceInfoEntity ResourceInfoEntity = resourceApplicationConverter.toEntity(resourceDto);
+        if (!resourceDomainService.checkResourceEntity(ResourceInfoEntity)) {
             throw new IllegalArgumentException("资源数据已存在");
         }
-        return resourceRepository.save(resourceEntity).getValue();
+        return resourceRepository.save(ResourceInfoEntity).getValue();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<String> batchAdd(List<ResourceDto> resourceDtoList) {
-        List<ResourceEntity> resourceEntityList = resourceApplicationConverter.toEntityList(resourceDtoList);
-        List<ResourceId> resourceIdList = batchSave(resourceEntityList);
+        List<ResourceInfoEntity> ResourceInfoEntityList = resourceApplicationConverter.toEntityList(resourceDtoList);
+        List<ResourceId> resourceIdList = batchSave(ResourceInfoEntityList);
         return resourceIdList.stream().map(ResourceId::getValue).toList();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean batchSaveResources(List<ResourcesModel> resourcesModelList) {
-        List<ResourceEntity> resourceEntityList = resourceApplicationConverter.batchToEntity(resourcesModelList);
-        List<ResourceId> resourceIdList = batchSave(resourceEntityList);
-        return resourceIdList.size() > 0;
+        List<ResourceInfoEntity> ResourceInfoEntityList = resourceApplicationConverter.batchToEntity(resourcesModelList);
+        List<ResourceId> resourceIdList = batchSave(ResourceInfoEntityList);
+        return !resourceIdList.isEmpty();
     }
 
-    private List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList) {
-        List<ResourceEntity> filterResourceEntityList =
-                resourceDomainService.checkResourceEntityList(resourceEntityList);
-        return resourceDomainService.batchSave(filterResourceEntityList);
+    private List<ResourceId> batchSave(List<ResourceInfoEntity> ResourceInfoEntityList) {
+        List<ResourceInfoEntity> filterResourceInfoEntityList =
+                resourceDomainService.checkResourceEntityList(ResourceInfoEntityList);
+        return resourceDomainService.batchSave(filterResourceInfoEntityList);
     }
 
 }

@@ -4,6 +4,7 @@ import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.enums.TokenRevokeReasonEnums;
+import com.yaocode.sts.auth.domain.port.JwtTokenConfigPort;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
 import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
@@ -13,7 +14,7 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.JwtPayload;
 import com.yaocode.sts.auth.domain.valueobjects.composites.RememberMeAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.basic.exception.ParamCheckException;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import org.slf4j.Logger;
@@ -49,11 +50,12 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
      */
     public RememberMeProvider(
             JwtTokenService jwtTokenService,
+            JwtTokenConfigPort jwtTokenConfigPort,
             RememberMeTokenRepository rememberMeRepository,
             RefreshTokenRepository refreshTokenRepository,
             UserInfoRepository userInfoRepository
     ) {
-        super(jwtTokenService, refreshTokenRepository, rememberMeRepository);
+        super(jwtTokenService, jwtTokenConfigPort, refreshTokenRepository, rememberMeRepository);
         this.userInfoRepository = userInfoRepository;
         logger.info("RememberMeProvider initialized with JWT algorithm: HMAC-SHA512");
     }
@@ -110,7 +112,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             RememberMeTokenEntity tokenEntity = tokenEntityOpt.get();
 
             // 6. 检查 Token 是否已被撤销
-            if (Objects.equals(tokenEntity.getIsRevoked(), OppositeEnums.YES)) {
+            if (Objects.equals(tokenEntity.getIsRevoked(), YesNoEnums.YES)) {
                 logger.debug("Remember-me authentication failed: token has been revoked");
                 throw new IllegalArgumentException("Remember-me authentication failed: token has been revoked");
             }
@@ -131,7 +133,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             }
 
             // 8. 更新最后使用时间
-            RememberMeTokenEntity newTokenEntity = tokenEntity.renew(Instant.now().plusSeconds(rememberMeTokenTtlSeconds));
+            RememberMeTokenEntity newTokenEntity = tokenEntity.renew(Instant.now().plusSeconds(jwtTokenConfigPort.getRememberMeTtl()));
             rememberMeRepository.save(newTokenEntity);
 
             logger.debug("Remember-me authentication succeeded for user {}", userId);

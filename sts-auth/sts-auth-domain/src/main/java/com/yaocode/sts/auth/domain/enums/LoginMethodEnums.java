@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.enums;
 
 import com.yaocode.sts.auth.domain.entity.TenantConfigEntity;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -60,16 +60,16 @@ public enum LoginMethodEnums {
             return methods;
         }
 
-        if (Objects.equals(config.getPasswordLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getPasswordLoginEnabled(), YesNoEnums.YES)) {
             methods.add(PASSWORD);
         }
-        if (Objects.equals(config.getSmsLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getSmsLoginEnabled(), YesNoEnums.YES)) {
             methods.add(SMS);
         }
-        if (Objects.equals(config.getEmailLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getEmailLoginEnabled(), YesNoEnums.YES)) {
             methods.add(EMAIL);
         }
-        if (Objects.equals(config.getQrCodeLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getQrCodeLoginEnabled(), YesNoEnums.YES)) {
             methods.add(QRCODE);
         }
 
@@ -87,13 +87,13 @@ public enum LoginMethodEnums {
             return PASSWORD;
         }
 
-        if (Objects.equals(config.getQrCodeLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getQrCodeLoginEnabled(), YesNoEnums.YES)) {
             return QRCODE;
         }
-        if (Objects.equals(config.getSmsLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getSmsLoginEnabled(), YesNoEnums.YES)) {
             return SMS;
         }
-        if (Objects.equals(config.getEmailLoginEnabled(), OppositeEnums.YES)) {
+        if (Objects.equals(config.getEmailLoginEnabled(), YesNoEnums.YES)) {
             return EMAIL;
         }
         return PASSWORD;

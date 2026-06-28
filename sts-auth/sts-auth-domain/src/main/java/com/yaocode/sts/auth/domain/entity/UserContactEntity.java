@@ -5,7 +5,7 @@ import com.yaocode.sts.auth.domain.enums.SocialContactTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
 
@@ -23,15 +23,15 @@ public class UserContactEntity {
     private ContactTypeEnums contactType;
     private SocialContactTypeEnums socialType;    // 仅当 contactType = SOCIAL 时使用
     private String contactValue;
-    private OppositeEnums isVerified;
-    private OppositeEnums isPrimary;
+    private YesNoEnums isVerified;
+    private YesNoEnums isPrimary;
     private String remark;
 
     private UserContactEntity(ContactId contactId, UserId userId) {
         this.contactId = contactId;
         this.userId = userId;
-        this.isVerified = OppositeEnums.NO;
-        this.isPrimary = OppositeEnums.NO;
+        this.isVerified = YesNoEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     // ========== 工厂方法 ==========
@@ -87,16 +87,16 @@ public class UserContactEntity {
             ContactTypeEnums contactType,
             SocialContactTypeEnums socialType,
             String contactValue,
-            OppositeEnums isVerified,
-            OppositeEnums isPrimary,
+            YesNoEnums isVerified,
+            YesNoEnums isPrimary,
             String remark
     ) {
         UserContactEntity entity = new UserContactEntity(contactId, userId);
         entity.contactType = contactType;
         entity.socialType = socialType;
         entity.contactValue = contactValue;
-        entity.isVerified = isVerified != null ? isVerified : OppositeEnums.NO;
-        entity.isPrimary = isPrimary != null ? isPrimary : OppositeEnums.NO;
+        entity.isVerified = isVerified != null ? isVerified : YesNoEnums.NO;
+        entity.isPrimary = isPrimary != null ? isPrimary : YesNoEnums.NO;
         entity.remark = remark;
         return entity;
     }
@@ -104,15 +104,15 @@ public class UserContactEntity {
     // ========== 业务行为 ==========
 
     public void verify() {
-        this.isVerified = OppositeEnums.YES;
+        this.isVerified = YesNoEnums.YES;
     }
 
     public void markPrimary() {
-        this.isPrimary = OppositeEnums.YES;
+        this.isPrimary = YesNoEnums.YES;
     }
 
     public void unmarkPrimary() {
-        this.isPrimary = OppositeEnums.NO;
+        this.isPrimary = YesNoEnums.NO;
     }
 
     public void updateRemark(String remark) {
@@ -132,11 +132,11 @@ public class UserContactEntity {
     }
 
     public boolean isVerified() {
-        return isVerified == OppositeEnums.YES;
+        return isVerified == YesNoEnums.YES;
     }
 
     public boolean isPrimaryContact() {
-        return isPrimary == OppositeEnums.YES;
+        return isPrimary == YesNoEnums.YES;
     }
 
     @Override

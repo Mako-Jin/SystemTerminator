@@ -3,6 +3,7 @@ package com.yaocode.sts.auth.application.converter;
 import com.yaocode.sts.auth.application.dto.RoleInfoDto;
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import org.mapstruct.Mapper;
@@ -34,7 +35,7 @@ public interface RoleInfoApplicationConverter {
                 stringToRoleCode(roleDto.getRoleCode()),
                 roleDto.getRoleName(),
                 roleDto.getRoleDesc(),
-                roleDto.getIsDefault(),
+                YesNoEnums.fromCode(roleDto.getIsDefault()),
                 stringToRoleId(roleDto.getParentId())
         );
     }

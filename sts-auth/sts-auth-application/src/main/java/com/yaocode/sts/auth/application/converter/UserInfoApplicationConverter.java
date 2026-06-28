@@ -5,6 +5,7 @@ import com.yaocode.sts.auth.domain.command.CreateUserCommand;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -53,7 +54,7 @@ public interface UserInfoApplicationConverter {
      * @return UserInfoEntity
      */
     default UserInfoEntity toEntity(UserInfoDto user) {
-        return UserInfoEntity.build(
+        return UserInfoEntity.create(
                 stringToUsername(user.getUsername()),
 //                stringListToTenantIdList(user.getTenantIdList()),
 //                stringListToOrganizationIdList(user.getOrganizationIdList()),
@@ -61,7 +62,7 @@ public interface UserInfoApplicationConverter {
 //                stringListToUserGroupIdList(user.getUserGroupIdList()),
 //                stringToEmail(user.getEmail()),
 //                stringToPhoneNum(user.getPhoneNum()),
-                user.getIsEnabled()
+                EnableEnums.fromCode(user.getIsEnabled())
         );
     }
 

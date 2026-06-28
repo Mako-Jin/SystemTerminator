@@ -3,6 +3,7 @@ package com.yaocode.sts.auth.infrastructure.converter;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -55,17 +56,12 @@ public interface UserInfoConverter {
             List<String> roleIdList,
             List<String> userGroupIdList
     ) {
-        return UserInfoEntity.builder()
-                .userId(stringToUserId(userPo.getUserId()))
-                .username(stringToUsername(userPo.getUsername()))
-//                stringToTenantId(tenantIdList),
-//                stringToOrganizationId(organizationIdList),
-//                stringToRoleId(roleIdList),
-//                stringToUserGroupId(userGroupIdList),
-//                stringToEmail(userPo.getEmail()),
-//                stringToPhoneNum(userPo.getPhoneNum()),
-                .isEnabled(userPo.getIsEnabled())
-        .build();
+        return UserInfoEntity.reconstruct(
+                stringToUserId(userPo.getUserId()),
+                stringToUsername(userPo.getUsername()),
+                EnableEnums.fromCode(userPo.getIsEnabled())
+        );
+
     }
 
     /**

@@ -4,6 +4,7 @@ import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -45,7 +46,7 @@ public interface RoleInfoConverter {
                 stringToRoleCode(roleInfoPo.getRoleCode()),
                 roleInfoPo.getRoleName(),
                 roleInfoPo.getRoleDesc(),
-                roleInfoPo.getIsDefault(),
+                YesNoEnums.fromCode(roleInfoPo.getIsDefault()),
                 stringToRoleId(roleInfoPo.getParentId())
         );
     }

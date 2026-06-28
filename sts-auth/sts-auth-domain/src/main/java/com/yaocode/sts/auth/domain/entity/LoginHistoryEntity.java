@@ -8,7 +8,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.LoginHistoryId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.SessionId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.SuccessFailedEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -33,7 +33,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
     private final ClientId clientId;
     private final String userAgent;
     private final Instant loginTime;
-    private final OppositeEnums status;
+    private final SuccessFailedEnums result;
     private final String failReason;
     private final SessionId sessionId;
     private Instant logoutTime;
@@ -51,7 +51,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
         this.clientId = builder.clientId;
         this.userAgent = builder.userAgent;
         this.loginTime = builder.loginTime;
-        this.status = builder.status;
+        this.result = builder.result;
         this.failReason = builder.failReason;
         this.sessionId = builder.sessionId;
         this.logoutTime = builder.logoutTime;
@@ -84,7 +84,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
                 .clientId(clientId)
                 .userAgent(userAgent)
                 .loginTime(Instant.now())
-                .status(OppositeEnums.SUCCESS)
+                .result(SuccessFailedEnums.SUCCESS)
                 .sessionId(sessionId)
                 .build();
     }
@@ -113,7 +113,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
                 .clientId(clientId)
                 .userAgent(userAgent)
                 .loginTime(Instant.now())
-                .status(OppositeEnums.FAILED)
+                .result(SuccessFailedEnums.FAILED)
                 .failReason(failReason)
                 .build();
     }
@@ -130,7 +130,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
             ClientId clientId,
             String userAgent,
             Instant loginTime,
-            OppositeEnums status,
+            SuccessFailedEnums result,
             String failReason,
             SessionId sessionId,
             Instant logoutTime,
@@ -148,7 +148,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
                 .clientId(clientId)
                 .userAgent(userAgent)
                 .loginTime(loginTime)
-                .status(status)
+                .result(result)
                 .failReason(failReason)
                 .sessionId(sessionId)
                 .logoutTime(logoutTime)
@@ -164,11 +164,11 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
     }
 
     public boolean isSuccess() {
-        return status == OppositeEnums.SUCCESS;
+        return result == SuccessFailedEnums.SUCCESS;
     }
 
     public boolean isFailed() {
-        return status == OppositeEnums.FAILED;
+        return result == SuccessFailedEnums.FAILED;
     }
 
     public boolean isLoggedOut() {
@@ -189,7 +189,7 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
         private ClientId clientId;
         private String userAgent;
         private Instant loginTime;
-        private OppositeEnums status;
+        private SuccessFailedEnums result;
         private String failReason;
         private SessionId sessionId;
         private Instant logoutTime;
@@ -250,8 +250,8 @@ public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
             return this;
         }
 
-        public Builder status(OppositeEnums status) {
-            this.status = status;
+        public Builder result(SuccessFailedEnums result) {
+            this.result = result;
             return this;
         }
 

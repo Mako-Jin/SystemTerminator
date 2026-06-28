@@ -1,12 +1,13 @@
 package com.yaocode.sts.common.resources.services.handler.impl;
 
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.constants.IConstants;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import com.yaocode.sts.common.resources.model.ContactInfoModel;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.services.handler.ResourcesHandler;
 import com.yaocode.sts.common.resources.utils.PropertyResolverUtils;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +28,7 @@ import java.util.function.Supplier;
  * @author: Jin-LiangBo
  * @date: 2026年01月20日 15:15
  */
+@Setter
 public abstract class AbstractResourcesHandler<R extends Annotation, M extends ResourcesModel> implements ResourcesHandler<R, M> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractResourcesHandler.class);
@@ -69,10 +71,6 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
         return applicationContext;
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
     @Override
     public Map<String, Object> scanResources() {
         return getApplicationContext().getBeansWithAnnotation(getSupportedAnnotation());
@@ -84,8 +82,8 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
         model.setName(getDefaultResourceName());
         model.setDesc(getDefaultResourceDesc());
         model.setVersion(getDefaultResourceVersion());
-        model.setIsEnabled(OppositeEnums.YES.getCode());
-        model.setIsDeprecated(OppositeEnums.NO.getCode());
+        model.setIsEnabled(YesNoEnums.YES.getCode());
+        model.setIsDeprecated(YesNoEnums.NO.getCode());
     }
 
     @Override
@@ -142,10 +140,6 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
     @Override
     public PropertyResolverUtils getPropertyResolverUtils() {
         return propertyResolverUtils;
-    }
-
-    public void setPropertyResolverUtils(PropertyResolverUtils propertyResolverUtils) {
-        this.propertyResolverUtils = propertyResolverUtils;
     }
 
     protected List<String> filterParentCode(List<String> parentCodeList, Set<String> systemCodeList) {

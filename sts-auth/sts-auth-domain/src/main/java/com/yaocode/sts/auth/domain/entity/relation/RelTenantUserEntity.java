@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.entity.relation;
 
 import com.yaocode.sts.auth.domain.enums.MFATypeEnums;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.common.tools.id.IdFactory;
@@ -19,7 +19,7 @@ public class RelTenantUserEntity {
 
     private final UserId userId;
 
-    private OppositeEnums isLocked;
+    private YesNoEnums isLocked;
 
     private String lockReason;
 
@@ -36,7 +36,7 @@ public class RelTenantUserEntity {
     /**
      * 是否已绑定MFA
      */
-    private OppositeEnums mfaBound;
+    private YesNoEnums mfaBound;
 
     /**
      * MFA类型：TOTP, SMS, EMAIL
@@ -49,8 +49,8 @@ public class RelTenantUserEntity {
         this.relId = relId;
         this.tenantId = tenantId;
         this.userId = userId;
-        this.isLocked = OppositeEnums.NO;
-        this.mfaBound = OppositeEnums.NO;
+        this.isLocked = YesNoEnums.NO;
+        this.mfaBound = YesNoEnums.NO;
     }
 
     public static RelTenantUserEntity create(TenantId tenantId, UserId userId) {
@@ -58,31 +58,31 @@ public class RelTenantUserEntity {
     }
 
     public void lock(String reason) {
-        this.isLocked = OppositeEnums.YES;
+        this.isLocked = YesNoEnums.YES;
         this.lockReason = reason;
     }
 
     public void unlock() {
-        this.isLocked = OppositeEnums.NO;
+        this.isLocked = YesNoEnums.NO;
         this.lockReason = null;
     }
 
     public void bindMFA(MFATypeEnums mfaType) {
-        this.mfaBound = OppositeEnums.YES;
+        this.mfaBound = YesNoEnums.YES;
         this.mfaType = mfaType;
     }
 
     public void unbindMFA() {
-        this.mfaBound = OppositeEnums.NO;
+        this.mfaBound = YesNoEnums.NO;
         this.mfaType = null;
     }
 
     public boolean isLocked() {
-        return isLocked == OppositeEnums.YES;
+        return isLocked == YesNoEnums.YES;
     }
 
     public boolean isMfaBound() {
-        return mfaBound != null && mfaBound.equals(OppositeEnums.YES);
+        return mfaBound != null && mfaBound.equals(YesNoEnums.YES);
     }
 
 }

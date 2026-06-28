@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.service.provider;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
+import com.yaocode.sts.auth.domain.port.JwtTokenConfigPort;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
 import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
@@ -26,10 +27,11 @@ public class PasswordAuthenticationProvider extends AbstractAuthenticationProvid
 
     protected PasswordAuthenticationProvider(
             JwtTokenService jwtTokenService,
+            JwtTokenConfigPort jwtTokenConfigPort,
             RememberMeTokenRepository rememberMeRepository,
             RefreshTokenRepository refreshTokenRepository
     ) {
-        super(jwtTokenService, refreshTokenRepository, rememberMeRepository);
+        super(jwtTokenService, jwtTokenConfigPort, refreshTokenRepository, rememberMeRepository);
     }
 
     @Override

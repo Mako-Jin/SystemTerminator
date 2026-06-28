@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.resources.services.handler.impl;
 
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.model.ModuleResourcesModel;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
@@ -151,7 +152,7 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
         super.buildDefaultResourcesModel(model);
         String defaultParentCode = serviceResourcesHandler.getDefaultResourceCode();
         model.setParentCode(Collections.singletonList(defaultParentCode));
-        model.setIsWhiteList(OppositeEnums.NO.getCode());
+        model.setIsWhiteList(YesNoEnums.NO.getCode());
     }
 
     @Override
@@ -162,9 +163,9 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
         resourcesModel.setVersion(annotatedResource.version());
         resourcesModel.setIcon(annotatedResource.icon());
         resourcesModel.setPath(Arrays.asList(annotatedResource.path()));
-        resourcesModel.setIsWhiteList(OppositeEnums.getCode(annotatedResource.isWhiteList()));
-        resourcesModel.setIsDeprecated(OppositeEnums.getCode(annotatedResource.isDeprecated()));
-        resourcesModel.setIsEnabled(OppositeEnums.getCode(annotatedResource.isEnabled()));
+        resourcesModel.setIsWhiteList(YesNoEnums.fromBoolean(annotatedResource.isWhiteList()).getCode());
+        resourcesModel.setIsDeprecated(YesNoEnums.fromBoolean(annotatedResource.isDeprecated()).getCode());
+        resourcesModel.setIsEnabled(EnableEnums.fromBoolean(annotatedResource.isEnabled()).getCode());
         resourcesModel.setParentCode(Arrays.asList(annotatedResource.parent()));
     }
 
