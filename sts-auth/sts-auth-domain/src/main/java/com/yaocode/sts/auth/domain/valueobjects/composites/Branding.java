@@ -18,6 +18,8 @@ public class Branding {
     String copyright;
     String primaryColor;
     String loginBackgroundUrl;
+    String welcomeMessage;
+    String subtitle;
 
     private Branding(Builder builder) {
         this.brandName = builder.brandName;
@@ -27,6 +29,8 @@ public class Branding {
         this.copyright = builder.copyright;
         this.primaryColor = builder.primaryColor;
         this.loginBackgroundUrl = builder.loginBackgroundUrl;
+        this.welcomeMessage = builder.welcomeMessage;
+        this.subtitle = builder.subtitle;
     }
 
     public static class Builder {
@@ -37,6 +41,8 @@ public class Branding {
         private String copyright;
         private String primaryColor = "#1890ff";
         private String loginBackgroundUrl;
+        private String welcomeMessage;
+        private String subtitle;
 
         public Builder brandName(String brandName) {
             this.brandName = brandName;

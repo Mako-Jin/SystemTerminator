@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.entity.LoginAttemptEntity;
 import com.yaocode.sts.auth.domain.entity.PasswordHistoryEntity;
 import com.yaocode.sts.auth.domain.entity.UserContactEntity;
 import com.yaocode.sts.auth.domain.entity.UserCredentialEntity;
@@ -28,7 +29,15 @@ import com.yaocode.sts.auth.domain.events.user.UserRegisteredEvent;
 import com.yaocode.sts.auth.domain.events.user.UserRemoveTenantEvent;
 import com.yaocode.sts.auth.domain.events.user.UserRemovedRoleEvent;
 import com.yaocode.sts.auth.domain.events.user.UserUnlockedEvent;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.*;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.CredentialId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.EducationId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.EmergencyContactId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.EmploymentId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
@@ -64,7 +73,13 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
     private OppositeEnums mfaBound;
     private MFATypeEnums mfaType;
     private RegisterSourceEnums registerSource;
-    private LocalDateTime registeredAt;
+
+//    private Email email;
+//    private PhoneNumber phone;
+//    private Password password;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime lastLoginAt;
 
     // ============ 子实体（1:1） ============
     private UserProfileEntity profile;
@@ -77,6 +92,8 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
     private List<UserEmergencyContactEntity> emergencyContacts = new ArrayList<>();
     private List<UserSecretQuestionEntity> secretQuestions = new ArrayList<>();
     private List<PasswordHistoryEntity> passwordHistories = new ArrayList<>();
+
+    private List<LoginAttemptEntity> loginAttemptInfoEntityList = new ArrayList<>();
 
     // ============ 跨聚合引用（通过ID） ============
     private Set<TenantId> tenantIds = new HashSet<>();
@@ -91,7 +108,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         this.status = UserStatusEnums.INACTIVE;
         this.onlineStatus = OppositeEnums.NO;
         this.mfaBound = OppositeEnums.NO;
-        this.registeredAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
         this.registerSource = RegisterSourceEnums.REGISTER;
     }
 
@@ -177,7 +194,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         user.mfaBound = mfaBound != null ? mfaBound : OppositeEnums.NO;
         user.mfaType = mfaType;
         user.registerSource = registerSource != null ? registerSource : RegisterSourceEnums.REGISTER;
-        user.registeredAt = registeredAt != null ? registeredAt : LocalDateTime.now();
+        user.createdAt = registeredAt != null ? registeredAt : LocalDateTime.now();
         user.profile = profile;
         user.contacts = contacts != null ? new ArrayList<>(contacts) : new ArrayList<>();
         user.credentials = credentials != null ? new ArrayList<>(credentials) : new ArrayList<>();

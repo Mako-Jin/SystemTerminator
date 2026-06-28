@@ -1,17 +1,21 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.LoginAttemptId;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Data
+@EqualsAndHashCode(callSuper = true)
+@Getter
 @Builder
-public class LoginAttemptEntity {
+public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
 
     /**
      * 基础锁定时间（分钟）

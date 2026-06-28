@@ -2,10 +2,10 @@ package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
-import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.common.domain.Repository;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 
 import java.util.List;
 import java.util.Optional;

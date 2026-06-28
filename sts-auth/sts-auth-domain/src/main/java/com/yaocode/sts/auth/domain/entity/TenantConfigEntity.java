@@ -8,6 +8,7 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordPolicy;
 import com.yaocode.sts.auth.domain.valueobjects.composites.SessionConfig;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantConfigId;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
  * 对应表：auth_tbl_tenant_config
  */
 @Getter
-public class TenantConfigEntity {
+public class TenantConfigEntity extends AbstractAggregate<TenantConfigId> {
 
     private final TenantConfigId configId;
     private final TenantId tenantId;
@@ -38,6 +39,7 @@ public class TenantConfigEntity {
     private Integer maxLoginAttempts;
 
     private TenantConfigEntity(TenantConfigId configId, TenantId tenantId) {
+        super(configId);
         this.configId = configId;
         this.tenantId = tenantId;
         this.isEnabled = OppositeEnums.ENABLED;

@@ -4,6 +4,7 @@ import com.yaocode.sts.auth.domain.entity.BrandConfigEntity;
 import com.yaocode.sts.auth.domain.entity.CompanyInfoEntity;
 import com.yaocode.sts.auth.domain.entity.InstanceInfoEntity;
 import com.yaocode.sts.auth.domain.entity.TenantConfigEntity;
+import com.yaocode.sts.auth.domain.entity.TenantSecurityEntity;
 import com.yaocode.sts.auth.domain.enums.BrandTargetTypeEnums;
 import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
 import com.yaocode.sts.auth.domain.events.client.InstanceAddedToTenantEvent;
@@ -18,6 +19,7 @@ import com.yaocode.sts.auth.domain.events.tenant.UserAddedToTenantEvent;
 import com.yaocode.sts.auth.domain.valueobjects.composites.Branding;
 import com.yaocode.sts.auth.domain.valueobjects.composites.LoginConfig;
 import com.yaocode.sts.auth.domain.valueobjects.composites.MFAConfig;
+import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordPolicy;
 import com.yaocode.sts.auth.domain.valueobjects.composites.SessionConfig;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.BrandConfigId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.CompanyId;
@@ -25,7 +27,6 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.InstanceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
-import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordPolicy;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
@@ -63,6 +64,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
     private List<BrandConfigEntity> brandConfigs = new ArrayList<>();
     private List<CompanyInfoEntity> companies = new ArrayList<>();
     private List<InstanceInfoEntity> instances = new ArrayList<>();
+    private List<TenantSecurityEntity> securityConfigs = new ArrayList<>();
 
     // ============ 跨聚合引用 ============
     private Set<UserId> userIds = new HashSet<>();
@@ -85,7 +87,8 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
             TenantCode tenantCode,
             String tenantDesc,
             Integer tenantLevel,
-            TenantId parentId
+            TenantId parentId,
+            TenantStatusEnums tenantStatus
     ) {
         TenantInfoAggregate tenant = new TenantInfoAggregate(TenantId.nextId());
         tenant.tenantName = tenantName;
@@ -93,7 +96,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         tenant.tenantDesc = tenantDesc;
         tenant.tenantLevel = tenantLevel;
         tenant.parentId = parentId;
-        tenant.tenantStatus = TenantStatusEnums.ACTIVATE;
+        tenant.tenantStatus = tenantStatus != null ? tenantStatus : TenantStatusEnums.ACTIVATE;
 
         // 创建默认配置
         tenant.config = TenantConfigEntity.create(
@@ -122,6 +125,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
             String tenantDesc,
             Integer tenantLevel,
             TenantId parentId,
+            TenantStatusEnums tenantStatus,
             TenantConfigEntity config,
             List<BrandConfigEntity> brandConfigs,
             List<CompanyInfoEntity> companies,
@@ -137,7 +141,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         tenant.tenantDesc = tenantDesc;
         tenant.tenantLevel = tenantLevel;
         tenant.parentId = parentId;
-        tenant.tenantStatus = TenantStatusEnums.ACTIVATE;
+        tenant.tenantStatus = tenantStatus;
         tenant.config = config;
         tenant.brandConfigs = brandConfigs != null ? new ArrayList<>(brandConfigs) : new ArrayList<>();
         tenant.companies = companies != null ? new ArrayList<>(companies) : new ArrayList<>();

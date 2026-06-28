@@ -4,19 +4,18 @@ import com.yaocode.sts.auth.domain.enums.BrandTargetTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.composites.Branding;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.BrandConfigId;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
 
-import java.util.Objects;
 
 /**
  * 品牌配置实体（属于租户聚合）
  * 对应表：auth_tbl_brand_config
  */
 @Getter
-public class BrandConfigEntity {
+public class BrandConfigEntity extends AbstractAggregate<BrandConfigId> {
 
-    private final BrandConfigId brandConfigId;
     private final String brandConfigName;
     private final BrandTargetTypeEnums targetType;
     private final String targetId;          // 关联目标ID（租户ID/公司ID）
@@ -37,7 +36,7 @@ public class BrandConfigEntity {
             String targetId, String logoUrl, String loginTitle, String welcomeMessage, String subtitle,
             String institution, String copyright, String primaryColor, String loginBackgroundUrl
     ) {
-        this.brandConfigId = brandConfigId;
+        super(brandConfigId);
         this.brandConfigName = brandConfigName;
         this.targetType = targetType;
         this.targetId = targetId;
@@ -118,16 +117,4 @@ public class BrandConfigEntity {
         return isEnabled == OppositeEnums.YES;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BrandConfigEntity that = (BrandConfigEntity) o;
-        return Objects.equals(brandConfigId, that.brandConfigId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(brandConfigId);
-    }
 }
