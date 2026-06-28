@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.domain.service;
 
-import com.yaocode.sts.auth.domain.entity.ResourceEntity;
+import com.yaocode.sts.auth.domain.entity.ResourceInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 
 import java.util.List;
@@ -17,20 +17,20 @@ public interface ResourceDomainService {
      * @param resourceEntity 资源数据
      * @return boolean true 检查通过， false: 检查不通过
      */
-    boolean checkResourceEntity(ResourceEntity resourceEntity);
+    boolean checkResourceEntity(ResourceInfoEntity resourceEntity);
 
     /**
      * 检查资源数据是否满足保存条件
      * @param resourceEntityList 资源列表
      * @return java.util.List<ResourceEntity>
      */
-    List<ResourceEntity> checkResourceEntityList(List<ResourceEntity> resourceEntityList);
+    List<ResourceInfoEntity> checkResourceEntityList(List<ResourceInfoEntity> resourceEntityList);
 
     /**
      * 批量保存资源数据
      * @param resourceEntityList 资源数据列表
      * @return java.util.List<ResourceId>
      */
-    List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList);
+    List<ResourceId> batchSave(List<ResourceInfoEntity> resourceEntityList);
 
 }

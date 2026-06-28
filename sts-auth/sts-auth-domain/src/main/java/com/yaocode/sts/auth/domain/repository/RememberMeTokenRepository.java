@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author: Jin-LiangBo
  * @date: 2026-06-07
  */
-public interface RememberMeRepository {
+public interface RememberMeTokenRepository {
 
     /**
      * 保存令牌

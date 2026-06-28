@@ -11,10 +11,9 @@ import com.yaocode.sts.auth.domain.service.UserInfoDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
-import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -115,16 +114,15 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
         // Password encryptedPassword = Password.encode(defaultPassword, passwordEncoder);
 
         // ✅ 3. 通过实体工厂方法创建（触发领域事件）
-        UserInfoEntity user = UserInfoEntity.build(
-                command.getUsername(),
+        UserInfoEntity user = UserInfoEntity.builder()
+                .username(command.getUsername())
 //                command.getTenantIdList(),
 //                command.getOrganizationIdList(),
 //                command.getRoleIdList(),
 //                command.getUserGroupIdList(),
 //                command.getEmail(),
 //                command.getPhoneNum(),
-                OppositeEnums.YES.getCode()
-        );
+                .build();
 
         // ✅ 4. 分配角色（触发角色分配事件）
         // 分配角色得查询租户，组织，用户组，关联的默认基础角色，或者权限

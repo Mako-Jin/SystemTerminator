@@ -9,12 +9,11 @@ import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.RoleDomainService;
-import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
-import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +30,6 @@ public class RoleDomainServiceImpl implements RoleDomainService {
 
     @Resource
     private TenantInfoRepository tenantInfoRepository;
-
-    @Resource
-    private TenantDomainService tenantDomainService;
 
     @Resource
     private RoleInfoRepository roleInfoRepository;
@@ -96,13 +92,11 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             throw new IllegalArgumentException("auth.data.is.exists");
         }
         RoleInfoEntity roleInfoEntity = RoleInfoEntity.build(
-                tenantDomainService,
-                this,
                 tenantInfoEntity.getId(),
                 roleCode,
                 roleName,
                 roleName,
-                OppositeEnums.YES.getCode(),
+                OppositeEnums.YES,
                 null
         );
         roleInfoRepository.save(roleInfoEntity);

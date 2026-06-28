@@ -3,9 +3,9 @@ package com.yaocode.sts.auth.domain.service.provider;
 import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
-import com.yaocode.sts.auth.domain.port.JwtTokenPort;
+import com.yaocode.sts.auth.domain.enums.TokenRevokeReasonEnums;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
-import com.yaocode.sts.auth.domain.repository.RememberMeRepository;
+import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.JwtTokenService;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
@@ -13,11 +13,14 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.JwtPayload;
 import com.yaocode.sts.auth.domain.valueobjects.composites.RememberMeAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
+import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.basic.exception.ParamCheckException;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,16 +37,6 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
     private static final Logger logger = LoggerFactory.getLogger(RememberMeProvider.class);
 
     /**
-     * JWT Token 端口（默认使用 HMAC-SHA512 实现）
-     * <p>
-     * 可通过配置选择不同的 JWT 实现：
-     * - HMAC-SHA512: @Qualifier("hmac512JwtAdapter")
-     * - 其他算法: 实现 JwtTokenPort 接口并使用相应的 @Qualifier
-     * </p>
-     */
-    private final JwtTokenPort jwtTokenPort;
-
-    /**
      * 用户信息仓储
      */
     private final UserInfoRepository userInfoRepository;
@@ -51,19 +44,16 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
     /**
      * 构造函数注入（支持根据配置选择不同的 JWT 实现）
      *
-     * @param jwtTokenPort         JWT Token 端口实现
      * @param rememberMeRepository Remember-Me 令牌仓储
      * @param userInfoRepository   用户信息仓储
      */
     public RememberMeProvider(
             JwtTokenService jwtTokenService,
-            JwtTokenPort jwtTokenPort,
-            RememberMeRepository rememberMeRepository,
+            RememberMeTokenRepository rememberMeRepository,
             RefreshTokenRepository refreshTokenRepository,
             UserInfoRepository userInfoRepository
     ) {
         super(jwtTokenService, refreshTokenRepository, rememberMeRepository);
-        this.jwtTokenPort = jwtTokenPort;
         this.userInfoRepository = userInfoRepository;
         logger.info("RememberMeProvider initialized with JWT algorithm: HMAC-SHA512");
     }
@@ -88,7 +78,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
 
         try {
             // 2. 验证并解析 Remember-Me Token
-            JwtPayload rememberMePayload = jwtTokenPort.parse(credential.getRememberMeToken());
+            JwtPayload rememberMePayload = jwtTokenService.parseRememberMe(credential.getRememberMeToken());
             if (rememberMePayload == null) {
                 logger.debug("Remember-me authentication failed: invalid token");
                 throw new IllegalArgumentException("Remember-me authentication failed: invalid token");
@@ -120,7 +110,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             RememberMeTokenEntity tokenEntity = tokenEntityOpt.get();
 
             // 6. 检查 Token 是否已被撤销
-            if (tokenEntity.isRevoked()) {
+            if (Objects.equals(tokenEntity.getIsRevoked(), OppositeEnums.YES)) {
                 logger.debug("Remember-me authentication failed: token has been revoked");
                 throw new IllegalArgumentException("Remember-me authentication failed: token has been revoked");
             }
@@ -128,7 +118,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             // 7. 检查 series 是否匹配（防止盗用）
             if (series != null && !series.equals(tokenEntity.getSeries())) {
                 logger.warn("Remember-me authentication failed: series mismatch, possible token theft for user {}", userId);
-                tokenEntity.revoke("SERIES_MISMATCH");
+                tokenEntity.revoke(TokenRevokeReasonEnums.SERIES_MISMATCH);
                 rememberMeRepository.save(tokenEntity);
                 return Optional.empty();
             }
@@ -141,7 +131,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             }
 
             // 8. 更新最后使用时间
-            RememberMeTokenEntity newTokenEntity = tokenEntity.renew(30);
+            RememberMeTokenEntity newTokenEntity = tokenEntity.renew(Instant.now().plusSeconds(rememberMeTokenTtlSeconds));
             rememberMeRepository.save(newTokenEntity);
 
             logger.debug("Remember-me authentication succeeded for user {}", userId);

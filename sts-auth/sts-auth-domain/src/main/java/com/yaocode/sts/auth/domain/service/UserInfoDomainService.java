@@ -2,9 +2,9 @@ package com.yaocode.sts.auth.domain.service;
 
 import com.yaocode.sts.auth.domain.command.CreateUserCommand;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 
 import java.util.List;
 

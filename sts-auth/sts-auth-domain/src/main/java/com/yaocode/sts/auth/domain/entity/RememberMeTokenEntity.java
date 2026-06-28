@@ -136,11 +136,12 @@ public class RememberMeTokenEntity {
         this.lastLoginTime = now;
     }
 
-    public void renew(Instant newExpiresAt) {
+    public RememberMeTokenEntity renew(Instant newExpiresAt) {
         if (newExpiresAt.isBefore(Instant.now())) {
             throw new IllegalArgumentException("新的过期时间不能早于当前时间");
         }
         this.expiresAt = newExpiresAt;
+        return this;
     }
 
     public void revoke(TokenRevokeReasonEnums reason) {

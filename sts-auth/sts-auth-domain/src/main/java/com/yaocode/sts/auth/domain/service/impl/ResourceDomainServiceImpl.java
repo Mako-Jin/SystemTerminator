@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
-import com.yaocode.sts.auth.domain.entity.ResourceEntity;
+import com.yaocode.sts.auth.domain.entity.ResourceInfoEntity;
 import com.yaocode.sts.auth.domain.repository.ResourceRepository;
 import com.yaocode.sts.auth.domain.service.ResourceDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
@@ -24,26 +24,26 @@ public class ResourceDomainServiceImpl implements ResourceDomainService {
     private ResourceRepository resourceRepository;
 
     @Override
-    public boolean checkResourceEntity(ResourceEntity resourceEntity) {
+    public boolean checkResourceEntity(ResourceInfoEntity resourceEntity) {
         if (Objects.isNull(resourceEntity)) {
             return false;
         }
-        Optional<ResourceEntity> optionalResourceEntity = resourceRepository.findByEntity(resourceEntity);
+        Optional<ResourceInfoEntity> optionalResourceEntity = resourceRepository.findByEntity(resourceEntity);
         return optionalResourceEntity.isEmpty();
     }
 
     @Override
-    public List<ResourceEntity> checkResourceEntityList(List<ResourceEntity> resourceEntityList) {
+    public List<ResourceInfoEntity> checkResourceEntityList(List<ResourceInfoEntity> resourceEntityList) {
         if (resourceEntityList == null || resourceEntityList.isEmpty()) {
             return Collections.emptyList();
         }
-        List<ResourceEntity> dbEntityList = resourceRepository.findByEntityList(resourceEntityList);
+        List<ResourceInfoEntity> dbEntityList = resourceRepository.findByEntityList(resourceEntityList);
         return resourceEntityList.stream().filter(resourceEntity -> dbEntityList.stream().noneMatch(dbEntity ->
             Objects.equals(resourceEntity, dbEntity))).toList();
     }
 
     @Override
-    public List<ResourceId> batchSave(List<ResourceEntity> resourceEntityList) {
+    public List<ResourceId> batchSave(List<ResourceInfoEntity> resourceEntityList) {
         return resourceRepository.batchSave(resourceEntityList);
     }
 

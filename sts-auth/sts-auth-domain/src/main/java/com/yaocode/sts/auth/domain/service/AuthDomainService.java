@@ -1,6 +1,5 @@
 package com.yaocode.sts.auth.domain.service;
 
-import com.yaocode.sts.auth.domain.entity.LoginSuccessEntity;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 
@@ -17,12 +16,5 @@ public interface AuthDomainService {
      * @return 认证令牌
      */
     AuthenticationToken authenticate(AbstractAuthCredential credential);
-
-    /**
-     * 登录成功
-     * @param authenticationToken 认证令牌
-     * @return 登录成功实体
-     */
-    LoginSuccessEntity loginSuccess(AuthenticationToken authenticationToken);
 
 }

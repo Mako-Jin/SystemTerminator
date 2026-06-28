@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
-import com.yaocode.sts.auth.domain.repository.RememberMeRepository;
+import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public class RememberMeRepositoryImpl implements RememberMeRepository {
+public class RememberMeRepositoryImpl implements RememberMeTokenRepository {
 
     @Override
     public void save(RememberMeTokenEntity token) {

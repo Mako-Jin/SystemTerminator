@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
-import com.yaocode.sts.auth.domain.entity.LoginSuccessEntity;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
+import com.yaocode.sts.auth.domain.exception.AuthenticationException;
 import com.yaocode.sts.auth.domain.service.AuthDomainService;
 import com.yaocode.sts.auth.domain.service.provider.AuthenticationProvider;
 import com.yaocode.sts.auth.domain.service.provider.ProviderManager;
@@ -33,13 +33,16 @@ public class AuthDomainServiceImpl implements AuthDomainService {
 
         AuthenticationProvider<AbstractAuthCredential> provider = providerManager.getProvider(grantType);
 
+        if (provider == null) {
+            throw new AuthenticationException("不支持的认证方式: " + credential.getGrantType());
+        }
         if (Objects.equals(grantType, GrantTypeEnums.REMEMBER_ME)) {
             return provider.authenticate(credential);
         }
-//
+
 //        // 1. 验证 State（CSRF 防护）
 //        if (!stateService.consume(token.getState(), token.getSessionId())) {
-//            log.warn("State 验证失败: sessionId={}", token.getSessionId());
+//            logger.warn("State 验证失败: sessionId={}", token.getSessionId());
 //            return AuthenticationResult.failure("请求已过期，请刷新页面重试");
 //        }
 //
@@ -47,22 +50,9 @@ public class AuthDomainServiceImpl implements AuthDomainService {
 //        if (!validateCaptcha(token)) {
 //            return AuthenticationResult.failure("验证码错误");
 //        }
-//
-//        // 3. 查找对应的 Provider
-//
-//        if (provider == null) {
-//            log.warn("不支持的认证类型: {}", grantType);
-//            return AuthenticationResult.failure("不支持的认证类型");
-//        }
-//
-//        // 4. 执行认证
-//        return provider.authenticate(token);
-        return null;
-    }
 
-    @Override
-    public LoginSuccessEntity loginSuccess(AuthenticationToken authenticationToken) {
-        return null;
+        // 4. 执行认证
+        return provider.authenticate(credential);
     }
 
 }

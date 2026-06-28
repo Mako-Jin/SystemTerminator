@@ -3,18 +3,21 @@ package com.yaocode.sts.auth.domain.service.provider;
 import com.yaocode.sts.auth.domain.entity.RefreshTokenEntity;
 import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
+import com.yaocode.sts.auth.domain.port.JwtTokenConfigPort;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
-import com.yaocode.sts.auth.domain.repository.RememberMeRepository;
+import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.service.JwtTokenService;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
+import com.yaocode.sts.auth.domain.valueobjects.identifiers.TokenId;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
+import com.yaocode.sts.common.web.context.RequestContextHolder;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -30,25 +33,19 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAuthenticationProvider.class);
 
-    private final JwtTokenService jwtTokenService;
+    protected final JwtTokenService jwtTokenService;
 
     protected RefreshTokenRepository refreshTokenRepository;
 
-    protected RememberMeRepository rememberMeRepository;
+    protected RememberMeTokenRepository rememberMeRepository;
 
-    @Value("${yaocode.jwt.remember-me.ttl:2592000}")
-    protected long rememberMeTokenTtlSeconds;
-
-    @Value("${yaocode.jwt.refresh.ttl:604800}")
-    protected long refreshTokenTtlSeconds;
-
-    @Value("${yaocode.jwt.access.ttl:1800}")
-    protected long accessTokenTtlSeconds;
+    protected JwtTokenConfigPort jwtTokenConfigPort;
 
     protected AbstractAuthenticationProvider(
             JwtTokenService jwtTokenService,
+            JwtTokenConfigPort jwtTokenConfigPort,
             RefreshTokenRepository refreshTokenRepository,
-            RememberMeRepository rememberMeRepository
+            RememberMeTokenRepository rememberMeRepository
     ) {
         this.jwtTokenService = jwtTokenService;
         this.refreshTokenRepository = refreshTokenRepository;
@@ -105,7 +102,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      * 验证用户状态（子类可扩展）
      */
     protected void validateUserStatus(UserInfoEntity userInfoEntity) {
-        if (Objects.equals(userInfoEntity.getIsEnabled(), OppositeEnums.DISABLED.getCode())) {
+        if (Objects.equals(userInfoEntity.getIsEnabled(), OppositeEnums.DISABLED)) {
             throw new IllegalStateException("用户已被禁用");
         }
 //        if (userInfoEntity.get()) {
@@ -117,11 +114,11 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      * 构建成功令牌
      */
     protected AuthenticationToken buildSuccessToken(UserInfoEntity userInfoEntity, T  credential) {
-        Instant accessTokenExpiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
+        Instant accessTokenExpiresAt = Instant.now().plusSeconds(jwtTokenConfigPort.getAccessTokenTtl());
         String accessToken = jwtTokenService.generateAccessToken(userInfoEntity, credential.getClientId(), credential.getDeviceId());
-        Instant refreshTokenExpiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
+        Instant refreshTokenExpiresAt = Instant.now().plusSeconds(jwtTokenConfigPort.getRefreshTokenTtl());
         String refreshToken = generateAndSaveRefreshToken(userInfoEntity, credential, refreshTokenExpiresAt);
-        Instant rememberMeTokenExpiresAt = Instant.now().plusSeconds(rememberMeTokenTtlSeconds);
+        Instant rememberMeTokenExpiresAt = Instant.now().plusSeconds(jwtTokenConfigPort.getRememberMeTtl());
         String rememberMeToken = generateAndSaveRememberMeToken(userInfoEntity, credential, rememberMeTokenExpiresAt);
         return AuthenticationToken.builder()
                 .userId(userInfoEntity.getId())
@@ -144,21 +141,26 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
             return "";
         }
 
-        RememberMeTokenEntity entity = new RememberMeTokenEntity(
+        String series = IdFactory.generate(IdGeneratorType.UUID);
+        String token = jwtTokenService.generateRememberMeToken(userInfoEntity, credential.getClientId(), credential.getDeviceId(), series);
+
+        RememberMeTokenEntity entity = RememberMeTokenEntity.create(
                 userInfoEntity.getId(),
                 userInfoEntity.getUsername(),
                 credential.getClientId(),
                 credential.getDeviceId(),
-                Instant.now(),
+                token,
+                series,
                 expiresAt,
-                IdFactory.generate(IdGeneratorType.UUID)
+                IpAddress.of(RequestContextHolder.getIpAddress()),
+                RequestContextHolder.getUserAgent()
         );
         rememberMeRepository.save(entity);
 
-        logger.debug("RememberMe saved to database: id={}, userId={}", entity.getId(), userInfoEntity.getId());
+        logger.debug("RememberMe saved to database: id={}, userId={}", entity.getTokenId(), userInfoEntity.getId());
 
         // 3. 生成 JWT
-        return jwtTokenService.generateRememberMeToken(userInfoEntity, credential.getClientId(), credential.getDeviceId(), entity.getSeries());
+        return token;
     }
 
     /**
@@ -169,19 +171,24 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
             return "";
         }
 
-        RefreshTokenEntity entity = new RefreshTokenEntity(
+        TokenId tokenId = TokenId.nextId();
+        String jti = IdFactory.generate(IdGeneratorType.UUID).toString();
+        String token = jwtTokenService.generateRefreshToken(userInfoEntity, credential.getClientId(), credential.getDeviceId(), tokenId, jti);
+        RefreshTokenEntity entity = RefreshTokenEntity.create(
+                tokenId,
                 userInfoEntity.getId(),
                 credential.getClientId(),
                 credential.getDeviceId(),
-                expiresAt,
-                Instant.now()
+                jti,
+                token,
+                expiresAt
         );
         refreshTokenRepository.save(entity);
 
-        logger.debug("RefreshToken saved to database: id={}, userId={}", entity.getId(), userInfoEntity.getId());
+        logger.debug("RefreshToken saved to database: id={}, userId={}", entity.getTokenId(), userInfoEntity.getId());
 
         // 3. 生成 JWT
-        return jwtTokenService.generateRefreshToken(userInfoEntity, credential.getClientId(), credential.getDeviceId(), entity.getId());
+        return token;
     }
 
     /**

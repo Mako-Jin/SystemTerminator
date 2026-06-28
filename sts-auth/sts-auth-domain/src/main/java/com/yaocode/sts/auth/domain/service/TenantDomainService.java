@@ -1,9 +1,9 @@
 package com.yaocode.sts.auth.domain.service;
 
-import com.yaocode.sts.auth.domain.enums.UserAddTypeEnums;
+import com.yaocode.sts.auth.domain.enums.RegisterSourceEnums;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 
 import java.util.List;
 
@@ -48,6 +48,8 @@ public interface TenantDomainService {
      * @param userId 用户id
      * @param userAddType 用户新增类型
      */
-    void associatedTenantUser(TenantId tenantId, UserId userId, UserAddTypeEnums userAddType);
+    void associatedTenantUser(TenantId tenantId, UserId userId, RegisterSourceEnums userAddType);
+
+    TenantId resolveTenantId(TenantId tenantId, TenantCode tenantCode, String domain);
 
 }

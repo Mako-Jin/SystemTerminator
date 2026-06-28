@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.auth.infrastructure.converter.TenantInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelTenantUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.TenantInfoDao;
@@ -50,8 +51,8 @@ public class TenantInfoRepositoryImpl implements TenantInfoRepository {
     }
 
     @Override
-    public Optional<TenantInfoEntity> getByTenantCode(String tenantCode) {
-        TenantInfoPo tenantInfoPo = tenantInfoDao.getByTenantCode(tenantCode);
+    public Optional<TenantInfoEntity> getByTenantCode(TenantCode tenantCode) {
+        TenantInfoPo tenantInfoPo = tenantInfoDao.getByTenantCode(tenantCode.getValue());
         return Optional.ofNullable(TenantInfoConverter.INSTANCE.toEntity(tenantInfoPo));
     }
 

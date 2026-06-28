@@ -1,10 +1,13 @@
 package com.yaocode.sts.common.basic.enums;
 
+import lombok.Getter;
+
 /**
  * 0和1对立面枚举类
  * @author: Jin-LiangBo
  * @date: 2025年10月17日 22:16
  */
+@Getter
 public enum OppositeEnums {
 
     /**
@@ -35,8 +38,12 @@ public enum OppositeEnums {
      * 启用
      */
     ENABLED(1, "启用"),
+
     FAILED(0, "失败"),
     SUCCESS(1, "成功"),
+
+    DENY(0, "失败"),
+    ALLOW(1, "允许"),
     ;
 
     private final Integer code;
@@ -46,14 +53,6 @@ public enum OppositeEnums {
     OppositeEnums(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     public static Integer getCode(boolean flag) {

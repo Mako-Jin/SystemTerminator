@@ -75,6 +75,30 @@ public class RefreshTokenEntity {
                 .build();
     }
 
+    public static RefreshTokenEntity create(
+            TokenId tokenId,
+            UserId userId,
+            ClientId clientId,
+            DeviceId deviceId,
+            String jti,
+            String tokenHash,
+            Instant expiresAt
+    ) {
+        return new Builder()
+                .tokenId(tokenId)
+                .userId(userId)
+                .clientId(clientId)
+                .deviceId(deviceId)
+                .jti(jti)
+                .tokenHash(tokenHash)
+                .createdAt(Instant.now())
+                .expiresAt(expiresAt)
+                .revoked(OppositeEnums.NO)
+                .lastUsedAt(Instant.now())
+                .useCount(0)
+                .build();
+    }
+
     public static RefreshTokenEntity reconstruct(
             TokenId tokenId,
             UserId userId,

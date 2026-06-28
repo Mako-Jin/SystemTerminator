@@ -1,6 +1,7 @@
 package com.yaocode.sts.auth.domain.repository;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
+import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.common.domain.Repository;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -20,7 +21,7 @@ public interface TenantInfoRepository extends Repository<TenantInfoEntity, Tenan
      * @param tenantCode 租户编码
      * @return Optional<TenantInfoEntity>
      */
-    Optional<TenantInfoEntity> getByTenantCode(String tenantCode);
+    Optional<TenantInfoEntity> getByTenantCode(TenantCode tenantCode);
 
     /**
      * 根据租户名称查询租户对象
