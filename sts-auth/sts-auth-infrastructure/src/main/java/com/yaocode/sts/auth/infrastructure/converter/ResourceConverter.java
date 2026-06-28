@@ -1,10 +1,10 @@
 package com.yaocode.sts.auth.infrastructure.converter;
 
-import com.yaocode.sts.auth.domain.entity.ResourceEntity;
+import com.yaocode.sts.auth.domain.entity.ResourceInfoEntity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Version;
-import com.yaocode.sts.auth.infrastructure.po.ResourcePo;
+import com.yaocode.sts.auth.infrastructure.po.ResourceInfoPo;
 import com.yaocode.sts.common.tools.ListUtils;
 import com.yaocode.sts.common.tools.StringUtils;
 import org.mapstruct.Mapper;
@@ -36,14 +36,14 @@ public interface ResourceConverter {
     @Mapping(target = "parentCode", source = "resourceEntity.parentCode", qualifiedByName = "listToString")
     @Mapping(target = "version", source = "resourceEntity.version", qualifiedByName = "versionToString")
     @Mapping(target = "resourceType", source = "resourceEntity.identity.resourceType")
-    ResourcePo toPo(ResourceEntity resourceEntity);
+    ResourceInfoPo toPo(ResourceInfoEntity resourceEntity);
 
     /**
      * 批量Entity转Po
      * @param resourceEntityList entity列表
      * @return List<ResourcePo>
      */
-    List<ResourcePo> toPoList(List<ResourceEntity> resourceEntityList);
+    List<ResourceInfoPo> toPoList(List<ResourceInfoEntity> resourceEntityList);
 
     /**
      * 值对象与基本类型的转换方法
@@ -120,8 +120,9 @@ public interface ResourceConverter {
      * @param resourcePo po数据
      * @return ResourceEntity
      */
-    default ResourceEntity toEntity(ResourcePo resourcePo) {
-        ResourceEntity entity = ResourceEntity.build(
+    default ResourceInfoEntity toEntity(ResourceInfoPo resourcePo) {
+        ResourceInfoEntity entity = ResourceInfoEntity.build(
+                stringToResourceId(resourcePo.getResourceId()),
                 stringToResourceValue(resourcePo.getResourceValue()),
                 resourcePo.getResourceName(),
                 resourcePo.getResourceDesc(),
@@ -132,7 +133,6 @@ public interface ResourceConverter {
                 resourcePo.getIcon(),
                 resourcePo.getVersion()
         );
-        entity.setId(stringToResourceId(resourcePo.getResourceId()));
         entity.reconstructionWhiteList(resourcePo.getIsWhiteList());
         entity.reconstructionEnable(resourcePo.getIsEnabled());
         entity.reconstructionDeprecated(resourcePo.getIsDeprecated());
@@ -154,6 +154,6 @@ public interface ResourceConverter {
      * @param resourcePoList po列表
      * @return List<ResourceEntity>
      */
-    List<ResourceEntity> toEntityList(List<ResourcePo> resourcePoList);
+    List<ResourceInfoEntity> toEntityList(List<ResourceInfoPo> resourcePoList);
 
 }

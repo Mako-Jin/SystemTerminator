@@ -2,9 +2,9 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.RefreshTokenEntity;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-@Service
+@Repository
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     @Override
     public void save(RefreshTokenEntity refreshToken) {

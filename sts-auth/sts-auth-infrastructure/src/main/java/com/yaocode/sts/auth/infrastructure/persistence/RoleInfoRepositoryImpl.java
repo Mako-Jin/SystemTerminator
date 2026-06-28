@@ -1,19 +1,16 @@
 package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
-import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
-import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
-import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
 import com.yaocode.sts.auth.infrastructure.converter.RoleInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelRoleUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RoleInfoDao;
-import com.yaocode.sts.auth.infrastructure.po.RelRoleUserPo;
+import com.yaocode.sts.auth.infrastructure.po.RelRoleMemberPo;
 import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
@@ -45,10 +42,10 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
 
 
     @Override
-    public RoleId save(RoleInfoEntity aggregate) {
-        RoleInfoPo roleInfoPo = RoleInfoConverter.INSTANCE.toPo(aggregate);
+    public RoleId save(RoleInfoEntity roleInfoEntity) {
+        RoleInfoPo roleInfoPo = RoleInfoConverter.INSTANCE.toPo(roleInfoEntity);
         roleInfoDao.save(roleInfoPo);
-        return aggregate.getId();
+        return roleInfoEntity.getId();
     }
 
     @Override
@@ -85,17 +82,17 @@ public class RoleInfoRepositoryImpl implements RoleInfoRepository {
     @Override
     public void saveRelRoleUser(TenantId tenantId, UserId userId, List<RoleId> roleIdList) {
         List<String> roleIdStrList = roleIdList.stream().map(RoleId::getValue).toList();
-        List<RelRoleUserPo> existRelList = relRoleUserDao.getByUserIdAndRoleIdList(
+        List<RelRoleMemberPo> existRelList = relRoleUserDao.getByUserIdAndRoleIdList(
                 tenantId.getValue(), userId.getValue(), roleIdStrList
         );
-        List<String> existRoleIdList = existRelList.stream().map(RelRoleUserPo::getRoleId).toList();
+        List<String> existRoleIdList = existRelList.stream().map(RelRoleMemberPo::getRoleId).toList();
         List<String> nonExistList = roleIdStrList.stream().filter(e -> !existRoleIdList.contains(e)).toList();
         if (CollectionUtils.isEmpty(nonExistList)) {
             return;
         }
-        List<RelRoleUserPo> relRoleUserPoList = new ArrayList<>();
+        List<RelRoleMemberPo> relRoleUserPoList = new ArrayList<>();
         nonExistList.forEach(e -> {
-            RelRoleUserPo relRoleUserPo = new RelRoleUserPo();
+            RelRoleMemberPo relRoleUserPo = new RelRoleMemberPo();
             relRoleUserPo.setRelId(IdFactory.generate());
             relRoleUserPo.setTenantId(tenantId.getValue());
             relRoleUserPo.setRoleId(e);

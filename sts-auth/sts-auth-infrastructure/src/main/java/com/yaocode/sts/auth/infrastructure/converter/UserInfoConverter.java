@@ -55,17 +55,17 @@ public interface UserInfoConverter {
             List<String> roleIdList,
             List<String> userGroupIdList
     ) {
-        return UserInfoEntity.build(
-                stringToUserId(userPo.getUserId()),
-                stringToUsername(userPo.getUsername()),
+        return UserInfoEntity.builder()
+                .userId(stringToUserId(userPo.getUserId()))
+                .username(stringToUsername(userPo.getUsername()))
 //                stringToTenantId(tenantIdList),
 //                stringToOrganizationId(organizationIdList),
 //                stringToRoleId(roleIdList),
 //                stringToUserGroupId(userGroupIdList),
 //                stringToEmail(userPo.getEmail()),
 //                stringToPhoneNum(userPo.getPhoneNum()),
-                userPo.getIsEnabled()
-        );
+                .isEnabled(userPo.getIsEnabled())
+        .build();
     }
 
     /**

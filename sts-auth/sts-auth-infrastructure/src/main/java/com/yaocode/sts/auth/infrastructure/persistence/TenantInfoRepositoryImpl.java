@@ -2,17 +2,18 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
-import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.infrastructure.converter.TenantInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelTenantUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.TenantInfoDao;
 import com.yaocode.sts.auth.infrastructure.po.RelTenantUserPo;
 import com.yaocode.sts.auth.infrastructure.po.TenantInfoPo;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -74,5 +75,10 @@ public class TenantInfoRepositoryImpl implements TenantInfoRepository {
         relTenantUserPo.setTenantId(tenantId.getValue());
         relTenantUserPo.setUserId(userId.getValue());
         relTenantUserDao.save(relTenantUserPo);
+    }
+
+    @Override
+    public List<TenantInfoEntity> findByTenantIds(List<TenantId> tenantIds) {
+        return List.of();
     }
 }

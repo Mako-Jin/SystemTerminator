@@ -2,8 +2,6 @@ package com.yaocode.sts.auth.infrastructure.persistence;
 
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
-import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
 import com.yaocode.sts.auth.infrastructure.converter.UserInfoConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelOrganizationUserDao;
@@ -14,12 +12,13 @@ import com.yaocode.sts.auth.infrastructure.mybatis.dao.UserInfoDao;
 import com.yaocode.sts.auth.infrastructure.po.RelTenantUserPo;
 import com.yaocode.sts.auth.infrastructure.po.UserInfoPo;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 仓库接口
@@ -107,10 +106,10 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     }
 
     @Override
-    public UserId save(UserInfoEntity aggregate) {
-        UserInfoPo userPo = UserInfoConverter.INSTANCE.toPo(aggregate);
+    public UserId save(UserInfoEntity userInfoEntity) {
+        UserInfoPo userPo = UserInfoConverter.INSTANCE.toPo(userInfoEntity);
         userInfoDao.save(userPo);
-        return aggregate.getId();
+        return userInfoEntity.getUserId();
     }
 
     @Override

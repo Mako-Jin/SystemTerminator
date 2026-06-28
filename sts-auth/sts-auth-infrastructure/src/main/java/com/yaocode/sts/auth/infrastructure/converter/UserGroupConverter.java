@@ -1,10 +1,10 @@
 package com.yaocode.sts.auth.infrastructure.converter;
 
 import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
 import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

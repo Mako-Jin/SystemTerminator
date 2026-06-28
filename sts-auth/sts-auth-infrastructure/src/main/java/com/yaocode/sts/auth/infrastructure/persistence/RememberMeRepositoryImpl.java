@@ -5,11 +5,11 @@ import com.yaocode.sts.auth.domain.repository.RememberMeRepository;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Service
+@Repository
 public class RememberMeRepositoryImpl implements RememberMeRepository {
 
     @Override

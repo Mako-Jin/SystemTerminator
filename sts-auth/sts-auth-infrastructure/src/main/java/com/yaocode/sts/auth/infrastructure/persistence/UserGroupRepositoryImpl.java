@@ -1,20 +1,16 @@
 package com.yaocode.sts.auth.infrastructure.persistence;
 
-import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
 import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
 import com.yaocode.sts.auth.domain.repository.UserGroupRepository;
-import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
-import com.yaocode.sts.auth.infrastructure.converter.OrganizationConverter;
-import com.yaocode.sts.auth.infrastructure.po.OrganizationInfoPo;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
-import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
 import com.yaocode.sts.auth.infrastructure.converter.UserGroupConverter;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelUserGroupUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.UserGroupDao;
-import com.yaocode.sts.auth.infrastructure.po.RelUserGroupUserPo;
+import com.yaocode.sts.auth.infrastructure.po.RelUserGroupMemberPo;
 import com.yaocode.sts.auth.infrastructure.po.UserGroupPo;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
@@ -59,14 +55,14 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     @Override
     public void saveRelUserGroupUser(TenantId tenantId, UserGroupId userGroupId, UserId userId) {
-        RelUserGroupUserPo relUserGroupUserPo = relUserGroupUserDao.getByUserGroupIdAndUserId(
+        RelUserGroupMemberPo relUserGroupUserPo = relUserGroupUserDao.getByUserGroupIdAndUserId(
                 tenantId.getValue(), userGroupId.getValue(), userId.getValue()
         );
         if (Objects.nonNull(relUserGroupUserPo)) {
             // TODO 感觉这块应该记个什么日志
             return;
         }
-        relUserGroupUserPo = new RelUserGroupUserPo();
+        relUserGroupUserPo = new RelUserGroupMemberPo();
         relUserGroupUserPo.setRelId(IdFactory.generate());
         relUserGroupUserPo.setTenantId(tenantId.getValue());
         relUserGroupUserPo.setUserGroupId(userGroupId.getValue());

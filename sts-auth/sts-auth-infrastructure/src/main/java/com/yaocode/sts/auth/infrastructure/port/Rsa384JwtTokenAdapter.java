@@ -6,7 +6,6 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.JwtPayload;
 import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
 import lombok.Getter;
 
-import java.time.Duration;
 import java.util.Map;
 
 @Getter
