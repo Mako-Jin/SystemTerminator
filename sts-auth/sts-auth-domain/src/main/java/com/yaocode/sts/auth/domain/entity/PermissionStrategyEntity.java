@@ -30,7 +30,7 @@ public class PermissionStrategyEntity {
     private Integer priority;
     private OppositeEnums isDefault;
     private String conditions;        // JSON格式
-    private OppositeEnums status;
+    private OppositeEnums isEnabled;
 
     private PermissionStrategyEntity(StrategyId strategyId, TenantId tenantId) {
         this.strategyId = strategyId;
@@ -38,7 +38,7 @@ public class PermissionStrategyEntity {
         this.roleIds = new HashSet<>();
         this.resourceIds = new HashSet<>();
         this.isDefault = OppositeEnums.NO;
-        this.status = OppositeEnums.ENABLED;
+        this.isEnabled = OppositeEnums.ENABLED;
     }
 
     // ========== 工厂方法 ==========
@@ -78,7 +78,7 @@ public class PermissionStrategyEntity {
             Integer priority,
             OppositeEnums isDefault,
             String conditions,
-            OppositeEnums status
+            OppositeEnums isEnabled
     ) {
         PermissionStrategyEntity entity = new PermissionStrategyEntity(strategyId, tenantId);
         entity.strategyName = strategyName;
@@ -90,7 +90,7 @@ public class PermissionStrategyEntity {
         entity.priority = priority != null ? priority : 0;
         entity.isDefault = isDefault != null ? isDefault : OppositeEnums.NO;
         entity.conditions = conditions;
-        entity.status = status != null ? status : OppositeEnums.ENABLED;
+        entity.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.ENABLED;
         return entity;
     }
 
@@ -121,15 +121,15 @@ public class PermissionStrategyEntity {
     }
 
     public void enable() {
-        this.status = OppositeEnums.ENABLED;
+        this.isEnabled = OppositeEnums.ENABLED;
     }
 
     public void disable() {
-        this.status = OppositeEnums.DISABLED;
+        this.isEnabled = OppositeEnums.DISABLED;
     }
 
     public boolean isEnabled() {
-        return status == OppositeEnums.ENABLED;
+        return isEnabled == OppositeEnums.ENABLED;
     }
 
     public boolean isDefaultStrategy() {

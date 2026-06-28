@@ -9,21 +9,20 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.LoginHistoryId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.SessionId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.Instant;
 
 /**
  * 登录历史实体（独立实体）
  * 对应表：auth_tbl_login_history
  */
 @Getter
-public class LoginHistoryEntity {
+public class LoginHistoryEntity extends AbstractAggregate<LoginHistoryId> {
 
-    private final LoginHistoryId loginHistoryId;
     private final UserId userId;
     private final TenantId tenantId;
     private final String username;
@@ -33,15 +32,15 @@ public class LoginHistoryEntity {
     private final DeviceId deviceId;
     private final ClientId clientId;
     private final String userAgent;
-    private final LocalDateTime loginTime;
+    private final Instant loginTime;
     private final OppositeEnums status;
     private final String failReason;
     private final SessionId sessionId;
-    private LocalDateTime logoutTime;
+    private Instant logoutTime;
     private LogoutReasonEnums logoutReason;
 
     private LoginHistoryEntity(Builder builder) {
-        this.loginHistoryId = builder.loginHistoryId;
+        super(builder.loginHistoryId);
         this.userId = builder.userId;
         this.tenantId = builder.tenantId;
         this.username = builder.username;
@@ -84,7 +83,7 @@ public class LoginHistoryEntity {
                 .deviceId(deviceId)
                 .clientId(clientId)
                 .userAgent(userAgent)
-                .loginTime(LocalDateTime.now())
+                .loginTime(Instant.now())
                 .status(OppositeEnums.SUCCESS)
                 .sessionId(sessionId)
                 .build();
@@ -113,7 +112,7 @@ public class LoginHistoryEntity {
                 .deviceId(deviceId)
                 .clientId(clientId)
                 .userAgent(userAgent)
-                .loginTime(LocalDateTime.now())
+                .loginTime(Instant.now())
                 .status(OppositeEnums.FAILED)
                 .failReason(failReason)
                 .build();
@@ -130,11 +129,11 @@ public class LoginHistoryEntity {
             DeviceId deviceId,
             ClientId clientId,
             String userAgent,
-            LocalDateTime loginTime,
+            Instant loginTime,
             OppositeEnums status,
             String failReason,
             SessionId sessionId,
-            LocalDateTime logoutTime,
+            Instant logoutTime,
             LogoutReasonEnums logoutReason
     ) {
         return new Builder()
@@ -160,7 +159,7 @@ public class LoginHistoryEntity {
     // ========== 业务行为 ==========
 
     public void recordLogout(LogoutReasonEnums reason) {
-        this.logoutTime = LocalDateTime.now();
+        this.logoutTime = Instant.now();
         this.logoutReason = reason;
     }
 
@@ -189,11 +188,11 @@ public class LoginHistoryEntity {
         private DeviceId deviceId;
         private ClientId clientId;
         private String userAgent;
-        private LocalDateTime loginTime;
+        private Instant loginTime;
         private OppositeEnums status;
         private String failReason;
         private SessionId sessionId;
-        private LocalDateTime logoutTime;
+        private Instant logoutTime;
         private LogoutReasonEnums logoutReason;
 
         public Builder loginHistoryId(LoginHistoryId loginHistoryId) {
@@ -246,7 +245,7 @@ public class LoginHistoryEntity {
             return this;
         }
 
-        public Builder loginTime(LocalDateTime loginTime) {
+        public Builder loginTime(Instant loginTime) {
             this.loginTime = loginTime;
             return this;
         }
@@ -266,7 +265,7 @@ public class LoginHistoryEntity {
             return this;
         }
 
-        public Builder logoutTime(LocalDateTime logoutTime) {
+        public Builder logoutTime(Instant logoutTime) {
             this.logoutTime = logoutTime;
             return this;
         }
@@ -281,16 +280,4 @@ public class LoginHistoryEntity {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LoginHistoryEntity that = (LoginHistoryEntity) o;
-        return Objects.equals(loginHistoryId, that.loginHistoryId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(loginHistoryId);
-    }
 }

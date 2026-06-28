@@ -61,7 +61,7 @@ public class UserContactEntity {
      */
     public static UserContactEntity createPhone(UserId userId, String phone) {
         UserContactEntity entity = new UserContactEntity(ContactId.nextId(), userId);
-        entity.contactType = ContactTypeEnums.PHONE;
+        entity.contactType = ContactTypeEnums.TELEPHONE;
         entity.contactValue = phone;
         return entity;
     }

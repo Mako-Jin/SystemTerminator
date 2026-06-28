@@ -33,7 +33,7 @@ public class RememberMeTokenEntity {
     private String lastUsedUserAgent;
     private Instant lastLoginTime;
     private Instant expiresAt;
-    private OppositeEnums revoked;
+    private OppositeEnums isRevoked;
     private TokenRevokeReasonEnums revokedReason;
     private Instant revokedAt;
 
@@ -51,7 +51,7 @@ public class RememberMeTokenEntity {
         this.lastUsedUserAgent = builder.lastUsedUserAgent;
         this.lastLoginTime = builder.lastLoginTime;
         this.expiresAt = builder.expiresAt;
-        this.revoked = builder.revoked;
+        this.isRevoked = builder.revoked;
         this.revokedReason = builder.revokedReason;
         this.revokedAt = builder.revokedAt;
     }
@@ -144,13 +144,13 @@ public class RememberMeTokenEntity {
     }
 
     public void revoke(TokenRevokeReasonEnums reason) {
-        this.revoked = OppositeEnums.YES;
+        this.isRevoked = OppositeEnums.YES;
         this.revokedAt = Instant.now();
         this.revokedReason = reason;
     }
 
     public boolean isValid() {
-        return !Objects.equals(revoked, OppositeEnums.YES) && Instant.now().isBefore(expiresAt);
+        return !Objects.equals(isRevoked, OppositeEnums.YES) && Instant.now().isBefore(expiresAt);
     }
 
     public boolean isExpired() {

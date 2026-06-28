@@ -22,7 +22,7 @@ public class UserEmploymentEntity {
     private TenantId tenantId;
     private String organization;          // 组织/公司名称
     private String division;              // 事业部
-    private OrganizationId departmentId;  // 部门ID
+    private OrganizationId organizationId;  // 部门ID
     private String departmentName;        // 部门名称（冗余）
     private String employeeNumber;
     private String jobTitle;              // 职位
@@ -50,7 +50,7 @@ public class UserEmploymentEntity {
             TenantId tenantId,
             String organization,
             String division,
-            OrganizationId departmentId,
+            OrganizationId organizationId,
             String departmentName,
             String employeeNumber,
             String jobTitle,
@@ -71,7 +71,7 @@ public class UserEmploymentEntity {
         entity.tenantId = tenantId;
         entity.organization = organization;
         entity.division = division;
-        entity.departmentId = departmentId;
+        entity.organizationId = organizationId;
         entity.departmentName = departmentName;
         entity.employeeNumber = employeeNumber;
         entity.jobTitle = jobTitle;
@@ -94,7 +94,7 @@ public class UserEmploymentEntity {
             TenantId tenantId,
             String organization,
             String division,
-            OrganizationId departmentId,
+            OrganizationId organizationId,
             String departmentName,
             String employeeNumber,
             String jobTitle,
@@ -114,7 +114,7 @@ public class UserEmploymentEntity {
         entity.tenantId = tenantId;
         entity.organization = organization;
         entity.division = division;
-        entity.departmentId = departmentId;
+        entity.organizationId = organizationId;
         entity.departmentName = departmentName;
         entity.employeeNumber = employeeNumber;
         entity.jobTitle = jobTitle;
@@ -158,8 +158,8 @@ public class UserEmploymentEntity {
         this.jobLevel = jobLevel;
     }
 
-    public void updateDepartment(OrganizationId departmentId, String departmentName) {
-        this.departmentId = departmentId;
+    public void updateDepartment(OrganizationId organizationId, String departmentName) {
+        this.organizationId = organizationId;
         this.departmentName = departmentName;
     }
 

@@ -6,21 +6,20 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.DeviceFingerprint;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
+import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.Instant;
 
 /**
  * 设备实体（独立实体，非聚合根）
  * 对应表：auth_tbl_device_info
  */
 @Getter
-public class DeviceInfoEntity {
+public class DeviceInfoEntity extends AbstractAggregate<DeviceId> {
 
-    private final DeviceId deviceId;
     private final UserId userId;
     private final TenantId tenantId;
     private final DeviceFingerprint deviceFingerprint;
@@ -34,22 +33,22 @@ public class DeviceInfoEntity {
     private OppositeEnums isTrusted;
     private OppositeEnums jailBroken;
     private DeviceStatusEnums status;
-    private LocalDateTime lastActiveTime;
+    private Instant lastActiveTime;
     private String extras;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+    private Instant createTime;
+    private Instant updateTime;
 
     private DeviceInfoEntity(DeviceId deviceId, UserId userId, TenantId tenantId, DeviceFingerprint deviceFingerprint) {
-        this.deviceId = deviceId;
+        super(deviceId);
         this.userId = userId;
         this.tenantId = tenantId;
         this.deviceFingerprint = deviceFingerprint;
         this.isTrusted = OppositeEnums.NO;
         this.jailBroken = OppositeEnums.NO;
         this.status = DeviceStatusEnums.ACTIVE;
-        this.lastActiveTime = LocalDateTime.now();
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
+        this.lastActiveTime = Instant.now();
+        this.createTime = Instant.now();
+        this.updateTime = Instant.now();
     }
 
     // ========== 工厂方法 ==========
@@ -94,10 +93,10 @@ public class DeviceInfoEntity {
             OppositeEnums isTrusted,
             OppositeEnums jailBroken,
             DeviceStatusEnums status,
-            LocalDateTime lastActiveTime,
+            Instant lastActiveTime,
             String extras,
-            LocalDateTime createTime,
-            LocalDateTime updateTime
+            Instant createTime,
+            Instant updateTime
     ) {
         DeviceInfoEntity entity = new DeviceInfoEntity(deviceId, userId, tenantId, deviceFingerprint);
         entity.deviceType = deviceType;
@@ -122,8 +121,8 @@ public class DeviceInfoEntity {
     public void updateActivity(IpAddress ipAddress, String userAgent) {
         this.lastIpAddress = ipAddress;
         this.userAgent = userAgent;
-        this.lastActiveTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
+        this.lastActiveTime = Instant.now();
+        this.updateTime = Instant.now();
         if (this.status == DeviceStatusEnums.INACTIVE) {
             this.status = DeviceStatusEnums.ACTIVE;
         }
@@ -131,23 +130,23 @@ public class DeviceInfoEntity {
 
     public void trust() {
         this.isTrusted = OppositeEnums.YES;
-        this.updateTime = LocalDateTime.now();
+        this.updateTime = Instant.now();
     }
 
     public void unTrust() {
         this.isTrusted = OppositeEnums.NO;
-        this.updateTime = LocalDateTime.now();
+        this.updateTime = Instant.now();
     }
 
     public void block() {
         this.status = DeviceStatusEnums.BLOCKED;
-        this.updateTime = LocalDateTime.now();
+        this.updateTime = Instant.now();
     }
 
     public void unblock() {
         if (this.status == DeviceStatusEnums.BLOCKED) {
             this.status = DeviceStatusEnums.ACTIVE;
-            this.updateTime = LocalDateTime.now();
+            this.updateTime = Instant.now();
         }
     }
 
@@ -163,7 +162,7 @@ public class DeviceInfoEntity {
         this.osVersion = osVersion;
         this.appVersion = appVersion;
         this.extras = extras;
-        this.updateTime = LocalDateTime.now();
+        this.updateTime = Instant.now();
     }
 
     public boolean isValid() {
@@ -178,16 +177,4 @@ public class DeviceInfoEntity {
         return isTrusted == OppositeEnums.YES;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeviceInfoEntity that = (DeviceInfoEntity) o;
-        return Objects.equals(deviceId, that.deviceId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(deviceId);
-    }
 }

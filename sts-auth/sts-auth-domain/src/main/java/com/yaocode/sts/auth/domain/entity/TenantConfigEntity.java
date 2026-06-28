@@ -4,9 +4,9 @@ import com.yaocode.sts.auth.domain.enums.CaptchaTriggerEnums;
 import com.yaocode.sts.auth.domain.enums.CaptchaTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.composites.LoginConfig;
 import com.yaocode.sts.auth.domain.valueobjects.composites.MFAConfig;
+import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordPolicy;
 import com.yaocode.sts.auth.domain.valueobjects.composites.SessionConfig;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TenantConfigId;
-import com.yaocode.sts.auth.domain.valueobjects.composites.PasswordPolicy;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import lombok.Getter;
@@ -29,6 +29,13 @@ public class TenantConfigEntity {
     private CaptchaTypeEnums captchaType;
     private CaptchaTriggerEnums captchaTrigger;
     private OppositeEnums isEnabled;
+
+    private OppositeEnums passwordLoginEnabled;
+    private OppositeEnums smsLoginEnabled;
+    private OppositeEnums emailLoginEnabled;
+    private OppositeEnums qrCodeLoginEnabled;
+
+    private Integer maxLoginAttempts;
 
     private TenantConfigEntity(TenantConfigId configId, TenantId tenantId) {
         this.configId = configId;

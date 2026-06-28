@@ -17,16 +17,38 @@ import java.util.Objects;
 public class BrandConfigEntity {
 
     private final BrandConfigId brandConfigId;
+    private final String brandConfigName;
     private final BrandTargetTypeEnums targetType;
     private final String targetId;          // 关联目标ID（租户ID/公司ID）
     private Branding branding;
     private OppositeEnums isEnabled;
     private Integer priority;
+    private final String logoUrl;
+    private final String loginTitle;
+    private final String welcomeMessage;
+    private final String subtitle;
+    private final String institution;
+    private final String copyright;
+    private final String primaryColor;
+    private final String loginBackgroundUrl;
 
-    private BrandConfigEntity(BrandConfigId brandConfigId, BrandTargetTypeEnums targetType, String targetId) {
+    private BrandConfigEntity(
+            BrandConfigId brandConfigId, String brandConfigName, BrandTargetTypeEnums targetType,
+            String targetId, String logoUrl, String loginTitle, String welcomeMessage, String subtitle,
+            String institution, String copyright, String primaryColor, String loginBackgroundUrl
+    ) {
         this.brandConfigId = brandConfigId;
+        this.brandConfigName = brandConfigName;
         this.targetType = targetType;
         this.targetId = targetId;
+        this.logoUrl = logoUrl;
+        this.loginTitle = loginTitle;
+        this.welcomeMessage = welcomeMessage;
+        this.subtitle = subtitle;
+        this.institution = institution;
+        this.copyright = copyright;
+        this.primaryColor = primaryColor;
+        this.loginBackgroundUrl = loginBackgroundUrl;
         this.isEnabled = OppositeEnums.YES;
         this.priority = 0;
     }
@@ -39,7 +61,12 @@ public class BrandConfigEntity {
             Branding branding,
             Integer priority
     ) {
-        BrandConfigEntity entity = new BrandConfigEntity(BrandConfigId.nextId(), targetType, targetId);
+        BrandConfigEntity entity = new BrandConfigEntity(
+                BrandConfigId.nextId(), branding.getBrandName(), targetType, targetId,
+                branding.getLogoUrl(), branding.getLoginTitle(), branding.getWelcomeMessage(),
+                branding.getSubtitle(), branding.getInstitution(), branding.getCopyright(),
+                branding.getPrimaryColor(), branding.getLoginBackgroundUrl()
+        );
         entity.branding = branding;
         entity.priority = priority != null ? priority : 0;
         return entity;
@@ -57,7 +84,12 @@ public class BrandConfigEntity {
             OppositeEnums isEnabled,
             Integer priority
     ) {
-        BrandConfigEntity entity = new BrandConfigEntity(brandConfigId, targetType, targetId);
+        BrandConfigEntity entity = new BrandConfigEntity(
+                brandConfigId, branding.getBrandName(), targetType, targetId,
+                branding.getLogoUrl(), branding.getLoginTitle(), branding.getWelcomeMessage(),
+                branding.getSubtitle(), branding.getInstitution(), branding.getCopyright(),
+                branding.getPrimaryColor(), branding.getLoginBackgroundUrl()
+        );
         entity.branding = branding;
         entity.isEnabled = isEnabled != null ? isEnabled : OppositeEnums.YES;
         entity.priority = priority != null ? priority : 0;

@@ -5,7 +5,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -22,7 +22,7 @@ public class RoleResourceEntity {
     private Integer priority;              // 优先级
     private final String createUserId;
     private final String createUserName;
-    private final LocalDateTime createTime;
+    private final Instant createTime;
 
     private RoleResourceEntity(Builder builder) {
         this.relId = builder.relId;
@@ -32,7 +32,7 @@ public class RoleResourceEntity {
         this.priority = builder.priority != null ? builder.priority : 0;
         this.createUserId = builder.createUserId;
         this.createUserName = builder.createUserName;
-        this.createTime = builder.createTime != null ? builder.createTime : java.time.LocalDateTime.now();
+        this.createTime = builder.createTime != null ? builder.createTime : Instant.now();
     }
 
     // ========== 工厂方法 ==========
@@ -67,7 +67,7 @@ public class RoleResourceEntity {
             Integer priority,
             String createUserId,
             String createUserName,
-            java.time.LocalDateTime createTime
+            Instant createTime
     ) {
         return new Builder()
                 .relId(relId)
@@ -113,7 +113,7 @@ public class RoleResourceEntity {
         private Integer priority;
         private String createUserId;
         private String createUserName;
-        private java.time.LocalDateTime createTime;
+        private Instant createTime;
 
         public Builder relId(Long relId) {
             this.relId = relId;
@@ -150,7 +150,7 @@ public class RoleResourceEntity {
             return this;
         }
 
-        public Builder createTime(java.time.LocalDateTime createTime) {
+        public Builder createTime(Instant createTime) {
             this.createTime = createTime;
             return this;
         }

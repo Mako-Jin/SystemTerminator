@@ -7,7 +7,7 @@ import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -21,10 +21,10 @@ public class PasswordHistoryEntity {
     private final UserId userId;
     private final TenantId tenantId;
     private final String passwordHash;
-    private final LocalDateTime changeTime;
+    private final Instant changeTime;
     private final PasswordChangeSourceEnums changeSource;
     private final OppositeEnums isActive;
-    private final LocalDateTime expiresAt;
+    private final Instant expiresAt;
 
     private PasswordHistoryEntity(Builder builder) {
         this.passwordHistoryId = builder.passwordHistoryId;
@@ -44,14 +44,14 @@ public class PasswordHistoryEntity {
             TenantId tenantId,
             String passwordHash,
             PasswordChangeSourceEnums changeSource,
-            LocalDateTime expiresAt
+            Instant expiresAt
     ) {
         return new Builder()
                 .passwordHistoryId(PasswordHistoryId.nextId())
                 .userId(userId)
                 .tenantId(tenantId)
                 .passwordHash(passwordHash)
-                .changeTime(LocalDateTime.now())
+                .changeTime(Instant.now())
                 .changeSource(changeSource)
                 .isActive(OppositeEnums.YES)
                 .expiresAt(expiresAt)
@@ -63,10 +63,10 @@ public class PasswordHistoryEntity {
             UserId userId,
             TenantId tenantId,
             String passwordHash,
-            LocalDateTime changeTime,
+            Instant changeTime,
             PasswordChangeSourceEnums changeSource,
             OppositeEnums isActive,
-            LocalDateTime expiresAt
+            Instant expiresAt
     ) {
         return new Builder()
                 .passwordHistoryId(passwordHistoryId)
@@ -83,7 +83,7 @@ public class PasswordHistoryEntity {
     // ========== 业务行为 ==========
 
     public boolean isExpired() {
-        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
+        return expiresAt != null && Instant.now().isAfter(expiresAt);
     }
 
     public boolean isEffective() {
@@ -97,10 +97,10 @@ public class PasswordHistoryEntity {
         private UserId userId;
         private TenantId tenantId;
         private String passwordHash;
-        private LocalDateTime changeTime;
+        private Instant changeTime;
         private PasswordChangeSourceEnums changeSource;
         private OppositeEnums isActive;
-        private LocalDateTime expiresAt;
+        private Instant expiresAt;
 
         public Builder passwordHistoryId(PasswordHistoryId passwordHistoryId) {
             this.passwordHistoryId = passwordHistoryId;
@@ -122,7 +122,7 @@ public class PasswordHistoryEntity {
             return this;
         }
 
-        public Builder changeTime(LocalDateTime changeTime) {
+        public Builder changeTime(Instant changeTime) {
             this.changeTime = changeTime;
             return this;
         }
@@ -137,7 +137,7 @@ public class PasswordHistoryEntity {
             return this;
         }
 
-        public Builder expiresAt(LocalDateTime expiresAt) {
+        public Builder expiresAt(Instant expiresAt) {
             this.expiresAt = expiresAt;
             return this;
         }
