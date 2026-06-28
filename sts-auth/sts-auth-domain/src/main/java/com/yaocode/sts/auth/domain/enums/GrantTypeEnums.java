@@ -13,12 +13,14 @@ public enum GrantTypeEnums {
     /**
      * 用户名密码认证
      */
-    PASSWORD(1, "password", "资源拥有者密码"),
-    AUTHORIZATION_CODE(2, "authorization_code", "授权码"),
-    CLIENT_CREDENTIALS(3, "client_credentials", "客户端凭证"),
-    REFRESH_TOKEN(4, "refresh_token", "刷新Token"),
-    IMPLICIT(5, "implicit", "隐式授权"),          // OAuth2.0
-    DEVICE_CODE(6, "device_code", "设备码"),
+    REMEMBER_ME(1, "rememberMe", "记住我"),
+    MOBILE(2, "mobile", "手机号"),
+    PASSWORD(3, "password", "资源拥有者密码"),
+    AUTHORIZATION_CODE(4, "authorization_code", "授权码"),
+    CLIENT_CREDENTIALS(5, "client_credentials", "客户端凭证"),
+    REFRESH_TOKEN(6, "refresh_token", "刷新Token"),
+    IMPLICIT(7, "implicit", "隐式授权"),          // OAuth2.0
+    DEVICE_CODE(8, "device_code", "设备码"),
     ;
 
     private final Integer code;

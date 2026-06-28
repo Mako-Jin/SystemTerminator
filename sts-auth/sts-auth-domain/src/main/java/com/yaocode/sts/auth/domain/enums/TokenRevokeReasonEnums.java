@@ -10,6 +10,7 @@ public enum TokenRevokeReasonEnums {
 
     LOGOUT("LOGOUT", "用户退出"),
     PASSWORD_CHANGE("PASSWORD_CHANGE", "密码变更"),
+    SERIES_MISMATCH("SERIES_MISMATCH", "series不匹配"),
     REPLACED("REPLACED", "被新Token替换"),
     SECURITY_BREACH("SECURITY_BREACH", "安全事件"),
     ADMIN_REVOKE("ADMIN_REVOKE", "管理员撤销"),

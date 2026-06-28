@@ -87,8 +87,10 @@ public enum EventTypeEnums {
     USER_GROUP_ENABLED("USER_GROUP_ENABLED", "用户组启用"),
     USER_GROUP_DISABLED("USER_GROUP_DISABLED", "用户组禁用"),
     USER_ADDED_TO_GROUP("USER_ADDED_TO_GROUP", "用户添加到用户组"),
+    USERS_ADDED_TO_GROUP("USERS_ADDED_TO_GROUP", "用户批量添加到用户组"),
     USER_REMOVED_FROM_GROUP("USER_REMOVED_FROM_GROUP", "用户从用户组移除"),
     ROLE_BOUND_TO_GROUP("ROLE_BOUND_TO_GROUP", "角色绑定到用户组"),
+    ROLES_BOUND_TO_GROUP("ROLES_BOUND_TO_GROUP", "角色批量绑定到用户组"),
     ROLE_UNBOUND_FROM_GROUP("ROLE_UNBOUND_FROM_GROUP", "角色从用户组解绑"),
 
     // ===== ClientAggregate 事件 (CLIENT_) =====

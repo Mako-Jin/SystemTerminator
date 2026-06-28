@@ -10,7 +10,7 @@ public enum ContactTypeEnums {
 
     MOBILE(1, "手机"),
     EMAIL(2, "邮箱"),
-    PHONE(3, "座机"),
+    TELEPHONE(3, "座机"),
     SOCIAL(4, "社交"),
     ;
 
