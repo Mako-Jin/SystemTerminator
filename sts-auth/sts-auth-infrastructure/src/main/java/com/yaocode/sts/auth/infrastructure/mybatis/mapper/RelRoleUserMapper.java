@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.infrastructure.mybatis.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.yaocode.sts.auth.infrastructure.po.RelRoleUserPo;
+import com.yaocode.sts.auth.infrastructure.po.RelRoleMemberPo;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @date: 2025年10月23日 22:16
  */
 @Mapper
-public interface RelRoleUserMapper extends BaseMapper<RelRoleUserPo> {
+public interface RelRoleUserMapper extends BaseMapper<RelRoleMemberPo> {
 }

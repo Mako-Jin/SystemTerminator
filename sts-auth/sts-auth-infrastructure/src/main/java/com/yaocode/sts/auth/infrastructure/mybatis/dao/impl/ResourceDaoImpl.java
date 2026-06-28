@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yaocode.sts.auth.infrastructure.mybatis.dao.ResourceDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.mapper.ResourceMapper;
-import com.yaocode.sts.auth.infrastructure.po.ResourcePo;
+import com.yaocode.sts.auth.infrastructure.po.ResourceInfoPo;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,29 +17,29 @@ import java.util.stream.Collectors;
  * @author: Jin-LiangBo
  * @date: 2025年11月13日 23:26
  */
-@Service
-public class ResourceDaoImpl extends ServiceImpl<ResourceMapper, ResourcePo> implements ResourceDao {
+@Repository
+public class ResourceDaoImpl extends ServiceImpl<ResourceMapper, ResourceInfoPo> implements ResourceDao {
 
     @Resource
     private ResourceMapper resourceMapper;
 
     @Override
-    public ResourcePo getByPo(ResourcePo resourcePo) {
-        LambdaQueryWrapper<ResourcePo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ResourcePo::getResourceValue, resourcePo.getResourceValue());
-        wrapper.eq(ResourcePo::getResourceName, resourcePo.getResourceName());
-        wrapper.eq(ResourcePo::getResourceType, resourcePo.getResourceType());
-        wrapper.eq(ResourcePo::getRequestMethod, resourcePo.getRequestMethod());
-        wrapper.eq(ResourcePo::getRequestUrl, resourcePo.getRequestUrl());
-        wrapper.eq(ResourcePo::getVersion, resourcePo.getVersion());
-        wrapper.eq(ResourcePo::getIsEnabled, resourcePo.getIsEnabled());
+    public ResourceInfoPo getByPo(ResourceInfoPo resourcePo) {
+        LambdaQueryWrapper<ResourceInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ResourceInfoPo::getResourceValue, resourcePo.getResourceValue());
+        wrapper.eq(ResourceInfoPo::getResourceName, resourcePo.getResourceName());
+        wrapper.eq(ResourceInfoPo::getResourceType, resourcePo.getResourceType());
+        wrapper.eq(ResourceInfoPo::getRequestMethod, resourcePo.getRequestMethod());
+        wrapper.eq(ResourceInfoPo::getRequestUrl, resourcePo.getRequestUrl());
+        wrapper.eq(ResourceInfoPo::getVersion, resourcePo.getVersion());
+        wrapper.eq(ResourceInfoPo::getIsEnabled, resourcePo.getIsEnabled());
         return resourceMapper.selectOne(wrapper);
     }
 
     @Override
-    public List<ResourcePo> getByPoList(List<ResourcePo> resourcePoList) {
-        LambdaQueryWrapper<ResourcePo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(ResourcePo::getResourceValue, resourcePoList.stream().map(ResourcePo::getResourceValue).filter(Objects::nonNull).collect(Collectors.toSet()));
+    public List<ResourceInfoPo> getByPoList(List<ResourceInfoPo> resourcePoList) {
+        LambdaQueryWrapper<ResourceInfoPo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(ResourceInfoPo::getResourceValue, resourcePoList.stream().map(ResourceInfoPo::getResourceValue).filter(Objects::nonNull).collect(Collectors.toSet()));
         // wrapper.in(ResourcePo::getResourceName, resourcePoList.stream().map(ResourcePo::getResourceName).filter(Objects::nonNull).collect(Collectors.toSet()));
         // wrapper.in(ResourcePo::getResourceType, resourcePoList.stream().map(ResourcePo::getResourceType).filter(Objects::nonNull).collect(Collectors.toSet()));
         // // TODO 这块有个问题，这种列表转字符串的，如果其他都一样，但是逗号分隔的字符串只少一个值，或者多一个值，岂不是两条数据了。

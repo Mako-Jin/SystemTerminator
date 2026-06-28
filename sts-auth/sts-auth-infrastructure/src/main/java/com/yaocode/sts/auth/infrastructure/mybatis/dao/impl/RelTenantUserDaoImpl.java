@@ -6,7 +6,7 @@ import com.yaocode.sts.auth.infrastructure.mybatis.dao.RelTenantUserDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.mapper.RelTenantUserMapper;
 import com.yaocode.sts.auth.infrastructure.po.RelTenantUserPo;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @author: Jin-LiangBo
  * @date: 2025年10月22日 23:29
  */
-@Service
+@Repository
 public class RelTenantUserDaoImpl extends ServiceImpl<RelTenantUserMapper, RelTenantUserPo> implements RelTenantUserDao {
 
     @Resource

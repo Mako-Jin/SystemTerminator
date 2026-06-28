@@ -6,7 +6,7 @@ import com.yaocode.sts.auth.infrastructure.mybatis.dao.UserInfoDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.mapper.UserInfoMapper;
 import com.yaocode.sts.auth.infrastructure.po.UserInfoPo;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author: Jin-LiangBo
  * @date: 2025年10月07日 21:59
  */
-@Service
+@Repository
 public class UserInfoDaoImpl extends ServiceImpl<UserInfoMapper, UserInfoPo> implements UserInfoDao {
 
     @Resource

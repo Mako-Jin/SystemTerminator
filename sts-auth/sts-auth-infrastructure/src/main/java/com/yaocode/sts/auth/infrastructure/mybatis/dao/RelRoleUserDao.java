@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.infrastructure.mybatis.dao;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yaocode.sts.auth.infrastructure.po.RelRoleUserPo;
+import com.yaocode.sts.auth.infrastructure.po.RelRoleMemberPo;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * @author: Jin-LiangBo
  * @date: 2025年10月23日 22:16
  */
-public interface RelRoleUserDao extends IService<RelRoleUserPo> {
+public interface RelRoleUserDao extends IService<RelRoleMemberPo> {
 
     /**
      * 根据用户id和角色id列表查关联关系
@@ -18,7 +18,7 @@ public interface RelRoleUserDao extends IService<RelRoleUserPo> {
      * @param roleIdlIst 角色id列表
      * @return java.util.List<RelRoleUserPo>
      */
-    List<RelRoleUserPo> getByUserIdAndRoleIdList(String tenantId, String userId, List<String> roleIdlIst);
+    List<RelRoleMemberPo> getByUserIdAndRoleIdList(String tenantId, String userId, List<String> roleIdlIst);
 
     /**
      * 根据用户id查询角色关联关系

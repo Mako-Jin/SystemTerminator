@@ -6,14 +6,14 @@ import com.yaocode.sts.auth.infrastructure.mybatis.dao.TenantInfoDao;
 import com.yaocode.sts.auth.infrastructure.mybatis.mapper.TenantInfoMapper;
 import com.yaocode.sts.auth.infrastructure.po.TenantInfoPo;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 /**
  * 用户信息Dao实现层
  * @author: Jin-LiangBo
  * @date: 2025年10月10日 21:01
  */
-@Service
+@Repository
 public class TenantInfoDaoImpl extends ServiceImpl<TenantInfoMapper, TenantInfoPo> implements TenantInfoDao {
 
     @Resource

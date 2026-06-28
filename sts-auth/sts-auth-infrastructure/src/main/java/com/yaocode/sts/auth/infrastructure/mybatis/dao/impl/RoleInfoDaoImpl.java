@@ -7,7 +7,7 @@ import com.yaocode.sts.auth.infrastructure.mybatis.mapper.RoleInfoMapper;
 import com.yaocode.sts.auth.infrastructure.po.RoleInfoPo;
 import com.yaocode.sts.common.basic.enums.OppositeEnums;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * @author: Jin-LiangBo
  * @date: 2025年10月14日 19:53
  */
-@Service
+@Repository
 public class RoleInfoDaoImpl extends ServiceImpl<RoleInfoMapper, RoleInfoPo> implements RoleInfoDao {
 
     @Resource
