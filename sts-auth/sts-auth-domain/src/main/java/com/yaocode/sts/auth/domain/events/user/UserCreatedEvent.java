@@ -2,10 +2,10 @@ package com.yaocode.sts.auth.domain.events.user;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
+import com.yaocode.sts.common.domain.event.AggregateDomainEvent;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
-import com.yaocode.sts.common.domain.event.AbstractDomainEvent;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-public class UserCreatedEvent extends AbstractDomainEvent {
+public class UserCreatedEvent extends AggregateDomainEvent<UserId> {
 
     private final UserId userId;
     private final TenantId tenantId;
