@@ -1,6 +1,10 @@
 package com.yaocode.sts.auth.application.dto.response;
 
+import com.yaocode.sts.auth.application.dto.LoginSuccessDto;
+import lombok.Data;
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,27 +12,15 @@ import java.util.Map;
  * @author: Jin-LiangBo
  * @date: 2026年04月14日 10:45
  */
+@Data
 public class AuthenticationResponseDto {
 
-    /**
-     * 访问令牌
-     */
-    private String accessToken;
-
-    /**
-     * 刷新令牌
-     */
-    private String refreshToken;
+    private LoginSuccessDto loginSuccessDto;
 
     /**
      * 令牌类型（Bearer）
      */
     private String tokenType;
-
-    /**
-     * 过期时间（秒）
-     */
-    private Long expiresIn;
 
     /**
      * 用户ID
@@ -48,12 +40,12 @@ public class AuthenticationResponseDto {
     /**
      * 用户角色列表
      */
-    private java.util.List<String> roles;
+    private List<String> roles;
 
     /**
      * 用户权限列表
      */
-    private java.util.List<String> permissions;
+    private List<String> permissions;
 
     /**
      * 扩展信息
@@ -69,5 +61,20 @@ public class AuthenticationResponseDto {
      * 认证方式
      */
     private String authenticationMethod;
+
+    /**
+     * 是否需要修改密码
+     */
+    private Boolean needChangePassword;
+
+    /**
+     * 是否已绑定MFA
+     */
+    private Boolean mfaBound;
+
+    /**
+     * 如果MFA未绑定，返回绑定URL
+     */
+    private String mfaBindUrl;
 
 }

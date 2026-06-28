@@ -42,7 +42,6 @@ public class RequestContext {
     private String requestId;
 
     // ========== 请求基础信息 ==========
-    private String requestId;          // 请求链路ID
     private Long requestTime;          // 请求时间戳
     private String requestUri;         // 请求URI
     private String requestMethod;      // 请求方法 GET/POST
@@ -73,6 +72,11 @@ public class RequestContext {
     private DeviceInfoContext deviceInfo;
     private UserInfoContext userInfo;
     private TenantInfoContext tenantInfo;
+
+    /**
+     * 域名（前端可传，服务端也可从RequestContext获取）
+     */
+    private String domain;
 
     // ========== 扩展信息 ==========
     private Map<String, Object> extras;

@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.application.listener;
 
-import com.yaocode.sts.auth.domain.events.UserCreatedEvent;
+import com.yaocode.sts.auth.domain.events.user.UserCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

@@ -3,7 +3,6 @@ package com.yaocode.sts.auth.application.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 用户信息dto

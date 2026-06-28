@@ -4,8 +4,6 @@ import com.yaocode.sts.common.resources.annotation.ApiResources;
 import com.yaocode.sts.common.resources.model.ApiResourcesModel;
 import com.yaocode.sts.common.resources.model.ModuleResourcesModel;
 
-import java.util.List;
-
 /**
  * API资源处理接口
  * @author: Jin-LiangBo

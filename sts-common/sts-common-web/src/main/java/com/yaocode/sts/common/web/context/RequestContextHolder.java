@@ -111,9 +111,29 @@ public class RequestContextHolder {
         return client != null ? client.getClientId() : null;
     }
 
+    public static String getClientType() {
+        ClientInfoContext client = getClientInfo();
+        return client != null ? client.getClientType() : null;
+    }
+
+    public static String getClientVersion() {
+        ClientInfoContext client = getClientInfo();
+        return client != null ? client.getClientVersion() : null;
+    }
+
     public static String getDeviceId() {
         DeviceInfoContext device = getDeviceInfo();
         return device != null ? device.getDeviceId() : null;
+    }
+
+    public static String getDeviceType() {
+        DeviceInfoContext device = getDeviceInfo();
+        return device != null ? device.getDeviceType() : null;
+    }
+
+    public static String getLanguage() {
+        DeviceInfoContext device = getDeviceInfo();
+        return device != null ? device.getLanguage() : null;
     }
 
     public static String getUserId() {
@@ -121,14 +141,19 @@ public class RequestContextHolder {
         return user != null ? user.getUserId() : null;
     }
 
+    public static String getUsername() {
+        UserInfoContext user = getUserInfo();
+        return user != null ? user.getUsername() : null;
+    }
+
     public static String getTenantId() {
         TenantInfoContext tenant = getTenantInfo();
         return tenant != null ? tenant.getTenantId() : null;
     }
 
-    public static String getUsername() {
-        UserInfoContext user = getUserInfo();
-        return user != null ? user.getUsername() : null;
+    public static String getTenantCode() {
+        TenantInfoContext tenant = getTenantInfo();
+        return tenant != null ? tenant.getTenantCode() : null;
     }
 
     public static String getIpAddress() {

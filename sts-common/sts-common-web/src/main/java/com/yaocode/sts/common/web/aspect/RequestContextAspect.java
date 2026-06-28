@@ -12,6 +12,7 @@ import com.yaocode.sts.common.web.context.RequestContext;
 import com.yaocode.sts.common.web.context.RequestContextHolder;
 import com.yaocode.sts.common.web.utils.WebHttpRequestUtils;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,7 +20,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.Cookie;
 
 import java.time.Instant;
 import java.util.Enumeration;
@@ -96,6 +96,7 @@ public class RequestContextAspect {
                 .userAgent(request.getHeader(HeaderConstants.USER_AGENT))
                 .headers(getHeaders(request))
                 .cookies(getCookies(request))
+                .domain(request.getServerName())
 
                 // CSRF/Session
                 .csrfToken(request.getHeader(HeaderConstants.CSRF_TOKEN))

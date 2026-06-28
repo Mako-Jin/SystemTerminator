@@ -46,7 +46,7 @@ public class PreLoginRequestDto {
     /**
      * 记住我令牌（自动登录场景）
      */
-    private String rememberMe;
+    private String rememberMeToken;
 
     /**
      * 操作系统版本
@@ -85,17 +85,27 @@ public class PreLoginRequestDto {
      * IP地址（服务端可自动获取）
      */
     private String ipAddress;
+    // ===== 用户识别（用于查询关联租户） =====
+    private String identifier;
 
     /**
      * 来源页面URL
      * 用于登录成功后跳转回原页面
      */
     private String redirectUri;
-
     /**
-     * 验证码key（如果需要预获取验证码）
-     * 某些验证码方案需要先获取captchaKey
+     * 租户ID
+     * 用于多租户场景
      */
-    private String captchaKey;
+    private String tenantId;
+    /**
+     * 租户编码
+     * 用于多租户场景
+     */
+    private String tenantCode;
+    /**
+     * 域名（前端可传，服务端也可从RequestContext获取）
+     */
+    private String domain;
 
 }

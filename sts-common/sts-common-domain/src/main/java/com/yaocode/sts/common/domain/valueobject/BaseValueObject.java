@@ -1,7 +1,5 @@
 package com.yaocode.sts.common.domain.valueobject;
 
-import com.yaocode.sts.common.domain.valueobject.ValueObject;
-
 import java.util.Objects;
 
 /**

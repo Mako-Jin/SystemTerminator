@@ -1,8 +1,8 @@
 package com.yaocode.sts.auth.application.dto;
 
-import java.util.List;
-
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class TenantUserGroupDto {
