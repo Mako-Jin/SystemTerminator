@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Data
 @TableName("auth_tbl_device_info")
@@ -71,7 +70,7 @@ public class DeviceInfoPo extends BasePo {
     /**
      * 是否越狱/root
      */
-    private Integer jailbroken;
+    private Integer jailBroken;
     /**
      * 设备状态：ACTIVE, INACTIVE, BLOCKED
      */

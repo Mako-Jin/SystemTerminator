@@ -27,12 +27,6 @@ public class UserInfoPo extends BasePo {
      * 用户名
      */
     private String username;
-
-    /**
-     * 在线状态：0-离线、1-在线
-     */
-    private Integer online;
-
     /**
      * 是否激活：0：未激活；1：已激活
      */
@@ -42,9 +36,17 @@ public class UserInfoPo extends BasePo {
      */
     private Integer isLocked;
     /**
+     * 自动解锁时间
+     */
+    private LocalDateTime unlockAt;
+    /**
      * 锁定时间
      */
-    private LocalDateTime lockTime;
+    private LocalDateTime lockedAt;
+    /**
+     * 锁定原因
+     */
+    private String lockReason;
     /**
      * 解锁时间
      */
@@ -71,5 +73,49 @@ public class UserInfoPo extends BasePo {
      * 是否被删：0：没有删，1：被删
      */
     private Integer isDeleted;
+
+    /**
+     * 密码
+     */
+    private String password;
+    /**
+     * 密码最后修改时间
+     */
+    private LocalDateTime passwordChangedAt;
+    /**
+     * 密码过期时间
+     */
+    private LocalDateTime passwordExpiredAt;
+    /**
+     * 可逆加密的密码  采用非对称加密，并且公钥加密，私钥不公开
+     */
+    private String decipherable;
+    /**
+     * 盐
+     */
+    private String salt;
+
+    /**
+     * 加入日期
+     */
+    private LocalDateTime joinDate;
+    /**
+     * 离开日期
+     */
+    private LocalDateTime leaveDate;
+    /**
+     * 离开原因
+     */
+    private String leaveReason;
+    /**
+     * 密码最后修改人（用于审计）
+     */
+    private String passwordChangedBy;
+
+    /**
+     * 密码修改来源：SELF-用户自行修改, ADMIN-管理员重置,
+     * SYSTEM-系统强制重置, RESET-忘记密码重置
+     */
+    private Integer passwordChangeSource;
 
 }

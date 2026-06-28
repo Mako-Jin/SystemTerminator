@@ -45,5 +45,8 @@ public class ResourceContactPo extends BasePo {
      * 关联资源id
      */
     private String resourceId;
-
+    /**
+     * 租户id
+     */
+    private String tenantId;
 }

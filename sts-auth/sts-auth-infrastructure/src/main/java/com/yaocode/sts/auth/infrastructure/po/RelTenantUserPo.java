@@ -129,5 +129,24 @@ public class RelTenantUserPo {
      * 是否被删：0：没有删，1：被删
      */
     private Integer isDeleted;
+    /**
+     * 是否已绑定MFA
+     */
+    private Integer mfaBound;
+
+    /**
+     * MFA类型：TOTP, SMS, EMAIL
+     */
+    private Integer mfaType;
+    /**
+     * 密码最后修改人（用于审计）
+     */
+    private String passwordChangedBy;
+
+    /**
+     * 密码修改来源：SELF-用户自行修改, ADMIN-管理员重置,
+     * SYSTEM-系统强制重置, RESET-忘记密码重置
+     */
+    private Integer passwordChangeSource;
 
 }

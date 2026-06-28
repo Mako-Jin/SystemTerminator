@@ -13,7 +13,10 @@ public class BrandConfigPo extends BasePo {
 
     @TableId
     private String brandId;
-
+    /**
+     * 租户id
+     */
+    private String tenantId;
     /**
      * 关联目标类型：TENANT, COMPANY, PLATFORM
      */
@@ -60,9 +63,14 @@ public class BrandConfigPo extends BasePo {
     private String loginBackgroundUrl;
 
     /**
+     * 登录页欢迎语
+     */
+    private String welcomeMessage;
+
+    /**
      * 是否启用
      */
-    private Integer enabled;
+    private Integer isEnabled;
 
     /**
      * 优先级（数字越大优先级越高）
@@ -73,6 +81,21 @@ public class BrandConfigPo extends BasePo {
      * 版本号
      */
     private String version;
+
+    /**
+     * 登录页副标题
+     */
+    private String subtitle;
+
+    /**
+     * 登录页底部链接文本
+     */
+    private String footerLinkText;
+
+    /**
+     * 登录页底部链接URL
+     */
+    private String footerLinkUrl;
 
     /**
      * 是否删除0：没有删，1：被删
