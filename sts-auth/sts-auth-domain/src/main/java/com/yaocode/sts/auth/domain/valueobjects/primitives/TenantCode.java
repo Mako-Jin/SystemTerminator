@@ -18,7 +18,7 @@ public class TenantCode extends Identifier<String> {
 
     private static final Pattern TENANT_CODE_REGEX = Pattern.compile("^[a-zA-Z0-9-]+$");
 
-    protected TenantCode(String value) {
+    private TenantCode(String value) {
         super(value);
     }
 

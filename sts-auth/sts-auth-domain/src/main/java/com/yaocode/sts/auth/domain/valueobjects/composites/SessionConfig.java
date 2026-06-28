@@ -1,19 +1,19 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 
 /**
  * 会话配置（值对象）
  */
-@Getter
+@Value
 public class SessionConfig {
 
-    private final int sessionTimeoutSeconds;
-    private final boolean singleSessionEnabled;
-    private final boolean rememberMeEnabled;
-    private final int rememberMeMaxDays;
+    int sessionTimeoutSeconds;
+    boolean singleSessionEnabled;
+    boolean rememberMeEnabled;
+    int rememberMeMaxDays;
 
     private SessionConfig(Builder builder) {
         this.sessionTimeoutSeconds = builder.sessionTimeoutSeconds;

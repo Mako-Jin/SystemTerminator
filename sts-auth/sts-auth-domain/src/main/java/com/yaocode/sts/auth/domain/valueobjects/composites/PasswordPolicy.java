@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.enums.PasswordComplexityEnums;
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 
@@ -9,14 +9,14 @@ import java.util.Objects;
  * 密码策略（值对象）
  * 封装密码复杂度、过期策略等配置
  */
-@Getter
+@Value
 public class PasswordPolicy {
 
-    private final boolean expiryEnabled;
-    private final int expiryDays;
-    private final int minLength;
-    private final PasswordComplexityEnums complexity;
-    private final int historyCount;
+    boolean expiryEnabled;
+    int expiryDays;
+    int minLength;
+    PasswordComplexityEnums complexity;
+    int historyCount;
 
     private PasswordPolicy(Builder builder) {
         this.expiryEnabled = builder.expiryEnabled;

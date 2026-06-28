@@ -1,16 +1,18 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
-import lombok.Getter;
+import com.yaocode.sts.common.domain.valueobject.Identifier;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
  * IP地址（值对象）
  * 支持 IPv4 和 IPv6
  */
-@Getter
-public class IpAddress {
+@Value
+@EqualsAndHashCode(callSuper = true)
+public class IpAddress extends Identifier<String> {
 
     private static final Pattern IPV4_PATTERN = Pattern.compile(
             "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
@@ -25,9 +27,11 @@ public class IpAddress {
                     "^([0-9a-fA-F]{1,4}:){1,7}:$"
     );
 
-    private final String value;
+    private IpAddress(String value) {
+        super(value);
+    }
 
-    public IpAddress(String value) {
+    public static IpAddress of (String value) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("IP地址不能为空");
         }
@@ -35,15 +39,15 @@ public class IpAddress {
         if (!IPV4_PATTERN.matcher(trimmed).matches() && !IPV6_PATTERN.matcher(trimmed).matches()) {
             throw new IllegalArgumentException("IP地址格式不正确: " + value);
         }
-        this.value = trimmed;
+        return new IpAddress(trimmed);
     }
 
     public boolean isIPv4() {
-        return IPV4_PATTERN.matcher(value).matches();
+        return IPV4_PATTERN.matcher(getValue()).matches();
     }
 
     public boolean isIPv6() {
-        return IPV6_PATTERN.matcher(value).matches();
+        return IPV6_PATTERN.matcher(getValue()).matches();
     }
 
     /**
@@ -51,7 +55,7 @@ public class IpAddress {
      */
     public boolean isPrivate() {
         if (!isIPv4()) return false;
-        String[] parts = value.split("\\.");
+        String[] parts = getValue().split("\\.");
         int first = Integer.parseInt(parts[0]);
         int second = Integer.parseInt(parts[1]);
         // 10.0.0.0/8
@@ -62,21 +66,4 @@ public class IpAddress {
         return first == 192 && second == 168;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        IpAddress ipAddress = (IpAddress) o;
-        return Objects.equals(value, ipAddress.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
 }

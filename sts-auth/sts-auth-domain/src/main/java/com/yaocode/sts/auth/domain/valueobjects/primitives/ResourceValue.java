@@ -1,12 +1,16 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.common.domain.valueobject.Identifier;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
 /**
  *
  * @author: Jin-LiangBo
  * @date: 2025年11月13日 23:06
  */
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class ResourceValue extends Identifier<String> {
 
     public ResourceValue(String value) {

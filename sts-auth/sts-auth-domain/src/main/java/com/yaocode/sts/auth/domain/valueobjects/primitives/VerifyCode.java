@@ -4,7 +4,9 @@ import com.yaocode.sts.auth.domain.enums.VerifyCodeTypeEnums;
 import com.yaocode.sts.auth.domain.rules.VerifyCodeRule;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
@@ -18,7 +20,8 @@ import java.util.regex.Pattern;
  * @author: Jin-LiangBo
  * @date: 2026年03月31日 16:09
  */
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class VerifyCode extends Identifier<String> {
 
     /**
@@ -34,50 +37,61 @@ public class VerifyCode extends Identifier<String> {
     /**
      * 验证码类型
      */
-    private final VerifyCodeTypeEnums codeType;
+    VerifyCodeTypeEnums codeType;
 
     /**
      * 规则实例（延迟加载）
      */
-    private transient VerifyCodeRule verifyCodeRule;
+    VerifyCodeRule verifyCodeRule;
 
     /**
      * 过期时间
      */
-    private final LocalDateTime expireTime;
+    LocalDateTime expireTime;
 
     /**
      * 验证码有效期（默认5分钟，单位：秒）
      */
-    private final long ttlSeconds;
+    long ttlSeconds;
 
     /**
      * 验证码会话ID（防重放攻击）
      */
-    private final String sessionId;
+    String sessionId;
 
     /**
      * 是否已使用（防止重复使用）
      */
-    private boolean used;
+    boolean used;
 
     /**
      * 构造函数（使用默认有效期）
      */
-    public VerifyCode(String code, VerifyCodeTypeEnums codeType, String sessionId) {
-        this(code, codeType, sessionId, DEFAULT_TTL_SECONDS); // 默认5分钟
+    public VerifyCode(String code, VerifyCodeTypeEnums codeType, String sessionId, VerifyCodeRule verifyCodeRule) {
+        this(code, codeType, verifyCodeRule, sessionId, DEFAULT_TTL_SECONDS); // 默认5分钟
     }
 
     /**
      * 全参构造函数
      */
-    public VerifyCode(String code, VerifyCodeTypeEnums codeType, String sessionId, long ttlSeconds) {
-        super(code);
+    public VerifyCode(
+            String code, VerifyCodeTypeEnums codeType, VerifyCodeRule verifyCodeRule,
+            String sessionId, long ttlSeconds
+    ) {
+        this(code, codeType, verifyCodeRule, sessionId, ttlSeconds, null, false);
+    }
+
+    private VerifyCode(
+            String value, VerifyCodeTypeEnums codeType, VerifyCodeRule verifyCodeRule, String sessionId,
+            long ttlSeconds, LocalDateTime expireTime, boolean used
+    ) {
+        super(value);
         this.codeType = codeType != null ? codeType : VerifyCodeTypeEnums.LOGIN;
+        this.verifyCodeRule = verifyCodeRule;
         this.sessionId = sessionId;
         this.ttlSeconds = ttlSeconds > 0 ? ttlSeconds : 300;
-        this.expireTime = LocalDateTime.now().plusSeconds(this.ttlSeconds);
-        this.used = false;
+        this.expireTime = expireTime;
+        this.used = used;
         validateFormat();
     }
 
@@ -142,8 +156,16 @@ public class VerifyCode extends Identifier<String> {
     /**
      * 标记验证码为已使用
      */
-    public void markUsed() {
-        this.used = true;
+    public VerifyCode markUsed() {
+        return new VerifyCode(
+                this.getValue(),
+                this.codeType,
+                this.verifyCodeRule,
+                this.sessionId,
+                this.ttlSeconds,
+                this.expireTime,
+                true
+        );
     }
 
     /**

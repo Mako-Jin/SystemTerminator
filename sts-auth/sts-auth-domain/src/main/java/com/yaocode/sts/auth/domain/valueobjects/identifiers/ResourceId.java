@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.domain.valueobjects.identifiers;
 
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import com.yaocode.sts.common.tools.id.IdFactory;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.springframework.util.StringUtils;
 
 /**
@@ -9,6 +11,8 @@ import org.springframework.util.StringUtils;
  * @author: Jin-LiangBo
  * @date: 2025年11月13日 23:04
  */
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class ResourceId extends Identifier<String> {
 
     public ResourceId(String value) {

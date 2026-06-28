@@ -6,7 +6,8 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.VerifyCode;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
 import java.util.Objects;
 
@@ -15,33 +16,34 @@ import java.util.Objects;
  * @author: Jin-LiangBo
  * @date: 2026年03月31日 16:08
  */
-@Getter
+@EqualsAndHashCode(callSuper = true)
+@Value
 public class MobileAuthCredential extends AbstractAuthCredential {
 
     /**
      * 手机号（值对象）
      */
-    private final PhoneNum phoneNumber;
+    PhoneNum phoneNumber;
 
     /**
      * 验证码（值对象）
      */
-    private final VerifyCode verifyCode;
+    VerifyCode verifyCode;
 
     /**
      * 记住我
      */
-    private final Boolean rememberMe;
+    Boolean rememberMe;
 
     /**
      * 是否自动注册新用户
      */
-    private final boolean autoRegister;
+    boolean autoRegister;
 
     /**
      * 国际区号（可选，默认+86）
      */
-    private final String countryCode;
+    String countryCode;
 
     /**
      * 简化构造函数（最小必要参数）

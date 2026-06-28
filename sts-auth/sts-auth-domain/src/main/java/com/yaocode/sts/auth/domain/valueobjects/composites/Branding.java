@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 
@@ -8,16 +8,16 @@ import java.util.Objects;
  * 品牌配置（值对象）
  * 封装品牌名称、Logo、主题色等品牌信息
  */
-@Getter
+@Value
 public class Branding {
 
-    private final String brandName;
-    private final String logoUrl;
-    private final String loginTitle;
-    private final String institution;
-    private final String copyright;
-    private final String primaryColor;
-    private final String loginBackgroundUrl;
+    String brandName;
+    String logoUrl;
+    String loginTitle;
+    String institution;
+    String copyright;
+    String primaryColor;
+    String loginBackgroundUrl;
 
     private Branding(Builder builder) {
         this.brandName = builder.brandName;

@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * @author: Jin-LiangBo
  * @date: 2026年03月04日 18:32
  */
-@Getter
+@Value
 public class Version implements Comparable<Version> {
 
     private static final Pattern VERSION_PATTERN =
@@ -19,22 +19,22 @@ public class Version implements Comparable<Version> {
     /**
      * 主版本 - 资源整体重构
      */
-    private final Integer major;
+    Integer major;
 
     /**
      * 次版本 - 核心字段变化
      */
-    private final Integer minor;
+    Integer minor;
 
     /**
      * 修订版本 - 非核心字段变化
      */
-    private final Integer patch;
+    Integer patch;
 
     /**
      * 构建版本 - 客户自定义/构建号
      */
-    private final Integer build;
+    Integer build;
 
     private Version (int major, int minor, int patch, int build) {
         validateVersionNumbers(major, minor, patch, build);

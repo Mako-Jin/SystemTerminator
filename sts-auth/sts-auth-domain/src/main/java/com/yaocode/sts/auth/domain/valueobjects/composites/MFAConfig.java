@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.enums.MFATypeEnums;
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 import java.util.Set;
@@ -9,11 +9,11 @@ import java.util.Set;
 /**
  * MFA配置（值对象）
  */
-@Getter
+@Value
 public class MFAConfig {
 
-    private final boolean required;
-    private final Set<MFATypeEnums> supportedTypes;
+    boolean required;
+    Set<MFATypeEnums> supportedTypes;
 
     private MFAConfig(boolean required, Set<MFATypeEnums> supportedTypes) {
         if (required && (supportedTypes == null || supportedTypes.isEmpty())) {

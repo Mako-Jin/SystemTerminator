@@ -4,15 +4,17 @@ import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
-@Getter
+@EqualsAndHashCode(callSuper = true)
+@Value
 public class RememberMeAuthCredential extends AbstractAuthCredential {
 
     /**
      * 用户名
      */
-    private final String rememberMeToken;
+    String rememberMeToken;
 
     public RememberMeAuthCredential(String rememberMeToken, ClientId clientId, DeviceId deviceId) {
         super(GrantTypeEnums.REMEMBER_ME, clientId, deviceId);

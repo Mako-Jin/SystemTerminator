@@ -2,15 +2,19 @@ package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
 /**
  * 组织编码值对象
  * @author: Jin-LiangBo
  * @date: 2025年10月27日 22:18
  */
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class OrganizationCode extends Identifier<String> {
 
-    protected OrganizationCode(String value) {
+    private OrganizationCode(String value) {
         super(value);
     }
 

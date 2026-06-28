@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.Objects;
 
@@ -8,15 +8,15 @@ import java.util.Objects;
  * 地址（值对象）
  * 封装国家、省份、城市、街道等地址信息
  */
-@Getter
+@Value
 public class Address {
 
-    private final String country;
-    private final String region;      // 省份/地区
-    private final String locality;    // 城市
-    private final String street;      // 街道
-    private final String detail;      // 详细地址
-    private final String postalCode;  // 邮政编码
+    String country;
+    String region;      // 省份/地区
+    String locality;    // 城市
+    String street;      // 街道
+    String detail;      // 详细地址
+    String postalCode;  // 邮政编码
 
     private Address(Builder builder) {
         this.country = builder.country;

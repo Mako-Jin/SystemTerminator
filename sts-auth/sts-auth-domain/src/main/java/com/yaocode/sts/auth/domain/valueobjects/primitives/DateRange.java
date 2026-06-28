@@ -1,6 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
-import lombok.Getter;
+import lombok.Value;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,11 +9,11 @@ import java.util.Objects;
  * 时间范围（值对象）
  * 用于有效期、生效期等场景
  */
-@Getter
+@Value
 public class DateRange {
 
-    private final LocalDateTime from;
-    private final LocalDateTime to;
+    LocalDateTime from;
+    LocalDateTime to;
 
     private DateRange(LocalDateTime from, LocalDateTime to) {
         if (from != null && to != null && from.isAfter(to)) {

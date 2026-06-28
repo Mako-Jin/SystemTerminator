@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
-import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,24 +12,24 @@ import java.util.Objects;
  * @author: Jin-LiangBo
  * @date: 2026年02月12日 9:23
  */
-@Getter
+@Value
 public class ResourcesIdentity {
     /**
      * 资源值
      */
-    private final ResourceValue resourceValue;
+    ResourceValue resourceValue;
     /**
      * 资源类型：0：系统；1：服务；2：模块；3：页面；4：接口
      */
-    private final ResourceTypeEnums resourceType;
+    ResourceTypeEnums resourceType;
     /**
      * 接口请求地址
      */
-    private final List<String> requestUrl;
+    List<String> requestUrl;
     /**
      * 请求方法，大写：POST,GET,PUT
      */
-    private final List<String> requestMethod;
+    List<String> requestMethod;
 
     private ResourcesIdentity(
             ResourceValue resourceValue, ResourceTypeEnums resourceType,

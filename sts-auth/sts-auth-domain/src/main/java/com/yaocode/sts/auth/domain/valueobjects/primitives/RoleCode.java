@@ -2,15 +2,19 @@ package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
 /**
  *
  * @author: Jin-LiangBo
  * @date: 2025年10月25日 11:38
  */
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class RoleCode extends Identifier<String> {
 
-    protected RoleCode(String value) {
+    private RoleCode(String value) {
         super(value);
     }
 

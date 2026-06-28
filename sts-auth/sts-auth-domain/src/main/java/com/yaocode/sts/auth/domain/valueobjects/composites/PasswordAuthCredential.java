@@ -6,7 +6,8 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Password;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 
 import java.util.Objects;
 
@@ -15,33 +16,34 @@ import java.util.Objects;
  * @author: Jin-LiangBo
  * @date: 2026年03月30日 19:07
  */
-@Getter
+@EqualsAndHashCode(callSuper = true)
+@Value
 public class PasswordAuthCredential extends AbstractAuthCredential {
 
     /**
      * 用户名
      */
-    private final Username username;
+    Username username;
 
     /**
      * 密码
      */
-    private final Password password;
+    Password password;
 
     /**
      * 记住我
      */
-    private final Boolean rememberMe;
+    Boolean rememberMe;
 
     /**
      * 图形验证码（可选）
      */
-    private final String captcha;
+    String captcha;
 
     /**
      * 图形验证码Key（可选）
      */
-    private final String captchaKey;
+    String captchaKey;
 
     /**
      * 简化构造函数（最小必要参数）
@@ -88,8 +90,5 @@ public class PasswordAuthCredential extends AbstractAuthCredential {
         }
         username.validate(username.getValue());
         password.validate(password.getValue());
-    }
-
-    public static class ResourcesIdentity {
     }
 }
