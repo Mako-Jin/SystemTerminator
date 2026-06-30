@@ -52,16 +52,6 @@ public class RsaJwtTokenProviderConfig extends AbstractJwtTokenProviderConfig {
     }
 
     @Override
-    public AlgorithmTypeEnums getAlgorithm() {
-        return null;
-    }
-
-    @Override
-    public Duration getTtl() {
-        return null;
-    }
-
-    @Override
     public boolean isValid() {
         try {
             validateCommon();

@@ -5,7 +5,7 @@ import com.yaocode.sts.auth.infrastructure.config.model.HmacJwtTokenProviderConf
 import com.yaocode.sts.auth.infrastructure.config.model.JwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.model.RsaJwtTokenProviderConfig;
 import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
@@ -13,33 +13,33 @@ import java.time.Duration;
 /**
  * JWT 配置属性
  */
-@Setter
-@ConfigurationProperties(prefix = "yaocode.jwt")
+@Data
+@ConfigurationProperties(prefix = "yaocode.jwt.token")
 public class JwtTokenProperties {
 
     /**
      * Access Token 配置
      * 默认：HS512（性能好，足够安全）
      */
-    private JwtTokenProviderConfig access = getDefaultAccessConfig();
+    private JwtTokenProviderConfig access;
 
     /**
      * Refresh Token 配置
      * 默认：RS256（非对称，可让客户端安全存储）
      */
-    private JwtTokenProviderConfig refresh = getDefaultRefreshConfig();
+    private JwtTokenProviderConfig refresh;
 
     /**
      * Remember-Me Token 配置
      * 默认：HS512（简单场景）或 ED25519（高安全场景）
      */
-    private JwtTokenProviderConfig rememberMe = getDefaultRememberMeConfig();
+    private JwtTokenProviderConfig rememberMe;
 
     /**
      * State Token 配置
      * 默认：HS256（轻量级，一次性使用）
      */
-    private JwtTokenProviderConfig state = getDefaultStateConfig();
+    private JwtTokenProviderConfig state;
 
 
     /**
@@ -88,20 +88,34 @@ public class JwtTokenProperties {
     }
 
     public JwtTokenProviderConfig getAccess() {
+        if (access == null) {
+            access = getDefaultAccessConfig();
+        }
         return validateConfig(access, "access");
     }
 
     public JwtTokenProviderConfig getRefresh() {
+        if (refresh == null) {
+            refresh = getDefaultRefreshConfig();
+        }
         return validateConfig(refresh, "refresh");
     }
 
     public JwtTokenProviderConfig getRememberMe() {
+        if (rememberMe == null) {
+            rememberMe = getDefaultRememberMeConfig();
+        }
         return validateConfig(rememberMe, "remember-me");
     }
 
     public JwtTokenProviderConfig getState() {
+        if (state == null) {
+            state = getDefaultStateConfig();
+        }
         return validateConfig(state, "state");
     }
+
+
 
     private JwtTokenProviderConfig validateConfig(JwtTokenProviderConfig config, String providerName) {
         if (config == null) {

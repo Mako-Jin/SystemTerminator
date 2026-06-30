@@ -4,6 +4,7 @@ import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.db.enums.DBTypeEnums;
 import com.yaocode.sts.common.db.exception.UnsupportedDbTypeException;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.sql.SQLException;
  * @author: Jin-LiangBo
  * @date: 2025年11月08日 20:51
  */
+@Setter
 public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Closeable {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSqlScriptExecutor.class);
@@ -53,7 +55,9 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
 
     private String extractBaseUrl(String url) {
         if (url.contains(SymbolConstants.QUESTION_MARKS)) {
-            return url.split(SymbolConstants.QUESTION_MARKS)[0];
+//            return url.split(SymbolConstants.QUESTION_MARKS)[0];
+            int index = url.indexOf(SymbolConstants.QUESTION_MARKS);
+            return url.substring(0, index);
         }
         return url;
     }
@@ -158,16 +162,8 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         return dataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     public Connection getSystemConnection() {
         return systemConnection;
-    }
-
-    public void setSystemConnection(Connection systemConnection) {
-        this.systemConnection = systemConnection;
     }
 
     public Connection getConnection() {
@@ -177,7 +173,4 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         return connection;
     }
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
 }

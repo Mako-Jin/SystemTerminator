@@ -35,7 +35,7 @@ public class ScriptLoader {
     }
 
     public List<SqlStatement> loadSql(Resource resource) throws URISyntaxException, IOException {
-        String content = new String(Files.readAllBytes(Path.of(resource.getURI())));
+        String content = Files.readString(Path.of(resource.getURI()));
         List<SqlStatement> sqlStatements = this.sqlParser.parseSqlContent(content);
         sqlStatements.forEach(e -> e.setResourceName(resource.getFilename()));
         return sqlStatements;

@@ -43,9 +43,9 @@ public class HmacJwtTokenProviderConfig extends AbstractJwtTokenProviderConfig {
             }
             // 根据算法检查密钥长度
             return switch (algorithm) {
-                case HMAC_SHA256 -> secret.getBytes().length >= 32;   // 256位
-                case HMAC_SHA384 -> secret.getBytes().length >= 48;   // 384位
-                case HMAC_SHA512 -> secret.getBytes().length >= 64;   // 512位
+                case HS256 -> secret.getBytes().length >= 32;   // 256位
+                case HS384 -> secret.getBytes().length >= 48;   // 384位
+                case HS512 -> secret.getBytes().length >= 64;   // 512位
                 default -> false;
             };
         } catch (Exception e) {
