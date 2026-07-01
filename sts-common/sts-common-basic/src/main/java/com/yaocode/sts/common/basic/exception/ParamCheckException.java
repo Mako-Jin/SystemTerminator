@@ -7,5 +7,6 @@ package com.yaocode.sts.common.basic.exception;
  */
 public class ParamCheckException extends IllegalArgumentException {
     public ParamCheckException(String s) {
+        super(s);
     }
 }

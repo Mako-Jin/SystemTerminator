@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.basic.enums;
 
+import com.yaocode.sts.common.basic.constants.BasicI18nKeyConstants;
+import com.yaocode.sts.common.basic.constants.IConstants;
 import lombok.Getter;
 
 /**
@@ -9,8 +11,8 @@ import lombok.Getter;
  */
 @Getter
 public enum EnableEnums {
-    ENABLED(1, "启用"),
-    DISABLED(0, "禁用");
+    ENABLED(IConstants.ENABLED_CODE, BasicI18nKeyConstants.ENABLED_DESC),
+    DISABLED(IConstants.DISABLED_CODE, BasicI18nKeyConstants.DISABLED_DESC);
 
     private final Integer code;
     private final String desc;

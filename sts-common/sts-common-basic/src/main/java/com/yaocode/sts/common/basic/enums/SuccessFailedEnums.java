@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.basic.enums;
 
+import com.yaocode.sts.common.basic.constants.BasicI18nKeyConstants;
+import com.yaocode.sts.common.basic.constants.IConstants;
 import lombok.Getter;
 
 /**
@@ -10,8 +12,8 @@ import lombok.Getter;
 @Getter
 public enum SuccessFailedEnums {
 
-    SUCCESS(1, "成功"),
-    FAILED(0, "失败");
+    SUCCESS(IConstants.SUCCESS_CODE, BasicI18nKeyConstants.SUCCESS_DESC),
+    FAILED(IConstants.FAILED_CODE, BasicI18nKeyConstants.FAILED_DESC);
 
     private final Integer code;
     private final String desc;

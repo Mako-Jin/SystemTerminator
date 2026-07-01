@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.basic.enums;
 
+import com.yaocode.sts.common.basic.constants.BasicI18nKeyConstants;
+import com.yaocode.sts.common.basic.constants.IConstants;
 import lombok.Getter;
 
 /**
@@ -9,8 +11,8 @@ import lombok.Getter;
  */
 @Getter
 public enum YesNoEnums {
-    YES(1, "是"),
-    NO(0, "否");
+    YES(IConstants.YES, BasicI18nKeyConstants.YES_DESC),
+    NO(IConstants.NO, BasicI18nKeyConstants.NO_DESC);
 
     private final Integer code;
     private final String desc;
@@ -75,4 +77,3 @@ public enum YesNoEnums {
         return flag ? YES : NO;
     }
 }
-

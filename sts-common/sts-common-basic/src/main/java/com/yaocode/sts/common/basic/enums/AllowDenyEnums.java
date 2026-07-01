@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.basic.enums;
 
+import com.yaocode.sts.common.basic.constants.BasicI18nKeyConstants;
+import com.yaocode.sts.common.basic.constants.IConstants;
 import lombok.Getter;
 
 /**
@@ -9,8 +11,8 @@ import lombok.Getter;
  */
 @Getter
 public enum AllowDenyEnums {
-    ALLOW(1, "允许"),
-    DENY(0, "拒绝");
+    ALLOW(IConstants.ALLOW_CODE, BasicI18nKeyConstants.ALLOW_DESC),
+    DENY(IConstants.DENY_CODE, BasicI18nKeyConstants.DENY_DESC);
 
     private final Integer code;
     private final String desc;
