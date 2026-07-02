@@ -53,24 +53,25 @@ yaocode:
 #      elapsed:
 #        enabled: false
   jwt:
-    access:
-      algorithm: HS512
-      secret: ${JWT_ACCESS_SECRET:access-secret-64bytes...}
-      ttl: 3600
+    token:
+      access:
+        algorithm: HS512
+        secret:  0123456789012345678901234567890123456789012345678901234567890123
+        ttl: 3600
 
-    refresh:
-      algorithm: RS256
-      public-key: ${JWT_REFRESH_PUBLIC_KEY}
-      private-key: ${JWT_REFRESH_PRIVATE_KEY}
-      ttl: 604800
+      refresh:
+        algorithm: RS256
+        public-key: ${JWT_REFRESH_PUBLIC_KEY}
+        private-key: ${JWT_REFRESH_PRIVATE_KEY}
+        ttl: 604800
 
-    remember-me:
-      algorithm: ED25519
-      public-key: ${JWT_REMEMBER_PUBLIC_KEY}
-      private-key: ${JWT_REMEMBER_PRIVATE_KEY}
-      ttl: 2592000
+      remember-me:
+        algorithm: HS512
+        public-key: ${JWT_REMEMBER_PUBLIC_KEY}
+        private-key: ${JWT_REMEMBER_PRIVATE_KEY}
+        ttl: 2592000
 
-    state:
-      algorithm: HS256
-      secret: ${JWT_STATE_SECRET:state-secret-32bytes...}
-      ttl: 300
+      state:
+        algorithm: HS256
+        secret: 9a2f8c4e6b1d7a3e5f0c9b2a4d6f1e8c3a5b7d9f2c4e6a8b0d2f4h6j8l0n2p4q
+        ttl: 300

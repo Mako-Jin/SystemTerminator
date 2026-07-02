@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.crypto.algorithm.asymmetric;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -30,12 +32,12 @@ public final class SM2Algorithm {
     /**
      * SM2 曲线名称
      */
-    public static final String CURVE_NAME = "sm2p256v1";
+    public static final String CURVE_NAME = CryptoConstants.SM2_CURVE_NAME;
 
     /**
      * 用户ID（默认值）
      */
-    public static final String DEFAULT_USER_ID = "1234567812345678";
+    public static final String DEFAULT_USER_ID = CryptoConstants.SM2_DEFAULT_USER_ID;
 
     /**
      * SM2 曲线参数
@@ -110,7 +112,7 @@ public final class SM2Algorithm {
             byte[] signature = signer.generateSignature();
             return Base64Algorithm.encryptByBase64(signature);
         } catch (Exception e) {
-            throw new IllegalArgumentException("SM2 签名失败", e);
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_SM2_SIGN_FAILED, e);
         }
     }
 
@@ -156,7 +158,7 @@ public final class SM2Algorithm {
 
             return signer.verifySignature(signature);
         } catch (Exception e) {
-            throw new IllegalArgumentException("SM2 验签失败", e);
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_SM2_VERIFY_FAILED, e);
         }
     }
 

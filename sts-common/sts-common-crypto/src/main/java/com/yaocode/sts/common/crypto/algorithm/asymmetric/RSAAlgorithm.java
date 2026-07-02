@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.crypto.algorithm.asymmetric;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.constants.RSAConstants;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -27,43 +28,43 @@ public final class RSAAlgorithm {
     /**
      * RSA 算法名称
      */
-    public static final String RSA = "RSA";
+    public static final String RSA = RSAConstants.RSA;
 
     /**
      * 默认密钥长度（2048位，最小安全要求）
      */
-    public static final int DEFAULT_KEY_SIZE = 2048;
+    public static final int DEFAULT_KEY_SIZE = RSAConstants.DEFAULT_KEY_SIZE;
 
     /**
      * 推荐密钥长度（4096位，更高安全性）
      */
-    public static final int RECOMMENDED_KEY_SIZE = 4096;
+    public static final int RECOMMENDED_KEY_SIZE = RSAConstants.RECOMMENDED_KEY_SIZE;
 
     /**
      * RSA OAEP 加密模式（更安全的填充方式）
      */
-    public static final String RSA_OAEP = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+    public static final String RSA_OAEP = RSAConstants.RSA_OAEP;
 
     /**
      * RSA PKCS#1 v1.5 加密模式（兼容旧系统）
      */
-    public static final String RSA_PKCS1 = "RSA/ECB/PKCS1Padding";
+    public static final String RSA_PKCS1 = RSAConstants.RSA_PKCS1;
 
     /**
      * SHA-256 with RSA 签名算法
      */
-    public static final String SIGNATURE_SHA256_RSA = "SHA256withRSA";
+    public static final String SIGNATURE_SHA256_RSA = RSAConstants.SIGNATURE_SHA256_RSA;
 
     /**
      * SHA-512 with RSA 签名算法
      */
-    public static final String SIGNATURE_SHA512_RSA = "SHA512withRSA";
+    public static final String SIGNATURE_SHA512_RSA = RSAConstants.SIGNATURE_SHA512_RSA;
 
     /**
      * PEM 格式常量
      */
-    private static final String LINE_SEPARATOR = "\n";
-    private static final int PEM_LINE_LENGTH = 64;
+    private static final String LINE_SEPARATOR = RSAConstants.LINE_SEPARATOR;
+    private static final int PEM_LINE_LENGTH = RSAConstants.PEM_LINE_LENGTH;
 
     /**
      * 私有构造函数，防止实例化
@@ -362,8 +363,11 @@ public final class RSAAlgorithm {
      * @return PEM 格式字符串
      */
     public static String getPublicKeyPEM(PublicKey publicKey) {
-        return formatPEM("-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----",
-                publicKey.getEncoded());
+        return formatPEM(
+                RSAConstants.PEM_PUBLIC_KEY_BEGIN,
+                RSAConstants.PEM_PUBLIC_KEY_END,
+                publicKey.getEncoded()
+        );
     }
 
     /**
@@ -372,8 +376,11 @@ public final class RSAAlgorithm {
      * @return PEM 格式字符串
      */
     public static String getPrivateKeyPEM(PrivateKey privateKey) {
-        return formatPEM("-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----",
-                privateKey.getEncoded());
+        return formatPEM(
+                RSAConstants.PEM_PRIVATE_KEY_BEGIN,
+                RSAConstants.PEM_PRIVATE_KEY_END,
+                privateKey.getEncoded()
+        );
     }
 
     /**

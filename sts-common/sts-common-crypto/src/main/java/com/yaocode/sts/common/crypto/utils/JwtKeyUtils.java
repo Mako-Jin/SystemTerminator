@@ -1,8 +1,12 @@
 package com.yaocode.sts.common.crypto.utils;
 
+import com.yaocode.sts.common.basic.constants.PathConstants;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.crypto.algorithm.asymmetric.RSAAlgorithm;
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.algorithm.mac.Hmac512Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
 import com.yaocode.sts.common.tools.StringUtils;
@@ -29,9 +33,9 @@ public class JwtKeyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtKeyUtils.class);
 
-    private static final String CLASSPATH_PREFIX = "classpath:";
+    private static final String CLASSPATH_PREFIX = PathConstants.CLASSPATH_PREFIX;
 
-    private static final String FILE_PREFIX = "file:";
+    private static final String FILE_PREFIX = PathConstants.FILE_PREFIX;
 
     private JwtKeyUtils() {
     }
@@ -52,7 +56,7 @@ public class JwtKeyUtils {
                     "In production, configure a secure secret via environment variables.");
             return base64Key;
         } catch (Exception e) {
-            throw new CryptoException("Failed to generate default HMAC secret", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_KEY_GENERATE_HMAC_SECRET, e);
         }
     }
 
@@ -64,7 +68,7 @@ public class JwtKeyUtils {
      */
     public static String generateHmacSecret(AlgorithmTypeEnums algorithm) {
         if (algorithm == null) {
-            throw new IllegalArgumentException("Algorithm cannot be null");
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_JWT_KEY_ALGORITHM_NULL);
         }
 
         int keyLength;
@@ -72,7 +76,7 @@ public class JwtKeyUtils {
             case HMAC_SHA256, HS256 -> keyLength = 32;  // 256 bits
             case HMAC_SHA384, HS384 -> keyLength = 48;  // 384 bits
             case HMAC_SHA512, HS512 -> keyLength = 64;  // 512 bits
-            default -> throw new IllegalArgumentException("Unsupported HMAC algorithm: " + algorithm);
+            default -> throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_JWT_KEY_ALGORITHM_UNSUPPORTED);
         }
 
         byte[] key = Hmac512Algorithm.generateRandomKey(keyLength);
@@ -95,7 +99,7 @@ public class JwtKeyUtils {
                     "In production, configure secure keys via environment variables.");
             return publicKey;
         } catch (Exception e) {
-            throw new CryptoException("Failed to generate default RSA public key", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_KEY_GENERATE_RSA_PUBLIC, e);
         }
     }
 
@@ -113,7 +117,7 @@ public class JwtKeyUtils {
                     "In production, configure secure keys via environment variables.");
             return privateKey;
         } catch (Exception e) {
-            throw new CryptoException("Failed to generate default RSA private key", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_KEY_GENERATE_RSA_PRIVATE, e);
         }
     }
 
@@ -131,7 +135,7 @@ public class JwtKeyUtils {
                     RSAAlgorithm.getPrivateKeyPEM(keyPair.getPrivate())
             );
         } catch (Exception e) {
-            throw new CryptoException("Failed to generate RSA key pair", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_KEY_GENERATE_RSA_KEYPAIR, e);
         }
     }
 
@@ -216,7 +220,7 @@ public class JwtKeyUtils {
         content = content.trim();
 
         // 去除 UTF-8 BOM
-        if (content.startsWith("\uFEFF")) {
+        if (content.startsWith(CryptoConstants.UTF8_BOM)) {
             content = content.substring(1);
         }
 
@@ -225,7 +229,7 @@ public class JwtKeyUtils {
         for (String line : content.split("\n")) {
             String trimmedLine = line.trim();
             // 跳过空行和注释行
-            if (!trimmedLine.isEmpty() && !trimmedLine.startsWith("#")) {
+            if (!trimmedLine.isEmpty() && !trimmedLine.startsWith(SymbolConstants.NUMBER_SIGN)) {
                 cleaned.append(trimmedLine).append("\n");
             }
         }

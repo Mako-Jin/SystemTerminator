@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.crypto.algorithm.hash;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -19,7 +20,7 @@ public final class SM3Algorithm {
     /**
      * SM3 摘要长度（32字节）
      */
-    public static final int DIGEST_LENGTH = 32;
+    public static final int DIGEST_LENGTH = CryptoConstants.SM3_DIGEST_LENGTH;
 
     /**
      * 私有构造函数，防止实例化
@@ -198,7 +199,7 @@ public final class SM3Algorithm {
     private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
+            sb.append(String.format(CryptoConstants.HEX_FORMAT, b));
         }
         return sb.toString();
     }

@@ -30,4 +30,10 @@ public interface SymbolConstants {
     char LEFT_PARENTHESIS = '(';
     String QUESTION_MARKS = "?";
 
+    String LINE_SEPARATOR = "\n";
+
+    char EQUAL_SIGN = '=';
+
+    String DOT = ".";
+
 }

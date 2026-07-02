@@ -1,7 +1,10 @@
 package com.yaocode.sts.common.crypto.utils;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.algorithm.mac.Hmac512Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
 import com.yaocode.sts.common.tools.JSONUtils;
 
@@ -23,7 +26,7 @@ public class JwtTokenUtils {
     /**
      * JWT 分隔符
      */
-    private static final String DOT = ".";
+    private static final String DOT = SymbolConstants.DOT;
 
     /**
      * 转义后的点号正则表达式
@@ -33,7 +36,7 @@ public class JwtTokenUtils {
     /**
      * 默认算法名称
      */
-    private static final String ALG_HS512 = "HS512";
+    private static final String ALG_HS512 = CryptoConstants.JWT_ALGORITHM_HS512;
 
     /**
      * 私有构造函数，防止实例化
@@ -53,17 +56,17 @@ public class JwtTokenUtils {
     public static String generateTokenWithHmac512(Map<String, Object> payload, String secret) {
         // 参数校验
         if (payload == null) {
-            throw new IllegalArgumentException("payload 不能为空");
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_JWT_PAYLOAD_EMPTY);
         }
         if (secret == null || secret.isBlank()) {
-            throw new IllegalArgumentException("secret 不能为空");
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_JWT_SECRET_EMPTY);
         }
 
         try {
             // 1. 构建 JWT 头部
             Map<String, Object> header = new HashMap<>();
-            header.put("alg", ALG_HS512);
-            header.put("typ", "JWT");
+            header.put(CryptoConstants.JWT_HEADER_ALG, ALG_HS512);
+            header.put(CryptoConstants.JWT_HEADER_TYP, CryptoConstants.JWT_TYPE_VALUE);
 
             // 2. Base64 URL 编码头部和载荷（无填充）
             String encodedHeader = Base64Algorithm.encodeUrlSafeNoPadding(JSONUtils.toJson(header));
@@ -78,7 +81,7 @@ public class JwtTokenUtils {
             // 5. 拼接完整的 JWT
             return data + DOT + signature;
         } catch (Exception e) {
-            throw new CryptoException("JWT 序列化失败", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_SERIALIZE_FAILED, e);
         }
     }
 
@@ -120,14 +123,14 @@ public class JwtTokenUtils {
 
         String[] parts = jwt.split(DOT_REGEX);
         if (parts.length != 3) {
-            throw new CryptoException("JWT 格式无效");
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_INVALID_FORMAT);
         }
 
         try {
             String decodedPayload = Base64Algorithm.decodeUrlSafeNoPaddingToStr(parts[1]);
             return JSONUtils.parseMap(decodedPayload);
         } catch (Exception e) {
-            throw new CryptoException("JWT 解析失败", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_JWT_PARSE_FAILED, e);
         }
     }
 

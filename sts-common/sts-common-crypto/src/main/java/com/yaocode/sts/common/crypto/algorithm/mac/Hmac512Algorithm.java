@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.crypto.algorithm.mac;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,23 +22,23 @@ public class Hmac512Algorithm {
     /**
      * HMAC-SHA512 算法名称
      */
-    public static final String HMAC_SHA512 = "HmacSHA512";
+    public static final String HMAC_SHA512 = CryptoConstants.HMAC_SHA512;
 
     /**
      * HMAC-SHA512 输出长度（字节）
      */
-    public static final int OUTPUT_LENGTH = 64;
+    public static final int OUTPUT_LENGTH = CryptoConstants.HMAC_SHA512_OUTPUT_LENGTH;
 
     /**
      * 推荐的最小密钥长度（字节）
      * HMAC-SHA512 推荐密钥长度 >= 输出长度
      */
-    public static final int RECOMMENDED_KEY_LENGTH = 64;
+    public static final int RECOMMENDED_KEY_LENGTH = CryptoConstants.HMAC_SHA512_RECOMMENDED_KEY_LENGTH;
 
     /**
      * 最小的密钥长度（字节）
      */
-    public static final int MIN_KEY_LENGTH = 32;
+    public static final int MIN_KEY_LENGTH = CryptoConstants.HMAC_SHA512_MIN_KEY_LENGTH;
 
     /**
      * ThreadLocal 缓存 Mac 实例（性能优化）
@@ -45,7 +47,7 @@ public class Hmac512Algorithm {
         try {
             return Mac.getInstance(HMAC_SHA512);
         } catch (NoSuchAlgorithmException e) {
-            throw new CryptoException("HMAC-SHA512 算法不可用", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_HMAC_ALGORITHM_UNAVAILABLE, e);
         }
     });
 
@@ -64,7 +66,7 @@ public class Hmac512Algorithm {
      */
     private static byte[] normalizeKey(byte[] key) {
         if (key == null || key.length == 0) {
-            throw new CryptoException("密钥不能为空");
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_KEY_EMPTY);
         }
 
         // 密钥太短时记录警告
@@ -81,7 +83,7 @@ public class Hmac512Algorithm {
         // 密钥长度不足时，使用 SHA-512 扩展密钥（推荐做法）
         // 这样确保密钥至少有 64 字节
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            MessageDigest digest = MessageDigest.getInstance(CryptoConstants.SHA_512);
             byte[] extendedKey = digest.digest(key);
             log.debug("密钥长度从 {} 字节扩展到 {} 字节", key.length, extendedKey.length);
             return extendedKey;
@@ -103,7 +105,7 @@ public class Hmac512Algorithm {
             mac.init(keySpec);
             return mac;
         } catch (InvalidKeyException e) {
-            throw new CryptoException("无效的密钥: " + e.getMessage(), e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_KEY_INVALID, e);
         }
     }
 
@@ -117,7 +119,7 @@ public class Hmac512Algorithm {
      */
     public static byte[] hmac(byte[] key, byte[] data) {
         if (data == null) {
-            throw new CryptoException("待认证数据不能为空");
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_HMAC_DATA_EMPTY);
         }
         Mac mac = getMac(key);
         return mac.doFinal(data);

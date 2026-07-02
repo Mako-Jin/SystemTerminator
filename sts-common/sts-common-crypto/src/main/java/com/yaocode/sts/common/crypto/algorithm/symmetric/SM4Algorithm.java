@@ -2,6 +2,8 @@ package com.yaocode.sts.common.crypto.algorithm.symmetric;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.algorithm.hash.SM3Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -26,22 +28,22 @@ public final class SM4Algorithm {
     /**
      * SM4 算法名称
      */
-    public static final String ALGORITHM_NAME = "SM4";
+    public static final String ALGORITHM_NAME = CryptoConstants.SM4;
 
     /**
      * SM4 密钥长度（16字节）
      */
-    public static final int KEY_LENGTH = 16;
+    public static final int KEY_LENGTH = CryptoConstants.SM4_KEY_SIZE;
 
     /**
      * SM4 块大小（16字节）
      */
-    public static final int BLOCK_SIZE = 16;
+    public static final int BLOCK_SIZE = CryptoConstants.SM4_BLOCK_SIZE;
 
     /**
      * SM4 IV 长度（16字节）
      */
-    public static final int IV_LENGTH = 16;
+    public static final int IV_LENGTH = CryptoConstants.AES_GCM_IV_LENGTH;
 
     /**
      * 安全随机数生成器
@@ -108,7 +110,7 @@ public final class SM4Algorithm {
             PaddedBufferedBlockCipher cipher = createCipher(true, key, iv);
             return process(cipher, plaintext);
         } catch (Exception e) {
-            throw new IllegalArgumentException("SM4 加密失败", e);
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_SM4_ENCRYPT_FAILED, e);
         }
     }
 
@@ -124,7 +126,7 @@ public final class SM4Algorithm {
             PaddedBufferedBlockCipher cipher = createCipher(false, key, iv);
             return process(cipher, ciphertext);
         } catch (Exception e) {
-            throw new IllegalArgumentException("SM4 解密失败", e);
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_SM4_DECRYPT_FAILED, e);
         }
     }
 
@@ -204,8 +206,7 @@ public final class SM4Algorithm {
     private static void validateKey(byte[] key) {
         if (key == null || key.length != KEY_LENGTH) {
             throw new IllegalArgumentException(
-                String.format("SM4 密钥长度必须为 %d 字节，当前长度: %d",
-                    KEY_LENGTH, key == null ? 0 : key.length));
+                String.format(CryptoI18nKeyConstants.ERR_SM4_KEY_LENGTH_INVALID));
         }
     }
 }

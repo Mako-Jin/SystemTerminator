@@ -1,13 +1,17 @@
 package com.yaocode.sts.common.crypto.enums;
 
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
+import lombok.Getter;
+
+@Getter
 public enum SecurityLevelEnums {
 
     /** 高安全 */
-    HIGH("高安全", "推荐使用"),
+    HIGH(CryptoI18nKeyConstants.SECURITY_LEVEL_HIGH, CryptoI18nKeyConstants.SECURITY_LEVEL_HIGH_ADVICE),
     /** 较弱 */
-    WEAK("较弱", "不推荐新系统使用"),
+    WEAK(CryptoI18nKeyConstants.SECURITY_LEVEL_WEAK, CryptoI18nKeyConstants.SECURITY_LEVEL_WEAK_ADVICE),
     /** 不安全 */
-    INSECURE("不安全", "仅兼容旧系统");
+    INSECURE(CryptoI18nKeyConstants.SECURITY_LEVEL_INSECURE, CryptoI18nKeyConstants.SECURITY_LEVEL_INSECURE_ADVICE);
 
     private final String level;
     private final String advice;
@@ -15,14 +19,6 @@ public enum SecurityLevelEnums {
     SecurityLevelEnums(String level, String advice) {
         this.level = level;
         this.advice = advice;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public String getAdvice() {
-        return advice;
     }
 
 }

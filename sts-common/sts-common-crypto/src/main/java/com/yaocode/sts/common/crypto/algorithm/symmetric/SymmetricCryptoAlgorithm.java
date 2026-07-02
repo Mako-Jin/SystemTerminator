@@ -2,6 +2,8 @@ package com.yaocode.sts.common.crypto.algorithm.symmetric;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.algorithm.hash.DigestAlgorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -20,22 +22,22 @@ public final class SymmetricCryptoAlgorithm {
     /**
      * AES 算法名称
      */
-    public static final String AES = "AES";
+    public static final String AES = CryptoConstants.AES;
 
     /**
      * AES-GCM 算法模式（提供认证加密，防止篡改）
      */
-    public static final String AES_GCM = "AES/GCM/NoPadding";
+    public static final String AES_GCM = CryptoConstants.AES_GCM;
 
     /**
      * GCM 认证标签长度（128位）
      */
-    private static final int GCM_TAG_LENGTH = 128;
+    private static final int GCM_TAG_LENGTH = CryptoConstants.AES_GCM_TAG_LENGTH;
 
     /**
      * GCM IV 长度（12字节，推荐值）
      */
-    private static final int GCM_IV_LENGTH = 12;
+    private static final int GCM_IV_LENGTH = CryptoConstants.AES_GCM_IV_LENGTH;
 
     /**
      * 安全随机数生成器
@@ -57,7 +59,7 @@ public final class SymmetricCryptoAlgorithm {
      * @return Base64 编码的密文（包含IV）
      */
     public static String aes128Encrypt(String plaintext, byte[] key) {
-        validateKeyLength(key, 16);
+        validateKeyLength(key, CryptoConstants.AES_128_KEY_SIZE);
         return aesGcmEncrypt(plaintext.getBytes(StandardCharsets.UTF_8), key);
     }
 
@@ -68,7 +70,7 @@ public final class SymmetricCryptoAlgorithm {
      * @return 明文
      */
     public static String aes128Decrypt(String ciphertext, byte[] key) {
-        validateKeyLength(key, 16);
+        validateKeyLength(key, CryptoConstants.AES_128_KEY_SIZE);
         byte[] decrypted = aesGcmDecrypt(ciphertext, key);
         return new String(decrypted, StandardCharsets.UTF_8);
     }
@@ -80,7 +82,7 @@ public final class SymmetricCryptoAlgorithm {
      * @return Base64 编码的密文（包含IV）
      */
     public static String aes256Encrypt(String plaintext, byte[] key) {
-        validateKeyLength(key, 32);
+        validateKeyLength(key, CryptoConstants.AES_256_KEY_SIZE);
         return aesGcmEncrypt(plaintext.getBytes(StandardCharsets.UTF_8), key);
     }
 
@@ -91,7 +93,7 @@ public final class SymmetricCryptoAlgorithm {
      * @return 明文
      */
     public static String aes256Decrypt(String ciphertext, byte[] key) {
-        validateKeyLength(key, 32);
+        validateKeyLength(key, CryptoConstants.AES_256_KEY_SIZE);
         byte[] decrypted = aesGcmDecrypt(ciphertext, key);
         return new String(decrypted, StandardCharsets.UTF_8);
     }
@@ -124,7 +126,7 @@ public final class SymmetricCryptoAlgorithm {
 
             return Base64Algorithm.encryptByBase64(result);
         } catch (Exception e) {
-            throw new IllegalArgumentException("AES-GCM 加密失败", e);
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_AES_GCM_ENCRYPT_FAILED, e);
         }
     }
 
@@ -154,7 +156,7 @@ public final class SymmetricCryptoAlgorithm {
             // 解密（同时验证认证标签）
             return cipher.doFinal(encrypted);
         } catch (Exception e) {
-            throw new IllegalArgumentException("AES-GCM 解密失败（可能是密钥错误或数据被篡改）", e);
+            throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_AES_GCM_DECRYPT_FAILED, e);
         }
     }
 
@@ -187,7 +189,7 @@ public final class SymmetricCryptoAlgorithm {
      * @return 32字节随机密钥
      */
     public static byte[] generateAes256Key() {
-        byte[] key = new byte[32];
+        byte[] key = new byte[CryptoConstants.AES_256_KEY_SIZE];
         SECURE_RANDOM.nextBytes(key);
         return key;
     }
@@ -213,8 +215,7 @@ public final class SymmetricCryptoAlgorithm {
     private static void validateKeyLength(byte[] key, int expectedLength) {
         if (key == null || key.length != expectedLength) {
             throw new IllegalArgumentException(
-                String.format("密钥长度必须为 %d 字节，当前长度: %d", expectedLength,
-                    key == null ? 0 : key.length));
+                String.format(CryptoI18nKeyConstants.ERR_KEY_LENGTH_INVALID));
         }
     }
 }

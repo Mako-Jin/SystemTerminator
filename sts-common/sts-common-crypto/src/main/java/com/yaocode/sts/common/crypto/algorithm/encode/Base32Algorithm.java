@@ -1,5 +1,9 @@
 package com.yaocode.sts.common.crypto.algorithm.encode;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
+
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -14,7 +18,7 @@ public final class Base32Algorithm {
     /**
      * Base32 标准字符集（RFC 4648）
      */
-    private static final String BASE32_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    private static final String BASE32_CHARS = CryptoConstants.BASE32_CHARS;
 
     /**
      * Base32 字符数组
@@ -24,7 +28,7 @@ public final class Base32Algorithm {
     /**
      * 填充字符
      */
-    private static final char PADDING_CHAR = '=';
+    private static final char PADDING_CHAR = CryptoConstants.BASE32_PADDING_CHAR;
 
     /**
      * 私有构造函数，防止实例化
@@ -53,11 +57,10 @@ public final class Base32Algorithm {
      */
     public static String encode(byte[] input) {
         if (input == null || input.length == 0) {
-            return "";
+            return SymbolConstants.EMPTY_STR;
         }
 
         StringBuilder sb = new StringBuilder();
-        int index = 0;
         int currentByte = 0;
         int bitsRemaining = 0;
 
@@ -101,7 +104,7 @@ public final class Base32Algorithm {
         }
 
         // 移除填充字符并转换为大写
-        String normalizedInput = input.toUpperCase().replace("=", "");
+        String normalizedInput = input.toUpperCase().replace(String.valueOf(SymbolConstants.EQUAL_SIGN), SymbolConstants.EMPTY_STR);
         int inputLength = normalizedInput.length();
 
         if (inputLength == 0) {
@@ -119,7 +122,7 @@ public final class Base32Algorithm {
             int charValue = BASE32_CHARS.indexOf(c);
 
             if (charValue < 0) {
-                throw new IllegalArgumentException("非法的 Base32 字符: " + c);
+                throw new IllegalArgumentException(CryptoI18nKeyConstants.ERR_BASE32_ILLEGAL_CHAR);
             }
 
             currentByte = (currentByte << 5) | charValue;
@@ -153,7 +156,7 @@ public final class Base32Algorithm {
      */
     public static String encodeWithoutPadding(String input) {
         String encoded = encode(input);
-        return encoded.replace("=", "");
+        return encoded.replace(BASE32_CHARS, SymbolConstants.EMPTY_STR);
     }
 
     /**
@@ -163,6 +166,6 @@ public final class Base32Algorithm {
      */
     public static String encodeWithoutPadding(byte[] input) {
         String encoded = encode(input);
-        return encoded.replace("=", "");
+        return encoded.replace(BASE32_CHARS, SymbolConstants.EMPTY_STR);
     }
 }

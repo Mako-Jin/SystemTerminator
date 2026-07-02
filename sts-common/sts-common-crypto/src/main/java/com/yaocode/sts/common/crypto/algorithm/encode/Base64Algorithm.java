@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.crypto.algorithm.encode;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
 
 import javax.imageio.ImageIO;
@@ -105,7 +107,7 @@ public class Base64Algorithm {
         // 处理可能缺少的填充字符
         int padding = (4 - encoded.length() % 4) % 4;
         if (padding > 0) {
-            encoded = encoded + "=".repeat(padding);
+            encoded = encoded + String.valueOf(SymbolConstants.EQUAL_SIGN).repeat(padding);
         }
         return Base64.getUrlDecoder().decode(encoded);
     }
@@ -128,7 +130,7 @@ public class Base64Algorithm {
             stream.close();
             return b64Image;
         }catch (Exception e) {
-            throw new CryptoException("图片Base64编码失败", e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_BASE64_IMAGE_ENCODE_FAILED, e);
         }
     }
 

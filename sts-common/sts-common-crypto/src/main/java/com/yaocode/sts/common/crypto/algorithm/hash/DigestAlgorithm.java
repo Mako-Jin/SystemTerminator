@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.crypto.algorithm.hash;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
+import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
 
 import java.nio.charset.StandardCharsets;
@@ -18,17 +20,17 @@ public final class DigestAlgorithm {
     /**
      * SHA-256 算法名称
      */
-    public static final String SHA_256 = "SHA-256";
+    public static final String SHA_256 = CryptoConstants.SHA_256;
 
     /**
      * SHA-384 算法名称
      */
-    public static final String SHA_384 = "SHA-384";
+    public static final String SHA_384 = CryptoConstants.SHA_384;
 
     /**
      * SHA-512 算法名称
      */
-    public static final String SHA_512 = "SHA-512";
+    public static final String SHA_512 = CryptoConstants.SHA_512;
 
     /**
      * 私有构造函数，防止实例化
@@ -224,7 +226,7 @@ public final class DigestAlgorithm {
             messageDigest.update(input);
             return messageDigest.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new CryptoException("不支持的哈希算法: " + algorithm, e);
+            throw new CryptoException(CryptoI18nKeyConstants.ERR_HASH_ALGORITHM_UNSUPPORTED + algorithm, e);
         }
     }
 
@@ -236,7 +238,7 @@ public final class DigestAlgorithm {
     private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
+            sb.append(String.format(CryptoConstants.HEX_FORMAT, b));
         }
         return sb.toString();
     }
