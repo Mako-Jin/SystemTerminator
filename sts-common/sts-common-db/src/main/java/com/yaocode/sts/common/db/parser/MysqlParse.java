@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.db.parser;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.db.constants.CommonConstants;
+import com.yaocode.sts.common.db.constants.SqlConstants;
 import com.yaocode.sts.common.db.enums.StatementEnums;
 import com.yaocode.sts.common.db.statement.AlterStatement;
 import com.yaocode.sts.common.db.statement.CreateTableStatement;
@@ -26,7 +28,7 @@ public class MysqlParse extends AbstractSqlParser {
     public List<SqlStatement> parseSqlContent(String sqlContent) {
         List<SqlStatement> statements = new ArrayList<>();
         StringBuilder currentStatement = new StringBuilder();
-        String[] lines = sqlContent.split("\r\n");
+        String[] lines = sqlContent.split(SymbolConstants.LINE_SEPARATOR_CRLF);
 
         boolean inMultiLineComment = false;
         for (String line : lines) {
@@ -35,9 +37,9 @@ public class MysqlParse extends AbstractSqlParser {
             }
             // 看是不是注释
             if (inMultiLineComment) {
-                if (line.contains("*/")) {
+                if (line.contains(CommonConstants.COMMENT_MULTI_LINE_END)) {
                     inMultiLineComment = false;
-                    line = line.substring(line.indexOf("*/") + 2);
+                    line = line.substring(line.indexOf(CommonConstants.COMMENT_MULTI_LINE_END) + 2);
                 } else {
                     continue;
                 }
@@ -47,9 +49,9 @@ public class MysqlParse extends AbstractSqlParser {
             line = removeSingleLineComments(line);
 
             // 检查多行注释开始
-            if (line.contains("/*")) {
+            if (line.contains(CommonConstants.COMMENT_MULTI_LINE_START)) {
                 inMultiLineComment = true;
-                line = line.substring(0, line.indexOf("/*"));
+                line = line.substring(0, line.indexOf(CommonConstants.COMMENT_MULTI_LINE_START));
             }
 
             if (line.isEmpty()) {
@@ -59,7 +61,7 @@ public class MysqlParse extends AbstractSqlParser {
             currentStatement.append(line).append(SymbolConstants.SPACE_STR);
 
             // 检查语句结束
-            if (line.endsWith(";")) {
+            if (line.endsWith(SqlConstants.SEMICOLON)) {
                 String sql = currentStatement.toString().trim();
                 // 确保不是只有分号
                 if (sql.length() > 1) {
@@ -77,7 +79,7 @@ public class MysqlParse extends AbstractSqlParser {
 
     private String removeSingleLineComments(String line) {
         // 移除 -- 注释
-        int commentIndex = line.indexOf("--");
+        int commentIndex = line.indexOf(CommonConstants.COMMENT_SINGLE_LINE);
         if (commentIndex != -1) {
             line = line.substring(0, commentIndex);
         }

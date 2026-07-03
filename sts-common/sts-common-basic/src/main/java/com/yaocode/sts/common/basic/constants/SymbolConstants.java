@@ -31,9 +31,11 @@ public interface SymbolConstants {
     String QUESTION_MARKS = "?";
 
     String LINE_SEPARATOR = "\n";
+    String LINE_SEPARATOR_CRLF = "\r\n";
 
     char EQUAL_SIGN = '=';
 
     String DOT = ".";
+    String AMPERSAND  = "&";
 
 }

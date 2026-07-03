@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.db.events;
 
 import com.yaocode.sts.common.db.DbMigrationEngine;
+import com.yaocode.sts.common.db.constants.DbMigrationI18nKeyConstants;
 import com.yaocode.sts.common.db.enums.MigrationStateEnums;
 
 /**
@@ -11,6 +12,6 @@ import com.yaocode.sts.common.db.enums.MigrationStateEnums;
 public class DbMigrationCompletedEvent extends DbMigrationEvent {
 
     public DbMigrationCompletedEvent(DbMigrationEngine dbMigrationEngine) {
-        super(dbMigrationEngine, MigrationStateEnums.COMPLETED, "Database migration completed");
+        super(dbMigrationEngine, MigrationStateEnums.COMPLETED, DbMigrationI18nKeyConstants.MIGRATION_STATE_COMPLETED);
     }
 }

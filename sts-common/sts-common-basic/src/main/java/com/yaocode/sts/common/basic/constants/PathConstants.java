@@ -17,6 +17,16 @@ public interface PathConstants {
     String CLASSPATH_PREFIX = "classpath:";
 
     /**
+     * classpath* 前缀（支持通配符扫描多个JAR包）
+     */
+    String CLASSPATH_ALL_PREFIX = "classpath*:";
+
+    /**
+     * META-INF 目录前缀
+     */
+    String META_INF_PREFIX = "classpath*:/META-INF/";
+
+    /**
      * 文件系统路径前缀
      */
     String FILE_PREFIX = "file:";

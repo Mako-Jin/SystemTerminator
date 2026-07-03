@@ -1,9 +1,12 @@
 package com.yaocode.sts.common.db.executor;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.db.constants.CommonConstants;
+import com.yaocode.sts.common.db.constants.DbMigrationI18nKeyConstants;
 import com.yaocode.sts.common.db.enums.DBTypeEnums;
 import com.yaocode.sts.common.db.exception.UnsupportedDbTypeException;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +26,16 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSqlScriptExecutor.class);
 
+    /**
+     * 匹配JDBC URL中数据库名的正则表达式
+     * 匹配模式: /数据库名(参数|结束)
+     */
+    private static final String REGEX_DB_NAME_IN_URL = CommonConstants.REGEX_DB_NAME_IN_URL;
+
+    @Getter
     private DataSource dataSource;
 
+    @Getter
     private Connection systemConnection;
 
     private Connection connection;
@@ -72,7 +83,7 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
 
     protected String getDatabaseName() {
         // TODO 也不应该每次都计算一次吧
-        String database = "";
+        String database = SymbolConstants.EMPTY_STR;
         if (dataSource instanceof HikariDataSource hikariDataSource) {
             database = extractDatabaseName(hikariDataSource.getJdbcUrl());
         }
@@ -88,12 +99,10 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
     }
 
     private String createSystemDatabaseUrl(String datasourceUrl) {
-        if (datasourceUrl.contains(DBTypeEnums.MYSQL.getName())) {
-            // 替换数据库名为 mysql 系统数据库，或者移除数据库名
-            return addPublicKeyRetrieval(datasourceUrl.replaceFirst("/[^/?]+([?]|$)", "/mysql$1"));
-        } else if (datasourceUrl.contains(DBTypeEnums.POSTGRESQL.getName())) {
-            // PostgreSQL 连接到 postgres 系统数据库
-            return datasourceUrl.replaceFirst("/[^/?]+([?]|$)", "/postgres$1");
+        for (DBTypeEnums dbType : DBTypeEnums.values()) {
+            if (datasourceUrl.contains(dbType.getName())) {
+                return addPublicKeyRetrieval(datasourceUrl.replaceFirst(REGEX_DB_NAME_IN_URL, dbType.getSystemDbPath()));
+            }
         }
         // 默认移除数据库名部分
         return removeDatabaseFromUrl(datasourceUrl);
@@ -110,20 +119,29 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
         boolean hasParams = originalUrl.contains(SymbolConstants.QUESTION_MARKS);
 
         // 添加 allowPublicKeyRetrieval
-        if (!originalUrl.contains("allowPublicKeyRetrieval")) {
-            modifiedUrl.append(hasParams ? "&" : "?").append("allowPublicKeyRetrieval=true");
+        if (!originalUrl.contains(CommonConstants.URL_PARAM_ALLOW_PUBLIC_KEY_RETRIEVAL)) {
+            modifiedUrl.append(hasParams ? SymbolConstants.AMPERSAND : SymbolConstants.QUESTION_MARKS)
+                    .append(CommonConstants.URL_PARAM_ALLOW_PUBLIC_KEY_RETRIEVAL)
+                    .append(SymbolConstants.EQUAL_SIGN)
+                    .append(CommonConstants.URL_VALUE_TRUE);
             hasParams = true;
         }
 
         // 添加 useSSL
-        if (!originalUrl.contains("useSSL")) {
-            modifiedUrl.append(hasParams ? "&" : "?").append("useSSL=false");
+        if (!originalUrl.contains(CommonConstants.URL_PARAM_USE_SSL)) {
+            modifiedUrl.append(hasParams ? SymbolConstants.AMPERSAND : SymbolConstants.QUESTION_MARKS)
+                    .append(CommonConstants.URL_PARAM_USE_SSL)
+                    .append(SymbolConstants.EQUAL_SIGN)
+                    .append(CommonConstants.URL_VALUE_FALSE);
             hasParams = true;
         }
 
         // 添加 serverTimezone（对于MySQL 8.x很重要）
-        if (!originalUrl.contains("serverTimezone")) {
-            modifiedUrl.append("&serverTimezone=UTC");
+        if (!originalUrl.contains(CommonConstants.URL_PARAM_SERVER_TIMEZONE)) {
+            modifiedUrl.append(hasParams ? SymbolConstants.AMPERSAND : SymbolConstants.QUESTION_MARKS)
+                    .append(CommonConstants.URL_PARAM_SERVER_TIMEZONE)
+                    .append(SymbolConstants.EQUAL_SIGN)
+                    .append(CommonConstants.URL_VALUE_UTC);
         }
 
         return modifiedUrl.toString();
@@ -155,15 +173,7 @@ public abstract class AbstractSqlScriptExecutor implements SqlScriptExecutor, Cl
             copyDataSource.setDriverClassName(hikariDataSource.getDriverClassName());
             return copyDataSource;
         }
-        throw new UnsupportedDbTypeException("Currently, other types of DataSources are not supported.");
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public Connection getSystemConnection() {
-        return systemConnection;
+        throw new UnsupportedDbTypeException(DbMigrationI18nKeyConstants.ERR_UNSUPPORTED_DATASOURCE_TYPE);
     }
 
     public Connection getConnection() {

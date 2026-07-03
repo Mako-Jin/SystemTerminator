@@ -1,6 +1,9 @@
 package com.yaocode.sts.common.db.executor;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.db.constants.CommonConstants;
 import com.yaocode.sts.common.db.constants.SqlConstants;
+import com.yaocode.sts.common.db.constants.SqlTemplateConstants;
 import com.yaocode.sts.common.db.statement.SqlStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +43,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
      */
     @Override
     public boolean checkDatabaseExists() {
-        String checkSql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?";
+        String checkSql = SqlTemplateConstants.MySql.CHECK_DATABASE_EXISTS;;
         try {
             if (Objects.isNull(getSystemConnection())) {
                 logger.error("The database connection is empty.");
@@ -60,7 +63,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
     @Override
     public void createDatabase() {
         String createSql = String.format(
-                "CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci",
+                SqlTemplateConstants.MySql.CREATE_DATABASE,
                 getDatabaseName()
         );
         try {
@@ -80,8 +83,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
         if (tableName == null || SqlConstants.UNKNOWN.equals(tableName)) {
             return false;
         }
-        String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES " +
-                "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+        String sql = SqlTemplateConstants.MySql.CHECK_TABLE_EXISTS;;
         try {
             if (Objects.isNull(getConnection())) {
                 logger.error("The database connection is null.");
@@ -113,7 +115,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             return;
         }
         int status = 0;
-        String errorMessage = "";
+        String errorMessage = SymbolConstants.EMPTY_STR;
         LocalDateTime startTime = LocalDateTime.now();
         try (Statement stmt = getConnection().createStatement()) {
             stmt.execute(sqlStatement.getSql());
@@ -123,11 +125,16 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             errorMessage = e.getMessage();
         }
         LocalDateTime endTime = LocalDateTime.now();
-        String insertSqlHistory = "insert into aux_tbl_script_history (`file_name`, " +
-                "`script_content`, `script_type`, `security_level`, `status`, `error_message`, " +
-                "`execute_time`, " +
-                "`create_time`) " +
-                "values (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSqlHistory = String.format(SqlTemplateConstants.MySql.INSERT_SCRIPT_HISTORY,
+                CommonConstants.SCRIPT_CONTROL_TABLE_NAME,
+                CommonConstants.COLUMN_FILE_NAME,
+                CommonConstants.COLUMN_SCRIPT_CONTENT,
+                CommonConstants.COLUMN_SCRIPT_TYPE,
+                CommonConstants.COLUMN_SECURITY_LEVEL,
+                CommonConstants.COLUMN_STATUS,
+                CommonConstants.COLUMN_ERROR_MESSAGE,
+                CommonConstants.COLUMN_EXECUTE_TIME,
+                CommonConstants.COLUMN_CREATE_TIME);
         try (PreparedStatement prepareStatement = getConnection().prepareStatement(insertSqlHistory)) {
             prepareStatement.setString(1, sqlStatement.getResourceName());
             prepareStatement.setString(2, sqlStatement.getSql());
@@ -153,7 +160,7 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
         if (tableName == null || SqlConstants.UNKNOWN.equals(tableName)) {
             return 1;
         }
-        String sql = "SELECT COUNT(*) FROM " + tableName;
+        String sql = String.format(SqlTemplateConstants.MySql.COUNT_TABLE_DATA, tableName);
         try (Statement stmt = getConnection().createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
             if (rs.next()) {
@@ -171,7 +178,8 @@ public class MysqlScriptExecutor extends AbstractSqlScriptExecutor {
             logger.warn("The database connection is null.");
             return false;
         }
-        String scriptHistory = "select count(*) from aux_tbl_script_history where script_content = ?";
+        String scriptHistory = String.format(SqlTemplateConstants.MySql.CHECK_SCRIPT_EXECUTE_STATUS,
+                CommonConstants.SCRIPT_CONTROL_TABLE_NAME, CommonConstants.COLUMN_SCRIPT_CONTENT);
         try (PreparedStatement prepareStatement = getConnection().prepareStatement(scriptHistory)) {
             prepareStatement.setString(1, sql);
             ResultSet resultSet = prepareStatement.executeQuery();

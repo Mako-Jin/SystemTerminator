@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.db.enums;
 
+import com.yaocode.sts.common.db.constants.DbMigrationI18nKeyConstants;
 import com.yaocode.sts.common.db.constants.SqlConstants;
 import lombok.Getter;
 
@@ -14,20 +15,42 @@ public enum SqlSecurityLevelEnums {
     /**
      * 高危
      */
-    HIGH(1, "高危", "包含DROP、TRUNCATE等危险操作"),
+    HIGH(
+            1,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_HIGH,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_HIGH_DESC
+    ),
     /**
      * 中危
      */
-    MEDIUM(2, "中危", "包含ALTER、DELETE等操作"),
+    MEDIUM(
+            2,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_MEDIUM,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_MEDIUM_DESC
+    ),
     /**
      * 低危
      */
-    LOW(3, "低危", "包含CREATE、INSERT、UPDATE等操作"),
+    LOW(
+            3,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_LOW,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_LOW_DESC
+    ),
     /**
      * 安全
      */
-    SAFE(4, "安全", "只读查询操作"),
-    UNKNOWN(5, SqlConstants.UNKNOWN, "未知");
+    SAFE(
+            4,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_SAFE,
+            DbMigrationI18nKeyConstants.SECURITY_LEVEL_SAFE_DESC
+    ),
+    UNKNOWN(
+            5,
+            SqlConstants.UNKNOWN,
+            SqlConstants.UNKNOWN
+    );
+
+
 
     private final int level;
     private final String name;

@@ -1,40 +1,44 @@
 package com.yaocode.sts.common.db.enums;
 
+import com.yaocode.sts.common.db.constants.SqlConstants;
+import lombok.Getter;
+
 /**
  *
  * @author: Jin-LiangBo
  * @date: 2025年11月09日 21:58
  */
+@Getter
 public enum StatementEnums {
 
     /**
      * select
      */
-    SELECT("SELECT", SqlScriptTypeEnums.DQL, SqlSecurityLevelEnums.LOW),
+    SELECT(SqlConstants.SELECT, SqlScriptTypeEnums.DQL, SqlSecurityLevelEnums.LOW),
     /**
      * INSERT
      */
-    INSERT("INSERT", SqlScriptTypeEnums.DML, SqlSecurityLevelEnums.LOW),
+    INSERT(SqlConstants.INSERT, SqlScriptTypeEnums.DML, SqlSecurityLevelEnums.LOW),
     /**
      * UPDATE
      */
-    UPDATE("UPDATE", SqlScriptTypeEnums.DML, SqlSecurityLevelEnums.HIGH),
+    UPDATE(SqlConstants.UPDATE, SqlScriptTypeEnums.DML, SqlSecurityLevelEnums.HIGH),
     /**
      * DELETE
      */
-    DELETE("DELETE", SqlScriptTypeEnums.DML, SqlSecurityLevelEnums.HIGH),
+    DELETE(SqlConstants.DELETE, SqlScriptTypeEnums.DML, SqlSecurityLevelEnums.HIGH),
     /**
      * CREATE
      */
-    CREATE("CREATE", SqlScriptTypeEnums.DDL, SqlSecurityLevelEnums.LOW),
+    CREATE(SqlConstants.CREATE, SqlScriptTypeEnums.DDL, SqlSecurityLevelEnums.LOW),
     /**
      * DROP
      */
-    DROP("DROP", SqlScriptTypeEnums.DDL, SqlSecurityLevelEnums.HIGH),
+    DROP(SqlConstants.DROP, SqlScriptTypeEnums.DDL, SqlSecurityLevelEnums.HIGH),
     /**
      * ALTER
      */
-    ALTER("ALTER", SqlScriptTypeEnums.DDL, SqlSecurityLevelEnums.HIGH),
+    ALTER(SqlConstants.ALTER, SqlScriptTypeEnums.DDL, SqlSecurityLevelEnums.HIGH),
     ;
 
     private final String keyword;
@@ -46,9 +50,5 @@ public enum StatementEnums {
         this.category = category;
         this.securityLevel = securityLevel;
     }
-
-    public String getKeyword() { return keyword; }
-    public SqlScriptTypeEnums getCategory() { return category; }
-    public SqlSecurityLevelEnums getSecurityLevel() { return securityLevel; }
 
 }

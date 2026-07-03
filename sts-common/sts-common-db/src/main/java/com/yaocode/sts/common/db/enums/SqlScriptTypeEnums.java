@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.db.enums;
 
+import com.yaocode.sts.common.db.constants.DbMigrationI18nKeyConstants;
+import com.yaocode.sts.common.db.constants.SqlConstants;
 import lombok.Getter;
 
 /**
@@ -13,34 +15,58 @@ public enum SqlScriptTypeEnums {
     /**
      * DDL
      */
-    DDL(1, "数据定义语言", "CREATE, ALTER, DROP等"),
+    DDL(
+            1,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DDL,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DDL_DESC
+    ),
     /**
      * DML
      */
-    DML(2, "数据操作语言", "INSERT, UPDATE, DELETE等"),
+    DML(
+            2,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DML,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DML_DESC
+    ),
     /**
      * DQL
      */
-    DQL(3, "数据查询语言", "SELECT等"),
+    DQL(
+            3,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DQL,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DQL_DESC
+    ),
     /**
      * DCL
      */
-    DCL(4, "数据控制语言", "GRANT, REVOKE等"),
+    DCL(
+            4,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DCL,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_DCL_DESC
+    ),
     /**
      * TCL
      */
-    TCL(5, "事务控制语言", "COMMIT, ROLLBACK等"),
+    TCL(
+            5,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_TCL,
+            DbMigrationI18nKeyConstants.SCRIPT_TYPE_TCL_DESC
+    ),
 
-    UNKNOWN(0, "未知", "未知"),
+    UNKNOWN(
+            0,
+            SqlConstants.UNKNOWN,
+            SqlConstants.UNKNOWN
+    ),
     ;
 
     private final Integer type;
     private final String name;
-    private final String examples;
+    private final String desc;
 
-    SqlScriptTypeEnums(Integer type, String name, String examples) {
+    SqlScriptTypeEnums(Integer type, String name, String desc) {
         this.type = type;
         this.name = name;
-        this.examples = examples;
+        this.desc = desc;
     }
 }

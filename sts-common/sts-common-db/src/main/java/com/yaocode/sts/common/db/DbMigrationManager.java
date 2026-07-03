@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.db;
 
+import com.yaocode.sts.common.db.constants.DbMigrationI18nKeyConstants;
 import com.yaocode.sts.common.db.enums.MigrationStateEnums;
 import com.yaocode.sts.common.db.events.DbMigrationCompletedEvent;
 import com.yaocode.sts.common.db.events.DbMigrationFailedEvent;
@@ -7,6 +8,7 @@ import com.yaocode.sts.common.db.events.DbMigrationInitEvent;
 import com.yaocode.sts.common.db.events.DbMigrationStartEvent;
 import com.yaocode.sts.common.db.exception.DbMigrationException;
 import com.yaocode.sts.common.db.properties.DbMigrationProperties;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -31,6 +33,7 @@ public class DbMigrationManager implements InitializingBean, ApplicationListener
 
     private final AtomicReference<MigrationStateEnums> migrationState = new AtomicReference<>(MigrationStateEnums.PENDING);
 
+    @Getter
     private DataSource dataSource;
     private DbMigrationEngine dbMigrationEngine;
     private final DbMigrationProperties properties;
@@ -48,10 +51,6 @@ public class DbMigrationManager implements InitializingBean, ApplicationListener
             this.dataSource = dataSource;
         }
 
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
     }
 
     @Override
@@ -77,13 +76,13 @@ public class DbMigrationManager implements InitializingBean, ApplicationListener
 
             // 根据配置决定是否抛出异常
             if (!properties.isIgnoreErrors()) {
-                throw new DbMigrationException("Database migration failed", e);
+                throw new DbMigrationException(DbMigrationI18nKeyConstants.ERR_DB_MIGRATION_FAILED, e);
             }
         }
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (!properties.isEnabled()) {
             logger.info("Database migration is disabled");
             return;

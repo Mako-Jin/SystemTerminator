@@ -18,14 +18,12 @@ public interface SqlScriptExecutor {
 
     /**
      * 检查数据库存不存在
-     * @param dataSource 数据库信息
      * @return boolean
      */
     boolean checkDatabaseExists();
 
     /**
      * 创建数据库
-     * @param dataSource 数据库信息
      */
     void createDatabase();
 
@@ -38,7 +36,7 @@ public interface SqlScriptExecutor {
 
     /**
      * 执行sql脚本，无返回
-     * @param sqlStatement
+     * @param sqlStatement sql语句
      */
     void executeScript(SqlStatement sqlStatement);
 
