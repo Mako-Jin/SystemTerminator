@@ -14,6 +14,7 @@ import java.util.Objects;
  * 租户信息上下文
  * @author: Jin-LiangBo
  * @date: 2026年04月14日 16:42
+ * TODO 怎样和common-web里面的租户上下文合并
  */
 public final class TenantInfoContext {
 

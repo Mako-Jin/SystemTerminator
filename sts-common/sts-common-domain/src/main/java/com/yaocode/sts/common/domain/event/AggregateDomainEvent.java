@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * 聚合根领域事件基类
  * 自动从聚合根中提取聚合根ID和聚合根类型
- *
+ * <p>
  * 使用场景：
  * 1. 大多数领域事件都应该继承此类，因为它自动提供了 aggregateId 和 aggregateType
  * 2. 适用于聚合根已经创建完成的场景
@@ -43,7 +43,7 @@ public abstract class AggregateDomainEvent<ID extends Identifier<?>> extends Abs
      * 构造函数 - 从聚合根自动提取信息 + 自定义事件类型
      *
      * @param aggregate 聚合根实例
-     * @param eventType 自定义事件类型（如："USER_REGISTERED"）
+     * @param eventType 自定义事件类型（如：USER_REGISTERED）
      */
     protected AggregateDomainEvent(AbstractAggregate<ID> aggregate, String eventType) {
         super(eventType);

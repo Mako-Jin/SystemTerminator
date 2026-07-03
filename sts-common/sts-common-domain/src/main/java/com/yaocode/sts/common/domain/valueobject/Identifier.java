@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.domain.valueobject;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
 import lombok.Getter;
 
@@ -44,6 +45,6 @@ public abstract class Identifier<T> implements ValueObject {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[" + value + "]";
+        return this.getClass().getSimpleName() + SymbolConstants.LEFT_BRACKETS + value + SymbolConstants.RIGHT_BRACKETS;
     }
 }
