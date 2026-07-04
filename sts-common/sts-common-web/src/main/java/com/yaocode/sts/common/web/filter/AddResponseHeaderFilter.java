@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.web.filter;
 
+import com.yaocode.sts.common.web.constants.HeaderConstants;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,15 +17,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class AddResponseHeaderFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
+    protected void doFilterInternal(@Nonnull HttpServletRequest request, HttpServletResponse response, @Nonnull FilterChain filterChain) {
         // 防止缓存
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "0");
+        response.setHeader(HeaderConstants.HEADER_CACHE_CONTROL, HeaderConstants.CACHE_CONTROL_NO_CACHE);
+        response.setHeader(HeaderConstants.HEADER_PRAGMA, HeaderConstants.PRAGMA_NO_CACHE);
+        response.setHeader(HeaderConstants.HEADER_EXPIRES, HeaderConstants.EXPIRES_IMMEDIATE);
 
         // 安全相关头
-        response.setHeader("X-Content-Type-Options", "nosniff");
-        response.setHeader("X-Frame-Options", "DENY");
-        response.setHeader("X-XSS-Protection", "1; mode=block");
+        response.setHeader(HeaderConstants.HEADER_X_CONTENT_TYPE_OPTIONS, HeaderConstants.X_CONTENT_TYPE_OPTIONS_NOSNIFF);
+        response.setHeader(HeaderConstants.HEADER_X_FRAME_OPTIONS, HeaderConstants.X_FRAME_OPTIONS_DENY);
+        response.setHeader(HeaderConstants.HEADER_X_XSS_PROTECTION, HeaderConstants.X_XSS_PROTECTION_ENABLED);
     }
 }

@@ -2,6 +2,7 @@ package com.yaocode.sts.common.web.config;
 
 import com.yaocode.sts.common.web.annotation.EnableRestApiElapsed;
 import com.yaocode.sts.common.web.aspect.RestApiElapsedAspect;
+import com.yaocode.sts.common.web.constants.WebConstants;
 import com.yaocode.sts.common.web.properties.RestApiElapsedProperties;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class RestApiElapsedAutoConfiguration {
             EnableRestApiElapsed annotation = mainBean.getClass().getAnnotation(EnableRestApiElapsed.class);
             attributes = AnnotationUtils.getAnnotationAttributes(annotation, true, true);
         }
-        boolean defaultEnabled = Objects.nonNull(attributes) && attributes.getBoolean("value");
+        boolean defaultEnabled = Objects.nonNull(attributes) && attributes.getBoolean(WebConstants.ANNOTATION_VALUE);
         if (!properties.isEnabled() || !defaultEnabled) {
             logger.info("rest api elapsed disabled");
         } else {

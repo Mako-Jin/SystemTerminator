@@ -5,7 +5,7 @@ package com.yaocode.sts.common.resources.constants;
  * @author: Jin-LiangBo
  * @date: 2025年12月02日 23:14
  */
-public interface IConstants {
+public interface ResourcesConstants {
 
     // ==================== 配置属性key ====================
     /**

@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.properties;
 
+import com.yaocode.sts.common.web.constants.WebConstants;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,7 +25,7 @@ public class RestApiElapsedProperties {
     /**
      * 耗时阈值（毫秒）
      */
-    private long threshold = 1000L;
+    private long threshold = WebConstants.DEFAULT_API_ELAPSED_THRESHOLD;
 
     /**
      * 是否记录到数据库

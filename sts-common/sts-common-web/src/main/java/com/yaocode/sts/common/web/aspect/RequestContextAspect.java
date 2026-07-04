@@ -193,7 +193,7 @@ public class RequestContextAspect {
      * 格式：trace-{timestamp}-{uuid前8位}
      */
     private String generateTraceId() {
-        return String.format("trace-%d-%s",
+        return String.format(RequestConstants.TRACE_ID_FORMAT,
                 System.currentTimeMillis(),
                 IdFactory.generate());
     }
@@ -203,7 +203,7 @@ public class RequestContextAspect {
      * 格式：span-{timestamp}-{uuid前6位}
      */
     private String generateSpanId() {
-        return String.format("span-%d-%s",
+        return String.format(RequestConstants.SPAN_ID_FORMAT,
                 System.currentTimeMillis(),
                 IdFactory.generate());
     }
@@ -300,12 +300,12 @@ public class RequestContextAspect {
      */
     private String extractRememberMeToken(HttpServletRequest request) {
         // 1. 从请求参数中获取
-        String token = request.getParameter("rememberMeToken");
+        String token = request.getParameter(RequestConstants.REMEMBER_ME_TOKEN);
         if (token != null && !token.isEmpty()) {
             return token;
         }
 
-        token = request.getParameter("rememberMe");
+        token = request.getParameter(RequestConstants.PARAM_REMEMBER_ME_CAMEL);
         if (token != null && !token.isEmpty()) {
             return token;
         }
@@ -314,21 +314,20 @@ public class RequestContextAspect {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("remember_me".equals(cookie.getName())
-                        || "remember-me".equals(cookie.getName())
-                        || "rememberMe".equals(cookie.getName())) {
+                if (RequestConstants.COOKIE_REMEMBER_ME_UNDERSCORE.equals(cookie.getName())
+                        || RequestConstants.COOKIE_REMEMBER_ME_DASH.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
         }
 
         // 3. 从 Header 中获取
-        token = request.getHeader("X-Remember-Me-Token");
+        token = request.getHeader(HeaderConstants.REMEMBER_ME_TOKEN);
         if (token != null && !token.isEmpty()) {
             return token;
         }
 
-        token = request.getHeader("Cookie-Remember-Me");
+        token = request.getHeader(RequestConstants.HEADER_COOKIE_REMEMBER_ME);
         if (token != null && !token.isEmpty()) {
             return token;
         }

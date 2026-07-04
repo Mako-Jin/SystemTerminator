@@ -315,4 +315,36 @@ public interface RequestConstants {
      */
     String REDIRECT_URI = "redirectUri";
 
+    // ==================== ID格式常量 ====================
+    /**
+     * TraceId格式
+     */
+    String TRACE_ID_FORMAT = "trace-%d-%s";
+
+    /**
+     * SpanId格式
+     */
+    String SPAN_ID_FORMAT = "span-%d-%s";
+
+    // ==================== Remember Me 相关常量 ====================
+    /**
+     * Remember Me 参数名（驼峰式）
+     */
+    String PARAM_REMEMBER_ME_CAMEL = "rememberMe";
+
+    /**
+     * Remember Me Cookie名称（下划线式）
+     */
+    String COOKIE_REMEMBER_ME_UNDERSCORE = "remember_me";
+
+    /**
+     * Remember Me Cookie名称（连字符式）
+     */
+    String COOKIE_REMEMBER_ME_DASH = "remember-me";
+
+    /**
+     * Remember Me Header名称
+     */
+    String HEADER_COOKIE_REMEMBER_ME = "Cookie-Remember-Me";
+
 }

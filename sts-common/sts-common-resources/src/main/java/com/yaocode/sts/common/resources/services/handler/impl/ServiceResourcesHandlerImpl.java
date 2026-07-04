@@ -5,7 +5,7 @@ import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
-import com.yaocode.sts.common.resources.constants.IConstants;
+import com.yaocode.sts.common.resources.constants.ResourcesConstants;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.model.ServiceResourcesModel;
 import com.yaocode.sts.common.resources.services.handler.ServerResourcesHandler;
@@ -85,7 +85,7 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
 
     private void checkAndSetServicePath(ServiceResourcesModel serviceResourcesModel) {
         String servletPath = getApplicationContext().getEnvironment()
-                .getProperty(IConstants.SERVLET_CONTEXT_PATH_KEY, SymbolConstants.EMPTY_STR);
+                .getProperty(ResourcesConstants.SERVLET_CONTEXT_PATH_KEY, SymbolConstants.EMPTY_STR);
         if (!Objects.equals(serviceResourcesModel.getPath(), servletPath)) {
             logger.warn("Path configuration error has been corrected and updated to the effective path.");
             serviceResourcesModel.setPath(servletPath);

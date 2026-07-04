@@ -5,7 +5,7 @@ import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.annotation.ServerResources;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.annotation.SystemResources;
-import com.yaocode.sts.common.resources.constants.IConstants;
+import com.yaocode.sts.common.resources.constants.ResourcesConstants;
 import com.yaocode.sts.common.resources.constants.ResourcesI18nKeyConstants;
 import lombok.Getter;
 
@@ -78,15 +78,15 @@ public enum ResourceTypeEnums {
 
     public static String createDefaultResourceCode(Class<?> clazz) {
         if (SystemResources.class.equals(clazz)) {
-            return "0".repeat(IConstants.SYSTEM_CODE_LENGTH);
+            return "0".repeat(ResourcesConstants.SYSTEM_CODE_LENGTH);
         } else if (ServerResources.class.equals(clazz)) {
-            return "0".repeat(IConstants.SERVER_CODE_LENGTH);
+            return "0".repeat(ResourcesConstants.SERVER_CODE_LENGTH);
         } else if (ServiceResources.class.equals(clazz)) {
-            return "0".repeat(IConstants.SERVICE_CODE_LENGTH);
+            return "0".repeat(ResourcesConstants.SERVICE_CODE_LENGTH);
         } else if (ModuleResources.class.equals(clazz)) {
-            return "0".repeat(IConstants.MODULE_CODE_LENGTH);
+            return "0".repeat(ResourcesConstants.MODULE_CODE_LENGTH);
         } else if (ApiResources.class.equals(clazz)) {
-            return "0".repeat(IConstants.API_CODE_LENGTH);
+            return "0".repeat(ResourcesConstants.API_CODE_LENGTH);
         }
         throw new IllegalArgumentException();
     }

@@ -38,4 +38,14 @@ public interface SymbolConstants {
     String DOT = ".";
     String AMPERSAND  = "&";
 
+    /**
+     * 小于号（HTML标签开始）
+     */
+    String LESS_THAN = "<";
+
+    /**
+     * 大于号（HTML标签结束）
+     */
+    String GREATER_THAN = ">";
+
 }

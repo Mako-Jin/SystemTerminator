@@ -2,10 +2,10 @@ package com.yaocode.sts.auth.infrastructure.converter;
 
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.enums.TenantStatusEnums;
-import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
-import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
 import com.yaocode.sts.auth.infrastructure.po.TenantInfoPo;
+import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

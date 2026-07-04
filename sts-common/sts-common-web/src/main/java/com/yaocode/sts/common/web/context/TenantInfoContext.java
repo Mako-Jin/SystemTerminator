@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.context;
 
+import com.yaocode.sts.common.web.constants.ContextConstants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -60,7 +61,7 @@ public class TenantInfoContext extends BaseAbstractContext<TenantInfoContext> {
 
     @Override
     protected String getContextName() {
-        return "TenantInfo";
+        return ContextConstants.CONTEXT_NAME_TENANT_INFO;
     }
 
     // ========== 便捷方法 ==========

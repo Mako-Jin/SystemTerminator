@@ -2,6 +2,8 @@ package com.yaocode.sts.common.web.mvc;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
+import com.yaocode.sts.common.web.constants.WebConstants;
+import jakarta.annotation.Nonnull;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotationPredicates;
 import org.springframework.core.annotation.MergedAnnotations;
@@ -21,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -51,7 +54,7 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
     }
 
     @Override
-    protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
+    protected RequestMappingInfo getMappingForMethod(@Nonnull Method method, @Nonnull Class<?> handlerType) {
         RequestMappingInfo info = createRequestMappingInfo(method);
         if (info != null) {
             RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
@@ -118,8 +121,7 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
                 .toList();
         if (!requestMappings.isEmpty()) {
             if (requestMappings.size() > 1 && logger.isWarnEnabled()) {
-                logger.warn("Multiple @RequestMapping annotations found on %s, but only the first will be used: %s"
-                        .formatted(element, requestMappings));
+                logger.warn(WebConstants.LOG_MULTIPLE_REQUEST_MAPPING.formatted(element, requestMappings));
             }
             requestMappingInfo = createRequestMappingInfo((RequestMapping) requestMappings.get(0).annotation, customCondition);
         }
@@ -134,10 +136,10 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
                 .filter(desc -> desc.annotation instanceof HttpExchange).toList();
         if (!httpExchanges.isEmpty()) {
             Assert.state(requestMappingInfo == null,
-                    () -> "%s is annotated with @RequestMapping and @HttpExchange annotations, but only one is allowed: %s"
+                    () -> WebConstants.ERR_REQUEST_MAPPING_AND_HTTP_EXCHANGE
                             .formatted(element, Stream.of(requestMappings, httpExchanges).flatMap(List::stream).toList()));
             Assert.state(httpExchanges.size() == 1,
-                    () -> "Multiple @HttpExchange annotations found on %s, but only one is allowed: %s"
+                    () -> WebConstants.ERR_MULTIPLE_HTTP_EXCHANGE
                             .formatted(element, httpExchanges));
             requestMappingInfo = createRequestMappingInfo((HttpExchange) httpExchanges.get(0).annotation, customCondition);
         }
@@ -188,12 +190,15 @@ public class SubRequestMappingHandlerMapping extends RequestMappingHandlerMappin
         }
 
         public FirstRunAndSubOfPredicate {
-            Assert.notNull(valueExtractor, "Value extractor must not be null");
+            Assert.notNull(valueExtractor, WebConstants.ERR_VALUE_EXTRACTOR_NOT_NULL);
         }
 
         @Override
         public boolean test(@Nullable MergedAnnotation<A> aMergedAnnotation) {
-            if (aMergedAnnotation.getType() == SubRequestMapping.class) {
+            if (Objects.isNull(aMergedAnnotation)) {
+                return false;
+            }
+            if (Objects.equals(aMergedAnnotation.getType(), SubRequestMapping.class)) {
                 return true;
             }
             return MergedAnnotationPredicates.firstRunOf(valueExtractor).test(aMergedAnnotation);

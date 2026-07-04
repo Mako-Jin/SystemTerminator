@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.context;
 
+import com.yaocode.sts.common.web.constants.ContextConstants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -49,10 +50,10 @@ public class DeviceInfoContext extends BaseAbstractContext<DeviceInfoContext> {
 
     public static DeviceInfoContext createDefault() {
         DeviceInfoContext context = new DeviceInfoContext();
-        context.setDeviceType("UNKNOWN");
-        context.setIsJailbroken(false);
-        context.setIsEmulator(false);
-        context.setIsTrusted(false);
+        context.setDeviceType(ContextConstants.DEVICE_TYPE_UNKNOWN);
+        context.setIsJailbroken(ContextConstants.DEFAULT_IS_JAIL_BROKEN);
+        context.setIsEmulator(ContextConstants.DEFAULT_IS_EMULATOR);
+        context.setIsTrusted(ContextConstants.DEFAULT_IS_TRUSTED);
         return context;
     }
 
@@ -63,16 +64,18 @@ public class DeviceInfoContext extends BaseAbstractContext<DeviceInfoContext> {
 
     @Override
     protected String getContextName() {
-        return "DeviceInfo";
+        return ContextConstants.CONTEXT_NAME_DEVICE_INFO;
     }
 
     // ========== 便捷方法 ==========
     public boolean isIOS() {
-        return "IOS".equalsIgnoreCase(deviceType);
+        return ContextConstants.DEVICE_TYPE_IOS.equalsIgnoreCase(deviceType);
     }
 
+
+
     public boolean isAndroid() {
-        return "ANDROID".equalsIgnoreCase(deviceType);
+        return ContextConstants.DEVICE_TYPE_ANDROID.equalsIgnoreCase(deviceType);
     }
 
     public boolean isMobile() {

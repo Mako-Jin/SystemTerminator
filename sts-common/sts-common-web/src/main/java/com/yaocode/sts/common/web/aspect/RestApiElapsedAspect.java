@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.web.aspect;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.web.constants.WebConstants;
 import com.yaocode.sts.common.web.properties.RestApiElapsedProperties;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class RestApiElapsedAspect {
 
     @Around(value = "allControllerMethod()", argNames = "point")
     public Object around(ProceedingJoinPoint point) throws Throwable {
-        boolean defaultEnabled = Objects.nonNull(attributes) && attributes.getBoolean("value");
+        boolean defaultEnabled = Objects.nonNull(attributes) && attributes.getBoolean(WebConstants.ANNOTATION_VALUE);
         if (!restApiElapsedProperties.isEnabled() || !defaultEnabled) {
             return point.proceed();
         }

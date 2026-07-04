@@ -1,6 +1,6 @@
 package com.yaocode.sts.common.resources;
 
-import com.yaocode.sts.common.resources.constants.IConstants;
+import com.yaocode.sts.common.resources.constants.ResourcesConstants;
 import com.yaocode.sts.common.resources.properties.ResourcesConfigProperties;
 import com.yaocode.sts.common.resources.services.ResourcesBuilder;
 import org.slf4j.Logger;
@@ -37,14 +37,14 @@ public class ResourcesAutoInitEngine implements InitializingBean,  ApplicationCo
     private final ResourcesBuilder resourcesBuilder;
 
     private static final ExecutorService EXECUTORS = new ThreadPoolExecutor(
-            IConstants.THREAD_POOL_CORE_SIZE,
-            IConstants.THREAD_POOL_MAX_SIZE,
-            IConstants.THREAD_POOL_KEEP_ALIVE_SECONDS,
+            ResourcesConstants.THREAD_POOL_CORE_SIZE,
+            ResourcesConstants.THREAD_POOL_MAX_SIZE,
+            ResourcesConstants.THREAD_POOL_KEEP_ALIVE_SECONDS,
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(IConstants.THREAD_POOL_QUEUE_CAPACITY),
+            new LinkedBlockingQueue<>(ResourcesConstants.THREAD_POOL_QUEUE_CAPACITY),
             r -> {
                 final AtomicInteger counter = new AtomicInteger(1);
-                return new Thread(r, IConstants.THREAD_POOL_NAME_PREFIX + counter.getAndIncrement());
+                return new Thread(r, ResourcesConstants.THREAD_POOL_NAME_PREFIX + counter.getAndIncrement());
             },
             new ThreadPoolExecutor.CallerRunsPolicy()
     );

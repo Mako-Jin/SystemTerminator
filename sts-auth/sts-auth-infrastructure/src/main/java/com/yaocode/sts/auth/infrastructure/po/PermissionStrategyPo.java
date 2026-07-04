@@ -2,9 +2,9 @@ package com.yaocode.sts.auth.infrastructure.po;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.yaocode.sts.common.infrastructure.po.BasePo;
 
 /**
  * 权限策略模板表（三元管理）

@@ -221,4 +221,91 @@ public interface HeaderConstants {
      */
     String REQUESTED_WITH = "X-Requested-With";
 
+    // ==========================================
+    // IP获取相关
+    // ==========================================
+
+    /**
+     * X-Forwarded-For（代理转发IP）
+     */
+    String X_FORWARDED_FOR = "X-Forwarded-For";
+
+    /**
+     * Proxy-Client-IP（代理客户端IP）
+     */
+    String PROXY_CLIENT_IP = "Proxy-Client-IP";
+
+    /**
+     * WL-Proxy-Client-IP（WebLogic代理IP）
+     */
+    String WL_PROXY_CLIENT_IP = "WL-Proxy-Client-IP";
+
+    // ==========================================
+    // 响应头名称
+    // ==========================================
+
+    /**
+     * 缓存控制
+     */
+    String HEADER_CACHE_CONTROL = "Cache-Control";
+
+    /**
+     * Pragma（HTTP/1.0缓存控制）
+     */
+    String HEADER_PRAGMA = "Pragma";
+
+    /**
+     * 过期时间
+     */
+    String HEADER_EXPIRES = "Expires";
+
+    /**
+     * 内容类型选项
+     */
+    String HEADER_X_CONTENT_TYPE_OPTIONS = "X-Content-Type-Options";
+
+    /**
+     * 帧选项（防止点击劫持）
+     */
+    String HEADER_X_FRAME_OPTIONS = "X-Frame-Options";
+
+    /**
+     * XSS保护
+     */
+    String HEADER_X_XSS_PROTECTION = "X-XSS-Protection";
+
+    // ==========================================
+    // 响应头值
+    // ==========================================
+
+    /**
+     * Cache-Control值：不缓存
+     */
+    String CACHE_CONTROL_NO_CACHE = "no-store, no-cache, must-revalidate";
+
+    /**
+     * Pragma值：不缓存
+     */
+    String PRAGMA_NO_CACHE = "no-cache";
+
+    /**
+     * Expires值：立即过期
+     */
+    String EXPIRES_IMMEDIATE = "0";
+
+    /**
+     * X-Content-Type-Options值：禁止MIME类型嗅探
+     */
+    String X_CONTENT_TYPE_OPTIONS_NOSNIFF = "nosniff";
+
+    /**
+     * X-Frame-Options值：禁止嵌入帧
+     */
+    String X_FRAME_OPTIONS_DENY = "DENY";
+
+    /**
+     * X-XSS-Protection值：启用XSS保护
+     */
+    String X_XSS_PROTECTION_ENABLED = "1; mode=block";
+
 }

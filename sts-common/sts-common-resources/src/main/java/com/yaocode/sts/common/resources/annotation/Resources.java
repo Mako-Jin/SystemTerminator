@@ -1,7 +1,7 @@
 package com.yaocode.sts.common.resources.annotation;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
-import com.yaocode.sts.common.resources.constants.IConstants;
+import com.yaocode.sts.common.resources.constants.ResourcesConstants;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import org.springframework.core.annotation.AliasFor;
 
@@ -39,7 +39,7 @@ public @interface Resources {
 
     ResourceTypeEnums type();
 
-    String version() default IConstants.DEFAULT_RESOURCE_VERSION;
+    String version() default ResourcesConstants.DEFAULT_RESOURCE_VERSION;
 
     String icon() default SymbolConstants.EMPTY_STR;
 

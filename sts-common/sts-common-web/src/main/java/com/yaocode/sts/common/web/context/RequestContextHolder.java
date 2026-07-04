@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.context;
 
+import com.yaocode.sts.common.web.constants.ContextConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -46,7 +47,7 @@ public class RequestContextHolder {
         RequestContext context = CONTEXT_HOLDER.get();
         if (context == null) {
             context = RequestContext.builder()
-                    .requestId("default")
+                    .requestId(ContextConstants.DEFAULT_REQUEST_ID)
                     .build();
             CONTEXT_HOLDER.set(context);
         }

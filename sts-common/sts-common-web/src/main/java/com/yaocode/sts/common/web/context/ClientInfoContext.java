@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.context;
 
+import com.yaocode.sts.common.web.constants.ContextConstants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,8 +34,8 @@ public class ClientInfoContext extends BaseAbstractContext<ClientInfoContext> {
 
     public static ClientInfoContext createDefault() {
         ClientInfoContext context = new ClientInfoContext();
-        context.setClientType("WEB");
-        context.setIsTrusted(false);
+        context.setClientType(ContextConstants.CLIENT_TYPE_WEB);
+        context.setIsTrusted(ContextConstants.DEFAULT_IS_TRUSTED);
         return context;
     }
 
@@ -45,24 +46,24 @@ public class ClientInfoContext extends BaseAbstractContext<ClientInfoContext> {
 
     @Override
     protected String getContextName() {
-        return "ClientInfo";
+        return ContextConstants.CONTEXT_NAME_CLIENT_INFO;
     }
 
     // ========== 便捷方法 ==========
     public boolean isMobileApp() {
-        return "APP".equalsIgnoreCase(clientType);
+        return ContextConstants.CLIENT_TYPE_APP.equalsIgnoreCase(clientType);
     }
 
     public boolean isWeb() {
-        return "WEB".equalsIgnoreCase(clientType);
+        return ContextConstants.CLIENT_TYPE_WEB.equalsIgnoreCase(clientType);
     }
 
     public boolean isMiniProgram() {
-        return "MINI_PROGRAM".equalsIgnoreCase(clientType);
+        return ContextConstants.CLIENT_TYPE_MINI_PROGRAM.equalsIgnoreCase(clientType);
     }
 
     public boolean isH5() {
-        return "H5".equalsIgnoreCase(clientType);
+        return ContextConstants.CLIENT_TYPE_H5.equalsIgnoreCase(clientType);
     }
 
 }

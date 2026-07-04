@@ -1,7 +1,7 @@
 package com.yaocode.sts.common.resources.services.handler.impl;
 
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
-import com.yaocode.sts.common.resources.constants.IConstants;
+import com.yaocode.sts.common.resources.constants.ResourcesConstants;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import com.yaocode.sts.common.resources.model.ContactInfoModel;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
@@ -43,12 +43,12 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
     }
 
     public String getApplicationName() {
-        return applicationContext.getEnvironment().getProperty(IConstants.APPLICATION_NAME_KEY);
+        return applicationContext.getEnvironment().getProperty(ResourcesConstants.APPLICATION_NAME_KEY);
     }
 
     @Override
     public String getDefaultResourceName() {
-        return getApplicationName() + "_" + IConstants.DEFAULT_RESOURCE_NAME;
+        return getApplicationName() + "_" + ResourcesConstants.DEFAULT_RESOURCE_NAME;
     }
 
     @Override
@@ -58,12 +58,12 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
 
     @Override
     public String getDefaultResourceDesc() {
-        return getApplicationName() + "_" + IConstants.DEFAULT_RESOURCE_DESC;
+        return getApplicationName() + "_" + ResourcesConstants.DEFAULT_RESOURCE_DESC;
     }
 
     @Override
     public String getDefaultResourceVersion() {
-        return IConstants.DEFAULT_RESOURCE_VERSION;
+        return ResourcesConstants.DEFAULT_RESOURCE_VERSION;
     }
 
     @Override

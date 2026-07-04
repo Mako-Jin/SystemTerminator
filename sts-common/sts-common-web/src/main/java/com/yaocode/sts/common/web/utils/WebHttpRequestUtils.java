@@ -1,5 +1,8 @@
 package com.yaocode.sts.common.web.utils;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.common.web.constants.HeaderConstants;
+import com.yaocode.sts.common.web.constants.WebConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,18 +28,18 @@ public class WebHttpRequestUtils {
     }
 
     public static String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+        String ip = request.getHeader(HeaderConstants.X_FORWARDED_FOR);
+        if (ip == null || ip.isEmpty() || WebConstants.UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(HeaderConstants.PROXY_CLIENT_IP);
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
+        if (ip == null || ip.isEmpty() || WebConstants.UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader(HeaderConstants.WL_PROXY_CLIENT_IP);
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || WebConstants.UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        if (ip != null && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
+        if (ip != null && ip.contains(SymbolConstants.COMMA)) {
+            ip = ip.split(SymbolConstants.COMMA)[0].trim();
         }
         return ip;
     }
@@ -46,7 +49,7 @@ public class WebHttpRequestUtils {
      */
     public static String getUserAgent() {
         HttpServletRequest request = getCurrentRequest();
-        return request.getHeader("User-Agent");
+        return request.getHeader(HeaderConstants.USER_AGENT);
     }
 
     /**

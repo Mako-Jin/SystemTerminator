@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.web.validator;
 
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
+import com.yaocode.sts.common.web.constants.WebConstants;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
@@ -31,12 +32,7 @@ public class SqlInjectionValidator implements ConstraintValidator<CheckSqlInject
     /**
      * 正则表达式匹配常见的SQL注入攻击模式
      */
-    private static final Pattern SQL_INJECTION_PATTERN =
-            Pattern.compile(
-                    "(?i)\\b(?:select|update|and|or|grant|alter|delete|chr|mid|" +
-                            "insert|truncate|char|into|substr|ascii|declare|exec|" +
-                            "count|master|drop|execute)\\b|(\\*|;|\\+|'|%)"
-            );
+    private static final Pattern SQL_INJECTION_PATTERN = Pattern.compile(WebConstants.REGEX_SQL_INJECTION);
 
     /**
      * 检查输入是否包含SQL注入攻击模式。
@@ -44,7 +40,7 @@ public class SqlInjectionValidator implements ConstraintValidator<CheckSqlInject
      * @return true 如果输入包含可能的SQL注入攻击模式，否则返回false
      */
     public static boolean containsSqlInjection(String input) {
-        if (Objects.isNull(input) || input.length() == 0) {
+        if (Objects.isNull(input) || input.isEmpty()) {
             return false;
         }
         return SQL_INJECTION_PATTERN.matcher(input).matches();

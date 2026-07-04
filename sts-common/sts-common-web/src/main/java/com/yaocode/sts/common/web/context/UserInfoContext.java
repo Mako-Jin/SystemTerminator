@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.context;
 
+import com.yaocode.sts.common.web.constants.ContextConstants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -69,7 +70,7 @@ public class UserInfoContext extends BaseAbstractContext<UserInfoContext> {
 
     @Override
     protected String getContextName() {
-        return "UserInfo";
+        return ContextConstants.CONTEXT_NAME_USER_INFO;
     }
 
     // ========== 便捷方法 ==========
