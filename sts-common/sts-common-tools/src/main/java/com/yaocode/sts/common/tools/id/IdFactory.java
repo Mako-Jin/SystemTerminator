@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.tools.id;
 
+import com.yaocode.sts.common.tools.constants.ToolsI18nKeyConstants;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +32,7 @@ public class IdFactory {
         }
         IdGenerator<T> generator = (IdGenerator<T>) GENERATORS.get(type);
         if (generator == null) {
-            throw new IllegalArgumentException("No generator found for type: " + type);
+            throw new IllegalArgumentException(ToolsI18nKeyConstants.ERR_ID_GENERATOR_NOT_FOUND);
         }
         return generator.generate();
     }

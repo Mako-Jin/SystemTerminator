@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.yaocode.sts.common.tools.constants.ToolsI18nKeyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,7 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to convert object to JSON", e);
-            throw new RuntimeException("Failed to convert object to JSON", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_CONVERT_TO_STRING, e);
         }
     }
 
@@ -111,7 +112,7 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to convert object to pretty JSON", e);
-            throw new RuntimeException("Failed to convert object to pretty JSON", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_CONVERT_TO_PRETTY, e);
         }
     }
 
@@ -137,7 +138,7 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to parse JSON to object", e);
-            throw new RuntimeException("Failed to parse JSON to object", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_OBJECT, e);
         }
     }
 
@@ -161,7 +162,7 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to parse JSON to object with TypeReference", e);
-            throw new RuntimeException("Failed to parse JSON to object with TypeReference", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_OBJECT_TYPE_REF, e);
         }
     }
 
@@ -187,7 +188,7 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to parse JSON to List", e);
-            throw new RuntimeException("Failed to parse JSON to List", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_LIST, e);
         }
     }
 
@@ -211,7 +212,7 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to parse JSON to Map", e);
-            throw new RuntimeException("Failed to parse JSON to Map", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_MAP, e);
         }
     }
 
@@ -278,7 +279,7 @@ public class JSONUtils {
             return (JSONObject) JSON.toJSON(obj);
         } catch (Exception e) {
             logger.error("Failed to convert object to JSONObject", e);
-            throw new RuntimeException("Failed to convert object to JSONObject", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_CONVERT_TO_JSON_OBJECT, e);
         }
     }
 
@@ -296,7 +297,7 @@ public class JSONUtils {
             return (JSONArray) JSON.toJSON(obj);
         } catch (Exception e) {
             logger.error("Failed to convert object to JSONArray", e);
-            throw new RuntimeException("Failed to convert object to JSONArray", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_CONVERT_TO_JSON_ARRAY, e);
         }
     }
 
@@ -318,7 +319,7 @@ public class JSONUtils {
             return jsonObject.getObject(path, clazz);
         } catch (Exception e) {
             logger.error("Failed to get value by path", e);
-            throw new RuntimeException("Failed to get value by path", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_GET_VALUE_BY_PATH, e);
         }
     }
 

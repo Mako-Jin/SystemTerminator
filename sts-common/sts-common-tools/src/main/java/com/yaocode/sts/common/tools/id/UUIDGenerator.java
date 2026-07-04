@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.tools.id;
 
 import cn.hutool.core.util.IdUtil;
+import com.yaocode.sts.common.tools.constants.ToolsConstants;
 
 /**
  * uuid生成器实现
@@ -16,7 +17,7 @@ public class UUIDGenerator implements IdGenerator<String> {
 
     @Override
     public String getName() {
-        return "UUID Generator";
+        return ToolsConstants.UUID_GENERATOR_NAME;
     }
 
     @Override

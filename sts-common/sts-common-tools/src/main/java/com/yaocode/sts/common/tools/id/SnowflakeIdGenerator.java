@@ -1,6 +1,7 @@
 package com.yaocode.sts.common.tools.id;
 
 import cn.hutool.core.util.IdUtil;
+import com.yaocode.sts.common.tools.constants.ToolsConstants;
 
 /**
  * 雪花id生成器
@@ -16,7 +17,7 @@ public class SnowflakeIdGenerator implements IdGenerator<Long> {
 
     @Override
     public String getName() {
-        return "Snowflake ID Generator";
+        return ToolsConstants.SNOWFLAKE_GENERATOR_NAME;
     }
 
     @Override

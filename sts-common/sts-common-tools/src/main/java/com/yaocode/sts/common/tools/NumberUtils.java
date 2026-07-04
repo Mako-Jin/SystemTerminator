@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.tools;
 
+import com.yaocode.sts.common.tools.constants.ToolsConstants;
+
 /**
  * 数字工具类
  * @author: Jin-LiangBo
@@ -13,7 +15,7 @@ public class NumberUtils {
      * @return boolean
      */
     public static boolean isNumeric(String str) {
-        return str != null && str.matches("\\d+");
+        return str != null && str.matches(ToolsConstants.REGEX_NUMERIC);
     }
 
 }
