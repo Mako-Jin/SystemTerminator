@@ -1,6 +1,8 @@
 package com.yaocode.sts.common.i18n.repository.impl;
 
+import com.yaocode.sts.common.i18n.constants.I18nKeyConstants;
 import com.yaocode.sts.common.i18n.repository.I18nMessageRepository;
+import lombok.Getter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -8,9 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author: Jin-LiangBo
  * @date: 2026年04月08日 16:47
  */
+@Getter
 public class JdbcTemplateI18nMessageRepositoryImpl implements I18nMessageRepository {
 
-    private static final String TABLE_NAME = "aux_i18n_resource";
+    private static final String TABLE_NAME = I18nKeyConstants.TABLE_I18N_RESOURCE;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -23,7 +26,4 @@ public class JdbcTemplateI18nMessageRepositoryImpl implements I18nMessageReposit
         return null;
     }
 
-    public JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
-    }
 }

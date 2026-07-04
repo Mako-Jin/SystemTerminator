@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.i18n;
 
+import com.yaocode.sts.common.basic.constants.FileConstants;
+import com.yaocode.sts.common.i18n.constants.I18nKeyConstants;
 import com.yaocode.sts.common.i18n.properties.I18nMessageProperties;
 import com.yaocode.sts.common.i18n.repository.I18nMessageRepository;
 import jakarta.annotation.Nullable;
@@ -85,12 +87,12 @@ public class DatabaseMessageSource extends AbstractMessageSource {
 
         try {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources("classpath*:i18n/*/messages.properties");
+            Resource[] resources = resolver.getResources(I18nKeyConstants.I18N_MODULE_SCAN_PATTERN);
 
             for (Resource resource : resources) {
                 String path = resource.getURL().toString();
                 // 提取路径：i18n/common/messages.properties -> i18n/common/messages
-                String basename = path.substring(path.indexOf("i18n"), path.lastIndexOf(".properties"));
+                String basename = path.substring(path.indexOf(I18nKeyConstants.I18N_DIR_PREFIX), path.lastIndexOf(FileConstants.SUFFIX_PROPERTIES));
                 baseNames.add(basename);
             }
         } catch (IOException e) {

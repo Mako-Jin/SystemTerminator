@@ -1,5 +1,8 @@
 package com.yaocode.sts.common.i18n.properties;
 
+import com.yaocode.sts.common.i18n.constants.I18nKeyConstants;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -9,8 +12,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author: Jin-LiangBo
  * @date: 2026年04月08日 11:14
  */
-@ConfigurationProperties(prefix = "yaocode.messages.i18n")
-@ConditionalOnProperty(name = "yaocode.messages.i18n.enabled", havingValue = "true")
+@Setter
+@Getter
+@ConfigurationProperties(prefix = I18nKeyConstants.CONFIG_PREFIX)
+@ConditionalOnProperty(name = I18nKeyConstants.CONFIG_ENABLED, havingValue = "true")
 public class I18nMessageProperties {
 
     /**
@@ -18,31 +23,17 @@ public class I18nMessageProperties {
      */
     private boolean enabled = false;
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     /**
      * 降级配置
      */
     @NestedConfigurationProperty
     private Fallback fallback = new Fallback();
 
-    public Fallback getFallback() {
-        return fallback;
-    }
-
-    public void setFallback(Fallback fallback) {
-        this.fallback = fallback;
-    }
-
     /**
      * 降级配置
      */
+    @Setter
+    @Getter
     public static class Fallback {
         /**
          * 是否启用降级（数据库失败时降级到properties文件）
@@ -59,44 +50,13 @@ public class I18nMessageProperties {
         /**
          * 全局降级消息文件基础名称（classpath根目录）
          */
-        private String basename = "messages";
+        private String basename = I18nKeyConstants.DEFAULT_BASENAME;
 
         /**
          * 降级文件的编码
          */
-        private String encoding = "UTF-8";
+        private String encoding = I18nKeyConstants.DEFAULT_ENCODING;
 
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public boolean isUseCodeAsDefaultMessage() {
-            return useCodeAsDefaultMessage;
-        }
-
-        public void setUseCodeAsDefaultMessage(boolean useCodeAsDefaultMessage) {
-            this.useCodeAsDefaultMessage = useCodeAsDefaultMessage;
-        }
-
-        public String getBasename() {
-            return basename;
-        }
-
-        public void setBasename(String basename) {
-            this.basename = basename;
-        }
-
-        public String getEncoding() {
-            return encoding;
-        }
-
-        public void setEncoding(String encoding) {
-            this.encoding = encoding;
-        }
     }
 
 }
