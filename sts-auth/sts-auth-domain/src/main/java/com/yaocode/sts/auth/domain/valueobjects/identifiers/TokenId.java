@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.identifiers;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ public class TokenId extends Identifier<String> {
 
     public static TokenId of(String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException("auth.identifier.value.null");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.IDENTIFIER_VALUE_CANNOT_BE_NULL);
         }
         return new TokenId(value);
     }

@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.auth.domain.enums.GenderEnums;
 import com.yaocode.sts.auth.domain.enums.MaritalStatusEnums;
 import com.yaocode.sts.auth.domain.enums.ThemeEnums;
@@ -33,8 +35,8 @@ public class UserProfileEntity {
         this.gender = GenderEnums.UNKNOWN;
         this.maritalStatus = MaritalStatusEnums.UNKNOWN;
         this.theme = ThemeEnums.LIGHT;
-        this.locale = "zh-CN";
-        this.timeZone = "Asia/Shanghai";
+        this.locale = CommonConstants.DEFAULT_LOCALE;
+        this.timeZone = CommonConstants.DEFAULT_TIME_ZONE;
     }
 
     // ========== 工厂方法 ==========
@@ -63,8 +65,8 @@ public class UserProfileEntity {
         entity.birthDate = birthDate;
         entity.maritalStatus = maritalStatus != null ? maritalStatus : MaritalStatusEnums.UNKNOWN;
         entity.avatar = avatar;
-        entity.locale = locale != null ? locale : "zh-CN";
-        entity.timeZone = timeZone != null ? timeZone : "Asia/Shanghai";
+        entity.locale = locale != null ? locale : CommonConstants.DEFAULT_LOCALE;
+        entity.timeZone = timeZone != null ? timeZone : CommonConstants.DEFAULT_TIME_ZONE;
         entity.theme = theme != null ? theme : ThemeEnums.LIGHT;
         entity.extraAttributes = extraAttributes;
         return entity;
@@ -74,7 +76,7 @@ public class UserProfileEntity {
 
     public void updateDisplayName(String displayName) {
         if (displayName == null || displayName.trim().isEmpty()) {
-            throw new IllegalArgumentException("显示名称不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.DISPLAY_NAME_CANNOT_BE_BLANK);
         }
         this.displayName = displayName.trim();
     }
@@ -89,7 +91,7 @@ public class UserProfileEntity {
 
     public void updateBirthDate(LocalDate birthDate) {
         if (birthDate != null && birthDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("出生日期不能晚于当前日期");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.BIRTH_DATE_CANNOT_BE_LATER_THAN_NOW);
         }
         this.birthDate = birthDate;
     }
@@ -107,11 +109,11 @@ public class UserProfileEntity {
     }
 
     public void updateLocale(String locale) {
-        this.locale = locale != null ? locale : "zh-CN";
+        this.locale = locale != null ? locale : CommonConstants.DEFAULT_LOCALE;
     }
 
     public void updateTimeZone(String timeZone) {
-        this.timeZone = timeZone != null ? timeZone : "Asia/Shanghai";
+        this.timeZone = timeZone != null ? timeZone : CommonConstants.DEFAULT_TIME_ZONE;
     }
 
     public void updateExtraAttributes(String extraAttributes) {

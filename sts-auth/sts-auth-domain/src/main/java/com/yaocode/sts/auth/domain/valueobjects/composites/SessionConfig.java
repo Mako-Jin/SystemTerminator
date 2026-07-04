@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import lombok.Value;
 
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class SessionConfig {
         private int rememberMeMaxDays = 7;
 
         public Builder sessionTimeoutSeconds(int seconds) {
-            if (seconds < 60) throw new IllegalArgumentException("会话超时时间至少为60秒");
+            if (seconds < 60) throw new IllegalArgumentException(AuthI18nKeyConstants.SESSION_TIMEOUT_MINIMUM_60_SECONDS);
             this.sessionTimeoutSeconds = seconds;
             return this;
         }
@@ -45,7 +46,7 @@ public class SessionConfig {
         }
 
         public Builder rememberMeMaxDays(int days) {
-            if (days < 1) throw new IllegalArgumentException("记住我最大天数至少为1天");
+            if (days < 1) throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_MAX_DAYS_MINIMUM_ONE);
             this.rememberMeMaxDays = days;
             return this;
         }

@@ -14,11 +14,14 @@ import com.yaocode.sts.auth.domain.valueobjects.composites.SecurityStatus;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.common.tools.StringUtils;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -73,8 +76,8 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
                 ? attempt.getFailedAttempts() : 0;
         int remaining = maxAttempts - failedCount;
 
-        // 4. 检查是否需要验证码（失败次数 >= 3）
-        boolean captchaRequired = failedCount >= 3;
+        // 4. 检查是否需要验证码（失败次数 >= 阈值）
+        boolean captchaRequired = failedCount >= CommonConstants.CAPTCHA_THRESHOLD;
 
         // 5. 检查设备是否可信
         boolean trustedDevice = false;
@@ -90,7 +93,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         if (blackWhiteResult.isBlocked()) {
             return SecurityStatus.builder()
                     .locked(true)
-                    .lockReason("黑名单拦截: " + blackWhiteResult.getReason())
+                    .lockReason(AuthI18nKeyConstants.BLACKLIST_BLOCKED + SymbolConstants.DOUBLE_COLON + blackWhiteResult.getReason())
                     .remainingAttempts(0)
                     .captchaRequired(true)
                     .trustedDevice(trustedDevice)
@@ -187,7 +190,10 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
                 if (Objects.equals(rule.getAction(), AllowDenyEnums.DENY)) {
                     // DENY
                     return BlackWhiteCheckResult.blocked(
-                            "规则匹配: " + rule.getListType() + "=" + rule.getListValue());
+                            AuthI18nKeyConstants.RULE_MATCHED
+                                    + SymbolConstants.DOUBLE_COLON + rule.getListType()
+                                    + SymbolConstants.EQUAL_SIGN + rule.getListValue()
+                    );
                 } else if (Objects.equals(rule.getAction(), AllowDenyEnums.ALLOW)) {
                     // ALLOW
                     return BlackWhiteCheckResult.allowed();
@@ -249,8 +255,8 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
             return true;
         }
         // CIDR匹配（简化版）
-        if (pattern.contains("/")) {
-            String[] parts = pattern.split("/");
+        if (pattern.contains(SymbolConstants.FORWARD_SLASH)) {
+            String[] parts = pattern.split(SymbolConstants.FORWARD_SLASH);
             if (parts.length == 2) {
                 String subnet = parts[0];
                 int prefixLen = Integer.parseInt(parts[1]);
@@ -280,7 +286,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         if (config.isPresent() && config.get().getMaxLoginAttempts() != null) {
             return config.get().getMaxLoginAttempts();
         }
-        return 5; // 默认5次
+        return CommonConstants.DEFAULT_MAX_LOGIN_ATTEMPTS; // 默认5次
     }
 
     // ==================== 内部类 ====================

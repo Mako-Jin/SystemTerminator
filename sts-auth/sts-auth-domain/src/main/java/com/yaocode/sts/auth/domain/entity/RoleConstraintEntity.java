@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.ConstraintTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ConstraintId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
@@ -46,7 +47,7 @@ public class RoleConstraintEntity {
             Set<RoleId> roleIds
     ) {
         if (roleIds == null || roleIds.size() < 2) {
-            throw new IllegalArgumentException("互斥约束至少需要2个角色");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.MUTEX_CONSTRAINT_REQUIRES_AT_LEAST_TWO_ROLES);
         }
         RoleConstraintEntity entity = new RoleConstraintEntity(ConstraintId.nextId(), tenantId);
         entity.constraintName = constraintName;
@@ -67,10 +68,10 @@ public class RoleConstraintEntity {
             Integer maxAssign
     ) {
         if (roleIds == null || roleIds.isEmpty()) {
-            throw new IllegalArgumentException("基数约束至少需要1个角色");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.CARDINALITY_CONSTRAINT_REQUIRES_AT_LEAST_ONE_ROLE);
         }
         if (maxAssign == null || maxAssign < 1) {
-            throw new IllegalArgumentException("最大分配数至少为1");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.MAX_ASSIGNMENT_COUNT_AT_LEAST_ONE);
         }
         RoleConstraintEntity entity = new RoleConstraintEntity(ConstraintId.nextId(), tenantId);
         entity.constraintName = constraintName;
@@ -105,17 +106,17 @@ public class RoleConstraintEntity {
 
     public void addRole(RoleId roleId) {
         if (roleIds.contains(roleId)) {
-            throw new IllegalArgumentException("角色已存在约束中");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.ROLE_ALREADY_IN_CONSTRAINT);
         }
         roleIds.add(roleId);
     }
 
     public void removeRole(RoleId roleId) {
         if (constraintType == ConstraintTypeEnums.MUTEX && roleIds.size() <= 2) {
-            throw new IllegalArgumentException("互斥约束至少需要2个角色，无法移除");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.MUTEX_CONSTRAINT_CANNOT_REMOVE_INSUFFICIENT_ROLES);
         }
         if (constraintType == ConstraintTypeEnums.CARDINALITY && roleIds.size() <= 1) {
-            throw new IllegalArgumentException("基数约束至少需要1个角色，无法移除");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.CARDINALITY_CONSTRAINT_CANNOT_REMOVE_INSUFFICIENT_ROLES);
         }
         roleIds.remove(roleId);
     }

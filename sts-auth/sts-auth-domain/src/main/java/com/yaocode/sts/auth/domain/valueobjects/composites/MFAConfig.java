@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.MFATypeEnums;
 import lombok.Value;
 
@@ -17,7 +18,7 @@ public class MFAConfig {
 
     private MFAConfig(boolean required, Set<MFATypeEnums> supportedTypes) {
         if (required && (supportedTypes == null || supportedTypes.isEmpty())) {
-            throw new IllegalArgumentException("启用MFA时必须指定至少一种MFA类型");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.MFA_ENABLED_MUST_SPECIFY_TYPE);
         }
         this.required = required;
         this.supportedTypes = supportedTypes;

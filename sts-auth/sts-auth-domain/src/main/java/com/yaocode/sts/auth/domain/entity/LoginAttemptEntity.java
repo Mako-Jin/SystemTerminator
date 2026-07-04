@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.LoginAttemptId;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
@@ -77,7 +79,7 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
 
         // 检查是否需要锁定
         if (this.failedAttempts >= maxAllowedFailures) {
-            this.lock("密码错误次数超过限制");
+            this.lock(AuthI18nKeyConstants.PASSWORD_ERROR_EXCEEDED_LIMIT);
         }
     }
 
@@ -170,7 +172,7 @@ public class LoginAttemptEntity extends AbstractAggregate<LoginAttemptId> {
      * @return 锁定分钟数
      */
     public long calculateLockDuration() {
-        if ("FIXED".equalsIgnoreCase(this.lockStrategy)) {
+        if (CommonConstants.LOCK_STRATEGY_FIXED.equalsIgnoreCase(this.lockStrategy)) {
             // 固定时长策略
             return Math.min(BASE_LOCK_MINUTES * 6, MAX_LOCK_MINUTES);
         }

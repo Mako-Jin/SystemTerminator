@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.enums.BlackWhiteListTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.BlackWhiteListId;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
@@ -60,7 +61,12 @@ public class BlackWhiteListEntity extends AbstractAggregate<BlackWhiteListId> {
 
     public boolean matches(String value) {
         if (listValue == null) return false;
-        return listValue.equals(value) || value.matches(listValue.replace("*", ".*"));
+        return listValue.equals(value) || value.matches(
+                listValue.replace(
+                        SymbolConstants.SYMBOL_ASTERISK,
+                        SymbolConstants.DOT + SymbolConstants.SYMBOL_ASTERISK
+                )
+        );
     }
 
     public void enable() { this.enabled = EnableEnums.ENABLED; }

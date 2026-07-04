@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -16,9 +19,9 @@ public class Username extends Identifier<String> {
     /**
      * TODO 这些应该改到租户配置里面去
      */
-    private static final int USERNAME_MIN_LENGTH = 3;
-    private static final int USERNAME_MAX_LENGTH = 30;
-    private static final String USERNAME_REGEX = "^[a-zA-Z0-9_]+$";
+    private static final int USERNAME_MIN_LENGTH = CommonConstants.USERNAME_MIN_LENGTH;
+    private static final int USERNAME_MAX_LENGTH = CommonConstants.USERNAME_MAX_LENGTH;
+    private static final String USERNAME_REGEX = RegexConstants.USERNAME_PATTERN;
 
     private Username(String value) {
         super(value);
@@ -26,13 +29,13 @@ public class Username extends Identifier<String> {
 
     public static Username of(String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("用户名不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.USERNAME_CANNOT_BE_BLANK);
         }
         if (value.length() < USERNAME_MIN_LENGTH || value.length() > USERNAME_MAX_LENGTH) {
-            throw new IllegalArgumentException("auth.username.rule.check.error");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.USERNAME_RULE_CHECK_ERROR);
         }
         if (!value.matches(USERNAME_REGEX)) {
-            throw new IllegalArgumentException("auth.username.rule.check.error");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.USERNAME_RULE_CHECK_ERROR);
         }
         return new Username(value);
     }

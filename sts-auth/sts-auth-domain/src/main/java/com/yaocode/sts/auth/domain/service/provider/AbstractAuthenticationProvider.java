@@ -7,10 +7,12 @@ import com.yaocode.sts.auth.domain.port.JwtTokenConfigPort;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
 import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.service.JwtTokenService;
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.composites.AuthenticationToken;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TokenId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.IpAddress;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
@@ -61,7 +63,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
         // 2. 执行具体认证逻辑
         Optional<UserInfoEntity> userInfoEntityOptional = doAuthenticate(credential);
         if (userInfoEntityOptional.isEmpty()) {
-            throw new IllegalStateException("认证失败：用户不存在");
+            throw new IllegalStateException(AuthI18nKeyConstants.AUTHENTICATION_FAILED_USER_NOT_FOUND);
         }
         // 3. 后置验证
         postAuthenticateValidate(userInfoEntityOptional.get());
@@ -80,7 +82,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      */
     protected void preAuthenticateCheck(T credential) {
         if (Objects.isNull(credential)) {
-            throw new IllegalArgumentException("认证令牌不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.AUTH_CREDENTIAL_CANNOT_BE_BLANK);
         }
     }
 
@@ -94,7 +96,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      */
     protected void postAuthenticateValidate(UserInfoEntity userInfoEntity) {
         if (Objects.isNull(userInfoEntity)) {
-            throw new IllegalStateException("认证失败：用户不存在");
+            throw new IllegalStateException(AuthI18nKeyConstants.AUTHENTICATION_FAILED_USER_NOT_FOUND);
         }
         validateUserStatus(userInfoEntity);
     }
@@ -104,7 +106,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      */
     protected void validateUserStatus(UserInfoEntity userInfoEntity) {
         if (Objects.equals(userInfoEntity.getEnabled(), EnableEnums.DISABLED)) {
-            throw new IllegalStateException("用户已被禁用");
+            throw new IllegalStateException(AuthI18nKeyConstants.USER_ALREADY_DISABLED);
         }
 //        if (userInfoEntity.get()) {
 //            throw new IllegalStateException("用户已被锁定");
@@ -139,7 +141,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      */
     protected String generateAndSaveRememberMeToken(UserInfoEntity userInfoEntity, T credential, Instant expiresAt) {
         if (!credential.isRememberMe()) {
-            return "";
+            return SymbolConstants.EMPTY_STR;
         }
 
         String series = IdFactory.generate(IdGeneratorType.UUID);
@@ -169,7 +171,7 @@ public abstract class AbstractAuthenticationProvider<T extends AbstractAuthCrede
      */
     protected String generateAndSaveRefreshToken(UserInfoEntity userInfoEntity, T credential, Instant expiresAt) {
         if (!credential.needRefreshToken()) {
-            return "";
+            return SymbolConstants.EMPTY_STR;
         }
 
         TokenId tokenId = TokenId.nextId();

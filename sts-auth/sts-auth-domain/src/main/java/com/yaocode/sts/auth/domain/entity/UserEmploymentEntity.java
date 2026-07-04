@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.EmploymentStatusEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.EmploymentId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
@@ -65,7 +66,7 @@ public class UserEmploymentEntity {
             LocalDate regularizationDate
     ) {
         if (entryDate == null) {
-            throw new IllegalArgumentException("入职日期不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.EMPLOYMENT_DATE_CANNOT_BE_BLANK);
         }
         UserEmploymentEntity entity = new UserEmploymentEntity(EmploymentId.nextId(), userId);
         entity.tenantId = tenantId;
@@ -136,7 +137,7 @@ public class UserEmploymentEntity {
 
     public void regularize() {
         if (employmentStatus != EmploymentStatusEnums.PROBATION) {
-            throw new IllegalStateException("只有试用期员工才能转正");
+            throw new IllegalStateException(AuthI18nKeyConstants.ONLY_PROBATION_EMPLOYEE_CAN_BE_REGULAR);
         }
         this.employmentStatus = EmploymentStatusEnums.ACTIVE;
         this.regularizationDate = LocalDate.now();
@@ -144,10 +145,10 @@ public class UserEmploymentEntity {
 
     public void resign(LocalDate quitDate) {
         if (quitDate == null) {
-            throw new IllegalArgumentException("离职日期不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.RESIGN_DATE_CANNOT_BE_BLANK);
         }
         if (quitDate.isBefore(entryDate)) {
-            throw new IllegalArgumentException("离职日期不能早于入职日期");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.RESIGN_DATE_CANNOT_BE_EARLIER_THAN_EMPLOYMENT_DATE);
         }
         this.quitDate = quitDate;
         this.employmentStatus = EmploymentStatusEnums.RESIGNED;

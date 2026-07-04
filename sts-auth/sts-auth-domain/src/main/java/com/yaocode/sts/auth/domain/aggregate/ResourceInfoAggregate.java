@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.entity.ResourceContactEntity;
 import com.yaocode.sts.auth.domain.events.resource.ResourceAddedToWhiteListEvent;
 import com.yaocode.sts.auth.domain.events.resource.ResourceCreatedEvent;
@@ -13,6 +14,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Version;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
@@ -192,7 +194,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void updateName(String resourceName) {
         if (resourceName == null || resourceName.trim().isEmpty()) {
-            throw new DomainException("资源名称不能为空");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_NAME_CANNOT_BE_BLANK);
         }
         this.resourceName = resourceName.trim();
         this.version = version.bumpPatch();
@@ -221,7 +223,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void enable() {
         if (this.enabled == EnableEnums.ENABLED) {
-            throw new DomainException("资源已启用");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_ALREADY_ENABLED);
         }
         this.enabled = EnableEnums.ENABLED;
         this.version = version.bumpBuild();
@@ -233,7 +235,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void disable() {
         if (this.enabled == EnableEnums.DISABLED) {
-            throw new DomainException("资源已停用");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_ALREADY_DISABLED);
         }
         this.enabled = EnableEnums.DISABLED;
         this.version = version.bumpBuild();
@@ -245,7 +247,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void markDeprecated() {
         if (this.isDeprecated == YesNoEnums.YES) {
-            throw new DomainException("资源已标记为废弃");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_ALREADY_DEPRECATED);
         }
         this.isDeprecated = YesNoEnums.YES;
         this.version = version.bumpMajor();
@@ -257,7 +259,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void unmarkDeprecated() {
         if (this.isDeprecated == YesNoEnums.NO) {
-            throw new DomainException("资源未标记为废弃");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_NOT_DEPRECATED);
         }
         this.isDeprecated = YesNoEnums.NO;
         this.version = version.bumpPatch();
@@ -268,7 +270,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void addToWhiteList() {
         if (this.isWhiteList == YesNoEnums.YES) {
-            throw new DomainException("资源已在白名单中");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_ALREADY_IN_WHITE_LIST);
         }
         this.isWhiteList = YesNoEnums.YES;
         this.version = version.bumpPatch();
@@ -280,7 +282,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void removeFromWhiteList() {
         if (this.isWhiteList == YesNoEnums.NO) {
-            throw new DomainException("资源不在白名单中");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_NOT_IN_WHITE_LIST);
         }
         this.isWhiteList = YesNoEnums.NO;
         this.version = version.bumpPatch();
@@ -294,7 +296,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
      */
     public void addContact(ResourceContactEntity contact) {
         if (!contact.getResourceId().equals(this.getId())) {
-            throw new DomainException("联系人不属于当前资源");
+            throw new DomainException(AuthI18nKeyConstants.CONTACT_NOT_BELONG_TO_RESOURCE);
         }
         // 如果是主要联系人，降级其他
         if (contact.isPrimaryContact()) {
@@ -318,7 +320,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
         ResourceContactEntity contact = contacts.stream()
                 .filter(c -> c.getContactId().equals(contactId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("联系人不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.CONTACT_NOT_EXIST));
         contact.markPrimary();
     }
 
@@ -392,7 +394,7 @@ public class ResourceInfoAggregate extends AbstractAggregate<ResourceId> {
         if (parentCode == null || parentCode.isEmpty()) {
             return identity.getResourceValue().getValue();
         }
-        return String.join("/", parentCode) + "/" + identity.getResourceValue().getValue();
+        return String.join(SymbolConstants.FORWARD_SLASH, parentCode) + SymbolConstants.FORWARD_SLASH + identity.getResourceValue().getValue();
     }
 
     /**

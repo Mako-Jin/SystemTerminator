@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.entity.RoleConstraintEntity;
 import com.yaocode.sts.auth.domain.entity.RoleResourceEntity;
 import com.yaocode.sts.auth.domain.enums.InheritStrategyEnums;
@@ -19,6 +20,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
@@ -92,7 +94,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
         role.tenantId = tenantId;
         role.roleCode = roleCode;
         role.roleName = roleName;
-        role.roleDesc = roleDesc != null ? roleDesc.trim() : "";
+        role.roleDesc = roleDesc != null ? roleDesc.trim() : SymbolConstants.EMPTY_STR;
         role.category = category != null ? category : RoleCategoryEnums.STATIC;
         role.inheritStrategy = inheritStrategy != null ? inheritStrategy : InheritStrategyEnums.NONE;
         role.parentId = parentId;
@@ -179,7 +181,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      */
     public void updateName(String roleName) {
         if (roleName == null || roleName.trim().isEmpty()) {
-            throw new DomainException("角色名称不能为空");
+            throw new DomainException(AuthI18nKeyConstants.ROLE_NAME_CANNOT_BE_BLANK);
         }
         this.roleName = roleName.trim();
     }
@@ -204,7 +206,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     public void updateParent(RoleId parentId) {
         // 校验不能形成循环继承
         if (parentId != null && parentId.equals(this.getId())) {
-            throw new DomainException("角色不能继承自己");
+            throw new DomainException(AuthI18nKeyConstants.ROLE_CANNOT_INHERIT_SELF);
         }
         this.parentId = parentId;
     }
@@ -250,7 +252,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
         boolean exists = resources.stream()
                 .anyMatch(r -> r.getResourceId().equals(resourceId));
         if (exists) {
-            throw new DomainException("资源已分配给该角色");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_ALREADY_ASSIGNED_TO_ROLE);
         }
 
         resources.add(RoleResourceEntity.create(
@@ -268,7 +270,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
     public void removeResource(ResourceId resourceId) {
         boolean removed = resources.removeIf(r -> r.getResourceId().equals(resourceId));
         if (!removed) {
-            throw new DomainException("资源未分配给该角色");
+            throw new DomainException(AuthI18nKeyConstants.RESOURCE_NOT_ASSIGNED_TO_ROLE);
         }
         registerEvent(new ResourceRemovedFromRoleEvent(this.getId(), resourceId));
     }
@@ -330,7 +332,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      */
     public void addMember(UserId userId) {
         if (memberIds.contains(userId)) {
-            throw new DomainException("用户已在该角色中");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_IN_ROLE);
         }
         memberIds.add(userId);
         registerEvent(new UserAssignedToRoleEvent(this.getId(), userId));
@@ -341,7 +343,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      */
     public void removeMember(UserId userId) {
         if (!memberIds.contains(userId)) {
-            throw new DomainException("用户不在该角色中");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_IN_ROLE);
         }
         memberIds.remove(userId);
         registerEvent(new UserRemovedFromRoleEvent(this.getId(), userId));
@@ -360,7 +362,7 @@ public class RoleInfoAggregate extends AbstractAggregate<RoleId> {
      */
     public void addMemberGroup(UserGroupId userGroupId) {
         if (memberGroupIds.contains(userGroupId)) {
-            throw new DomainException("用户组已在该角色中");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_IN_ROLE);
         }
         memberGroupIds.add(userGroupId);
         registerEvent(new UserGroupAssignedToRoleEvent(this.getId(), userGroupId));

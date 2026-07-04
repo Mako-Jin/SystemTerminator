@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
@@ -49,17 +50,17 @@ public class OrganizationDomainServiceImpl implements OrganizationDomainService 
         // 验证当前租户存在不存在
         Optional<TenantInfoEntity> tenantInfoEntity = tenantInfoRepository.findById(tenantId);
         if (tenantInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         // 检查组织id存在不存在
         Optional<OrganizationInfoEntity> organizationInfoEntity = organizationRepository.findById(organizationId);
         if (organizationInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         // 检查用户存在不存在
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findById(userId);
         if (userInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         organizationRepository.saveRelOrganizationUser(tenantId, organizationId, userId);
     }

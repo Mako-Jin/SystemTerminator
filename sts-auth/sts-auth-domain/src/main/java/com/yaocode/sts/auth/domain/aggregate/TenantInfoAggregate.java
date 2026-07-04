@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.entity.BrandConfigEntity;
 import com.yaocode.sts.auth.domain.entity.CompanyInfoEntity;
 import com.yaocode.sts.auth.domain.entity.InstanceInfoEntity;
@@ -178,7 +179,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void updateName(String tenantName) {
         if (tenantName == null || tenantName.trim().isEmpty()) {
-            throw new IllegalArgumentException("租户名称不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.TENANT_NAME_CANNOT_BE_BLANK);
         }
         this.tenantName = tenantName.trim();
     }
@@ -267,7 +268,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         BrandConfigEntity brandConfig = brandConfigs.stream()
                 .filter(b -> b.getId().equals(brandConfigId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("品牌配置不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.BRAND_CONFIG_NOT_EXIST));
         brandConfig.enable();
     }
 
@@ -278,7 +279,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         BrandConfigEntity brandConfig = brandConfigs.stream()
                 .filter(b -> b.getId().equals(brandConfigId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("品牌配置不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.BRAND_CONFIG_NOT_EXIST));
         brandConfig.disable();
     }
 
@@ -289,7 +290,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void addCompany(CompanyInfoEntity company) {
         if (!company.getTenantId().equals(this.getId())) {
-            throw new DomainException("公司不属于当前租户");
+            throw new DomainException(AuthI18nKeyConstants.COMPANY_NOT_BELONG_TO_TENANT);
         }
         companies.add(company);
         registerEvent(new CompanyAddedToTenantEvent(this, company.getCompanyId(), company.getCompanyName()));
@@ -310,7 +311,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         CompanyInfoEntity existing = companies.stream()
                 .filter(c -> c.getCompanyId().equals(companyId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("公司不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.COMPANY_NOT_EXIST));
         // 更新逻辑
         companies.remove(existing);
         companies.add(updatedCompany);
@@ -323,7 +324,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void addInstance(InstanceInfoEntity instance) {
         if (!instance.getTenantId().equals(this.getId())) {
-            throw new DomainException("实例不属于当前租户");
+            throw new DomainException(AuthI18nKeyConstants.INSTANCE_NOT_BELONG_TO_TENANT);
         }
         instances.add(instance);
         registerEvent(new InstanceAddedToTenantEvent(this.getId(), instance.getInstanceId()));
@@ -335,7 +336,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
     public void removeInstance(InstanceId instanceId) {
         boolean removed = instances.removeIf(i -> i.getInstanceId().equals(instanceId));
         if (!removed) {
-            throw new DomainException("实例不存在");
+            throw new DomainException(AuthI18nKeyConstants.INSTANCE_NOT_EXIST);
         }
         registerEvent(new InstanceRemovedFromTenantEvent(this.getId(), instanceId));
     }
@@ -347,7 +348,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         InstanceInfoEntity instance = instances.stream()
                 .filter(i -> i.getInstanceId().equals(instanceId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("实例不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.INSTANCE_NOT_EXIST));
         instance.start();
     }
 
@@ -358,7 +359,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
         InstanceInfoEntity instance = instances.stream()
                 .filter(i -> i.getInstanceId().equals(instanceId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("实例不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.INSTANCE_NOT_EXIST));
         instance.stop();
     }
 
@@ -369,7 +370,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void addUser(UserId userId) {
         if (userIds.contains(userId)) {
-            throw new DomainException("用户已在该租户中");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_IN_TENANT);
         }
         userIds.add(userId);
         registerEvent(new UserAddedToTenantEvent(this.getId(), userId));
@@ -380,7 +381,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void removeUser(UserId userId) {
         if (!userIds.contains(userId)) {
-            throw new DomainException("用户不在该租户中");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_IN_TENANT);
         }
         userIds.remove(userId);
         registerEvent(new TenantRemoveUserEvent(this.getId(), userId));
@@ -391,7 +392,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void addOrganization(OrganizationId organizationId) {
         if (organizationIds.contains(organizationId)) {
-            throw new DomainException("组织已在该租户中");
+            throw new DomainException(AuthI18nKeyConstants.ORGANIZATION_ALREADY_IN_TENANT);
         }
         organizationIds.add(organizationId);
     }
@@ -401,7 +402,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void addRole(RoleId roleId) {
         if (roleIds.contains(roleId)) {
-            throw new DomainException("角色已在该租户中");
+            throw new DomainException(AuthI18nKeyConstants.ROLE_ALREADY_IN_TENANT);
         }
         roleIds.add(roleId);
     }
@@ -411,7 +412,7 @@ public class TenantInfoAggregate extends AbstractAggregate<TenantId> {
      */
     public void addUserGroup(UserGroupId userGroupId) {
         if (userGroupIds.contains(userGroupId)) {
-            throw new DomainException("用户组已在该租户中");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_IN_TENANT);
         }
         userGroupIds.add(userGroupId);
     }

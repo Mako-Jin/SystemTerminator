@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ContactId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
@@ -69,7 +70,7 @@ public class ResourceContactEntity {
 
     public void updateContactName(String contactName) {
         if (contactName == null || contactName.trim().isEmpty()) {
-            throw new IllegalArgumentException("联系人姓名不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.EMERGENCY_CONTACT_NAME_CANNOT_BE_BLANK);
         }
         this.contactName = contactName.trim();
     }

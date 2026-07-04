@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.CompanyId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Address;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Email;
@@ -115,7 +116,7 @@ public class CompanyInfoEntity {
 
     public void updateCompanyName(String companyName) {
         if (companyName == null || companyName.trim().isEmpty()) {
-            throw new IllegalArgumentException("公司名称不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.COMPANY_NAME_CANNOT_BE_BLANK);
         }
         this.companyName = companyName.trim();
     }

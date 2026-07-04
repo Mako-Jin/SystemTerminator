@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.entity.UserGroupEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
@@ -54,17 +55,17 @@ public class UserGroupDomainServiceImpl implements UserGroupDomainService {
         // 验证当前租户存在不存在
         Optional<TenantInfoEntity> tenantInfoEntity = tenantInfoRepository.findById(tenantId);
         if (tenantInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         // 检查用户存在不存在
         Optional<UserGroupEntity> userGroupEntity = userGroupRepository.findById(userGroupId);
         if (userGroupEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         // 检查用户存在不存在
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findById(userId);
         if (userInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         userGroupRepository.saveRelUserGroupUser(tenantId, userGroupId, userId);
     }

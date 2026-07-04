@@ -1,5 +1,9 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import lombok.Value;
 
 import java.util.Objects;
@@ -13,8 +17,7 @@ import java.util.regex.Pattern;
 @Value
 public class Version implements Comparable<Version> {
 
-    private static final Pattern VERSION_PATTERN =
-            Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)$");
+    private static final Pattern VERSION_PATTERN = RegexConstants.VERSION_PATTERN_COMPILED;
 
     /**
      * 主版本 - 资源整体重构
@@ -46,7 +49,7 @@ public class Version implements Comparable<Version> {
 
     private void validateVersionNumbers(int major, int minor, int patch, int build) {
         if (major < 0 || minor < 0 || patch < 0 || build < 0) {
-            throw new IllegalArgumentException("版本号不能为负数");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.VERSION_CANNOT_BE_NEGATIVE);
         }
         // if (major == 0 && minor == 0 && patch == 0 && build == 0) {
         //     throw new IllegalArgumentException("版本号不能全为0");
@@ -64,7 +67,7 @@ public class Version implements Comparable<Version> {
 
         var matcher = VERSION_PATTERN.matcher(versionStr.trim());
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("版本格式不正确，应为: 主.次.修.建 (如: 1.2.3.4)");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.VERSION_FORMAT_INVALID);
         }
 
         return new Version(
@@ -79,7 +82,12 @@ public class Version implements Comparable<Version> {
      * 获取初始版本
      */
     public static Version initial() {
-        return of(0, 0, 0, 1);
+        return of(
+                CommonConstants.INITIAL_MAJOR,
+                CommonConstants.INITIAL_MINOR,
+                CommonConstants.INITIAL_PATCH,
+                CommonConstants.INITIAL_BUILD
+        );
     }
 
     /**
@@ -157,7 +165,7 @@ public class Version implements Comparable<Version> {
     }
 
     public String getStr() {
-        return major + "." + minor + "." + patch + "." + build;
+        return major + SymbolConstants.DOT + minor + SymbolConstants.DOT + patch + SymbolConstants.DOT + build;
     }
 
     @Override

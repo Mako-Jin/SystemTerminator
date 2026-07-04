@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.exception.AuthenticationException;
 import com.yaocode.sts.auth.domain.service.AuthDomainService;
@@ -34,7 +35,7 @@ public class AuthDomainServiceImpl implements AuthDomainService {
         AuthenticationProvider<AbstractAuthCredential> provider = providerManager.getProvider(grantType);
 
         if (provider == null) {
-            throw new AuthenticationException("不支持的认证方式: " + credential.getGrantType());
+            throw new AuthenticationException(AuthI18nKeyConstants.UNSUPPORTED_GRANT_TYPE);
         }
         if (Objects.equals(grantType, GrantTypeEnums.REMEMBER_ME)) {
             return provider.authenticate(credential);

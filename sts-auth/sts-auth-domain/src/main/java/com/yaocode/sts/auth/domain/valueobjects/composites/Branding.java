@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import lombok.Value;
 
 import java.util.Objects;
@@ -39,7 +42,7 @@ public class Branding {
         private String loginTitle;
         private String institution;
         private String copyright;
-        private String primaryColor = "#1890ff";
+        private String primaryColor = CommonConstants.DEFAULT_PRIMARY_COLOR;
         private String loginBackgroundUrl;
         private String welcomeMessage;
         private String subtitle;
@@ -71,8 +74,8 @@ public class Branding {
 
         public Builder primaryColor(String primaryColor) {
             // 简单颜色格式校验（#RRGGBB）
-            if (primaryColor != null && !primaryColor.matches("^#[0-9a-fA-F]{6}$")) {
-                throw new IllegalArgumentException("颜色格式不正确，应为 #RRGGBB");
+            if (primaryColor != null && !primaryColor.matches(RegexConstants.COLOR_HEX_PATTERN)) {
+                throw new IllegalArgumentException(AuthI18nKeyConstants.COLOR_FORMAT_INVALID);
             }
             this.primaryColor = primaryColor;
             return this;

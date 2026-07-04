@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.TokenRevokeReasonEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
@@ -138,7 +139,7 @@ public class RememberMeTokenEntity {
 
     public RememberMeTokenEntity renew(Instant newExpiresAt) {
         if (newExpiresAt.isBefore(Instant.now())) {
-            throw new IllegalArgumentException("新的过期时间不能早于当前时间");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.NEW_EXPIRE_TIME_CANNOT_BE_EARLIER);
         }
         this.expiresAt = newExpiresAt;
         return this;

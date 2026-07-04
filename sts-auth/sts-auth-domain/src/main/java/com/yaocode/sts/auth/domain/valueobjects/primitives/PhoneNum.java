@@ -1,5 +1,9 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -15,7 +19,7 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode(callSuper = true)
 public class PhoneNum extends Identifier<String> {
 
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^1[2-9]\\d{9}$");
+    private static final Pattern PHONE_PATTERN = RegexConstants.PHONE_CHINA_PATTERN_COMPILED;
 
     private PhoneNum(String value) {
         super(value);
@@ -25,26 +29,26 @@ public class PhoneNum extends Identifier<String> {
     public static PhoneNum of(String value) {
 
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("手机号码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PHONE_NUMBER_CANNOT_BE_BLANK);
         }
 
         String normalized = normalizePhoneNumber(value);
 
         if (!PHONE_PATTERN.matcher(normalized).matches()) {
-            throw new IllegalArgumentException("手机号码格式不正确: " + value);
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PHONE_NUMBER_FORMAT_INVALID);
         }
         return new PhoneNum(normalized);
     }
 
     private static String normalizePhoneNumber(String phoneNumber) {
-        String normalized = phoneNumber.trim().replaceAll("\\s+", "");
+        String normalized = phoneNumber.trim().replaceAll(RegexConstants.WHITESPACE_PATTERN, SymbolConstants.EMPTY_STR);
 
         // 移除国际前缀
-        if (normalized.startsWith("+86")) {
+        if (normalized.startsWith(CommonConstants.COUNTRY_CODE_PLUS)) {
             normalized = normalized.substring(3);
-        } else if (normalized.startsWith("0086")) {
+        } else if (normalized.startsWith(CommonConstants.COUNTRY_CODE_DOUBLE_ZERO)) {
             normalized = normalized.substring(4);
-        } else if (normalized.startsWith("86")) {
+        } else if (normalized.startsWith(CommonConstants.COUNTRY_CODE_SIMPLE)) {
             normalized = normalized.substring(2);
         }
 
@@ -52,7 +56,7 @@ public class PhoneNum extends Identifier<String> {
     }
 
     public String getMaskedNumber() {
-        return this.getValue().replaceFirst("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        return this.getValue().replaceFirst(RegexConstants.PHONE_MASK_PATTERN, RegexConstants.PHONE_MASK_REPLACEMENT);
     }
 
 }

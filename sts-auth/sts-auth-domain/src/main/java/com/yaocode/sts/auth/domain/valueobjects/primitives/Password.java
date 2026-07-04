@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.crypto.password.PasswordEncoder;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
@@ -18,9 +21,9 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode(callSuper = true)
 public class Password extends Identifier<String> {
 
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$^+_()%*?&.\\-=]){8,20}$");
+    private static final Pattern PASSWORD_PATTERN = RegexConstants.PASSWORD_PATTERN_COMPILED;
 
-    private static final Pattern CHINESE_PATTERN = Pattern.compile("[\\u4e00-\\u9fa5]");
+    private static final Pattern CHINESE_PATTERN = RegexConstants.CHINESE_PATTERN_COMPILED;
 
     /**
      * 创建时间
@@ -54,7 +57,7 @@ public class Password extends Identifier<String> {
         // 在创建时校验明文密码格式
         validatePlainPassword(plainPassword);
         String encrypted = encoder.encode(plainPassword);
-        return new Password(encrypted, LocalDateTime.now(), null, false, 1);
+        return new Password(encrypted, LocalDateTime.now(), null, false, CommonConstants.DEFAULT_PASSWORD_VERSION);
     }
 
     public static Password reconstruct(String value, LocalDateTime createTime, LocalDateTime expireTime, boolean isTemporary, int version) {
@@ -63,13 +66,13 @@ public class Password extends Identifier<String> {
 
     private static void validatePlainPassword(String plainPassword) {
         if (plainPassword == null || plainPassword.isBlank()) {
-            throw new IllegalArgumentException("密码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_CANNOT_BE_BLANK);
         }
         if (CHINESE_PATTERN.matcher(plainPassword).find()) {
-            throw new IllegalArgumentException("auth.password.rule.check.error");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_RULE_CHECK_ERROR);
         }
         if (!PASSWORD_PATTERN.matcher(plainPassword).matches()) {
-            throw new IllegalArgumentException("auth.password.rule.check.error");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_RULE_CHECK_ERROR);
         }
     }
 
@@ -78,7 +81,7 @@ public class Password extends Identifier<String> {
         super.validate(value);
         // validate() 用于校验存储的密文值非空即可
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("密码值不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_VALUE_CANNOT_BE_BLANK);
         }
     }
 
@@ -114,7 +117,11 @@ public class Password extends Identifier<String> {
             return true;
         }
         // 密码即将过期（如还剩7天）
-        return expireTime != null && LocalDateTime.now().isAfter(expireTime.minusDays(7));
+        return expireTime != null
+                && LocalDateTime.now().isAfter(
+                        expireTime.minusDays(CommonConstants.PASSWORD_EXPIRY_WARNING_DAYS
+                    )
+        );
     }
 
 }

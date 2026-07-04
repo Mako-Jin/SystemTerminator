@@ -48,4 +48,8 @@ public interface SymbolConstants {
      */
     String GREATER_THAN = ">";
 
+    String SYMBOL_HYPHEN = "-";
+
+    String SYMBOL_ASTERISK = "*";
+
 }

@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.auth.domain.entity.LoginAttemptEntity;
 import com.yaocode.sts.auth.domain.entity.PasswordHistoryEntity;
 import com.yaocode.sts.auth.domain.entity.UserContactEntity;
@@ -137,8 +139,8 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
                 null,
                 MaritalStatusEnums.UNKNOWN,
                 null,
-                "zh-CN",
-                "Asia/Shanghai",
+                CommonConstants.DEFAULT_LOCALE,
+                CommonConstants.DEFAULT_TIME_ZONE,
                 ThemeEnums.LIGHT,
                 null
         );
@@ -220,7 +222,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void activate() {
         if (this.status == UserStatusEnums.ACTIVE) {
-            throw new DomainException("用户已激活");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_ACTIVATED);
         }
         this.status = UserStatusEnums.ACTIVE;
         registerEvent(new UserActivatedEvent(this.getId()));
@@ -231,7 +233,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void deactivate() {
         if (this.status == UserStatusEnums.INACTIVE) {
-            throw new DomainException("用户已停用");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_DEACTIVATED);
         }
         this.status = UserStatusEnums.INACTIVE;
         registerEvent(new UserDeactivatedEvent(this.getId()));
@@ -242,7 +244,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void lock(String reason) {
         if (this.status == UserStatusEnums.LOCKED) {
-            throw new DomainException("用户已锁定");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_LOCKED);
         }
         this.status = UserStatusEnums.LOCKED;
         this.lockTime = LocalDateTime.now();
@@ -254,7 +256,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void unlock() {
         if (this.status != UserStatusEnums.LOCKED) {
-            throw new DomainException("用户未锁定");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_LOCKED);
         }
         this.status = UserStatusEnums.ACTIVE;
         this.unlockTime = LocalDateTime.now();
@@ -317,7 +319,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void addContact(UserContactEntity contact) {
         if (!contact.getUserId().equals(this.getId())) {
-            throw new DomainException("联系方式不属于当前用户");
+            throw new DomainException(AuthI18nKeyConstants.CONTACT_NOT_BELONG_TO_USER);
         }
         // 如果是主联系方式，将其他主联系方式降级
         if (contact.isPrimaryContact()) {
@@ -338,7 +340,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         UserContactEntity contact = contacts.stream()
                 .filter(c -> c.getContactId().equals(contactId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("联系方式不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.CONTACT_NOT_EXIST));
         contacts.remove(contact);
         registerEvent(new UserContactRemovedEvent(this.getId(), contactId));
     }
@@ -350,7 +352,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         UserContactEntity contact = contacts.stream()
                 .filter(c -> c.getContactId().equals(contactId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("联系方式不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.CONTACT_NOT_EXIST));
         contact.verify();
     }
 
@@ -362,7 +364,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         UserContactEntity contact = contacts.stream()
                 .filter(c -> c.getContactId().equals(contactId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("联系方式不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.CONTACT_NOT_EXIST));
         contact.markPrimary();
     }
 
@@ -373,7 +375,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void addCredential(UserCredentialEntity credential) {
         if (!credential.getUserId().equals(this.getId())) {
-            throw new DomainException("证件不属于当前用户");
+            throw new DomainException(AuthI18nKeyConstants.CREDENTIAL_NOT_BELONG_TO_USER);
         }
         if (credential.isPrimaryCredential()) {
             credentials.forEach(UserCredentialEntity::unmarkPrimary);
@@ -395,7 +397,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void addEmployment(UserEmploymentEntity employment) {
         if (!employment.getUserId().equals(this.getId())) {
-            throw new DomainException("工作经历不属于当前用户");
+            throw new DomainException(AuthI18nKeyConstants.EMPLOYMENT_NOT_BELONG_TO_USER);
         }
         employments.add(employment);
     }
@@ -407,7 +409,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         UserEmploymentEntity employment = employments.stream()
                 .filter(e -> e.getEmploymentId().equals(employmentId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("工作经历不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.EMPLOYMENT_NOT_BELONG_TO_USER));
         employment.updatePosition(jobTitle, jobLevel);
     }
 
@@ -418,7 +420,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
         UserEmploymentEntity employment = employments.stream()
                 .filter(e -> e.getEmploymentId().equals(employmentId))
                 .findFirst()
-                .orElseThrow(() -> new DomainException("工作经历不存在"));
+                .orElseThrow(() -> new DomainException(AuthI18nKeyConstants.EMPLOYMENT_NOT_BELONG_TO_USER));
         employment.resign(quitDate);
     }
 
@@ -429,7 +431,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void addEducation(UserEducationEntity education) {
         if (!education.getUserId().equals(this.getId())) {
-            throw new DomainException("教育经历不属于当前用户");
+            throw new DomainException(AuthI18nKeyConstants.EDUCATION_NOT_BELONG_TO_USER);
         }
         educations.add(education);
     }
@@ -448,7 +450,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void addEmergencyContact(UserEmergencyContactEntity emergencyContact) {
         if (!emergencyContact.getUserId().equals(this.getId())) {
-            throw new DomainException("紧急联系人不属于当前用户");
+            throw new DomainException(AuthI18nKeyConstants.EMERGENCY_CONTACT_NOT_BELONG_TO_USER);
         }
         emergencyContacts.add(emergencyContact);
     }
@@ -487,7 +489,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void assignToTenant(TenantId tenantId) {
         if (tenantIds.contains(tenantId)) {
-            throw new DomainException("用户已关联该租户");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_ASSOCIATED_WITH_TENANT);
         }
         tenantIds.add(tenantId);
         registerEvent(new UserAssignedToTenantEvent(this.getId(), tenantId));
@@ -498,7 +500,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void removeFromTenant(TenantId tenantId) {
         if (!tenantIds.contains(tenantId)) {
-            throw new DomainException("用户未关联该租户");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_ASSOCIATED_WITH_TENANT);
         }
         tenantIds.remove(tenantId);
         registerEvent(new UserRemoveTenantEvent(this.getId(), tenantId));
@@ -509,7 +511,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void assignToOrganization(OrganizationId organizationId) {
         if (organizationIds.contains(organizationId)) {
-            throw new DomainException("用户已关联该组织");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_ASSOCIATED_WITH_ORGANIZATION);
         }
         organizationIds.add(organizationId);
     }
@@ -526,7 +528,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void assignRole(RoleId roleId) {
         if (roleIds.contains(roleId)) {
-            throw new DomainException("用户已有该角色");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_HAS_ROLE);
         }
         roleIds.add(roleId);
         registerEvent(new UserAssignedRoleEvent(this.getId(), roleId));
@@ -537,7 +539,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void removeRole(RoleId roleId) {
         if (!roleIds.contains(roleId)) {
-            throw new DomainException("用户没有该角色");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_HAS_ROLE);
         }
         roleIds.remove(roleId);
         registerEvent(new UserRemovedRoleEvent(this.getId(), roleId));
@@ -548,7 +550,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void assignToUserGroup(UserGroupId userGroupId) {
         if (userGroupIds.contains(userGroupId)) {
-            throw new DomainException("用户已在该用户组");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_IN_USER_GROUP_2);
         }
         userGroupIds.add(userGroupId);
     }
@@ -565,7 +567,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void associateDevice(DeviceId deviceId) {
         if (deviceIds.contains(deviceId)) {
-            throw new DomainException("用户已关联该设备");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_ASSOCIATED_WITH_DEVICE);
         }
         deviceIds.add(deviceId);
     }
@@ -575,7 +577,7 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
      */
     public void disassociateDevice(DeviceId deviceId) {
         if (!deviceIds.contains(deviceId)) {
-            throw new DomainException("用户未关联该设备");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_ASSOCIATED_WITH_DEVICE);
         }
         deviceIds.remove(deviceId);
     }

@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
@@ -80,13 +81,13 @@ public class PasswordAuthCredential extends AbstractAuthCredential {
     @Override
     public void validate() {
         if (Objects.isNull(username)) {
-            throw new IllegalArgumentException("用户名不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.USERNAME_CANNOT_BE_BLANK);
         }
         if (Objects.isNull(password)) {
-            throw new IllegalArgumentException("密码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_CANNOT_BE_BLANK);
         }
         if (Objects.isNull(clientId)) {
-            throw new IllegalArgumentException("客户端ID不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.CLIENT_ID_CANNOT_BE_BLANK);
         }
         username.validate(username.getValue());
         password.validate(password.getValue());

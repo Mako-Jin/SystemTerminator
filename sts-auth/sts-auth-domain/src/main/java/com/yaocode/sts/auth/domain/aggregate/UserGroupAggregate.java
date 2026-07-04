@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.UserGroupCategoryEnums;
 import com.yaocode.sts.auth.domain.events.usergroup.RoleBoundToGroupEvent;
 import com.yaocode.sts.auth.domain.events.usergroup.RoleUnboundFromGroupEvent;
@@ -13,6 +14,7 @@ import com.yaocode.sts.auth.domain.events.usergroup.UsersAddedToGroupEvent;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
@@ -81,7 +83,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
         group.tenantId = tenantId;
         group.userGroupCode = userGroupCode;
         group.userGroupName = userGroupName;
-        group.userGroupDesc = userGroupDesc != null ? userGroupDesc.trim() : "";
+        group.userGroupDesc = userGroupDesc != null ? userGroupDesc.trim() : SymbolConstants.EMPTY_STR;
         group.category = category != null ? category : UserGroupCategoryEnums.STATIC;
         group.parentId = parentId;
         group.filters = filters;
@@ -163,7 +165,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void updateName(String userGroupName) {
         if (userGroupName == null || userGroupName.trim().isEmpty()) {
-            throw new DomainException("用户组名称不能为空");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_NAME_CANNOT_BE_BLANK);
         }
         this.userGroupName = userGroupName.trim();
     }
@@ -180,7 +182,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void updateParent(UserGroupId parentId) {
         if (parentId != null && parentId.equals(this.getId())) {
-            throw new DomainException("用户组不能继承自己");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_CANNOT_INHERIT_SELF);
         }
         this.parentId = parentId;
     }
@@ -199,7 +201,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void enable() {
         if (this.enabled == EnableEnums.ENABLED) {
-            throw new DomainException("用户组已启用");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_ENABLED);
         }
         this.enabled = EnableEnums.ENABLED;
         registerEvent(new UserGroupEnabledEvent(this.getId()));
@@ -210,7 +212,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void disable() {
         if (this.enabled == EnableEnums.DISABLED) {
-            throw new DomainException("用户组已禁用");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_DISABLED);
         }
         this.enabled = EnableEnums.DISABLED;
         registerEvent(new UserGroupDisabledEvent(this.getId()));
@@ -237,10 +239,10 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void addUser(UserId userId) {
         if (this.enabled == EnableEnums.ENABLED) {
-            throw new DomainException("用户组已禁用，不能添加用户");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_DISABLED_CANNOT_ADD_USER);
         }
         if (userIds.contains(userId)) {
-            throw new DomainException("用户已在该用户组中");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_IN_USER_GROUP);
         }
         userIds.add(userId);
         registerEvent(new UserAddedToGroupEvent(this.getId(), userId));
@@ -251,7 +253,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void removeUser(UserId userId) {
         if (!userIds.contains(userId)) {
-            throw new DomainException("用户不在该用户组中");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_IN_USER_GROUP);
         }
         userIds.remove(userId);
         registerEvent(new UserRemovedFromGroupEvent(this.getId(), userId));
@@ -262,7 +264,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void addUsers(Set<UserId> userIds) {
         if (this.enabled == EnableEnums.DISABLED) {
-            throw new DomainException("用户组已禁用，不能添加用户");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_DISABLED_CANNOT_ADD_USER);
         }
         this.userIds.addAll(userIds);
         registerEvent(new UsersAddedToGroupEvent(this.getId(), userIds));
@@ -275,10 +277,10 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void bindRole(RoleId roleId) {
         if (this.enabled == EnableEnums.DISABLED) {
-            throw new DomainException("用户组已禁用，不能绑定角色");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_DISABLED_CANNOT_ASSIGN_ROLE);
         }
         if (roleIds.contains(roleId)) {
-            throw new DomainException("角色已绑定到该用户组");
+            throw new DomainException(AuthI18nKeyConstants.ROLE_ALREADY_BOUND_TO_USER_GROUP);
         }
         roleIds.add(roleId);
         registerEvent(new RoleBoundToGroupEvent(this.getId(), roleId));
@@ -289,7 +291,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void unbindRole(RoleId roleId) {
         if (!roleIds.contains(roleId)) {
-            throw new DomainException("角色未绑定到该用户组");
+            throw new DomainException(AuthI18nKeyConstants.ROLE_NOT_BOUND_TO_USER_GROUP);
         }
         roleIds.remove(roleId);
         registerEvent(new RoleUnboundFromGroupEvent(this.getId(), roleId));
@@ -300,7 +302,7 @@ public class UserGroupAggregate extends AbstractAggregate<UserGroupId> {
      */
     public void bindRoles(Set<RoleId> roleIds) {
         if (this.enabled == EnableEnums.DISABLED) {
-            throw new DomainException("用户组已禁用，不能绑定角色");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_DISABLED_CANNOT_ASSIGN_ROLE);
         }
         this.roleIds.addAll(roleIds);
         registerEvent(new RolesBoundToGroupEvent(this.getId(), roleIds));

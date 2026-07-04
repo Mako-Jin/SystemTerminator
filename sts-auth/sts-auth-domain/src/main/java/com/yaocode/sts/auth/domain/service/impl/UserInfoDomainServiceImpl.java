@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.command.CreateUserCommand;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
@@ -12,6 +13,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import jakarta.annotation.Resource;
@@ -50,9 +52,10 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
         // 1. 验证命令参数
         command.validate();
         if (!tenantDomainService.validateTenantId(command.getTenantIdList())) {
-            throw new IllegalArgumentException("租户不存在: " + command.getTenantIdList().stream()
+            throw new IllegalArgumentException(AuthI18nKeyConstants.TENANT_NOT_EXIST + SymbolConstants.DOUBLE_COLON
+                    + command.getTenantIdList().stream()
                     .map(TenantId::getValue)
-                    .collect(Collectors.joining(",", "[", "]"))
+                    .collect(Collectors.joining(SymbolConstants.COMMA, SymbolConstants.LEFT_BRACKETS, SymbolConstants.RIGHT_BRACKETS))
             );
         }
         // 3. 验证组织是否存在（如果提供了组织ID）
@@ -63,9 +66,10 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
                         command.getOrganizationIdList()
                 );
                 if (!exist) {
-                    throw new IllegalArgumentException("用户组不存在: " + tenantId.getValue() + command.getUserGroupIdList().stream()
+                    throw new IllegalArgumentException(AuthI18nKeyConstants.USER_GROUP_NOT_EXIST + SymbolConstants.DOUBLE_COLON
+                            + tenantId.getValue() + command.getUserGroupIdList().stream()
                             .map(UserGroupId::getValue)
-                            .collect(Collectors.joining(",", "[", "]"))
+                            .collect(Collectors.joining(SymbolConstants.COMMA, SymbolConstants.LEFT_BRACKETS, SymbolConstants.RIGHT_BRACKETS))
                     );
                 }
 
@@ -80,9 +84,10 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
                         command.getUserGroupIdList()
                 );
                 if (!exist) {
-                    throw new IllegalArgumentException("组织不存在: " + tenantId.getValue() + command.getOrganizationIdList().stream()
+                    throw new IllegalArgumentException(AuthI18nKeyConstants.ORGANIZATION_NOT_EXIST + SymbolConstants.DOUBLE_COLON
+                            + tenantId.getValue() + command.getOrganizationIdList().stream()
                             .map(OrganizationId::getValue)
-                            .collect(Collectors.joining(",", "[", "]"))
+                            .collect(Collectors.joining(SymbolConstants.COMMA, SymbolConstants.LEFT_BRACKETS, SymbolConstants.RIGHT_BRACKETS))
                     );
                 }
 
@@ -97,9 +102,11 @@ public class UserInfoDomainServiceImpl implements UserInfoDomainService {
                         command.getRoleIdList()
                 );
                 if (!exist) {
-                    throw new IllegalArgumentException("角色不存在: " + tenantId.getValue() + command.getRoleIdList().stream()
+                    throw new IllegalArgumentException(
+                            AuthI18nKeyConstants.ROLE_NOT_EXIST + SymbolConstants.DOUBLE_COLON
+                                    + tenantId.getValue() + command.getRoleIdList().stream()
                             .map(RoleId::getValue)
-                            .collect(Collectors.joining(",", "[", "]"))
+                            .collect(Collectors.joining(SymbolConstants.COMMA, SymbolConstants.LEFT_BRACKETS, SymbolConstants.RIGHT_BRACKETS))
                     );
                 }
 

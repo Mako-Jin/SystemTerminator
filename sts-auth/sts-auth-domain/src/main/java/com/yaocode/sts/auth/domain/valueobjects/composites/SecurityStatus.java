@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import lombok.Builder;
 import lombok.Value;
 
@@ -64,7 +65,7 @@ public class SecurityStatus {
 
         return SecurityStatus.builder()
                 .locked(newLocked)
-                .lockReason(newLocked ? "密码错误次数过多" : null)
+                .lockReason(newLocked ? AuthI18nKeyConstants.PASSWORD_ERROR_EXCEEDED_LIMIT : null)
                 .unlockTime(newLocked ? LocalDateTime.now().plusMinutes(30).toString() : null)
                 .remainingAttempts(Math.max(0, newRemaining))
                 .captchaRequired(newRemaining <= 2)

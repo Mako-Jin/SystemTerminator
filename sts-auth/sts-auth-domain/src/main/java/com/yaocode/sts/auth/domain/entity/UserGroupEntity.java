@@ -1,8 +1,10 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.UserGroupCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.domain.exception.DomainException;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -74,7 +76,7 @@ public class UserGroupEntity extends AbstractAggregate<UserGroupId> {
         entity.tenantId = tenantId;
         entity.userGroupCode = userGroupCode;
         entity.userGroupName = userGroupName;
-        entity.userGroupDesc = userGroupDesc != null ? userGroupDesc.trim() : "";
+        entity.userGroupDesc = userGroupDesc != null ? userGroupDesc.trim() : SymbolConstants.EMPTY_STR;
         entity.parentId = parentUserGroupId;
         // 6. 发布领域事件
         // entity.registerEvent(new UserGroupCreatedEvent(
@@ -106,26 +108,26 @@ public class UserGroupEntity extends AbstractAggregate<UserGroupId> {
 
     public void assignUser(UserId userId) {
         if (this.isEnabled == 0) {
-            throw new DomainException("用户组未激活，不能分配用户！");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_NOT_ACTIVATED_CANNOT_ASSIGN_USER);
         }
         if (Objects.isNull(assignedUsers)) {
             assignedUsers = new HashSet<>();
         }
         if (assignedUsers.contains(userId)) {
-            throw new DomainException("用户组已包含当前用户，请勿重复分配！");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_CONTAINS_USER);
         }
         assignedUsers.add(userId);
     }
 
     public void bindRoles(RoleId roleId) {
         if (this.isEnabled == 0) {
-            throw new DomainException("用户组未激活，不能绑定角色！");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_NOT_ACTIVATED_CANNOT_BIND_ROLE);
         }
         if (Objects.isNull(bindRoles)) {
             bindRoles = new HashSet<>();
         }
         if (bindRoles.contains(roleId)) {
-            throw new DomainException("用户组已包含当前角色，请勿重复绑定！");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_CONTAINS_ROLE);
         }
         bindRoles.add(roleId);
     }

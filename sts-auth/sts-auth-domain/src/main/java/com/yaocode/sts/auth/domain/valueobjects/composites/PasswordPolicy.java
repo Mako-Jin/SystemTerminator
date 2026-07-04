@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.auth.domain.enums.PasswordComplexityEnums;
 import lombok.Value;
 
@@ -39,13 +41,13 @@ public class PasswordPolicy {
         }
 
         public Builder expiryDays(int expiryDays) {
-            if (expiryDays < 1) throw new IllegalArgumentException("密码过期天数至少为1天");
+            if (expiryDays < 1) throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_EXPIRY_DAYS_MINIMUM_ONE);
             this.expiryDays = expiryDays;
             return this;
         }
 
         public Builder minLength(int minLength) {
-            if (minLength < 6) throw new IllegalArgumentException("密码最小长度至少为6位");
+            if (minLength < 6) throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_MIN_LENGTH_MINIMUM_SIX);
             this.minLength = minLength;
             return this;
         }
@@ -56,7 +58,7 @@ public class PasswordPolicy {
         }
 
         public Builder historyCount(int historyCount) {
-            if (historyCount < 0) throw new IllegalArgumentException("密码历史记录数不能为负数");
+            if (historyCount < 0) throw new IllegalArgumentException(AuthI18nKeyConstants.PASSWORD_HISTORY_COUNT_CANNOT_BE_NEGATIVE);
             this.historyCount = historyCount;
             return this;
         }
@@ -86,11 +88,12 @@ public class PasswordPolicy {
         }
 
         return switch (complexity) {
-            case MEDIUM -> password.matches(".*[a-zA-Z].*") && password.matches(".*\\d.*");
-            case HIGH -> password.matches(".*[a-z].*") &&
-                    password.matches(".*[A-Z].*") &&
-                    password.matches(".*\\d.*") &&
-                    password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\",./<>?].*");
+            case MEDIUM -> password.matches(RegexConstants.PASSWORD_LETTER_PATTERN) && 
+                    password.matches(RegexConstants.PASSWORD_NUMBER_PATTERN);
+            case HIGH -> password.matches(RegexConstants.PASSWORD_LOWERCASE_PATTERN) &&
+                    password.matches(RegexConstants.PASSWORD_UPPERCASE_PATTERN) &&
+                    password.matches(RegexConstants.PASSWORD_NUMBER_PATTERN) &&
+                    password.matches(RegexConstants.PASSWORD_SPECIAL_PATTERN);
             default -> true;
         };
     }

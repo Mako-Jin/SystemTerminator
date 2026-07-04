@@ -2,6 +2,7 @@ package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.model.AbstractAggregate;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -56,7 +57,7 @@ public class RoleInfoEntity extends AbstractAggregate<RoleId> {
         roleInfoEntity.roleCode = roleCode;
         roleInfoEntity.tenantId = tenantId;
         roleInfoEntity.roleName = roleName;
-        roleInfoEntity.roleDesc = roleDesc != null ? roleDesc.trim() : "";
+        roleInfoEntity.roleDesc = roleDesc != null ? roleDesc.trim() : SymbolConstants.EMPTY_STR;
         roleInfoEntity.isDefault = isDefault;
         roleInfoEntity.parentId = roleParentId;
         return roleInfoEntity;

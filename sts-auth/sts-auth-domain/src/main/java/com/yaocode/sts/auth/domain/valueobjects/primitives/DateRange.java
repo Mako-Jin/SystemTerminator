@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import lombok.Value;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class DateRange {
 
     private DateRange(LocalDateTime from, LocalDateTime to) {
         if (from != null && to != null && from.isAfter(to)) {
-            throw new IllegalArgumentException("开始时间不能晚于结束时间");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.DATE_RANGE_FROM_CANNOT_BE_LATER_THAN_TO);
         }
         this.from = from;
         this.to = to;

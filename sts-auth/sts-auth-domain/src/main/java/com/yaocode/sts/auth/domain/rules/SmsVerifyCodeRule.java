@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.rules;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+
 import java.util.regex.Pattern;
 
 /**
@@ -13,8 +16,8 @@ import java.util.regex.Pattern;
  */
 public class SmsVerifyCodeRule implements VerifyCodeRule {
 
-    private static final Pattern PATTERN = Pattern.compile("^\\d{6}$");
-    private static final int LENGTH = 6;
+    private static final Pattern PATTERN = CommonConstants.SMS_CODE_PATTERN;
+    private static final int LENGTH = CommonConstants.SMS_CODE_LENGTH;
 
     @Override
     public boolean validate(String code) {
@@ -23,13 +26,13 @@ public class SmsVerifyCodeRule implements VerifyCodeRule {
 
     @Override
     public String getDescription() {
-        return "6位数字";
+        return AuthI18nKeyConstants.SMS_CODE_DESCRIPTION;
     }
 
     @Override
     public String generate() {
-        int code = getSecureRandom().nextInt(1000000);
-        return String.format("%06d", code);
+        int code = getSecureRandom().nextInt((int) Math.pow(10, LENGTH));
+        return String.format(CommonConstants.SMS_CODE_FORMAT_PATTERN, code);
     }
 
     @Override

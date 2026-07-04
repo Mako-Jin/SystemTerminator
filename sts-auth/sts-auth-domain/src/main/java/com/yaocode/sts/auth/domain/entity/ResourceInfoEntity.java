@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.composites.ResourcesIdentity;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ResourceId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
@@ -93,7 +94,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         );
         // 创建实体
         ResourceInfoEntity entity = new ResourceInfoEntity(resourceId, identity);
-        entity.resourceName = StringUtils.requireNonBlank(resourceName, "资源名称不能为空");
+        entity.resourceName = StringUtils.requireNonBlank(resourceName, AuthI18nKeyConstants.RESOURCE_NAME_CANNOT_BE_BLANK);
         entity.resourceDesc = resourceDesc;
         entity.icon = icon;
         entity.version = version;
@@ -124,7 +125,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
         );
         // 创建实体
         ResourceInfoEntity entity = new ResourceInfoEntity(ResourceId.nextId(), identity);
-        entity.resourceName = StringUtils.requireNonBlank(resourceName, "资源名称不能为空");
+        entity.resourceName = StringUtils.requireNonBlank(resourceName, AuthI18nKeyConstants.RESOURCE_NAME_CANNOT_BE_BLANK);
         entity.resourceDesc = resourceDesc;
         entity.icon = icon;
         entity.version = version;
@@ -175,7 +176,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
             if (newResourceEntity.getVersion().compareTo(this.version) >= 0) {
                 newVersion = newResourceEntity.getVersion();
             } else {
-                throw new IllegalArgumentException("客户版本不能低于当前版本");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.CLIENT_VERSION_CANNOT_BE_LOWER_THAN_CURRENT);
             }
         }
         if (newResourceEntity.getVersion() != null && !newResourceEntity.getVersion().equals(this.version)) {
@@ -184,7 +185,7 @@ public class ResourceInfoEntity extends AbstractAggregate<ResourceId> {
                 // 采用客户版本
                 newVersion = newResourceEntity.getVersion();
             } else {
-                throw new IllegalArgumentException("客户版本不能低于当前版本");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.CLIENT_VERSION_CANNOT_BE_LOWER_THAN_CURRENT);
             }
         }
         return newVersion;

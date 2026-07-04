@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
@@ -74,7 +76,7 @@ public class MobileAuthCredential extends AbstractAuthCredential {
         this.verifyCode = verifyCode;
         this.rememberMe = rememberMe;
         this.autoRegister = autoRegister;
-        this.countryCode = countryCode != null ? countryCode : "+86";
+        this.countryCode = countryCode != null ? countryCode : CommonConstants.DEFAULT_COUNTRY_CODE;
     }
 
     /**
@@ -83,13 +85,13 @@ public class MobileAuthCredential extends AbstractAuthCredential {
     @Override
     public void validate() {
         if (Objects.isNull(phoneNumber)) {
-            throw new IllegalArgumentException("手机号不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PHONE_NUMBER_CANNOT_BE_BLANK);
         }
         if (Objects.isNull(verifyCode)) {
-            throw new IllegalArgumentException("验证码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.VERIFY_CODE_CANNOT_BE_BLANK);
         }
         if (Objects.isNull(clientId)) {
-            throw new IllegalArgumentException("客户端ID不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.CLIENT_ID_CANNOT_BE_BLANK);
         }
         // 值对象内部自校验
         phoneNumber.validate(phoneNumber.getValue());

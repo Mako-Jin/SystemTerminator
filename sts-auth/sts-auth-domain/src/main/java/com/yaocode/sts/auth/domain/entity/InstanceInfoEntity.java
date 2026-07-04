@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.EnvironmentTypeEnums;
 import com.yaocode.sts.auth.domain.enums.InstanceTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.InstanceId;
@@ -51,7 +52,7 @@ public class InstanceInfoEntity {
                     return status;
                 }
             }
-            throw new IllegalArgumentException("Unknown instance status: " + code);
+            throw new IllegalArgumentException(AuthI18nKeyConstants.UNKNOWN_INSTANCE_STATUS);
         }
     }
 
@@ -145,7 +146,7 @@ public class InstanceInfoEntity {
 
     public void upgrade(Version newVersion) {
         if (newVersion.compareTo(this.version) <= 0) {
-            throw new IllegalArgumentException("新版本号必须高于当前版本");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.NEW_VERSION_MUST_BE_HIGHER);
         }
         this.version = newVersion;
     }

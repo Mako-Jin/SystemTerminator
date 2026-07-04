@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -14,18 +16,9 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode(callSuper = true)
 public class IpAddress extends Identifier<String> {
 
-    private static final Pattern IPV4_PATTERN = Pattern.compile(
-            "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-                    "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    );
+    private static final Pattern IPV4_PATTERN = RegexConstants.IPV4_PATTERN_COMPILED;
 
-    private static final Pattern IPV6_PATTERN = Pattern.compile(
-            "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|" +
-                    "^::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}$|" +
-                    "^([0-9a-fA-F]{1,4}:){1,7}:$"
-    );
+    private static final Pattern IPV6_PATTERN = RegexConstants.IPV6_PATTERN_COMPILED;
 
     private IpAddress(String value) {
         super(value);
@@ -33,11 +26,11 @@ public class IpAddress extends Identifier<String> {
 
     public static IpAddress of (String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("IP地址不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.IP_ADDRESS_CANNOT_BE_BLANK);
         }
         String trimmed = value.trim();
         if (!IPV4_PATTERN.matcher(trimmed).matches() && !IPV6_PATTERN.matcher(trimmed).matches()) {
-            throw new IllegalArgumentException("IP地址格式不正确: " + value);
+            throw new IllegalArgumentException(AuthI18nKeyConstants.IP_ADDRESS_FORMAT_INVALID);
         }
         return new IpAddress(trimmed);
     }
@@ -55,7 +48,7 @@ public class IpAddress extends Identifier<String> {
      */
     public boolean isPrivate() {
         if (!isIPv4()) return false;
-        String[] parts = getValue().split("\\.");
+        String[] parts = getValue().split(RegexConstants.REGEX_DOT);
         int first = Integer.parseInt(parts[0]);
         int second = Integer.parseInt(parts[1]);
         // 10.0.0.0/8

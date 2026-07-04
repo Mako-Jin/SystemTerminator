@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
 import com.yaocode.sts.auth.domain.enums.RegisterSourceEnums;
@@ -7,6 +10,7 @@ import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.TenantCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.AllowDenyEnums;
 import com.yaocode.sts.common.basic.exception.NotAllowedException;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -58,21 +62,21 @@ public class TenantDomainServiceImpl implements TenantDomainService {
         // 验证当前租户是否允许创建用户
         Optional<TenantInfoEntity> tenantInfoEntity = tenantInfoRepository.findById(tenantId);
         if (tenantInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         if (RegisterSourceEnums.REGISTER == userAddType
                 && Objects.equals(tenantInfoEntity.get().getAllowRegister(), AllowDenyEnums.DENY)
         ) {
-            throw new NotAllowedException("当前租户不允许注册");
+            throw new NotAllowedException(AuthI18nKeyConstants.TENANT_NOT_ALLOW_REGISTER);
         }
         if (RegisterSourceEnums.ADMIN == userAddType
                 && Objects.equals(tenantInfoEntity.get().getAllowAdd(), AllowDenyEnums.DENY)
         ) {
-            throw new NotAllowedException("当前租户不允许添加用户");
+            throw new NotAllowedException(AuthI18nKeyConstants.TENANT_NOT_ALLOW_ADD_USER);
         }
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findById(userId);
         if (userInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         tenantInfoRepository.saveRelTenantUser(tenantId, userId);
     }
@@ -111,9 +115,9 @@ public class TenantDomainServiceImpl implements TenantDomainService {
         }
 
         // 4. 返回默认租户
-        return tenantInfoRepository.getByTenantCode(TenantCode.of("default"))
+        return tenantInfoRepository.getByTenantCode(TenantCode.of(CommonConstants.DEFAULT_TENANT_CODE))
                 .map(TenantInfoEntity::getId)
-                .orElseThrow(() -> new RuntimeException("默认租户不存在"));
+                .orElseThrow(() -> new RuntimeException(AuthI18nKeyConstants.DEFAULT_TENANT_NOT_EXIST));
     }
 
     /**
@@ -124,13 +128,13 @@ public class TenantDomainServiceImpl implements TenantDomainService {
             return null;
         }
         // 示例：tenant.yourdomain.com → tenant
-        String domainSuffix = ".yourdomain.com";
+        String domainSuffix = CommonConstants.DEFAULT_DOMAIN_SUFFIX;
         if (domain.endsWith(domainSuffix)) {
             String prefix = domain.substring(0, domain.length() - domainSuffix.length());
-            if (!prefix.contains(".")) {
+            if (!prefix.contains(SymbolConstants.DOT)) {
                 return prefix;
             }
-            String[] parts = prefix.split("\\.");
+            String[] parts = prefix.split(RegexConstants.REGEX_DOT);
             return parts[parts.length - 1];
         }
         return null;
@@ -140,9 +144,9 @@ public class TenantDomainServiceImpl implements TenantDomainService {
      * 获取默认租户ID
      */
     public TenantId getDefaultTenantId() {
-        return tenantInfoRepository.getByTenantCode(TenantCode.of("default"))
+        return tenantInfoRepository.getByTenantCode(TenantCode.of(CommonConstants.DEFAULT_TENANT_CODE))
                 .map(TenantInfoEntity::getId)
-                .orElseThrow(() -> new RuntimeException("默认租户不存在"));
+                .orElseThrow(() -> new RuntimeException(AuthI18nKeyConstants.DEFAULT_TENANT_NOT_EXIST));
     }
 
 }

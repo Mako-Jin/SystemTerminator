@@ -1,7 +1,11 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.auth.domain.enums.VerifyCodeTypeEnums;
 import com.yaocode.sts.auth.domain.rules.VerifyCodeRule;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 
 import lombok.EqualsAndHashCode;
@@ -27,12 +31,12 @@ public class VerifyCode extends Identifier<String> {
     /**
      * 验证码格式：6位数字
      */
-    private static final Pattern CODE_PATTERN = Pattern.compile("^\\d{6}$");
+    private static final Pattern CODE_PATTERN = RegexConstants.VERIFY_CODE_PATTERN_COMPILED;
 
     /**
      * 验证码有效期（默认5分钟，单位：秒）
      */
-    private static final long DEFAULT_TTL_SECONDS = 300;
+    private static final long DEFAULT_TTL_SECONDS = CommonConstants.DEFAULT_TTL_SECONDS;
 
     /**
      * 验证码类型
@@ -89,7 +93,7 @@ public class VerifyCode extends Identifier<String> {
         this.codeType = codeType != null ? codeType : VerifyCodeTypeEnums.LOGIN;
         this.verifyCodeRule = verifyCodeRule;
         this.sessionId = sessionId;
-        this.ttlSeconds = ttlSeconds > 0 ? ttlSeconds : 300;
+        this.ttlSeconds = ttlSeconds > 0 ? ttlSeconds : CommonConstants.DEFAULT_TTL_SECONDS;
         this.expireTime = expireTime;
         this.used = used;
         validateFormat();
@@ -100,7 +104,7 @@ public class VerifyCode extends Identifier<String> {
         super.validate(value);
 
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("验证码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.VERIFY_CODE_CANNOT_BE_BLANK);
         }
     }
 
@@ -110,12 +114,12 @@ public class VerifyCode extends Identifier<String> {
     private void validateFormat() {
         String value = getValue();
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("验证码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.VERIFY_CODE_CANNOT_BE_BLANK);
         }
 
         VerifyCodeRule rule = codeType.getRule();
         if (!rule.validate(value)) {
-            throw new IllegalArgumentException("验证码格式错误，应为：" + rule.getDescription());
+            throw new IllegalArgumentException(AuthI18nKeyConstants.VERIFY_CODE_FORMAT_INVALID);
         }
     }
 
@@ -191,14 +195,18 @@ public class VerifyCode extends Identifier<String> {
      */
     public String mask() {
         String code = getValue();
-        if (code == null || code.length() < 4) {
-            return "****";
+        if (code == null || code.length() < CommonConstants.MIN_LENGTH_FOR_MASK) {
+            return CommonConstants.MASK_STRING;
         }
-        return code.substring(0, 2) + "****" + code.substring(code.length() - 2);
+        return code.substring(0, CommonConstants.MASK_KEEP_LENGTH) +
+                CommonConstants.MASK_STRING +
+                code.substring(code.length() - CommonConstants.MASK_KEEP_LENGTH);
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[" + mask() + ", type=" + codeType + "]";
+        return this.getClass().getSimpleName()
+                + SymbolConstants.LEFT_BRACKETS + mask()
+                + ", type=" + codeType + SymbolConstants.RIGHT_BRACKETS;
     }
 }

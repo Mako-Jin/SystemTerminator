@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.RelationshipEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.EmergencyContactId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.PhoneNum;
@@ -39,10 +40,10 @@ public class UserEmergencyContactEntity {
             Integer sortOrder
     ) {
         if (contactName == null || contactName.trim().isEmpty()) {
-            throw new IllegalArgumentException("紧急联系人姓名不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.EMERGENCY_CONTACT_NAME_CANNOT_BE_BLANK);
         }
         if (relationship == null) {
-            throw new IllegalArgumentException("紧急联系人关系不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.EMERGENCY_CONTACT_RELATIONSHIP_CANNOT_BE_BLANK);
         }
         UserEmergencyContactEntity entity = new UserEmergencyContactEntity(
                 EmergencyContactId.nextId(), userId
@@ -77,14 +78,14 @@ public class UserEmergencyContactEntity {
 
     public void updateContactName(String contactName) {
         if (contactName == null || contactName.trim().isEmpty()) {
-            throw new IllegalArgumentException("紧急联系人姓名不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.EMERGENCY_CONTACT_NAME_CANNOT_BE_BLANK);
         }
         this.contactName = contactName.trim();
     }
 
     public void updateRelationship(RelationshipEnums relationship) {
         if (relationship == null) {
-            throw new IllegalArgumentException("紧急联系人关系不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.EMERGENCY_CONTACT_RELATIONSHIP_CANNOT_BE_BLANK);
         }
         this.relationship = relationship;
     }

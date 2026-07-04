@@ -1,6 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -20,10 +21,10 @@ public class UserGroupCode extends Identifier<String> {
 
     public static UserGroupCode of (String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("用户组编码不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.USER_GROUP_CODE_CANNOT_BE_BLANK);
         }
-        if (!CommonConstants.IDENTIFIER_CODE_REGEX.matcher(value).matches()) {
-            throw new IllegalArgumentException("编码只支持大小写字母、数字和中横线");
+        if (!RegexConstants.CODE_PATTERN_COMPILED.matcher(value).matches()) {
+            throw new IllegalArgumentException(AuthI18nKeyConstants.CODE_FORMAT_INVALID);
         }
         return new UserGroupCode(value);
     }

@@ -10,6 +10,7 @@ import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.JwtTokenService;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.composites.JwtPayload;
 import com.yaocode.sts.auth.domain.valueobjects.composites.RememberMeAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
@@ -75,7 +76,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
         // 1. 参数校验
         if (credential == null || credential.getRememberMeToken() == null || credential.getRememberMeToken().isBlank()) {
             logger.debug("Remember-me authentication failed: token is null or blank");
-            throw new ParamCheckException("Remember-me authentication failed: token is null or blank");
+            throw new ParamCheckException(AuthI18nKeyConstants.REMEMBER_ME_TOKEN_NULL_OR_BLANK);
         }
 
         try {
@@ -83,13 +84,13 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             JwtPayload rememberMePayload = jwtTokenService.parseRememberMe(credential.getRememberMeToken());
             if (rememberMePayload == null) {
                 logger.debug("Remember-me authentication failed: invalid token");
-                throw new IllegalArgumentException("Remember-me authentication failed: invalid token");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_AUTH_FAILED_INVALID_TOKEN);
             }
 
             // 3. 检查 Token 是否过期
             if (!rememberMePayload.isValid()) {
                 logger.debug("Remember-me authentication failed: token has expired");
-                throw new IllegalArgumentException("Remember-me authentication failed: token has expired");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_AUTH_FAILED_TOKEN_EXPIRED);
             }
 
             // 4. 获取用户 ID
@@ -99,7 +100,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             UserId userId = rememberMePayload.getUserId();
             if (userId == null) {
                 logger.debug("Remember-me authentication failed: user ID is null");
-                throw new IllegalArgumentException("Remember-me authentication failed: invalid token");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_AUTH_FAILED_USER_ID_NULL);
             }
 
             // 5. 验证数据库中的 Remember-Me 记录
@@ -114,7 +115,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             // 6. 检查 Token 是否已被撤销
             if (Objects.equals(tokenEntity.getIsRevoked(), YesNoEnums.YES)) {
                 logger.debug("Remember-me authentication failed: token has been revoked");
-                throw new IllegalArgumentException("Remember-me authentication failed: token has been revoked");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_AUTH_FAILED_TOKEN_REVOKED);
             }
 
             // 7. 检查 series 是否匹配（防止盗用）
@@ -129,7 +130,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             Optional<UserInfoEntity> userOpt = userInfoRepository.findById(userId);
             if (userOpt.isEmpty()) {
                 logger.debug("Remember-me authentication failed: user not found");
-                throw new IllegalArgumentException("Remember-me authentication failed: user not found");
+                throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_AUTH_FAILED_USER_NOT_FOUND);
             }
 
             // 8. 更新最后使用时间
@@ -140,7 +141,7 @@ public class RememberMeProvider extends AbstractAuthenticationProvider<RememberM
             return userOpt;
         } catch (Exception e) {
             logger.error("Remember-me authentication failed due to exception", e);
-            throw new IllegalArgumentException("Remember-me authentication failed: user not found", e);
+            throw new IllegalArgumentException(AuthI18nKeyConstants.REMEMBER_ME_AUTH_FAILED_USER_NOT_FOUND, e);
         }
     }
 }

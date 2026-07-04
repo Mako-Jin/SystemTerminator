@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.rules;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+
 import java.util.regex.Pattern;
 
 /**
@@ -13,9 +16,9 @@ import java.util.regex.Pattern;
  */
 public class EmailVerifyCodeRule implements VerifyCodeRule {
 
-    private static final Pattern PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,8}$");
-    private static final int DEFAULT_LENGTH = 8;
-    private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final Pattern PATTERN = CommonConstants.EMAIL_CODE_PATTERN;
+    private static final int DEFAULT_LENGTH = CommonConstants.EMAIL_CODE_DEFAULT_LENGTH;
+    private static final String CHARS = CommonConstants.EMAIL_CODE_CHARS;
 
     @Override
     public boolean validate(String code) {
@@ -24,7 +27,7 @@ public class EmailVerifyCodeRule implements VerifyCodeRule {
 
     @Override
     public String getDescription() {
-        return "6-8位字母和数字组合";
+        return AuthI18nKeyConstants.EMAIL_CODE_DESCRIPTION;
     }
 
     @Override

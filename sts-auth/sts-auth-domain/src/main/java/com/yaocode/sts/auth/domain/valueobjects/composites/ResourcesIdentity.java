@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.ResourceValue;
 import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import lombok.Value;
@@ -35,7 +36,7 @@ public class ResourcesIdentity {
             ResourceValue resourceValue, ResourceTypeEnums resourceType,
             List<String> requestUrl, List<String> requestMethod
     ) {
-        this.resourceValue = Objects.requireNonNull(resourceValue, "资源值不能为空");
+        this.resourceValue = Objects.requireNonNull(resourceValue, AuthI18nKeyConstants.RESOURCE_VALUE_CANNOT_BE_BLANK);
         this.resourceType = resourceType;
         this.requestUrl = requestUrl;
         this.requestMethod = requestMethod;

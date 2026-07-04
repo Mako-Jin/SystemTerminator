@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.JwtTokenConstants;
 import com.yaocode.sts.auth.domain.entity.RefreshTokenEntity;
 import com.yaocode.sts.auth.domain.entity.RememberMeTokenEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
@@ -9,6 +10,7 @@ import com.yaocode.sts.auth.domain.port.JwtTokenPort;
 import com.yaocode.sts.auth.domain.repository.RefreshTokenRepository;
 import com.yaocode.sts.auth.domain.repository.RememberMeTokenRepository;
 import com.yaocode.sts.auth.domain.service.JwtTokenService;
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.composites.JwtPayload;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
@@ -60,23 +62,23 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     @Override
     public String generateAccessToken(UserInfoEntity userInfoEntity, ClientId clientId, DeviceId deviceId) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("userId", userInfoEntity.getId().getValue());
-        payload.put("clientId", clientId);
-        payload.put("deviceId", deviceId);
-        payload.put("tokenType", TokenTypeEnums.ACCESS_TOKEN.getTokenType());
-        payload.put("jti", IdFactory.generate(IdGeneratorType.UUID).toString());
+        payload.put(JwtTokenConstants.PAYLOAD_USER_ID, userInfoEntity.getId().getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_CLIENT_ID, clientId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_DEVICE_ID, deviceId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_TOKEN_TYPE, TokenTypeEnums.ACCESS_TOKEN.getTokenType());
+        payload.put(JwtTokenConstants.PAYLOAD_JTI, IdFactory.generate(IdGeneratorType.UUID).toString());
         return accessTokenPort.generate(payload);
     }
 
     @Override
     public String generateRefreshToken(UserInfoEntity userInfoEntity, ClientId clientId, DeviceId deviceId, TokenId refreshTokenId, String jti) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("userId", userInfoEntity.getId().getValue());
-        payload.put("refreshTokenId", refreshTokenId.getValue());
-        payload.put("clientId", clientId.getValue());
-        payload.put("deviceId", deviceId.getValue());
-        payload.put("tokenType", TokenTypeEnums.REFRESH_TOKEN.getTokenType());
-        payload.put("jti", jti);
+        payload.put(JwtTokenConstants.PAYLOAD_USER_ID, userInfoEntity.getId().getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_REFRESH_TOKEN_ID, refreshTokenId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_CLIENT_ID, clientId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_DEVICE_ID, deviceId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_TOKEN_TYPE, TokenTypeEnums.REFRESH_TOKEN.getTokenType());
+        payload.put(JwtTokenConstants.PAYLOAD_JTI, jti);
         String refreshToken = refreshTokenPort.generate(payload);
         // 2. 保存到数据库
         RefreshTokenEntity entity = RefreshTokenEntity.create(
@@ -94,12 +96,12 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     @Override
     public String generateRememberMeToken(UserInfoEntity userInfoEntity, ClientId clientId, DeviceId deviceId, String series) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("userId", userInfoEntity.getId().getValue());
-        payload.put("clientId", clientId.getValue());
-        payload.put("deviceId", deviceId.getValue());
-        payload.put("series", series);
-        payload.put("tokenType", TokenTypeEnums.REMEMBER_ME.getTokenType());
-        payload.put("jti", IdFactory.generate(IdGeneratorType.UUID).toString());
+        payload.put(JwtTokenConstants.PAYLOAD_USER_ID, userInfoEntity.getId().getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_CLIENT_ID, clientId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_DEVICE_ID, deviceId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_SERIES, series);
+        payload.put(JwtTokenConstants.PAYLOAD_TOKEN_TYPE, TokenTypeEnums.REMEMBER_ME.getTokenType());
+        payload.put(JwtTokenConstants.PAYLOAD_JTI, IdFactory.generate(IdGeneratorType.UUID).toString());
         String rememberMeToken = rememberMeTokenPort.generate(payload);
         // 2. 保存到数据库
         RememberMeTokenEntity entity = RememberMeTokenEntity.create(
@@ -120,12 +122,12 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     @Override
     public String generateStateToken(String state, String redirectUri, ClientId clientId, DeviceId deviceId) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("state", state);
-        payload.put("redirectUri", redirectUri);
-        payload.put("clientId", clientId.getValue());
-        payload.put("deviceId", deviceId.getValue());
-        payload.put("tokenType", TokenTypeEnums.STATE_TOKEN.getTokenType());
-        payload.put("jti", IdFactory.generate(IdGeneratorType.UUID).toString());
+        payload.put(JwtTokenConstants.PAYLOAD_STATE, state);
+        payload.put(JwtTokenConstants.PAYLOAD_REDIRECT_URI, redirectUri);
+        payload.put(JwtTokenConstants.PAYLOAD_CLIENT_ID, clientId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_DEVICE_ID, deviceId.getValue());
+        payload.put(JwtTokenConstants.PAYLOAD_TOKEN_TYPE, TokenTypeEnums.STATE_TOKEN.getTokenType());
+        payload.put(JwtTokenConstants.PAYLOAD_JTI, IdFactory.generate(IdGeneratorType.UUID).toString());
         return stateTokenPort.generate(payload);
     }
 
@@ -133,23 +135,23 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     public JwtPayload parseRememberMe(String token) {
         // 1. 基本校验
         if (token == null || token.isBlank()) {
-            throw new IllegalArgumentException("Token不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.TOKEN_CANNOT_BE_BLANK);
         }
 
         // 2. 使用 RememberMe Token Port 解析
         JwtPayload payload = rememberMeTokenPort.parse(token);
         if (payload == null) {
-            throw new IllegalArgumentException("Token解析失败");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.TOKEN_PARSE_FAILED);
         }
 
         // 3. 校验 Token 类型必须是 REMEMBER_ME
         if (payload.getTokenType() != TokenTypeEnums.REMEMBER_ME) {
-            throw new IllegalArgumentException("Token类型不匹配，期望 REMEMBER_ME");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.TOKEN_TYPE_MISMATCH);
         }
 
         // 4. 校验是否过期
         if (payload.isExpired()) {
-            throw new IllegalArgumentException("Token已过期");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.TOKEN_EXPIRED);
         }
 
         return payload;

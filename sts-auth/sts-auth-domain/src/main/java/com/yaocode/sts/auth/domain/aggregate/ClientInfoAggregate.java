@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.ClientTypeEnums;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.events.client.ClientCreatedEvent;
@@ -61,7 +62,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
             String appId
     ) {
         if (grantTypes == null || grantTypes.isEmpty()) {
-            throw new DomainException("至少需要指定一个授权类型");
+            throw new DomainException(AuthI18nKeyConstants.AT_LEAST_ONE_GRANT_TYPE_REQUIRED);
         }
 
         ClientInfoAggregate client = new ClientInfoAggregate(ClientId.nextId());
@@ -76,7 +77,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
 
         // 验证redirectUris
         if (grantTypes.contains(GrantTypeEnums.AUTHORIZATION_CODE) && client.redirectUris.isEmpty()) {
-            throw new DomainException("授权码模式必须配置重定向URI");
+            throw new DomainException(AuthI18nKeyConstants.AUTHORIZATION_CODE_REQUIRES_REDIRECT_URI);
         }
 
         client.registerEvent(new ClientCreatedEvent(client.getId(), clientName));
@@ -121,7 +122,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void updateName(String clientName) {
         if (clientName == null || clientName.trim().isEmpty()) {
-            throw new DomainException("客户端名称不能为空");
+            throw new DomainException(AuthI18nKeyConstants.CLIENT_NAME_CANNOT_BE_BLANK);
         }
         this.clientName = clientName.trim();
     }
@@ -147,7 +148,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void rotateSecret(String newSecret) {
         if (newSecret == null || newSecret.trim().isEmpty()) {
-            throw new DomainException("客户端密钥不能为空");
+            throw new DomainException(AuthI18nKeyConstants.CLIENT_SECRET_CANNOT_BE_BLANK);
         }
         this.clientSecret = newSecret.trim();
         registerEvent(new ClientSecretRotatedEvent(this.getId()));
@@ -160,11 +161,11 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void addGrantType(GrantTypeEnums grantType) {
         if (grantTypes.contains(grantType)) {
-            throw new DomainException("授权类型已存在");
+            throw new DomainException(AuthI18nKeyConstants.GRANT_TYPE_ALREADY_EXISTS);
         }
         // 如果是授权码模式，需要检查redirectUris
         if (grantType == GrantTypeEnums.AUTHORIZATION_CODE && redirectUris.isEmpty()) {
-            throw new DomainException("添加授权码模式前，请先配置重定向URI");
+            throw new DomainException(AuthI18nKeyConstants.ADD_AUTH_CODE_BEFORE_CONFIG_REDIRECT_URI);
         }
         grantTypes.add(grantType);
         registerEvent(new GrantTypeAddedEvent(this.getId(), grantType));
@@ -175,10 +176,10 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void removeGrantType(GrantTypeEnums grantType) {
         if (!grantTypes.contains(grantType)) {
-            throw new DomainException("授权类型不存在");
+            throw new DomainException(AuthI18nKeyConstants.GRANT_TYPE_NOT_EXIST);
         }
         if (grantTypes.size() == 1) {
-            throw new DomainException("至少保留一个授权类型");
+            throw new DomainException(AuthI18nKeyConstants.AT_LEAST_ONE_GRANT_TYPE_MUST_REMAIN);
         }
         grantTypes.remove(grantType);
         registerEvent(new GrantTypeRemovedEvent(this.getId(), grantType));
@@ -191,7 +192,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void addRedirectUri(String redirectUri) {
         if (redirectUri == null || redirectUri.trim().isEmpty()) {
-            throw new DomainException("重定向URI不能为空");
+            throw new DomainException(AuthI18nKeyConstants.REDIRECT_URI_CANNOT_BE_BLANK);
         }
         redirectUris.add(redirectUri.trim());
     }
@@ -201,10 +202,10 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void removeRedirectUri(String redirectUri) {
         if (!redirectUris.contains(redirectUri)) {
-            throw new DomainException("重定向URI不存在");
+            throw new DomainException(AuthI18nKeyConstants.REDIRECT_URI_NOT_EXIST);
         }
         if (grantTypes.contains(GrantTypeEnums.AUTHORIZATION_CODE) && redirectUris.size() <= 1) {
-            throw new DomainException("授权码模式至少需要一个重定向URI");
+            throw new DomainException(AuthI18nKeyConstants.AUTHORIZATION_CODE_REQUIRES_AT_LEAST_ONE_REDIRECT_URI);
         }
         redirectUris.remove(redirectUri);
     }
@@ -216,7 +217,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void addScope(String scope) {
         if (scope == null || scope.trim().isEmpty()) {
-            throw new DomainException("Scope不能为空");
+            throw new DomainException(AuthI18nKeyConstants.SCOPE_CANNOT_BE_BLANK);
         }
         this.scope.add(scope.trim());
     }
@@ -235,7 +236,7 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      */
     public void enable() {
         if (this.enabled == EnableEnums.ENABLED) {
-            throw new DomainException("客户端已启用");
+            throw new DomainException(AuthI18nKeyConstants.CLIENT_ALREADY_ENABLED);
         }
         this.enabled = EnableEnums.ENABLED;
         registerEvent(new ClientEnabledEvent(this.getId()));
@@ -245,10 +246,10 @@ public class ClientInfoAggregate extends AbstractAggregate<ClientId> {
      * 禁用客户端
      */
     public void disable() {
-        if (this.enabled == EnableEnums.ENABLED) {
-            throw new DomainException("客户端已禁用");
+        if (this.enabled == EnableEnums.DISABLED) {
+            throw new DomainException(AuthI18nKeyConstants.CLIENT_ALREADY_DISABLED);
         }
-        this.enabled = EnableEnums.ENABLED;
+        this.enabled = EnableEnums.DISABLED;
         registerEvent(new ClientDisabledEvent(this.getId()));
     }
 

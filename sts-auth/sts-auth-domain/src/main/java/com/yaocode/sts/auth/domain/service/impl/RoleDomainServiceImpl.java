@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.constants.CommonConstants;
 import com.yaocode.sts.auth.domain.constants.RoleConstants;
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
@@ -11,6 +12,7 @@ import com.yaocode.sts.auth.domain.repository.UserInfoRepository;
 import com.yaocode.sts.auth.domain.service.RoleDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.RoleCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -57,16 +59,16 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         // 验证当前租户存在不存在
         Optional<TenantInfoEntity> tenantInfoEntity = tenantInfoRepository.findById(tenantId);
         if (tenantInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         // 验证角色id存在不存在
         if (!validateRoleId(tenantId, roleIdList)) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         // 检查用户存在不存在
         Optional<UserInfoEntity> userInfoEntity = userInfoRepository.findById(userId);
         if (userInfoEntity.isEmpty()) {
-            throw new IllegalArgumentException("auth.params.data.not.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.PARAMS_DATA_NOT_EXISTS);
         }
         roleInfoRepository.saveRelRoleUser(tenantId, userId, roleIdList);
     }
@@ -75,21 +77,21 @@ public class RoleDomainServiceImpl implements RoleDomainService {
     public void createDefaultRole(TenantInfoEntity tenantInfoEntity) {
         String tenantCode = tenantInfoEntity.getTenantCode().getValue();
         String defaultRoleCode = tenantCode
-                .concat(CommonConstants.SYMBOL_HYPHEN)
+                .concat(SymbolConstants.SYMBOL_HYPHEN)
                 .concat(CommonConstants.DEFAULT_EN_STR);
         RoleCode roleCode = RoleCode.of(defaultRoleCode);
         // 校验角色编码不可重复
         Optional<RoleInfoEntity> roleCodeEntity = roleInfoRepository
                 .findByRoleCode(tenantInfoEntity.getId(), roleCode);
         if (roleCodeEntity.isPresent()) {
-            throw new IllegalArgumentException("auth.data.is.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.DATA_ALREADY_EXISTS);
         }
         String roleName = tenantInfoEntity.getTenantName().concat(RoleConstants.DEFAULT_ROLE_NAME);
         // 校验角色名称不可重复
         Optional<RoleInfoEntity> roleNameEntity = roleInfoRepository
                 .findByRoleName(tenantInfoEntity.getId(), roleName);
         if (roleNameEntity.isPresent()) {
-            throw new IllegalArgumentException("auth.data.is.exists");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.DATA_ALREADY_EXISTS);
         }
         RoleInfoEntity roleInfoEntity = RoleInfoEntity.build(
                 tenantInfoEntity.getId(),

@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.DegreeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.EducationId;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
@@ -46,7 +47,7 @@ public class UserEducationEntity {
             Integer sortOrder
     ) {
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("入学日期不能晚于毕业日期");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.ENROLLMENT_DATE_CANNOT_BE_LATER_THAN_GRADUATION);
         }
         UserEducationEntity entity = new UserEducationEntity(EducationId.nextId(), userId);
         entity.tenantId = tenantId;
@@ -88,7 +89,7 @@ public class UserEducationEntity {
 
     public void updateEndDate(LocalDate endDate) {
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("毕业日期不能早于入学日期");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.GRADUATION_DATE_CANNOT_BE_EARLIER_THAN_ENROLLMENT);
         }
         this.endDate = endDate;
     }

@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.enums.OrganizationTypeEnums;
 import com.yaocode.sts.auth.domain.events.organization.OrganizationAddUserEvent;
 import com.yaocode.sts.auth.domain.events.organization.OrganizationCreatedEvent;
@@ -11,6 +12,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.RoleId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.UserGroupId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.exception.DomainException;
@@ -126,7 +128,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
         org.organizationType = organizationType != null ? organizationType : OrganizationTypeEnums.ENTITY;
         org.parentId = parentOrg.getId();
         org.level = parentOrg.getLevel() + 1;
-        org.organizationCodePath = parentOrg.getOrganizationCodePath() + "/" + organizationCode.getValue();
+        org.organizationCodePath = parentOrg.getOrganizationCodePath() + SymbolConstants.FORWARD_SLASH + organizationCode.getValue();
         org.contact = contact;
         org.phone = phone;
         org.email = email;
@@ -207,7 +209,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      */
     public void updateName(String organizationName) {
         if (organizationName == null || organizationName.trim().isEmpty()) {
-            throw new DomainException("组织名称不能为空");
+            throw new DomainException(AuthI18nKeyConstants.ORGANIZATION_NAME_CANNOT_BE_BLANK);
         }
         this.organizationName = organizationName.trim();
     }
@@ -290,7 +292,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      */
     public void addMember(UserId userId) {
         if (userIds.contains(userId)) {
-            throw new DomainException("用户已在该组织中");
+            throw new DomainException(AuthI18nKeyConstants.USER_ALREADY_IN_ORGANIZATION);
         }
         userIds.add(userId);
         registerEvent(new OrganizationAddUserEvent(this.getId(), userId));
@@ -301,7 +303,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      */
     public void removeMember(UserId userId) {
         if (!userIds.contains(userId)) {
-            throw new DomainException("用户不在该组织中");
+            throw new DomainException(AuthI18nKeyConstants.USER_NOT_IN_ORGANIZATION);
         }
         userIds.remove(userId);
         registerEvent(new OrganizationRemoveUserEvent(this.getId(), userId));
@@ -319,7 +321,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      */
     public void addUserGroup(UserGroupId userGroupId) {
         if (userGroupIds.contains(userGroupId)) {
-            throw new DomainException("用户组已关联到该组织");
+            throw new DomainException(AuthI18nKeyConstants.USER_GROUP_ALREADY_ASSOCIATED_WITH_ORGANIZATION);
         }
         userGroupIds.add(userGroupId);
     }
@@ -336,7 +338,7 @@ public class OrganizationInfoAggregate extends AbstractAggregate<OrganizationId>
      */
     public void addRole(RoleId roleId) {
         if (roleIds.contains(roleId)) {
-            throw new DomainException("角色已关联到该组织");
+            throw new DomainException(AuthI18nKeyConstants.ROLE_ALREADY_ASSOCIATED_WITH_ORGANIZATION);
         }
         roleIds.add(roleId);
     }

@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.domain.entity;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.SecretQuestionId;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -38,10 +39,10 @@ public class UserSecretQuestionEntity {
             Integer sortOrder
     ) {
         if (questionType == null && customQuestion == null) {
-            throw new IllegalArgumentException("问题类型或自定义问题至少提供一个");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.QUESTION_TYPE_OR_CUSTOM_QUESTION_REQUIRED);
         }
         if (encryptedAnswer == null || encryptedAnswer.trim().isEmpty()) {
-            throw new IllegalArgumentException("答案不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.ANSWER_CANNOT_BE_BLANK);
         }
         UserSecretQuestionEntity entity = new UserSecretQuestionEntity(
                 SecretQuestionId.nextId(), userId
@@ -76,7 +77,7 @@ public class UserSecretQuestionEntity {
 
     public void updateAnswer(String encryptedAnswer) {
         if (encryptedAnswer == null || encryptedAnswer.trim().isEmpty()) {
-            throw new IllegalArgumentException("答案不能为空");
+            throw new IllegalArgumentException(AuthI18nKeyConstants.ANSWER_CANNOT_BE_BLANK);
         }
         this.encryptedAnswer = encryptedAnswer;
     }

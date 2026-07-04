@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.domain.rules;
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.constants.CommonConstants;
+
 import java.util.regex.Pattern;
 
 /**
@@ -13,9 +16,9 @@ import java.util.regex.Pattern;
  */
 public class CaptchaVerifyCodeRule implements VerifyCodeRule {
 
-    private static final Pattern PATTERN = Pattern.compile("^[A-Za-z\\d]{4,6}$");
-    private static final int DEFAULT_LENGTH = 5;
-    private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final Pattern PATTERN = CommonConstants.CAPTCHA_CODE_PATTERN;
+    private static final int DEFAULT_LENGTH = CommonConstants.CAPTCHA_DEFAULT_LENGTH;
+    private static final String CHARS = CommonConstants.CAPTCHA_CHARS;
 
     @Override
     public boolean validate(String code) {
@@ -24,7 +27,7 @@ public class CaptchaVerifyCodeRule implements VerifyCodeRule {
 
     @Override
     public String getDescription() {
-        return "4-6位字母和数字（区分大小写）";
+        return AuthI18nKeyConstants.CAPTCHA_CODE_DESCRIPTION;
     }
 
     @Override
