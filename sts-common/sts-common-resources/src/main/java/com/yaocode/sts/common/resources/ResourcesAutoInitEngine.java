@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.resources;
 
+import com.yaocode.sts.common.resources.constants.IConstants;
 import com.yaocode.sts.common.resources.properties.ResourcesConfigProperties;
 import com.yaocode.sts.common.resources.services.ResourcesBuilder;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.springframework.context.ApplicationContextAware;
 import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,12 +37,14 @@ public class ResourcesAutoInitEngine implements InitializingBean,  ApplicationCo
     private final ResourcesBuilder resourcesBuilder;
 
     private static final ExecutorService EXECUTORS = new ThreadPoolExecutor(
-            3, 10, 60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(20),
-            (ThreadFactory) r -> {
+            IConstants.THREAD_POOL_CORE_SIZE,
+            IConstants.THREAD_POOL_MAX_SIZE,
+            IConstants.THREAD_POOL_KEEP_ALIVE_SECONDS,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(IConstants.THREAD_POOL_QUEUE_CAPACITY),
+            r -> {
                 final AtomicInteger counter = new AtomicInteger(1);
-
-                return new Thread(r, "sts-common-resources-thread-" + counter.getAndIncrement());
+                return new Thread(r, IConstants.THREAD_POOL_NAME_PREFIX + counter.getAndIncrement());
             },
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
@@ -56,7 +58,7 @@ public class ResourcesAutoInitEngine implements InitializingBean,  ApplicationCo
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         EXECUTORS.submit(this::scanResources);
     }
 

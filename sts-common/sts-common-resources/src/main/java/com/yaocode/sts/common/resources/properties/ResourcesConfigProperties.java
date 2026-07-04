@@ -1,5 +1,7 @@
 package com.yaocode.sts.common.resources.properties;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
  * @author: Jin-LiangBo
  * @date: 2025年11月15日 16:12
  */
+@Setter
+@Getter
 @Configuration(proxyBeanMethods = false)
 @ConfigurationProperties(prefix = ResourcesConfigProperties.RESOURCES_CONFIG_PREFIX)
 public class ResourcesConfigProperties {
@@ -24,19 +28,4 @@ public class ResourcesConfigProperties {
      */
     private String[] basePackages = {"com.yaocode.sts"};
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String[] getBasePackages() {
-        return basePackages;
-    }
-
-    public void setBasePackages(String[] basePackages) {
-        this.basePackages = basePackages;
-    }
 }

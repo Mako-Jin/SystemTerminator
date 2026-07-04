@@ -5,6 +5,8 @@ import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.resources.annotation.ServerResources;
 import com.yaocode.sts.common.resources.annotation.ServiceResources;
 import com.yaocode.sts.common.resources.annotation.SystemResources;
+import com.yaocode.sts.common.resources.constants.IConstants;
+import com.yaocode.sts.common.resources.constants.ResourcesI18nKeyConstants;
 import lombok.Getter;
 
 /**
@@ -18,51 +20,51 @@ public enum ResourceTypeEnums {
     /**
      * 系统
      */
-    SYSTEM(0, "系统"),
+    SYSTEM(0, ResourcesI18nKeyConstants.RESOURCE_TYPE_SYSTEM),
 
     /**
      * 服务
      */
-    SERVER(1, "服务"),
+    SERVER(1, ResourcesI18nKeyConstants.RESOURCE_TYPE_SERVER),
 
     /**
      * 服务
      */
-    SERVICE(2, "服务"),
+    SERVICE(2, ResourcesI18nKeyConstants.RESOURCE_TYPE_SERVICE),
 
     /**
      * 模块
      */
-    MODULE(3, "模块"),
+    MODULE(3, ResourcesI18nKeyConstants.RESOURCE_TYPE_MODULE),
 
     /**
      * 菜单
      */
-    MENUS(4, "菜单"),
+    MENUS(4, ResourcesI18nKeyConstants.RESOURCE_TYPE_MENUS),
 
     /**
      * 页面
      */
-    PAGES(5, "页面"),
+    PAGES(5, ResourcesI18nKeyConstants.RESOURCE_TYPE_PAGES),
 
     /**
      * 接口
      */
-    API(6, "接口"),
+    API(6, ResourcesI18nKeyConstants.RESOURCE_TYPE_API),
 
     /**
      * 按钮
      */
-    BUTTON(7, "按钮"),
+    BUTTON(7, ResourcesI18nKeyConstants.RESOURCE_TYPE_BUTTON),
 
     /**
      * 数据
      */
-    DATA(8, "数据"),
+    DATA(8, ResourcesI18nKeyConstants.RESOURCE_TYPE_DATA),
     /**
      * 文件
      */
-    FILE(9, "文件"),
+    FILE(9, ResourcesI18nKeyConstants.RESOURCE_TYPE_FILE),
     ;
 
     private final Integer code;
@@ -76,15 +78,15 @@ public enum ResourceTypeEnums {
 
     public static String createDefaultResourceCode(Class<?> clazz) {
         if (SystemResources.class.equals(clazz)) {
-            return "0".repeat(3);
+            return "0".repeat(IConstants.SYSTEM_CODE_LENGTH);
         } else if (ServerResources.class.equals(clazz)) {
-            return "0".repeat(6);
+            return "0".repeat(IConstants.SERVER_CODE_LENGTH);
         } else if (ServiceResources.class.equals(clazz)) {
-            return "0".repeat(9);
+            return "0".repeat(IConstants.SERVICE_CODE_LENGTH);
         } else if (ModuleResources.class.equals(clazz)) {
-            return "0".repeat(12);
-        }  else if (ApiResources.class.equals(clazz)) {
-            return "0".repeat(15);
+            return "0".repeat(IConstants.MODULE_CODE_LENGTH);
+        } else if (ApiResources.class.equals(clazz)) {
+            return "0".repeat(IConstants.API_CODE_LENGTH);
         }
         throw new IllegalArgumentException();
     }
@@ -95,7 +97,7 @@ public enum ResourceTypeEnums {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown resource type: " + code);
+        throw new IllegalArgumentException(ResourcesI18nKeyConstants.ERR_UNKNOWN_RESOURCE_TYPE);
     }
 
     public boolean isMenu() {
