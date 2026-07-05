@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
 import com.yaocode.sts.common.web.annotation.CheckXss;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +16,7 @@ public class CreateUserParams {
 
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "租户标识不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_PARAMS_VALIDATION_TENANT_ID_REQUIRED)
     private String tenantId;
 
     @CheckXss
@@ -28,7 +29,7 @@ public class CreateUserParams {
 
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "用户名不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_VALUE_OBJECT_USERNAME_CANNOT_BE_BLANK)
     private String username;
 
     @CheckXss
@@ -37,7 +38,7 @@ public class CreateUserParams {
 
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "电话号码不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_VALUE_OBJECT_PHONE_NUMBER_CANNOT_BE_BLANK)
     private String phoneNum;
 
     @CheckXss

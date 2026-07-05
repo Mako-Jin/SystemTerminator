@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
 import com.yaocode.sts.common.web.annotation.CheckXss;
 import jakarta.validation.constraints.NotBlank;
@@ -18,14 +19,14 @@ public class CreateRoleParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "角色编码不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_ROLE_CODE_CANNOT_BE_BLANK)
     private String roleCode;
     /**
      * 角色名称
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "角色名称不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_ROLE_NAME_CANNOT_BE_BLANK)
     private String roleName;
 
     @CheckXss
@@ -40,7 +41,7 @@ public class CreateRoleParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "租户标识不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_PARAMS_VALIDATION_TENANT_ID_REQUIRED)
     private String tenantId;
 
 }

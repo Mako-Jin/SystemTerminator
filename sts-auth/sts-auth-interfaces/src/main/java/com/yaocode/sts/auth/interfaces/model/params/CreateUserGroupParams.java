@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
 import com.yaocode.sts.common.web.annotation.CheckXss;
 import jakarta.validation.constraints.NotBlank;
@@ -18,14 +19,14 @@ public class CreateUserGroupParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "用户组编码不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_USER_GROUP_CODE_CANNOT_BE_BLANK)
     private String userGroupCode;
     /**
      * 用户组名称
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "用户组名称不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_USER_GROUP_NAME_CANNOT_BE_BLANK)
     private String userGroupName;
 
     @CheckXss
@@ -40,7 +41,7 @@ public class CreateUserGroupParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "租户标识不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_PARAMS_VALIDATION_TENANT_ID_REQUIRED)
     private String tenantId;
 
 }

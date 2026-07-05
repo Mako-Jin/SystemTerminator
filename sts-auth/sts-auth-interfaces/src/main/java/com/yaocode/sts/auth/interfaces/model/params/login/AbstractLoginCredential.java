@@ -3,6 +3,7 @@ package com.yaocode.sts.auth.interfaces.model.params.login;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.yaocode.sts.auth.domain.valueobjects.Credential;
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -24,7 +25,7 @@ import lombok.Data;
 })
 public abstract class AbstractLoginCredential implements Credential {
 
-    @NotBlank(message = "授权类型不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_VALUE_OBJECT_GRANT_TYPE_CANNOT_BE_BLANK)
     private String grantType;
 
     // ========== 客户端信息 ==========

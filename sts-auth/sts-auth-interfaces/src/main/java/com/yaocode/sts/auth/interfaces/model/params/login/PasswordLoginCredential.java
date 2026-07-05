@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params.login;
 
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,10 +14,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class PasswordLoginCredential extends AbstractLoginCredential {
 
-    @NotBlank(message = "用户名不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_VALUE_OBJECT_USERNAME_CANNOT_BE_BLANK)
     private String username;
 
-    @NotBlank(message = "密码不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_VALUE_OBJECT_PASSWORD_CANNOT_BE_BLANK)
     private String password;
 
     private Boolean rememberMe;

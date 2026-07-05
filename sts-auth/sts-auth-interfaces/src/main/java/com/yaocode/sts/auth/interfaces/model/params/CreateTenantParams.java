@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
 import com.yaocode.sts.common.web.annotation.CheckXss;
@@ -19,14 +20,14 @@ public class CreateTenantParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "租户名称不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_TENANT_NAME_CANNOT_BE_BLANK)
     private String tenantName;
     /**
      * 租户编码
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "租户编码不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_TENANT_CODE_CANNOT_BE_BLANK)
     private String tenantCode;
     /**
      * 租户描述
@@ -37,12 +38,12 @@ public class CreateTenantParams {
     /**
      * 是否允许注册新用户
      */
-    @Range(min = 0, max = 1, message = "allowRegister只支持0和1")
+    @Range(min = 0, max = 1, message = AuthApiI18nKeyConstants.AUTH_PARAMS_VALIDATION_BOOLEAN_VALUE)
     private Integer allowRegister = YesNoEnums.NO.getCode();
     /**
      * 是否允许新增新用户
      */
-    @Range(min = 0, max = 1, message = "allowAdd只支持0和1")
+    @Range(min = 0, max = 1, message = AuthApiI18nKeyConstants.AUTH_PARAMS_VALIDATION_BOOLEAN_VALUE)
     private Integer allowAdd = YesNoEnums.YES.getCode();
     /**
      * 父id

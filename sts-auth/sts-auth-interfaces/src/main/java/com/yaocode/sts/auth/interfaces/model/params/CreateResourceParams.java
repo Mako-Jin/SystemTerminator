@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.interfaces.model.params;
 
+import com.yaocode.sts.auth.interfaces.constants.AuthApiI18nKeyConstants;
 import com.yaocode.sts.common.web.annotation.CheckSqlInjection;
 import com.yaocode.sts.common.web.annotation.CheckXss;
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +22,7 @@ public class CreateResourceParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "资源名称不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_RESOURCE_NAME_CANNOT_BE_BLANK)
     private String resourceName;
 
     /**
@@ -29,7 +30,7 @@ public class CreateResourceParams {
      */
     @CheckXss
     @CheckSqlInjection
-    @NotBlank(message = "资源编码不能为空")
+    @NotBlank(message = AuthApiI18nKeyConstants.AUTH_RESOURCE_VALUE_CANNOT_BE_BLANK)
     private String resourceValue;
 
     /**
@@ -42,7 +43,7 @@ public class CreateResourceParams {
     /**
      * 资源类型：0：系统；1：服务；2：模块；3：页面；4：接口
      */
-    @NotNull(message = "资源类型不能为空")
+    @NotNull(message = AuthApiI18nKeyConstants.AUTH_PARAMS_VALIDATION_RESOURCE_TYPE_REQUIRED)
     private Integer resourceType;
 
     /**
