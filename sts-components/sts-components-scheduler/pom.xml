@@ -16,7 +16,7 @@
         <groupId>com.yaocode.sts</groupId>
         <artifactId>sts-components</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modules>

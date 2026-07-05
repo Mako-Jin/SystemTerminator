@@ -13,11 +13,11 @@
     </parent>
 
     <packaging>pom</packaging>
-    <artifactId>sts-components</artifactId>
+    <artifactId>sts-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>sts-components</name>
-    <description>components -- 组件库</description>
+    <name>sts-server</name>
+    <description>server -- 服务聚合</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,9 +26,8 @@
     </properties>
 
     <modules>
-        <module>sts-components-flow</module>
-        <module>sts-components-scheduler</module>
-        <module>sts-components-file</module>
+        <module>sts-server-auth</module>
+        <module>sts-server-external-adapter</module>
     </modules>
 
     <dependencyManagement>

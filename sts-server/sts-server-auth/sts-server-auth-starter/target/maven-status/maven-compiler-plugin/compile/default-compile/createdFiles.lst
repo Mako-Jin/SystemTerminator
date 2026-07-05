@@ -1,0 +1,10 @@
+com\yaocode\sts\auth\starter\config\MyBatisConfig.class
+com\yaocode\sts\auth\starter\controller\TestController.class
+com\yaocode\sts\auth\starter\controller\UserGroupController.class
+com\yaocode\sts\auth\starter\controller\TenantInfoController.class
+com\yaocode\sts\auth\starter\AuthApplication.class
+com\yaocode\sts\auth\starter\controller\OrganizationController.class
+com\yaocode\sts\auth\starter\controller\AuthController.class
+com\yaocode\sts\auth\starter\controller\UserInfoController.class
+com\yaocode\sts\auth\starter\controller\ResourceController.class
+com\yaocode\sts\auth\starter\controller\RoleInfoController.class

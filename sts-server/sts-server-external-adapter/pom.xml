@@ -2,42 +2,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.yaocode.sts</groupId>
-        <artifactId>sts-parent</artifactId>
+        <artifactId>sts-server</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../sts-parent/pom.xml</relativePath>
+        <relativePath/>
     </parent>
 
-    <packaging>pom</packaging>
-    <artifactId>sts-components</artifactId>
+    <artifactId>sts-server-external-adapter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-    <name>sts-components</name>
-    <description>components -- 组件库</description>
+    <name>sts-server-external-adapter</name>
+    <description>external adapter -- 外部服务API对接适配层</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-
-    <modules>
-        <module>sts-components-flow</module>
-        <module>sts-components-scheduler</module>
-        <module>sts-components-file</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-
-    </build>
 
 </project>
