@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.application.service.impl;
 
 import com.yaocode.sts.auth.application.converter.TenantInfoApplicationConverter;
 import com.yaocode.sts.auth.application.dto.TenantInfoDto;
+import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
+import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.TenantInfoApplicationService;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.repository.TenantInfoRepository;
@@ -38,10 +40,10 @@ public class TenantInfoApplicationServiceImpl implements TenantInfoApplicationSe
         // 租户编码肯定不能重复，租户名称也不让重复
         TenantCode tenantCode = TenantCode.of(tenantInfoDto.getTenantCode());
         if (tenantDomainService.existsByTenantCode(tenantCode)) {
-            throw new IllegalArgumentException("租户编码已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.TENANT_CODE_EXISTS);
         }
         if (tenantDomainService.existsByTenantName(tenantInfoDto.getTenantName())) {
-            throw new IllegalArgumentException("租户名已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.TENANT_NAME_EXISTS);
         }
         TenantInfoEntity tenantInfoEntity = tenantInfoApplicationConverter.toEntityForAdd(tenantInfoDto);
         // 4. 设置默认值/初始化状态

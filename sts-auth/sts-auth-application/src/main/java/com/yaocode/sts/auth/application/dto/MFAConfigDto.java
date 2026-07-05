@@ -1,5 +1,7 @@
 package com.yaocode.sts.auth.application.dto;
 
+import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
+import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.domain.enums.MFATypeEnums;
 import lombok.Getter;
 
@@ -17,7 +19,7 @@ public class MFAConfigDto {
 
     private MFAConfigDto(boolean required, Set<MFATypeEnums> supportedTypes) {
         if (required && (supportedTypes == null || supportedTypes.isEmpty())) {
-            throw new IllegalArgumentException("启用MFA时必须指定至少一种MFA类型");
+            throw new AuthServerException(AuthErrorCodeEnums.MFA_ENABLED_REQUIRES_TYPE);
         }
         this.required = required;
         this.supportedTypes = supportedTypes;

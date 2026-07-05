@@ -1,5 +1,8 @@
 package com.yaocode.sts.auth.application.dto;
 
+import com.yaocode.sts.auth.application.constants.AuthApplicationConstants;
+import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
+import com.yaocode.sts.auth.application.exception.AuthServerException;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -35,7 +38,7 @@ public class BrandingDto {
         private String loginTitle;
         private String institution;
         private String copyright;
-        private String primaryColor = "#1890ff";
+        private String primaryColor = AuthApplicationConstants.DEFAULT_PRIMARY_COLOR;
         private String loginBackgroundUrl;
 
         public Builder brandName(String brandName) {
@@ -65,8 +68,8 @@ public class BrandingDto {
 
         public Builder primaryColor(String primaryColor) {
             // 简单颜色格式校验（#RRGGBB）
-            if (primaryColor != null && !primaryColor.matches("^#[0-9a-fA-F]{6}$")) {
-                throw new IllegalArgumentException("颜色格式不正确，应为 #RRGGBB");
+            if (primaryColor != null && !primaryColor.matches(AuthApplicationConstants.COLOR_FORMAT_REGEX)) {
+                throw new AuthServerException(AuthErrorCodeEnums.BRANDING_COLOR_FORMAT_INVALID);
             }
             this.primaryColor = primaryColor;
             return this;

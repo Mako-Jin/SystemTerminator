@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.application.service.impl;
 
 import com.yaocode.sts.auth.application.converter.OrganizationApplicationConverter;
 import com.yaocode.sts.auth.application.dto.OrganizationDto;
+import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
+import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.OrganizationApplicationService;
 import com.yaocode.sts.auth.domain.entity.OrganizationInfoEntity;
 import com.yaocode.sts.auth.domain.repository.OrganizationRepository;
@@ -9,7 +11,6 @@ import com.yaocode.sts.auth.domain.service.OrganizationDomainService;
 import com.yaocode.sts.auth.domain.service.TenantDomainService;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.OrganizationId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.OrganizationCode;
-import com.yaocode.sts.common.basic.exception.DataExistsException;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import jakarta.annotation.Resource;
@@ -48,19 +49,19 @@ public class OrganizationApplicationServiceImpl implements OrganizationApplicati
     public String singleAdd(OrganizationDto organizationDto) {
         TenantId tenantId = TenantId.of(organizationDto.getTenantId());
         if (!tenantDomainService.validateTenantId(tenantId)) {
-            throw new IllegalArgumentException("租户不存在");
+            throw new AuthServerException(AuthErrorCodeEnums.TENANT_NOT_FOUND);
         }
         OrganizationCode organizationCode = OrganizationCode.of(organizationDto.getOrganizationCode());
         if (organizationDomainService.uniqueOrganizationCode(tenantId, organizationCode)) {
-            throw new IllegalArgumentException("组织编码已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.ORGANIZATION_CODE_EXISTS);
         }
         if (organizationDomainService.uniqueOrganizationName(tenantId, organizationDto.getOrganizationName())) {
-            throw new IllegalArgumentException("组织名称已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.ORGANIZATION_NAME_EXISTS);
         }
         if (Objects.nonNull(organizationDto.getParentId())) {
             OrganizationId parentId = OrganizationId.of(organizationDto.getParentId());
             if (!organizationDomainService.validateOrganizationId(tenantId, parentId)) {
-                throw new IllegalArgumentException("父组织不存在");
+                throw new AuthServerException(AuthErrorCodeEnums.ORGANIZATION_PARENT_NOT_FOUND);
             }
         }
         organizationDto.setOrganizationId(IdFactory.generate().toString());
@@ -75,7 +76,7 @@ public class OrganizationApplicationServiceImpl implements OrganizationApplicati
         Optional<OrganizationInfoEntity> organizationInfoEntity = organizationRepository.findById(valueObjectId);
         if (organizationInfoEntity.isEmpty()) {
             logger.warn("组织不存在, organizationId: {}", organizationId);
-            throw new DataExistsException(String.format("组织不存在, ID: %s", organizationId));
+            throw new AuthServerException(AuthErrorCodeEnums.ORGANIZATION_NOT_FOUND);
         }
         // 转换为DTO
         return organizationApplicationConverter.toDto(organizationInfoEntity.get());

@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.application.service.impl;
 
 import com.yaocode.sts.auth.application.converter.ResourceApplicationConverter;
 import com.yaocode.sts.auth.application.dto.ResourceDto;
+import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
+import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.ResourceApplicationService;
 import com.yaocode.sts.auth.domain.entity.ResourceInfoEntity;
 import com.yaocode.sts.auth.domain.repository.ResourceRepository;
@@ -38,7 +40,7 @@ public class ResourceApplicationServiceImpl implements ResourceApplicationServic
         resourceDto.setResourceId(IdFactory.generate().toString());
         ResourceInfoEntity ResourceInfoEntity = resourceApplicationConverter.toEntity(resourceDto);
         if (!resourceDomainService.checkResourceEntity(ResourceInfoEntity)) {
-            throw new IllegalArgumentException("资源数据已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.RESOURCE_EXISTS);
         }
         return resourceRepository.save(ResourceInfoEntity).getValue();
     }

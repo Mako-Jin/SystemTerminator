@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.application.service.impl;
 
+import com.yaocode.sts.auth.application.constants.AuthApplicationConstants;
 import com.yaocode.sts.auth.application.converter.AuthApplicationConverter;
 import com.yaocode.sts.auth.application.dto.TenantConfigDto;
 import com.yaocode.sts.auth.application.dto.request.AuthenticationRequestDto;
@@ -343,7 +344,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
         if (config.isPresent() && config.get().getMaxLoginAttempts() != null) {
             return config.get().getMaxLoginAttempts();
         }
-        return 5;
+        return AuthApplicationConstants.DEFAULT_MAX_LOGIN_ATTEMPTS;
     }
 
     /**

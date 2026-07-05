@@ -2,6 +2,8 @@ package com.yaocode.sts.auth.application.service.impl;
 
 import com.yaocode.sts.auth.application.converter.RoleInfoApplicationConverter;
 import com.yaocode.sts.auth.application.dto.RoleInfoDto;
+import com.yaocode.sts.auth.application.enums.AuthErrorCodeEnums;
+import com.yaocode.sts.auth.application.exception.AuthServerException;
 import com.yaocode.sts.auth.application.service.RoleInfoApplicationService;
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.repository.RoleInfoRepository;
@@ -42,19 +44,19 @@ public class RoleInfoApplicationServiceImpl implements RoleInfoApplicationServic
     public String singleAdd(RoleInfoDto roleInfoDto) {
         TenantId tenantId = TenantId.of(roleInfoDto.getTenantId());
         if (!tenantDomainService.validateTenantId(tenantId)) {
-            throw new IllegalArgumentException("租户不存在");
+            throw new AuthServerException(AuthErrorCodeEnums.TENANT_NOT_FOUND);
         }
         RoleCode roleCode = RoleCode.of(roleInfoDto.getRoleCode());
         if (roleDomainService.uniqueRoleCode(tenantId, roleCode)) {
-            throw new IllegalArgumentException("角色编码已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.ROLE_CODE_EXISTS);
         }
         if (roleDomainService.uniqueRoleName(tenantId, roleInfoDto.getRoleName())) {
-            throw new IllegalArgumentException("角色名称已存在");
+            throw new AuthServerException(AuthErrorCodeEnums.ROLE_NAME_EXISTS);
         }
         if (Objects.nonNull(roleInfoDto.getParentId())) {
             RoleId parentId = RoleId.of(roleInfoDto.getParentId());
             if (!roleDomainService.validateRoleId(tenantId, parentId)) {
-                throw new IllegalArgumentException("父角色不存在");
+                throw new AuthServerException(AuthErrorCodeEnums.ROLE_PARENT_NOT_FOUND);
             }
         }
         roleInfoDto.setRoleId(IdFactory.generate().toString());
