@@ -1,11 +1,15 @@
 package com.yaocode.sts.common.web.model;
 
 import com.yaocode.sts.common.web.enums.ResultEnums;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author: Jin-LiangBo
  * @date: 2025年10月07日 21:01
  */
+@Setter
+@Getter
 public class ResultModel<T> {
 
     private String code;
@@ -32,27 +36,4 @@ public class ResultModel<T> {
         this.data = data;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 }

@@ -11,6 +11,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Objects;
+
 /**
  * 租户信息对象转换
  * @author: Jin-LiangBo
@@ -37,6 +39,9 @@ public interface TenantInfoConverter {
      * @return TenantInfoEntity
      */
     default TenantInfoEntity toEntity(TenantInfoPo tenantInfoPo) {
+        if (Objects.isNull(tenantInfoPo)) {
+            return null;
+        }
         return TenantInfoEntity.build(
                 stringToTenantId(tenantInfoPo.getTenantId()),
                 tenantInfoPo.getTenantName(),

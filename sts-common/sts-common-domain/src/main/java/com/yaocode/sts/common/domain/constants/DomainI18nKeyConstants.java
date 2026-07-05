@@ -9,8 +9,8 @@ import com.yaocode.sts.common.basic.constants.BasicI18nKeyConstants;
  */
 public interface DomainI18nKeyConstants extends BasicI18nKeyConstants {
 
-    String TENANT_ID_NULL = "tenant.id.null";
-    String USER_ID_NULL = "user.id.null";
+    String TENANT_ID_NULL = "auth.tenant.id.null";
+    String USER_ID_NULL = "auth.user.id.null";
 
     String TENANT_INFO_NOT_FOUND = "tenant.info.not.found";
     String COMMON_DOMAIN_IDENTIFIER_VALUE_NULL = "common.domain.identifier.value.null";
