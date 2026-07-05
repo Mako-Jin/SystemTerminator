@@ -1,85 +1,88 @@
 package com.yaocode.sts.components.flow.core.engine;
 
-import com.yaocode.sts.components.flow.core.config.ProcessEngineConfiguration;
-import com.yaocode.sts.components.flow.core.executor.CommandExecutor;
-import com.yaocode.sts.components.flow.core.executor.ProcessExecutor;
-import com.yaocode.sts.components.flow.core.job.JobExecutor;
-import com.yaocode.sts.components.flow.core.job.JobScheduler;
-import com.yaocode.sts.components.flow.core.repository.ExecutionRepository;
-import com.yaocode.sts.components.flow.core.repository.NodeDefinitionRepository;
-import com.yaocode.sts.components.flow.core.repository.ProcessDefinitionRepository;
-import com.yaocode.sts.components.flow.core.repository.ProcessInstanceRepository;
-import com.yaocode.sts.components.flow.core.repository.SequenceDefinitionRepository;
-import com.yaocode.sts.components.flow.core.repository.TaskRepository;
-import com.yaocode.sts.components.flow.core.repository.VariableRepository;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+
+import com.yaocode.sts.components.flow.core.engine.repository.RepositoryService;
+import com.yaocode.sts.components.flow.core.engine.runtime.RuntimeService;
 
 /**
- * 流程引擎
- * 类似 Camunda 的 ProcessEngine
- * <p>
- * 参考 Camunda: org.camunda.bpm.engine.ProcessEngine
+ * 流程引擎服务聚合接口
+ * 提供所有核心服务的访问入口
+ *
+ * @author Process Engine Team
+ * @version 1.0.0
  */
-@Slf4j
-@Getter
-public class ProcessEngine {
+public interface ProcessEngine {
 
-    private final ProcessEngineConfiguration configuration;
     /**
-     * -- GETTER --
-     *  获取命令执行器
+     * 获取运行时服务
+     * 用于流程实例管理、启动、变量操作等
      */
-    private final CommandExecutor commandExecutor;
+    RuntimeService getRuntimeService();
+
     /**
-     * -- GETTER --
-     *  获取流程执行器
+     * 获取仓库服务
+     * 用于流程定义部署、查询、版本管理
      */
-    private final ProcessExecutor processExecutor;
-    private final JobExecutor jobExecutor;
+    RepositoryService getRepositoryService();
+
     /**
-     * -- GETTER --
-     *  获取作业调度器
+     * 获取任务服务
+     * 用于人工任务管理、认领、完成、指派
      */
-    private final JobScheduler jobScheduler;
+    TaskService getTaskService();
 
-    // 仓储
-    private final ProcessDefinitionRepository processDefinitionRepository;
-    private final ProcessInstanceRepository processInstanceRepository;
-    private final ExecutionRepository executionRepository;
-    private final TaskRepository taskRepository;
-    private final VariableRepository variableRepository;
-    private final NodeDefinitionRepository nodeDefinitionRepository;
-    private final SequenceDefinitionRepository sequenceDefinitionRepository;
+    /**
+     * 获取历史服务
+     * 用于历史数据查询、报表统计
+     */
+    HistoryService getHistoryService();
 
-    public ProcessEngine(ProcessEngineConfiguration configuration) {
-        this.configuration = configuration;
-        this.commandExecutor = new CommandExecutor();
-        this.processExecutor = new ProcessExecutor(this);
-        this.jobExecutor = new JobExecutor(this);
-        this.jobScheduler = new JobScheduler(this);
+    /**
+     * 获取身份服务
+     * 用于用户、组、租户管理
+     */
+    IdentityService getIdentityService();
 
-        // 初始化仓储
-        this.processDefinitionRepository = configuration.getProcessDefinitionRepository();
-        this.processInstanceRepository = configuration.getProcessInstanceRepository();
-        this.executionRepository = configuration.getExecutionRepository();
-        this.taskRepository = configuration.getTaskRepository();
-        this.variableRepository = configuration.getVariableRepository();
-        this.nodeDefinitionRepository = configuration.getNodeDefinitionRepository();
-        this.sequenceDefinitionRepository = configuration.getSequenceDefinitionRepository();
+    /**
+     * 获取管理服务
+     * 用于引擎管理、作业管理、指标监控
+     */
+    ManagementService getManagementService();
 
-        log.info("ProcessEngine 初始化完成");
-    }
+    /**
+     * 获取授权服务
+     * 用于权限管理、授权检查
+     */
+    AuthorizationService getAuthorizationService();
 
-    public ProcessEngine start() {
-        log.info("ProcessEngine 启动");
-        jobScheduler.start();
-        return this;
-    }
+    /**
+     * 获取表单服务
+     * 用于表单定义与渲染
+     */
+    FormService getFormService();
 
-    public void stop() {
-        log.info("ProcessEngine 停止");
-        jobScheduler.stop();
-    }
+    /**
+     * 获取案例服务
+     * 用于CMMN案例管理
+     */
+    CaseService getCaseService();
+
+    /**
+     * 获取过滤器服务
+     * 用于查询过滤器管理
+     */
+    FilterService getFilterService();
+
+    /**
+     * 获取外部任务服务
+     * 用于外部任务管理
+     */
+    ExternalTaskService getExternalTaskService();
+
+    /**
+     * 获取决策服务
+     * 用于DMN决策服务
+     */
+    DecisionService getDecisionService();
 
 }
