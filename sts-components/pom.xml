@@ -12,6 +12,7 @@
         <relativePath>../sts-parent/pom.xml</relativePath>
     </parent>
 
+    <groupId>com.yaocode.sts.components</groupId>
     <packaging>pom</packaging>
     <artifactId>sts-components</artifactId>
     <version>0.0.1-SNAPSHOT</version>

@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.components</groupId>
         <artifactId>sts-components</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <groupId>com.yaocode.sts.components.flow</groupId>
     <packaging>pom</packaging>
     <artifactId>sts-components-flow</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -32,61 +33,41 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-core</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-api</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-client</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-service</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-web</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.components.flow</groupId>
                 <artifactId>sts-components-flow-starter</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <!-- spring boot starter -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- common -->
-        <dependency>
-            <groupId>com.yaocode.sts</groupId>
-            <artifactId>sts-common-basic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.yaocode.sts</groupId>
-            <artifactId>sts-common-domain</artifactId>
-        </dependency>
-
-
-    </dependencies>
 
 </project>

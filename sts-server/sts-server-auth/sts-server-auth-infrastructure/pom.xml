@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.server.auth</groupId>
         <artifactId>sts-server-auth</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -26,19 +26,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.server.auth</groupId>
             <artifactId>sts-server-auth-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-db</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-infrastructure</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-messages</artifactId>
         </dependency>
         <!-- mapstruct start -->

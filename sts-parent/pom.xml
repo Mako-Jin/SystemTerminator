@@ -106,47 +106,47 @@
             <!-- aop aspectj end -->
             <!-- 自研包 start -->
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-web</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-tools</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-basic</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-domain</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-db</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-resources</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-messages</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.yaocode.sts</groupId>
+                <groupId>com.yaocode.sts.common</groupId>
                 <artifactId>sts-common-crypto</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>

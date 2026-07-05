@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.server.auth</groupId>
         <artifactId>sts-server-auth</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -36,23 +36,23 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-tools</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-basic</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-crypto</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-resources</artifactId>
         </dependency>
         <dependency>

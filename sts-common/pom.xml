@@ -11,6 +11,7 @@
         <relativePath/>
     </parent>
 
+    <groupId>com.yaocode.sts.common</groupId>
     <artifactId>sts-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>

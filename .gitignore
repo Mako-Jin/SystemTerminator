@@ -69,3 +69,4 @@ replay_pid*
 /sts-components/sts-components-flow/sts-components-flow-web/target/
 /sts-app/sts-app-archive/target/
 /sts-app/sts-app-collaborate/target/
+/sts-server/sts-server-external-adapter/target/

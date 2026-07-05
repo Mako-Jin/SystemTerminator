@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.server</groupId>
         <artifactId>sts-server</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <groupId>com.yaocode.sts.server.external.adapter</groupId>
     <artifactId>sts-server-external-adapter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>

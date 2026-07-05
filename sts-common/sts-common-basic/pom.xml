@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.common</groupId>
         <artifactId>sts-common</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>

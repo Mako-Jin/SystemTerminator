@@ -6,11 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.app</groupId>
         <artifactId>sts-app</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <groupId>com.yaocode.sts.app.archive</groupId>
     <artifactId>sts-app-archive</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>

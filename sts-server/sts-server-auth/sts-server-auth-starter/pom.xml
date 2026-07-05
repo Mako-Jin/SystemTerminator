@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.server.auth</groupId>
         <artifactId>sts-server-auth</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -27,7 +27,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.yaocode.sts</groupId>
+            <groupId>com.yaocode.sts.server.auth</groupId>
             <artifactId>sts-server-auth-interfaces</artifactId>
         </dependency>
         <dependency>

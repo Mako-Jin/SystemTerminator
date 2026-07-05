@@ -6,12 +6,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yaocode.sts</groupId>
+        <groupId>com.yaocode.sts.components</groupId>
         <artifactId>sts-components</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <groupId>com.yaocode.sts.components.file</groupId>
     <artifactId>sts-components-file</artifactId>
     <packaging>jar</packaging>
 
