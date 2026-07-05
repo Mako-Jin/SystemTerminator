@@ -1,6 +1,8 @@
 package com.yaocode.sts.auth.infrastructure.config.properties;
 
 
+import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
+import com.yaocode.sts.auth.domain.enums.TokenTypeEnums;
 import com.yaocode.sts.auth.infrastructure.config.model.HmacJwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.model.JwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.model.RsaJwtTokenProviderConfig;
@@ -91,28 +93,30 @@ public class JwtTokenProperties {
         if (access == null) {
             access = getDefaultAccessConfig();
         }
-        return validateConfig(access, "access");
+        return validateConfig(access, TokenTypeEnums.ACCESS_TOKEN.getTokenType());
     }
+
+
 
     public JwtTokenProviderConfig getRefresh() {
         if (refresh == null) {
             refresh = getDefaultRefreshConfig();
         }
-        return validateConfig(refresh, "refresh");
+        return validateConfig(refresh, TokenTypeEnums.REFRESH_TOKEN.getTokenType());
     }
 
     public JwtTokenProviderConfig getRememberMe() {
         if (rememberMe == null) {
             rememberMe = getDefaultRememberMeConfig();
         }
-        return validateConfig(rememberMe, "remember-me");
+        return validateConfig(rememberMe, TokenTypeEnums.REMEMBER_ME.getTokenType());
     }
 
     public JwtTokenProviderConfig getState() {
         if (state == null) {
             state = getDefaultStateConfig();
         }
-        return validateConfig(state, "state");
+        return validateConfig(state, TokenTypeEnums.STATE_TOKEN.getTokenType());
     }
 
 
@@ -120,12 +124,11 @@ public class JwtTokenProperties {
     private JwtTokenProviderConfig validateConfig(JwtTokenProviderConfig config, String providerName) {
         if (config == null) {
             throw new IllegalStateException(
-                    String.format("Configuration not found for %s provider", providerName));
+                    String.format(AuthI18nKeyConstants.ERROR_JWT_CONFIG_NOT_FOUND));
         }
         if (!config.isValid()) {
             throw new IllegalStateException(
-                    String.format("Invalid configuration for %s provider with algorithm %s",
-                            providerName, config.getAlgorithm()));
+                    String.format(AuthI18nKeyConstants.ERROR_JWT_CONFIG_INVALID));
         }
         return config;
     }

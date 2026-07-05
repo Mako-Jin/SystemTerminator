@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
@@ -19,8 +19,8 @@ public class Username extends Identifier<String> {
     /**
      * TODO 这些应该改到租户配置里面去
      */
-    private static final int USERNAME_MIN_LENGTH = CommonConstants.USERNAME_MIN_LENGTH;
-    private static final int USERNAME_MAX_LENGTH = CommonConstants.USERNAME_MAX_LENGTH;
+    private static final int USERNAME_MIN_LENGTH = AuthDomainConstants.USERNAME_MIN_LENGTH;
+    private static final int USERNAME_MAX_LENGTH = AuthDomainConstants.USERNAME_MAX_LENGTH;
     private static final String USERNAME_REGEX = RegexConstants.USERNAME_PATTERN;
 
     private Username(String value) {

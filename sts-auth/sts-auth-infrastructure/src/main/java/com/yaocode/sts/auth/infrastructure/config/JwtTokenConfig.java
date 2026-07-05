@@ -6,6 +6,7 @@ import com.yaocode.sts.auth.infrastructure.config.model.HmacJwtTokenProviderConf
 import com.yaocode.sts.auth.infrastructure.config.model.JwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.model.RsaJwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.properties.JwtTokenProperties;
+import com.yaocode.sts.auth.infrastructure.constants.AuthInfrastructureConstants;
 import com.yaocode.sts.auth.infrastructure.port.Hmac512JwtTokenAdapter;
 import com.yaocode.sts.auth.infrastructure.port.Rsa384JwtTokenAdapter;
 import com.yaocode.sts.common.crypto.utils.JwtKeyUtils;
@@ -146,7 +147,9 @@ public class JwtTokenConfig {
             );
         }
 
-        throw new IllegalArgumentException("Unsupported config type: " + config.getClass().getName());
+        throw new IllegalArgumentException(
+                    AuthInfrastructureConstants.ERROR_JWT_CONFIG_TYPE_UNSUPPORTED
+                            + config.getClass().getName());
     }
 
     /**

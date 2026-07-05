@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.enums.VerifyCodeTypeEnums;
 import com.yaocode.sts.auth.domain.rules.VerifyCodeRule;
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
@@ -36,7 +36,7 @@ public class VerifyCode extends Identifier<String> {
     /**
      * 验证码有效期（默认5分钟，单位：秒）
      */
-    private static final long DEFAULT_TTL_SECONDS = CommonConstants.DEFAULT_TTL_SECONDS;
+    private static final long DEFAULT_TTL_SECONDS = AuthDomainConstants.DEFAULT_TTL_SECONDS;
 
     /**
      * 验证码类型
@@ -93,7 +93,7 @@ public class VerifyCode extends Identifier<String> {
         this.codeType = codeType != null ? codeType : VerifyCodeTypeEnums.LOGIN;
         this.verifyCodeRule = verifyCodeRule;
         this.sessionId = sessionId;
-        this.ttlSeconds = ttlSeconds > 0 ? ttlSeconds : CommonConstants.DEFAULT_TTL_SECONDS;
+        this.ttlSeconds = ttlSeconds > 0 ? ttlSeconds : AuthDomainConstants.DEFAULT_TTL_SECONDS;
         this.expireTime = expireTime;
         this.used = used;
         validateFormat();
@@ -195,12 +195,12 @@ public class VerifyCode extends Identifier<String> {
      */
     public String mask() {
         String code = getValue();
-        if (code == null || code.length() < CommonConstants.MIN_LENGTH_FOR_MASK) {
-            return CommonConstants.MASK_STRING;
+        if (code == null || code.length() < AuthDomainConstants.MIN_LENGTH_FOR_MASK) {
+            return AuthDomainConstants.MASK_STRING;
         }
-        return code.substring(0, CommonConstants.MASK_KEEP_LENGTH) +
-                CommonConstants.MASK_STRING +
-                code.substring(code.length() - CommonConstants.MASK_KEEP_LENGTH);
+        return code.substring(0, AuthDomainConstants.MASK_KEEP_LENGTH) +
+                AuthDomainConstants.MASK_STRING +
+                code.substring(code.length() - AuthDomainConstants.MASK_KEEP_LENGTH);
     }
 
     @Override

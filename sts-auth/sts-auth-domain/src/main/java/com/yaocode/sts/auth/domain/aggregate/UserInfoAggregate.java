@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.aggregate;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.entity.LoginAttemptEntity;
 import com.yaocode.sts.auth.domain.entity.PasswordHistoryEntity;
 import com.yaocode.sts.auth.domain.entity.UserContactEntity;
@@ -139,8 +139,8 @@ public class UserInfoAggregate extends AbstractAggregate<UserId> {
                 null,
                 MaritalStatusEnums.UNKNOWN,
                 null,
-                CommonConstants.DEFAULT_LOCALE,
-                CommonConstants.DEFAULT_TIME_ZONE,
+                AuthDomainConstants.DEFAULT_LOCALE,
+                AuthDomainConstants.DEFAULT_TIME_ZONE,
                 ThemeEnums.LIGHT,
                 null
         );

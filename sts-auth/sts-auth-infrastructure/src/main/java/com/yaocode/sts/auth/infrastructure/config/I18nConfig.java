@@ -1,9 +1,11 @@
 package com.yaocode.sts.auth.infrastructure.config;
 
+import com.yaocode.sts.auth.infrastructure.constants.AuthInfrastructureConstants;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -42,7 +44,7 @@ public class I18nConfig {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
-        interceptor.setParamName("lang");
+        interceptor.setParamName(AuthInfrastructureConstants.LANG_PARAM_NAME);
         return interceptor;
     }
 
@@ -50,7 +52,7 @@ public class I18nConfig {
     public WebMvcConfigurer localeConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addInterceptors(InterceptorRegistry registry) {
+            public void addInterceptors(@NonNull InterceptorRegistry registry) {
                 registry.addInterceptor(localeChangeInterceptor());
             }
         };

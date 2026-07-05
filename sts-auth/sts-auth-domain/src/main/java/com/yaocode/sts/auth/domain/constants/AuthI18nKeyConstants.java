@@ -217,9 +217,6 @@ public interface AuthI18nKeyConstants extends BasicI18nKeyConstants {
     String VERIFY_CODE_CANNOT_BE_BLANK = "auth.value.object.verify.code.cannot.be.blank";
     String VERIFY_CODE_FORMAT_INVALID = "auth.value.object.verify.code.format.invalid";
 
-    // ========== 值对象 - 认证凭证相关 ==========
-    String CLIENT_ID_CANNOT_BE_BLANK = "auth.value.object.client.id.cannot.be.blank";
-
     // ========== 标识符相关 ==========
     String IDENTIFIER_VALUE_CANNOT_BE_NULL = "auth.identifier.value.null";
 
@@ -274,4 +271,16 @@ public interface AuthI18nKeyConstants extends BasicI18nKeyConstants {
     // ========== 安全相关 ==========
     String BLACKLIST_BLOCKED = "auth.security.blacklist.blocked";
     String RULE_MATCHED = "auth.security.rule.matched";
+
+    // ==================== JWT 配置属性验证异常 ====================
+
+    /**
+     * JWT 配置未找到
+     */
+    String ERROR_JWT_CONFIG_NOT_FOUND = "auth.infrastructure.jwt.config.not.found";
+
+    /**
+     * JWT 配置无效
+     */
+    String ERROR_JWT_CONFIG_INVALID = "auth.infrastructure.jwt.config.invalid";
 }

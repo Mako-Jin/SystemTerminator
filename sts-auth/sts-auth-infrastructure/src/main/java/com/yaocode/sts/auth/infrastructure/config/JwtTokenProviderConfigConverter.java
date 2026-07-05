@@ -3,8 +3,10 @@ package com.yaocode.sts.auth.infrastructure.config;
 import com.yaocode.sts.auth.infrastructure.config.model.HmacJwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.model.JwtTokenProviderConfig;
 import com.yaocode.sts.auth.infrastructure.config.model.RsaJwtTokenProviderConfig;
+import com.yaocode.sts.auth.infrastructure.constants.AuthInfrastructureConstants;
 import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
 import com.yaocode.sts.common.tools.StringUtils;
+import com.yaocode.sts.common.tools.constants.ToolsConstants;
 import jakarta.annotation.Nonnull;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.core.convert.converter.Converter;
@@ -27,9 +29,10 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
             return null;
         }
 
-        String algorithm = (String) source.get("algorithm");
+        String algorithm = (String) source.get(AuthInfrastructureConstants.PROPERTY_ALGORITHM);
         if (algorithm == null || algorithm.isBlank()) {
-            throw new IllegalArgumentException("algorithm is required for JWT configuration");
+            throw new IllegalArgumentException(
+                    AuthInfrastructureConstants.ERROR_JWT_ALGORITHM_REQUIRED);
         }
 
         // 判断算法类型
@@ -37,13 +40,14 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
         boolean isHmacAlgorithm = isHmacAlgorithm(algorithm);
 
         if (!isRsaAlgorithm && !isHmacAlgorithm) {
-            throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
+            throw new IllegalArgumentException(
+                    AuthInfrastructureConstants.ERROR_JWT_ALGORITHM_UNSUPPORTED + algorithm);
         }
 
         AlgorithmTypeEnums algorithmType = AlgorithmTypeEnums.valueOf(algorithm.toUpperCase());
-        Duration ttl = parseDuration(source.get("ttl"));
-        String issuer = (String) source.get("issuer");
-        String audience = (String) source.get("audience");
+        Duration ttl = parseDuration(source.get(AuthInfrastructureConstants.PROPERTY_TTL));
+        String issuer = (String) source.get(AuthInfrastructureConstants.PROPERTY_ISSUER);
+        String audience = (String) source.get(AuthInfrastructureConstants.PROPERTY_AUDIENCE);
 
         if (isRsaAlgorithm) {
             // 创建 RSA 配置
@@ -52,10 +56,10 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
             config.setAudience(audience);
 
             // RSA 特有配置
-            config.setPublicKey((String) source.get("public-key"));
-            config.setPrivateKey((String) source.get("private-key"));
-            config.setPublicKeyPath((String) source.get("public-key-path"));
-            config.setPrivateKeyPath((String) source.get("private-key-path"));
+            config.setPublicKey((String) source.get(AuthInfrastructureConstants.PROPERTY_PUBLIC_KEY));
+            config.setPrivateKey((String) source.get(AuthInfrastructureConstants.PROPERTY_PRIVATE_KEY));
+            config.setPublicKeyPath((String) source.get(AuthInfrastructureConstants.PROPERTY_PUBLIC_KEY_PATH));
+            config.setPrivateKeyPath((String) source.get(AuthInfrastructureConstants.PROPERTY_PRIVATE_KEY_PATH));
 
             return config;
         } else {
@@ -65,8 +69,8 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
             config.setAudience(audience);
 
             // HMAC 特有配置
-            config.setSecret((String) source.get("secret"));
-            config.setSecretPath((String) source.get("secret-path"));
+            config.setSecret((String) source.get(AuthInfrastructureConstants.PROPERTY_SECRET));
+            config.setSecretPath((String) source.get(AuthInfrastructureConstants.PROPERTY_SECRET_PATH));
 
             return config;
         }
@@ -77,8 +81,10 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
      */
     private boolean isRsaAlgorithm(String algorithm) {
         String upper = algorithm.toUpperCase();
-        return upper.startsWith("RS") || upper.startsWith("PS") ||
-                upper.equals("RSA") || upper.equals("RSA_OAEP");
+        return upper.startsWith(AuthInfrastructureConstants.RSA_ALGORITHM_PREFIX_RS) ||
+                upper.startsWith(AuthInfrastructureConstants.RSA_ALGORITHM_PREFIX_PS) ||
+                upper.equals(AuthInfrastructureConstants.RSA_ALGORITHM_RSA) ||
+                upper.equals(AuthInfrastructureConstants.RSA_ALGORITHM_RSA_OAEP);
     }
 
     /**
@@ -86,7 +92,8 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
      */
     private boolean isHmacAlgorithm(String algorithm) {
         String upper = algorithm.toUpperCase();
-        return upper.startsWith("HS") || upper.startsWith("HMAC");
+        return upper.startsWith(AuthInfrastructureConstants.HMAC_ALGORITHM_PREFIX_HS) ||
+                upper.startsWith(AuthInfrastructureConstants.HMAC_ALGORITHM_PREFIX_HMAC);
     }
 
     /**
@@ -109,12 +116,13 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
             }
 
             // 尝试解析为数字（秒）
-            if (str.matches("\\d+")) {
+            if (str.matches(ToolsConstants.REGEX_NUMERIC)) {
                 return Duration.ofSeconds(Long.parseLong(str));
             }
 
             // 尝试解析为 ISO-8601 格式
-            if (str.startsWith("P") || str.startsWith("PT")) {
+            if (str.startsWith(AuthInfrastructureConstants.ISO_8601_PREFIX_P) ||
+                    str.startsWith(AuthInfrastructureConstants.ISO_8601_PREFIX_PT)) {
                 try {
                     return Duration.parse(str);
                 } catch (Exception e) {
@@ -138,13 +146,13 @@ public class JwtTokenProviderConfigConverter implements Converter<Map<String, Ob
      */
     private Duration parseSimpleDuration(String str) {
         str = str.trim().toLowerCase();
-        if (str.endsWith("s")) {
+        if (str.endsWith(AuthInfrastructureConstants.DURATION_SUFFIX_SECONDS)) {
             return Duration.ofSeconds(Long.parseLong(str.substring(0, str.length() - 1)));
-        } else if (str.endsWith("m")) {
+        } else if (str.endsWith(AuthInfrastructureConstants.DURATION_SUFFIX_MINUTES)) {
             return Duration.ofMinutes(Long.parseLong(str.substring(0, str.length() - 1)));
-        } else if (str.endsWith("h")) {
+        } else if (str.endsWith(AuthInfrastructureConstants.DURATION_SUFFIX_HOURS)) {
             return Duration.ofHours(Long.parseLong(str.substring(0, str.length() - 1)));
-        } else if (str.endsWith("d")) {
+        } else if (str.endsWith(AuthInfrastructureConstants.DURATION_SUFFIX_DAYS)) {
             return Duration.ofDays(Long.parseLong(str.substring(0, str.length() - 1)));
         } else {
             // 默认按秒处理

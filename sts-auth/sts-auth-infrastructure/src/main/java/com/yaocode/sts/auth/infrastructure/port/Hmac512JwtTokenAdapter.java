@@ -7,6 +7,7 @@ import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.DeviceId;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.TokenId;
 import com.yaocode.sts.auth.domain.valueobjects.primitives.Username;
+import com.yaocode.sts.auth.infrastructure.constants.AuthInfrastructureConstants;
 import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
 import com.yaocode.sts.common.crypto.utils.JwtTokenUtils;
 import com.yaocode.sts.common.domain.valueobject.UserId;
@@ -30,25 +31,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
 
     private static final Logger logger = LoggerFactory.getLogger(Hmac512JwtTokenAdapter.class);
 
-    /**
-     * JWT 标准字段常量
-     */
-    private static final String CLAIM_ISS = "iss";
-    private static final String CLAIM_SUB = "sub";
-    private static final String CLAIM_AUD = "aud";
-    private static final String CLAIM_IAT = "iat";
-    private static final String CLAIM_EXP = "exp";
-    private static final String CLAIM_JTI = "jti";
-
-    /**
-     * 自定义字段常量
-     */
-    private static final String CLAIM_USER_ID = "userId";
-    private static final String CLAIM_USERNAME = "username";
-    private static final String CLAIM_CLIENT_ID = "clientId";
-    private static final String CLAIM_DEVICE_ID = "deviceId";
-    private static final String CLAIM_SERIES = "series";
-    private static final String CLAIM_TOKEN_TYPE = "tokenType";
+    // 使用常量接口
 
     private final AlgorithmTypeEnums algorithm;
 
@@ -72,9 +55,9 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
     ) {
         this.algorithm = algorithm;
         this.secret = secret;
-        this.ttlSeconds = ttlSeconds != null ? ttlSeconds : 3600L;
-        this.issuer = issuer != null ? issuer : "sts";
-        this.audience = audience != null ? audience : "sts-api";
+        this.ttlSeconds = ttlSeconds != null ? ttlSeconds : AuthInfrastructureConstants.DEFAULT_TTL_SECONDS;
+        this.issuer = issuer != null ? issuer : AuthInfrastructureConstants.DEFAULT_ISSUER;
+        this.audience = audience != null ? audience : AuthInfrastructureConstants.DEFAULT_AUDIENCE;
         this.tokenType = tokenType;
         logger.info("Hmac512JwtAdapter initialized with issuer: {}, audience: {}", issuer, audience);
     }
@@ -83,10 +66,12 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
     public String generate(Map<String, Object> payload) {
         // 参数校验
         if (payload == null) {
-            throw new IllegalArgumentException("payload 不能为空");
+            throw new IllegalArgumentException(
+                    AuthInfrastructureConstants.ERROR_JWT_PAYLOAD_NOT_EMPTY);
         }
         if (secret == null || secret.isBlank()) {
-            throw new IllegalArgumentException("JWT secret 未配置");
+            throw new IllegalArgumentException(
+                    AuthInfrastructureConstants.ERROR_JWT_SECRET_NOT_CONFIGURED);
         }
 
         // 使用默认 TTL 如果未指定
@@ -98,15 +83,15 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
 
             // 添加标准 JWT 字段
             Instant now = Instant.now();
-            jwtPayload.put(CLAIM_IAT, now.getEpochSecond());
-            jwtPayload.put(CLAIM_EXP, now.plusSeconds(effectiveTtl).getEpochSecond());
-            jwtPayload.put(CLAIM_ISS, issuer);
-            jwtPayload.put(CLAIM_AUD, audience);
-            jwtPayload.put("token_type", tokenType.getTokenType());
+            jwtPayload.put(AuthInfrastructureConstants.CLAIM_IAT, now.getEpochSecond());
+            jwtPayload.put(AuthInfrastructureConstants.CLAIM_EXP, now.plusSeconds(effectiveTtl).getEpochSecond());
+            jwtPayload.put(AuthInfrastructureConstants.CLAIM_ISS, issuer);
+            jwtPayload.put(AuthInfrastructureConstants.CLAIM_AUD, audience);
+            jwtPayload.put(AuthInfrastructureConstants.TOKEN_TYPE_FIELD, tokenType.getTokenType());
 
             // 如果没有 jti，自动生成一个
-            if (!jwtPayload.containsKey(CLAIM_JTI)) {
-                jwtPayload.put(CLAIM_JTI, TokenId.nextId().getValue());
+            if (!jwtPayload.containsKey(AuthInfrastructureConstants.CLAIM_JTI)) {
+                jwtPayload.put(AuthInfrastructureConstants.CLAIM_JTI, TokenId.nextId().getValue());
             }
 
             // 生成 JWT
@@ -115,7 +100,8 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
             return jwt;
         } catch (Exception e) {
             logger.error("JWT generation failed", e);
-            throw new RuntimeException("JWT generation failed", e);
+            throw new RuntimeException(
+                    AuthInfrastructureConstants.ERROR_JWT_GENERATION_FAILED, e);
         }
     }
 
@@ -127,7 +113,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
             return false;
         }
         if (secret == null || secret.isBlank()) {
-            logger.error("JWT secret 未配置");
+            logger.error(AuthInfrastructureConstants.ERROR_JWT_SECRET_NOT_CONFIGURED);
             return false;
         }
 
@@ -141,7 +127,7 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
             // 2. 检查是否过期
             Map<String, Object> claims = JwtTokenUtils.parseHmac512Token(jwt);
             if (claims != null) {
-                Object expObj = claims.get(CLAIM_EXP);
+                Object expObj = claims.get(AuthInfrastructureConstants.CLAIM_EXP);
                 if (expObj != null) {
                     long expTime = parseLong(expObj);
                     if (Instant.now().getEpochSecond() > expTime) {
@@ -190,19 +176,19 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
 
         try {
             // 解析标准字段
-            String jti = getString(claims, CLAIM_JTI);
-            String iss = getString(claims, CLAIM_ISS);
-            String aud = getString(claims, CLAIM_AUD);
-            Instant iat = parseInstant(claims, CLAIM_IAT);
-            Instant exp = parseInstant(claims, CLAIM_EXP);
+            String jti = getString(claims, AuthInfrastructureConstants.CLAIM_JTI);
+            String iss = getString(claims, AuthInfrastructureConstants.CLAIM_ISS);
+            String aud = getString(claims, AuthInfrastructureConstants.CLAIM_AUD);
+            Instant iat = parseInstant(claims, AuthInfrastructureConstants.CLAIM_IAT);
+            Instant exp = parseInstant(claims, AuthInfrastructureConstants.CLAIM_EXP);
 
             // 解析自定义字段
-            String userId = getString(claims, CLAIM_USER_ID);
-            String username = getString(claims, CLAIM_USERNAME);
-            String clientId = getString(claims, CLAIM_CLIENT_ID);
-            String deviceId = getString(claims, CLAIM_DEVICE_ID);
-            String tokenType = getString(claims, CLAIM_TOKEN_TYPE);
-            String series = getString(claims, CLAIM_SERIES);
+            String userId = getString(claims, AuthInfrastructureConstants.CLAIM_USER_ID);
+            String username = getString(claims, AuthInfrastructureConstants.CLAIM_USERNAME);
+            String clientId = getString(claims, AuthInfrastructureConstants.CLAIM_CLIENT_ID);
+            String deviceId = getString(claims, AuthInfrastructureConstants.CLAIM_DEVICE_ID);
+            String tokenType = getString(claims, AuthInfrastructureConstants.CLAIM_TOKEN_TYPE);
+            String series = getString(claims, AuthInfrastructureConstants.CLAIM_SERIES);
 
             // 构建额外的 claims（移除已解析的字段）
             Map<String, Object> extraClaims = buildExtraClaims(claims);
@@ -245,18 +231,18 @@ public class Hmac512JwtTokenAdapter implements JwtTokenPort {
         private Map<String, Object> buildExtraClaims(Map<String, Object> claims) {
             Map<String, Object> extraClaims = new HashMap<>(claims);
             // 移除标准 JWT 字段
-            extraClaims.remove(CLAIM_JTI);
-            extraClaims.remove(CLAIM_ISS);
-            extraClaims.remove(CLAIM_SUB);
-            extraClaims.remove(CLAIM_AUD);
-            extraClaims.remove(CLAIM_IAT);
-            extraClaims.remove(CLAIM_EXP);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_JTI);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_ISS);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_SUB);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_AUD);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_IAT);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_EXP);
             // 移除此适配器处理的自定义字段
-            extraClaims.remove(CLAIM_USER_ID);
-            extraClaims.remove(CLAIM_USERNAME);
-            extraClaims.remove(CLAIM_CLIENT_ID);
-            extraClaims.remove(CLAIM_DEVICE_ID);
-            extraClaims.remove(CLAIM_TOKEN_TYPE);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_USER_ID);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_USERNAME);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_CLIENT_ID);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_DEVICE_ID);
+            extraClaims.remove(AuthInfrastructureConstants.CLAIM_TOKEN_TYPE);
             // 如果没有额外字段，返回 null
             return extraClaims.isEmpty() ? null : extraClaims;
         }

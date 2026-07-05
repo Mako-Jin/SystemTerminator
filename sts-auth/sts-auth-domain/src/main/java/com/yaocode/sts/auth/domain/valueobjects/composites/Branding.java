@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import lombok.Value;
 
@@ -42,7 +42,7 @@ public class Branding {
         private String loginTitle;
         private String institution;
         private String copyright;
-        private String primaryColor = CommonConstants.DEFAULT_PRIMARY_COLOR;
+        private String primaryColor = AuthDomainConstants.DEFAULT_PRIMARY_COLOR;
         private String loginBackgroundUrl;
         private String welcomeMessage;
         private String subtitle;

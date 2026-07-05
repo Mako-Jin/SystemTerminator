@@ -21,7 +21,7 @@ import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.valueobject.UserId;
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.common.tools.StringUtils;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -77,7 +77,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         int remaining = maxAttempts - failedCount;
 
         // 4. 检查是否需要验证码（失败次数 >= 阈值）
-        boolean captchaRequired = failedCount >= CommonConstants.CAPTCHA_THRESHOLD;
+        boolean captchaRequired = failedCount >= AuthDomainConstants.CAPTCHA_THRESHOLD;
 
         // 5. 检查设备是否可信
         boolean trustedDevice = false;
@@ -286,7 +286,7 @@ public class AuthSecurityDomainServiceImpl implements AuthSecurityDomainService 
         if (config.isPresent() && config.get().getMaxLoginAttempts() != null) {
             return config.get().getMaxLoginAttempts();
         }
-        return CommonConstants.DEFAULT_MAX_LOGIN_ATTEMPTS; // 默认5次
+        return AuthDomainConstants.DEFAULT_MAX_LOGIN_ATTEMPTS; // 默认5次
     }
 
     // ==================== 内部类 ====================

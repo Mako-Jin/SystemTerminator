@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
@@ -44,11 +44,11 @@ public class PhoneNum extends Identifier<String> {
         String normalized = phoneNumber.trim().replaceAll(RegexConstants.WHITESPACE_PATTERN, SymbolConstants.EMPTY_STR);
 
         // 移除国际前缀
-        if (normalized.startsWith(CommonConstants.COUNTRY_CODE_PLUS)) {
+        if (normalized.startsWith(AuthDomainConstants.COUNTRY_CODE_PLUS)) {
             normalized = normalized.substring(3);
-        } else if (normalized.startsWith(CommonConstants.COUNTRY_CODE_DOUBLE_ZERO)) {
+        } else if (normalized.startsWith(AuthDomainConstants.COUNTRY_CODE_DOUBLE_ZERO)) {
             normalized = normalized.substring(4);
-        } else if (normalized.startsWith(CommonConstants.COUNTRY_CODE_SIMPLE)) {
+        } else if (normalized.startsWith(AuthDomainConstants.COUNTRY_CODE_SIMPLE)) {
             normalized = normalized.substring(2);
         }
 

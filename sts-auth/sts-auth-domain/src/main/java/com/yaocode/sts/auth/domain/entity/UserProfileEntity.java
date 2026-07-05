@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.entity;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.enums.GenderEnums;
 import com.yaocode.sts.auth.domain.enums.MaritalStatusEnums;
 import com.yaocode.sts.auth.domain.enums.ThemeEnums;
@@ -35,8 +35,8 @@ public class UserProfileEntity {
         this.gender = GenderEnums.UNKNOWN;
         this.maritalStatus = MaritalStatusEnums.UNKNOWN;
         this.theme = ThemeEnums.LIGHT;
-        this.locale = CommonConstants.DEFAULT_LOCALE;
-        this.timeZone = CommonConstants.DEFAULT_TIME_ZONE;
+        this.locale = AuthDomainConstants.DEFAULT_LOCALE;
+        this.timeZone = AuthDomainConstants.DEFAULT_TIME_ZONE;
     }
 
     // ========== 工厂方法 ==========
@@ -65,8 +65,8 @@ public class UserProfileEntity {
         entity.birthDate = birthDate;
         entity.maritalStatus = maritalStatus != null ? maritalStatus : MaritalStatusEnums.UNKNOWN;
         entity.avatar = avatar;
-        entity.locale = locale != null ? locale : CommonConstants.DEFAULT_LOCALE;
-        entity.timeZone = timeZone != null ? timeZone : CommonConstants.DEFAULT_TIME_ZONE;
+        entity.locale = locale != null ? locale : AuthDomainConstants.DEFAULT_LOCALE;
+        entity.timeZone = timeZone != null ? timeZone : AuthDomainConstants.DEFAULT_TIME_ZONE;
         entity.theme = theme != null ? theme : ThemeEnums.LIGHT;
         entity.extraAttributes = extraAttributes;
         return entity;
@@ -109,11 +109,11 @@ public class UserProfileEntity {
     }
 
     public void updateLocale(String locale) {
-        this.locale = locale != null ? locale : CommonConstants.DEFAULT_LOCALE;
+        this.locale = locale != null ? locale : AuthDomainConstants.DEFAULT_LOCALE;
     }
 
     public void updateTimeZone(String timeZone) {
-        this.timeZone = timeZone != null ? timeZone : CommonConstants.DEFAULT_TIME_ZONE;
+        this.timeZone = timeZone != null ? timeZone : AuthDomainConstants.DEFAULT_TIME_ZONE;
     }
 
     public void updateExtraAttributes(String extraAttributes) {

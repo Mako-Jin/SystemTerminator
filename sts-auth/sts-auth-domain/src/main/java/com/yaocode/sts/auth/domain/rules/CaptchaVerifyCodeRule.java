@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.rules;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 
 import java.util.regex.Pattern;
 
@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
  */
 public class CaptchaVerifyCodeRule implements VerifyCodeRule {
 
-    private static final Pattern PATTERN = CommonConstants.CAPTCHA_CODE_PATTERN;
-    private static final int DEFAULT_LENGTH = CommonConstants.CAPTCHA_DEFAULT_LENGTH;
-    private static final String CHARS = CommonConstants.CAPTCHA_CHARS;
+    private static final Pattern PATTERN = AuthDomainConstants.CAPTCHA_CODE_PATTERN;
+    private static final int DEFAULT_LENGTH = AuthDomainConstants.CAPTCHA_DEFAULT_LENGTH;
+    private static final String CHARS = AuthDomainConstants.CAPTCHA_CHARS;
 
     @Override
     public boolean validate(String code) {

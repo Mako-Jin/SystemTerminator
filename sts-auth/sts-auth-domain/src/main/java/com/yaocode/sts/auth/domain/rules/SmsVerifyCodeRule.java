@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.rules;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 
 import java.util.regex.Pattern;
 
@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
  */
 public class SmsVerifyCodeRule implements VerifyCodeRule {
 
-    private static final Pattern PATTERN = CommonConstants.SMS_CODE_PATTERN;
-    private static final int LENGTH = CommonConstants.SMS_CODE_LENGTH;
+    private static final Pattern PATTERN = AuthDomainConstants.SMS_CODE_PATTERN;
+    private static final int LENGTH = AuthDomainConstants.SMS_CODE_LENGTH;
 
     @Override
     public boolean validate(String code) {
@@ -32,7 +32,7 @@ public class SmsVerifyCodeRule implements VerifyCodeRule {
     @Override
     public String generate() {
         int code = getSecureRandom().nextInt((int) Math.pow(10, LENGTH));
-        return String.format(CommonConstants.SMS_CODE_FORMAT_PATTERN, code);
+        return String.format(AuthDomainConstants.SMS_CODE_FORMAT_PATTERN, code);
     }
 
     @Override

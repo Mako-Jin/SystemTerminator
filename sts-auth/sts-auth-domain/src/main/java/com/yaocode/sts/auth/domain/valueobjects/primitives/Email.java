@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
 import lombok.EqualsAndHashCode;
@@ -32,7 +32,7 @@ public class Email extends Identifier<String> {
             throw new IllegalArgumentException(AuthI18nKeyConstants.EMAIL_CANNOT_BE_BLANK);
         }
         String trimmedEmail = value.trim();
-        if (trimmedEmail.length() > CommonConstants.EMAIL_MAX_LENGTH) {
+        if (trimmedEmail.length() > AuthDomainConstants.EMAIL_MAX_LENGTH) {
             throw new IllegalArgumentException(AuthI18nKeyConstants.EMAIL_TOO_LONG);
         }
 

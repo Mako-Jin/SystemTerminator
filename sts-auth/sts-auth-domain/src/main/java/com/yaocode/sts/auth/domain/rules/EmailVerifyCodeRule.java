@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.rules;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 
 import java.util.regex.Pattern;
 
@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
  */
 public class EmailVerifyCodeRule implements VerifyCodeRule {
 
-    private static final Pattern PATTERN = CommonConstants.EMAIL_CODE_PATTERN;
-    private static final int DEFAULT_LENGTH = CommonConstants.EMAIL_CODE_DEFAULT_LENGTH;
-    private static final String CHARS = CommonConstants.EMAIL_CODE_CHARS;
+    private static final Pattern PATTERN = AuthDomainConstants.EMAIL_CODE_PATTERN;
+    private static final int DEFAULT_LENGTH = AuthDomainConstants.EMAIL_CODE_DEFAULT_LENGTH;
+    private static final String CHARS = AuthDomainConstants.EMAIL_CODE_CHARS;
 
     @Override
     public boolean validate(String code) {

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * @author: Jin-LiangBo
  * @date: 2025年10月25日 11:29
  */
-public interface CommonConstants {
+public interface AuthDomainConstants {
 
     String DEFAULT_EN_STR = "DEFAULT";
 

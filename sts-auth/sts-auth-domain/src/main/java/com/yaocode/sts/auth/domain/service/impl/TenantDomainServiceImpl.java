@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
 import com.yaocode.sts.auth.domain.entity.UserInfoEntity;
@@ -115,7 +115,7 @@ public class TenantDomainServiceImpl implements TenantDomainService {
         }
 
         // 4. 返回默认租户
-        return tenantInfoRepository.getByTenantCode(TenantCode.of(CommonConstants.DEFAULT_TENANT_CODE))
+        return tenantInfoRepository.getByTenantCode(TenantCode.of(AuthDomainConstants.DEFAULT_TENANT_CODE))
                 .map(TenantInfoEntity::getId)
                 .orElseThrow(() -> new RuntimeException(AuthI18nKeyConstants.DEFAULT_TENANT_NOT_EXIST));
     }
@@ -128,7 +128,7 @@ public class TenantDomainServiceImpl implements TenantDomainService {
             return null;
         }
         // 示例：tenant.yourdomain.com → tenant
-        String domainSuffix = CommonConstants.DEFAULT_DOMAIN_SUFFIX;
+        String domainSuffix = AuthDomainConstants.DEFAULT_DOMAIN_SUFFIX;
         if (domain.endsWith(domainSuffix)) {
             String prefix = domain.substring(0, domain.length() - domainSuffix.length());
             if (!prefix.contains(SymbolConstants.DOT)) {
@@ -144,7 +144,7 @@ public class TenantDomainServiceImpl implements TenantDomainService {
      * 获取默认租户ID
      */
     public TenantId getDefaultTenantId() {
-        return tenantInfoRepository.getByTenantCode(TenantCode.of(CommonConstants.DEFAULT_TENANT_CODE))
+        return tenantInfoRepository.getByTenantCode(TenantCode.of(AuthDomainConstants.DEFAULT_TENANT_CODE))
                 .map(TenantInfoEntity::getId)
                 .orElseThrow(() -> new RuntimeException(AuthI18nKeyConstants.DEFAULT_TENANT_NOT_EXIST));
     }

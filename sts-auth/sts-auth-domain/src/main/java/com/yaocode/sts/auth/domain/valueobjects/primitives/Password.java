@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
 import com.yaocode.sts.common.crypto.password.PasswordEncoder;
 import com.yaocode.sts.common.domain.valueobject.Identifier;
@@ -57,7 +57,7 @@ public class Password extends Identifier<String> {
         // 在创建时校验明文密码格式
         validatePlainPassword(plainPassword);
         String encrypted = encoder.encode(plainPassword);
-        return new Password(encrypted, LocalDateTime.now(), null, false, CommonConstants.DEFAULT_PASSWORD_VERSION);
+        return new Password(encrypted, LocalDateTime.now(), null, false, AuthDomainConstants.DEFAULT_PASSWORD_VERSION);
     }
 
     public static Password reconstruct(String value, LocalDateTime createTime, LocalDateTime expireTime, boolean isTemporary, int version) {
@@ -119,7 +119,7 @@ public class Password extends Identifier<String> {
         // 密码即将过期（如还剩7天）
         return expireTime != null
                 && LocalDateTime.now().isAfter(
-                        expireTime.minusDays(CommonConstants.PASSWORD_EXPIRY_WARNING_DAYS
+                        expireTime.minusDays(AuthDomainConstants.PASSWORD_EXPIRY_WARNING_DAYS
                     )
         );
     }

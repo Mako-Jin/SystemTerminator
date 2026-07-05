@@ -2,7 +2,7 @@ package com.yaocode.sts.auth.domain.valueobjects.primitives;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
 import com.yaocode.sts.auth.domain.constants.RegexConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import lombok.Value;
 
@@ -83,10 +83,10 @@ public class Version implements Comparable<Version> {
      */
     public static Version initial() {
         return of(
-                CommonConstants.INITIAL_MAJOR,
-                CommonConstants.INITIAL_MINOR,
-                CommonConstants.INITIAL_PATCH,
-                CommonConstants.INITIAL_BUILD
+                AuthDomainConstants.INITIAL_MAJOR,
+                AuthDomainConstants.INITIAL_MINOR,
+                AuthDomainConstants.INITIAL_PATCH,
+                AuthDomainConstants.INITIAL_BUILD
         );
     }
 

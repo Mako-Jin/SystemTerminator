@@ -1,5 +1,6 @@
 package com.yaocode.sts.auth.infrastructure.config.model;
 
+import com.yaocode.sts.auth.infrastructure.constants.AuthInfrastructureConstants;
 import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
 import lombok.Data;
 
@@ -41,10 +42,12 @@ public abstract class AbstractJwtTokenProviderConfig implements JwtTokenProvider
      */
     protected void validateCommon() {
         if (algorithm == null) {
-            throw new IllegalStateException("Algorithm must not be null");
+            throw new IllegalStateException(
+                    AuthInfrastructureConstants.ERROR_JWT_ALGORITHM_NOT_NULL);
         }
         if (ttl == null || ttl.isNegative()) {
-            throw new IllegalStateException("TTL must be positive");
+            throw new IllegalStateException(
+                    AuthInfrastructureConstants.ERROR_JWT_TTL_POSITIVE);
         }
     }
 

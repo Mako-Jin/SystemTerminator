@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.service.impl;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.constants.RoleConstants;
 import com.yaocode.sts.auth.domain.entity.RoleInfoEntity;
 import com.yaocode.sts.auth.domain.entity.TenantInfoEntity;
@@ -78,7 +78,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         String tenantCode = tenantInfoEntity.getTenantCode().getValue();
         String defaultRoleCode = tenantCode
                 .concat(SymbolConstants.SYMBOL_HYPHEN)
-                .concat(CommonConstants.DEFAULT_EN_STR);
+                .concat(AuthDomainConstants.DEFAULT_EN_STR);
         RoleCode roleCode = RoleCode.of(defaultRoleCode);
         // 校验角色编码不可重复
         Optional<RoleInfoEntity> roleCodeEntity = roleInfoRepository

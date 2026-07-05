@@ -29,7 +29,7 @@ public class RelUserGroupMemberPo {
      */
     private String memberId;
     /**
-     * "USER" 或 "GROUP"
+     * USER 或 GROUP
      */
     private Integer memberType;
     /**

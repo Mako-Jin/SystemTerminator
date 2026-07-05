@@ -1,7 +1,7 @@
 package com.yaocode.sts.auth.domain.valueobjects.composites;
 
 import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.CommonConstants;
+import com.yaocode.sts.auth.domain.constants.AuthDomainConstants;
 import com.yaocode.sts.auth.domain.enums.GrantTypeEnums;
 import com.yaocode.sts.auth.domain.valueobjects.AbstractAuthCredential;
 import com.yaocode.sts.auth.domain.valueobjects.identifiers.ClientId;
@@ -76,7 +76,7 @@ public class MobileAuthCredential extends AbstractAuthCredential {
         this.verifyCode = verifyCode;
         this.rememberMe = rememberMe;
         this.autoRegister = autoRegister;
-        this.countryCode = countryCode != null ? countryCode : CommonConstants.DEFAULT_COUNTRY_CODE;
+        this.countryCode = countryCode != null ? countryCode : AuthDomainConstants.DEFAULT_COUNTRY_CODE;
     }
 
     /**
