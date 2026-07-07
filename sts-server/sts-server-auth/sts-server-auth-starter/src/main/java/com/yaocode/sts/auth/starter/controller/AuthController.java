@@ -10,6 +10,7 @@ import com.yaocode.sts.auth.interfaces.assembler.AuthenticationAssembler;
 import com.yaocode.sts.auth.interfaces.model.params.PreLoginParams;
 import com.yaocode.sts.auth.interfaces.model.params.login.LoginRequestParams;
 import com.yaocode.sts.auth.interfaces.model.vo.PreLoginVo;
+import com.yaocode.sts.common.resources.annotation.ApiResources;
 import com.yaocode.sts.common.resources.annotation.ModuleResources;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import com.yaocode.sts.common.web.model.ResultModel;
@@ -38,6 +39,7 @@ public class AuthController implements AuthApi {
     private AuthApplicationService authenticationService;
 
     @Override
+    @ApiResources(code = "000000000005001", name = "预登录", desc = "预登录接口")
     public ResultModel<PreLoginVo> preLogin(PreLoginParams params) {
         PreLoginRequestDto preLoginDto = authenticationAssembler.toPreLoginDto(params);
         PreLoginResponseDto preLoginResponseDto = authenticationService.preLogin(preLoginDto);
@@ -46,6 +48,7 @@ public class AuthController implements AuthApi {
     }
 
     @Override
+    @ApiResources(code = "000000000005002", name = "登录", desc = "登录认证接口")
     public ResultModel<?> login(LoginRequestParams loginRequestParams) {
         logger.info("收到登录请求, grantType={}", loginRequestParams.getCredential() != null ? loginRequestParams.getCredential().getGrantType() : "null");
         AuthenticationRequestDto authenticationDto = authenticationAssembler.toAuthenticationDto(loginRequestParams);
