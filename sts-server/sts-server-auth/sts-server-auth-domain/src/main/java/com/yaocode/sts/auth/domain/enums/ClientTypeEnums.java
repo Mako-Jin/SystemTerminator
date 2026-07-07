@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public enum ClientTypeEnums {
 
-    WEB(1, "Web"),
+    ADMIN(0, "管理后台"),
+    WEB(1, "Web端"),
     MOBILE(2, "移动端"),
     DESKTOP(3, "桌面端"),
     MINI_PROGRAM(4, "小程序");

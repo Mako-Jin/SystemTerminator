@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 public enum RegisterSourceEnums {
 
+    INIT(0, "初始化添加"),
     REGISTER(1, "自助注册"),
     ADMIN(2, "管理员创建"),
     SOCIAL(3, "社交登录"),

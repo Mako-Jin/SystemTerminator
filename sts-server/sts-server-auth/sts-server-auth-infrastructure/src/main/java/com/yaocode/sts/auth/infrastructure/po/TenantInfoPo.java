@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 
 @Data
-@TableName("auth_tbl_tenant")
+@TableName("auth_tbl_tenant_info")
 @EqualsAndHashCode(callSuper = true)
 public class TenantInfoPo extends BasePo {
 

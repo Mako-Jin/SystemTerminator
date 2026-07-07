@@ -14,10 +14,6 @@ public class BrandConfigPo extends BasePo {
     @TableId
     private String brandId;
     /**
-     * 租户id
-     */
-    private String tenantId;
-    /**
      * 关联目标类型：TENANT, COMPANY, PLATFORM
      */
     private String targetType;

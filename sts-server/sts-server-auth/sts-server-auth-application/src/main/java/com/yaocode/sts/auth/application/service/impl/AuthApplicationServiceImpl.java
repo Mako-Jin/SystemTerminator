@@ -257,21 +257,68 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
 
     /**
      * 构建默认租户响应
+     * 当所有租户查询都失败时，使用请求中的租户信息，如果都没有则使用系统默认配置
      */
     private PreLoginResponseDto buildDefaultTenantResponse(PreLoginRequestDto preLoginRequestDto) {
-        TenantId tenantId = tenantDomainService.resolveTenantId(
-                TenantId.of(preLoginRequestDto.getTenantId()),
-                TenantCode.of(preLoginRequestDto.getTenantCode()),
-                preLoginRequestDto.getDomain()
-        );
+        TenantId tenantId = null;
 
-        TenantConfigDto defaultConfig = buildSingleTenantConfig(tenantId, null, preLoginRequestDto);
+        // 优先使用请求中的租户ID
+        if (StringUtils.hasText(preLoginRequestDto.getTenantId())) {
+            tenantId = TenantId.of(preLoginRequestDto.getTenantId());
+        } else if (StringUtils.hasText(preLoginRequestDto.getTenantCode())) {
+            Optional<TenantInfoEntity> tenantOpt = tenantInfoRepository.getByTenantCode(
+                    TenantCode.of(preLoginRequestDto.getTenantCode())
+            );
+            if (tenantOpt.isPresent()) {
+                tenantId = tenantOpt.get().getId();
+            }
+        }
+
+        TenantConfigDto defaultConfig;
+        if (Objects.nonNull(tenantId)) {
+            // 有租户ID，尝试构建租户配置
+            defaultConfig = buildSingleTenantConfig(tenantId, null, preLoginRequestDto);
+            // 如果租户不存在，使用系统级默认配置
+            if (defaultConfig == null || defaultConfig.getTenantId() == null) {
+                defaultConfig = buildSystemDefaultConfig(preLoginRequestDto);
+            }
+        } else {
+            // 无租户场景，使用系统级默认配置
+            defaultConfig = buildSystemDefaultConfig(preLoginRequestDto);
+        }
 
         return authApplicationConverter.toDefaultTenantResponse(
                 defaultConfig,
                 generateStateToken(preLoginRequestDto),
                 preLoginRequestDto.getSessionId()
         );
+    }
+
+    /**
+     * 构建系统级默认配置（无租户场景）
+     * 当没有租户或租户不存在时，使用此配置作为兜底
+     */
+    private TenantConfigDto buildSystemDefaultConfig(PreLoginRequestDto preLoginRequestDto) {
+        return TenantConfigDto.builder()
+                .tenantId(null)
+                .tenantName("SystemTerminator")
+                .tenantCode(null)
+                .tenantLogo(null)
+                .brandName("SystemTerminator")
+                .logoUrl("/assets/logo.png")
+                .loginTitle("欢迎登录 SystemTerminator")
+                .welcomeMessage("欢迎使用 SystemTerminator 身份认证系统")
+                .primaryColor("#1890ff")
+                .loginMethods(java.util.Arrays.asList("PASSWORD"))
+                .defaultLoginMethod("PASSWORD")
+                .isLocked(false)
+                .lockReason(null)
+                .remainingAttempts(5)
+                .captchaRequired(false)
+                .mfaRequired(false)
+                .selfRegisterEnabled(true)
+                .forgotPasswordEnabled(true)
+                .build();
     }
 
     /**
