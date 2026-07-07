@@ -292,7 +292,7 @@ public interface RuntimeService {
      *
      * @param processInstanceId 流程实例ID
      */
-    void suspendProcessInstance(String processInstanceId);
+    void suspendProcessInstanceById(String processInstanceId);
 
     /**
      * 激活指定流程实例
@@ -301,7 +301,7 @@ public interface RuntimeService {
      *
      * @param processInstanceId 流程实例ID
      */
-    void activateProcessInstance(String processInstanceId);
+    void activateProcessInstanceById(String processInstanceId);
 
     /**
      * 终止指定流程实例
@@ -524,15 +524,6 @@ public interface RuntimeService {
     UpdateProcessInstanceSuspensionStateSelectBuilder updateProcessInstanceSuspensionState();
 
     /**
-     * 挂起指定ID的流程实例（已废弃，建议使用 suspendProcessInstance）
-     *
-     * @param processInstanceId 流程实例ID
-     * @deprecated 请使用 {@link #suspendProcessInstance(String)}
-     */
-    @Deprecated
-    void suspendProcessInstanceById(String processInstanceId);
-
-    /**
      * 挂起指定流程定义的所有流程实例
      *
      * @param processDefinitionId 流程定义ID
@@ -545,15 +536,6 @@ public interface RuntimeService {
      * @param processDefinitionKey 流程定义Key
      */
     void suspendProcessInstanceByProcessDefinitionKey(String processDefinitionKey);
-
-    /**
-     * 激活指定ID的流程实例（已废弃，建议使用 activateProcessInstance）
-     *
-     * @param processInstanceId 流程实例ID
-     * @deprecated 请使用 {@link #activateProcessInstance(String)}
-     */
-    @Deprecated
-    void activateProcessInstanceById(String processInstanceId);
 
     /**
      * 激活指定流程定义的所有流程实例
