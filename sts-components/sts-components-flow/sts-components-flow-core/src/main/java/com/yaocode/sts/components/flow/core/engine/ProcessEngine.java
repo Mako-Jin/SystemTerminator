@@ -3,6 +3,7 @@ package com.yaocode.sts.components.flow.core.engine;
 
 import com.yaocode.sts.components.flow.core.engine.repository.RepositoryService;
 import com.yaocode.sts.components.flow.core.engine.runtime.RuntimeService;
+import com.yaocode.sts.components.flow.core.engine.task.TaskService;
 
 /**
  * 流程引擎服务聚合接口
