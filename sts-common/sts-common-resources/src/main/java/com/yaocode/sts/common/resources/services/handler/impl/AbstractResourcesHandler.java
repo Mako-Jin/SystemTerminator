@@ -53,7 +53,7 @@ public abstract class AbstractResourcesHandler<R extends Annotation, M extends R
 
     @Override
     public String getDefaultResourceCode() {
-        return getApplicationName() + "_" + ResourceTypeEnums.createDefaultResourceCode(getSupportedAnnotation());
+        return ResourceTypeEnums.createDefaultResourceCode(getSupportedAnnotation());
     }
 
     @Override

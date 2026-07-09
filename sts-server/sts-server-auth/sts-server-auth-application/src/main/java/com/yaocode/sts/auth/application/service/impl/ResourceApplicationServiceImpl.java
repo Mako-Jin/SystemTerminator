@@ -56,8 +56,8 @@ public class ResourceApplicationServiceImpl implements ResourceApplicationServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean batchSaveResources(List<ResourcesModel> resourcesModelList) {
-        List<ResourceInfoEntity> ResourceInfoEntityList = resourceApplicationConverter.batchToEntity(resourcesModelList);
-        List<ResourceId> resourceIdList = batchSave(ResourceInfoEntityList);
+        List<ResourceInfoEntity> resourceInfoEntityList = resourceApplicationConverter.batchToEntity(resourcesModelList);
+        List<ResourceId> resourceIdList = resourceDomainService.batchSaveOrUpdate(resourceInfoEntityList);
         return !resourceIdList.isEmpty();
     }
 
@@ -65,6 +65,14 @@ public class ResourceApplicationServiceImpl implements ResourceApplicationServic
         List<ResourceInfoEntity> filterResourceInfoEntityList =
                 resourceDomainService.checkResourceEntityList(ResourceInfoEntityList);
         return resourceDomainService.batchSave(filterResourceInfoEntityList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchSaveOrUpdateResources(List<ResourcesModel> resourcesModelList) {
+        List<ResourceInfoEntity> resourceInfoEntityList = resourceApplicationConverter.batchToEntity(resourcesModelList);
+        List<ResourceId> resourceIdList = resourceDomainService.batchSaveOrUpdate(resourceInfoEntityList);
+        return !resourceIdList.isEmpty();
     }
 
 }

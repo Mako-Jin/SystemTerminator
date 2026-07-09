@@ -35,4 +35,18 @@ public interface ResourceRepository extends Repository<ResourceInfoEntity, Resou
      */
     List<ResourceInfoEntity> findByEntityList(List<ResourceInfoEntity> resourceEntityList);
 
+    /**
+     * 更新资源实体
+     * @param resourceEntity 资源实体
+     * @return ResourceId
+     */
+    ResourceId update(ResourceInfoEntity resourceEntity);
+
+    /**
+     * 批量更新资源实体
+     * @param resourceEntityList 资源实体列表
+     * @return List<ResourceId>
+     */
+    List<ResourceId> batchUpdate(List<ResourceInfoEntity> resourceEntityList);
+
 }

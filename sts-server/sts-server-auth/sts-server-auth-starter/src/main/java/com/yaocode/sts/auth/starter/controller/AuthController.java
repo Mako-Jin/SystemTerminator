@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @SubRequestMapping("/v1")
-@ModuleResources(code = "000000000005", name = "认证授权接口", desc = "认证授权接口控制器", parent = { "000000000"})
+@ModuleResources(code = "001000000005", name = "认证授权接口", desc = "认证授权接口控制器", parent = { "001000000"})
 public class AuthController implements AuthApi {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -39,7 +39,7 @@ public class AuthController implements AuthApi {
     private AuthApplicationService authenticationService;
 
     @Override
-    @ApiResources(code = "000000000005001", name = "预登录", desc = "预登录接口")
+    @ApiResources(code = "001000000005001", name = "预登录", desc = "预登录接口")
     public ResultModel<PreLoginVo> preLogin(PreLoginParams params) {
         PreLoginRequestDto preLoginDto = authenticationAssembler.toPreLoginDto(params);
         PreLoginResponseDto preLoginResponseDto = authenticationService.preLogin(preLoginDto);
@@ -48,7 +48,7 @@ public class AuthController implements AuthApi {
     }
 
     @Override
-    @ApiResources(code = "000000000005002", name = "登录", desc = "登录认证接口")
+    @ApiResources(code = "001000000005002", name = "登录", desc = "登录认证接口")
     public ResultModel<?> login(LoginRequestParams loginRequestParams) {
         logger.info("收到登录请求, grantType={}", loginRequestParams.getCredential() != null ? loginRequestParams.getCredential().getGrantType() : "null");
         AuthenticationRequestDto authenticationDto = authenticationAssembler.toAuthenticationDto(loginRequestParams);

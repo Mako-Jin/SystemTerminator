@@ -18,4 +18,11 @@ public interface ResourcesService {
      */
     boolean batchSaveResources(List<ResourcesModel> resourcesModelList);
 
+    /**
+     * 批量添加资源列表
+     * @param resourcesModelList resourcesModelList
+     * @return ResourceId
+     */
+    boolean batchSaveOrUpdateResources(List<ResourcesModel> resourcesModelList);
+
 }

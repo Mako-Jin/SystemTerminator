@@ -43,9 +43,6 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
         this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         SystemResourcesModel systemResourcesModel = new SystemResourcesModel();
-        this.buildDefaultResourcesModel(systemResourcesModel);
-        this.resources.add(systemResourcesModel);
-
         if (systemResourcesMap.isEmpty()) {
             ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
             scanner.addIncludeFilter(new AnnotationTypeFilter(SystemResources.class));
@@ -59,6 +56,11 @@ public class SystemResourcesHandlerImpl extends AbstractResourcesHandler<SystemR
                 this.buildResourcesModel(systemResourcesModel, systemResources);
                 this.resources.add(systemResourcesModel);
             }
+            if (!this.resources.isEmpty()) {
+                return this.resources;
+            }
+            this.buildDefaultResourcesModel(systemResourcesModel);
+            this.resources.add(systemResourcesModel);
             return this.resources;
         }
 

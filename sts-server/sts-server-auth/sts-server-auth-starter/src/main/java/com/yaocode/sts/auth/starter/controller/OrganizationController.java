@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @SubRequestMapping("/v1")
-@ModuleResources(code = "000000000002", name = "组织架构数据", desc = "组织架构资源数据控制器", parent = {"000000000"})
+@ModuleResources(code = "001000000002", name = "组织架构数据", desc = "组织架构资源数据控制器", parent = {"001000000"})
 public class OrganizationController implements OrganizationApi {
 
     @Resource
@@ -31,7 +31,7 @@ public class OrganizationController implements OrganizationApi {
     private OrganizationAssembler organizationAssembler;
 
     @Override
-    @ApiResources(code = "000000000002001", name = "新增", desc = "新增单个组织架构")
+    @ApiResources(code = "001000000002001", name = "新增", desc = "新增单个组织架构")
     public ResultModel<String> singleAdd(CreateOrganizationParams params) {
         OrganizationDto organizationDto = organizationAssembler.toDto(params);
         String organizationId = organizationApplicationService.singleAdd(organizationDto);

@@ -18,9 +18,9 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableRestApiElapsed
 @SpringBootApplication
 @ComponentScan(basePackages = "com.yaocode.sts.auth")
-@SystemResources(code = "000", name = "权限管理系统", desc = "后台租户组织用户管理系统")
-@ServerResources(code = "000000", name = "权限控制服务", desc = "主要用户认证和权限控制服务", parent = {"000"})
-@ServiceResources(code = "000000000", name = "用户中心服务", desc = "租户、组织、用户、资源、权限管理服务", path = "/auth", parent = {"000000"})
+@SystemResources(code = "001", name = "权限管理系统", desc = "后台租户组织用户管理系统")
+@ServerResources(code = "001000", name = "权限控制服务", desc = "主要用户认证和权限控制服务", parent = {"001"})
+@ServiceResources(code = "001000000", name = "用户中心服务", desc = "租户、组织、用户、资源、权限管理服务", path = "/auth", parent = {"001000"})
 public class AuthApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthApplication.class);

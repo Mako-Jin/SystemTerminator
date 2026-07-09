@@ -60,10 +60,10 @@ public class ServerResourcesHandlerImpl extends AbstractResourcesHandler<ServerR
         this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         ServerResourcesModel serverResourcesModel = new ServerResourcesModel();
-        this.buildDefaultResourcesModel(serverResourcesModel);
-        this.resources.add(serverResourcesModel);
 
         if (serverResourcesMap.isEmpty()) {
+            this.buildDefaultResourcesModel(serverResourcesModel);
+            this.resources.add(serverResourcesModel);
             return this.resources;
         }
 

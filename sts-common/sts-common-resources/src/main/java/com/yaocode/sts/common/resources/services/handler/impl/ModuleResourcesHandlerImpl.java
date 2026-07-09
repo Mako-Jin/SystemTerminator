@@ -3,6 +3,8 @@ package com.yaocode.sts.common.resources.services.handler.impl;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.annotation.ModuleResources;
+import com.yaocode.sts.common.resources.annotation.ServiceResources;
+import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import com.yaocode.sts.common.resources.model.ModuleResourcesModel;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.services.handler.ApiResourcesHandler;
@@ -72,10 +74,10 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
         this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         ModuleResourcesModel moduleResourcesModel = new ModuleResourcesModel();
-        this.buildDefaultResourcesModel(moduleResourcesModel);
-        this.resources.add(moduleResourcesModel);
 
         if (moduleResourcesMap.isEmpty()) {
+            this.buildDefaultResourcesModel(moduleResourcesModel);
+            this.resources.add(moduleResourcesModel);
             return this.resources;
         }
 
@@ -121,6 +123,15 @@ public class ModuleResourcesHandlerImpl extends AbstractResourcesHandler<ModuleR
         return Optional.ofNullable(AnnotationUtils.findAnnotation(clazz, annotationClass))
                 .map(this::extractPaths)
                 .orElse(Collections.emptyList());
+    }
+
+    @Override
+    protected List<String> filterParentCode(List<String> parentCodeList, Set<String> systemCodeList) {
+        List<String> parentCode = super.filterParentCode(parentCodeList, systemCodeList);
+        if (parentCode.isEmpty()) {
+            return Collections.singletonList(ResourceTypeEnums.createDefaultResourceCode(ServiceResources.class));
+        }
+        return parentCode;
     }
 
     private List<String> extractPaths(Annotation annotation) {

@@ -3,6 +3,8 @@ package com.yaocode.sts.common.resources.services.handler.impl;
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.resources.annotation.ApiResources;
+import com.yaocode.sts.common.resources.annotation.ModuleResources;
+import com.yaocode.sts.common.resources.enums.ResourceTypeEnums;
 import com.yaocode.sts.common.resources.model.ApiResourcesModel;
 import com.yaocode.sts.common.resources.model.ModuleResourcesModel;
 import com.yaocode.sts.common.resources.model.ResourcesModel;
@@ -90,7 +92,7 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
             apiResourcesModel = new ApiResourcesModel();
             this.buildResourcesModel(apiResourcesModel, apiResources);
             List<String> parentCodeList = filterParentCode(
-                    apiResourcesModel.getParentCode(),
+                    apiResourcesModel.getParentCode().isEmpty() ? Collections.singletonList(moduleResourcesModel.getCode()) : apiResourcesModel.getParentCode(),
                     Collections.singleton(moduleResourcesModel.getCode())
             );
             if (CollectionUtils.isEmpty(parentCodeList)) {
@@ -116,6 +118,15 @@ public class ApiResourcesHandlerImpl extends AbstractResourcesHandler<ApiResourc
             return;
         }
         apiResourcesModelList.add(resource);
+    }
+
+    @Override
+    protected List<String> filterParentCode(List<String> parentCodeList, Set<String> systemCodeList) {
+        List<String> parentCode = super.filterParentCode(parentCodeList, systemCodeList);
+        if (parentCode.isEmpty()) {
+            return Collections.singletonList(ResourceTypeEnums.createDefaultResourceCode(ModuleResources.class));
+        }
+        return parentCode;
     }
 
     public boolean isExist(ApiResourcesModel resource) {

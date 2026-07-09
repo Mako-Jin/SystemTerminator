@@ -95,7 +95,7 @@ public class ResourcesBuilder implements ApplicationContextAware, ApplicationLis
     public void onApplicationEvent(ApplicationReadyEvent event) {
         try {
             ResourcesService serviceBean = applicationContext.getBean(ResourcesService.class);
-            serviceBean.batchSaveResources(resourcesModelList);
+            serviceBean.batchSaveOrUpdateResources(resourcesModelList);
         } catch (NoSuchBeanDefinitionException exception) {
             logger.debug("Bean：ResourceService not found, remote call");
             resourcesServiceClient.batchSaveResources(resourcesModelList);

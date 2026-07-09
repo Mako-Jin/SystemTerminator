@@ -63,10 +63,10 @@ public class ServiceResourcesHandlerImpl extends AbstractResourcesHandler<Servic
         this.resources = new ArrayList<>();
         // 构建默认的系统资源对象
         ServiceResourcesModel serviceResourcesModel = new ServiceResourcesModel();
-        this.buildDefaultResourcesModel(serviceResourcesModel);
-        this.resources.add(serviceResourcesModel);
 
         if (serviceResourcesMap.isEmpty()) {
+            this.buildDefaultResourcesModel(serviceResourcesModel);
+            this.resources.add(serviceResourcesModel);
             return this.resources;
         }
 

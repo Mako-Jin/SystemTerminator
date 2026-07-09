@@ -33,4 +33,11 @@ public interface ResourceDomainService {
      */
     List<ResourceId> batchSave(List<ResourceInfoEntity> resourceEntityList);
 
+    /**
+     * 批量保存或更新资源数据（存在则更新，不存在则新增）
+     * @param resourceEntityList 资源数据列表
+     * @return java.util.List<ResourceId>
+     */
+    List<ResourceId> batchSaveOrUpdate(List<ResourceInfoEntity> resourceEntityList);
+
 }

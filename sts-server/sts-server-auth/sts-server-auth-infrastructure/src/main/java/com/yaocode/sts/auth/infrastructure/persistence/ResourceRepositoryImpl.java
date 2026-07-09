@@ -9,6 +9,7 @@ import com.yaocode.sts.auth.infrastructure.po.ResourceInfoPo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,9 @@ public class ResourceRepositoryImpl implements ResourceRepository {
 
     @Override
     public List<ResourceId> batchSave(List<ResourceInfoEntity> resourceEntityList) {
+        if (resourceEntityList.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<ResourceInfoPo> resourcePoList = resourceConverter.toPoList(resourceEntityList);
         resourceDao.saveBatch(resourcePoList);
         return resourcePoList.stream().map(e -> ResourceId.of(e.getResourceId())).toList();
@@ -62,5 +66,22 @@ public class ResourceRepositoryImpl implements ResourceRepository {
         List<ResourceInfoPo> resourcePoList = resourceConverter.toPoList(resourceEntityList);
         List<ResourceInfoPo> dbResourcePoList = resourceDao.getByPoList(resourcePoList);
         return resourceConverter.toEntityList(dbResourcePoList);
+    }
+
+    @Override
+    public ResourceId update(ResourceInfoEntity aggregate) {
+        ResourceInfoPo resourcePo = resourceConverter.toPo(aggregate);
+        resourceDao.updateById(resourcePo);
+        return ResourceId.of(resourcePo.getResourceId());
+    }
+
+    @Override
+    public List<ResourceId> batchUpdate(List<ResourceInfoEntity> resourceEntityList) {
+        if (resourceEntityList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<ResourceInfoPo> resourcePoList = resourceConverter.toPoList(resourceEntityList);
+        resourceDao.updateBatchById(resourcePoList);
+        return resourcePoList.stream().map(e -> ResourceId.of(e.getResourceId())).toList();
     }
 }

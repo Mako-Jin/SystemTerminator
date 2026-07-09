@@ -1,6 +1,7 @@
 package com.yaocode.sts.auth.application.service;
 
 import com.yaocode.sts.auth.application.dto.ResourceDto;
+import com.yaocode.sts.common.resources.model.ResourcesModel;
 import com.yaocode.sts.common.resources.services.ResourcesService;
 
 import java.util.List;
