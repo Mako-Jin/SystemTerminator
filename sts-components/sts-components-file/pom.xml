@@ -14,18 +14,67 @@
 
     <groupId>com.yaocode.sts.components.file</groupId>
     <artifactId>sts-components-file</artifactId>
-    <packaging>jar</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <name>sts-components-file</name>
-    <description>文件存储组件（支持本地存储、MinIO、OSS）</description>
+    <description>文件存储组件 - 支持动态切换、热插拔、多云存储</description>
 
-    <dependencies>
-    </dependencies>
+    <modules>
+        <module>sts-components-file-core</module>
+        <module>sts-components-file-runtime</module>
+        <module>sts-components-file-plugins</module>
+        <module>sts-components-file-starter</module>
+        <module>sts-components-file-service</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 内部模块 -->
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-core</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-runtime</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-plugin-local</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-plugin-minio</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-plugin-oss</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-plugin-rustfs</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
-        <plugins>
-
-        </plugins>
     </build>
-
 </project>
