@@ -71,3 +71,11 @@ replay_pid*
 /sts-app/sts-app-collaborate/target/
 /sts-server/sts-server-external-adapter/target/
 /sts-gateway/target/
+/sts-components/sts-components-file/sts-components-file-core/target/
+/sts-components/sts-components-file/sts-components-file-plugins/sts-components-file-plugin-local/target/
+/sts-components/sts-components-file/sts-components-file-plugins/sts-components-file-plugin-minio/target/
+/sts-components/sts-components-file/sts-components-file-plugins/sts-components-file-plugin-oss/target/
+/sts-components/sts-components-file/sts-components-file-plugins/sts-components-file-plugin-rustfs/target/
+/sts-components/sts-components-file/sts-components-file-runtime/target/
+/sts-components/sts-components-file/sts-components-file-starter/target/
+/sts-components/sts-components-file/sts-components-file-service/target/
