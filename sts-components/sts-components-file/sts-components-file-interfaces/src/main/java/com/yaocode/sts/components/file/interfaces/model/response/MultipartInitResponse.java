@@ -2,18 +2,15 @@ package com.yaocode.sts.components.file.interfaces.model.response;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
- * 文件存在性VO
+ * 分片上传初始化响应
  */
 @Data
-public class FileExistenceResponse {
-
+public class MultipartInitResponse {
     /**
-     * 是否存在
+     * 上传ID
      */
-    private Boolean exists;
+    private String uploadId;
     /**
      * 文件ID
      */
@@ -27,24 +24,19 @@ public class FileExistenceResponse {
      */
     private Long fileSize;
     /**
-     * 文件MD5值
+     * 分片大小（字节）
      */
-    private String fileMd5;
+    private Long chunkSize;
     /**
-     * 文件URL
+     * 总分片数
      */
-    private String fileUrl;
+    private Integer totalChunks;
     /**
-     * 是否存在重复
+     * 过期时间（毫秒级时间戳）
      */
-    private Boolean isDuplicate;
+    private Long expireTime;
     /**
      * 存储类型
      */
     private String storageType;
-    /**
-     * 重复文件列表
-     */
-    private List<FileInfoResponse> duplicateFiles;
-
 }
