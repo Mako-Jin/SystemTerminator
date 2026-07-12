@@ -1,25 +1,34 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+
 import lombok.Data;
 
 /**
- * 存储统计
+ * 存储类型统计
  */
 @Data
-public class StorageStatsResponse {
+public class StorageTypeStatsResponse {
 
     /**
      * 存储类型
      */
     private String storageType;
     /**
+     * 存储类型描述
+     */
+    private String storageTypeDesc;
+    /**
      * 文件数量
      */
     private Long fileCount;
     /**
-     * 使用空间（字节）
+     * 总大小（字节）
      */
-    private Long usedSpace;
+    private Long totalSize;
+    /**
+     * 已用容量（字节）
+     */
+    private Long usedCapacity;
     /**
      * 最大容量（字节）
      */
@@ -28,16 +37,5 @@ public class StorageStatsResponse {
      * 使用率
      */
     private Double usageRate;
-    /**
-     * 节点数量
-     */
-    private Integer nodeCount;
-    /**
-     * 健康节点数量
-     */
-    private Integer healthNodes;
-
-    private String storageTypeDesc;
-    private Long availableSpace;
 
 }

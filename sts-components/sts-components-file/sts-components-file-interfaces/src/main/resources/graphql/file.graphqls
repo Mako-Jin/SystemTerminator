@@ -1,0 +1,54 @@
+// web/resources/graphql/file.graphqls
+type Query {
+    # 查询文件信息
+    fileInfo(fileId: String!): FileInfo!
+
+    # 文件列表
+    files(page: Int, size: Int, status: FileStatus): FilePage!
+
+    # 上传进度
+    uploadProgress(uploadId: String!): UploadProgress!
+
+    # 秒传检测
+    checkFileExists(fileMd5: String!, fileSize: Long!): FileExistsResult!
+}
+
+type Mutation {
+    # 普通上传（文件内容用Base64）
+    uploadFile(
+        fileName: String!,
+        content: String!,  # Base64
+        storageType: String,
+        businessId: String,
+        businessType: String
+    ): UploadResult!
+
+    # 初始化分片上传
+    initMultipartUpload(
+        fileName: String!,
+        fileSize: Long!,
+        chunkSize: Long,
+        fileMd5: String
+    ): MultipartInitResult!
+
+    # 上传分片
+    uploadPart(
+        uploadId: String!,
+        chunkNumber: Int!,
+        chunkData: String!  # Base64
+    ): UploadPartResult!
+
+    # 完成分片上传
+    completeMultipartUpload(uploadId: String!): UploadResult!
+
+    # 删除文件
+    deleteFile(fileId: String!): Boolean!
+}
+
+type Subscription {
+    # 上传进度订阅（实时推送）
+    uploadProgress(uploadId: String!): UploadProgress!
+
+    # 文件事件订阅
+    fileEvents: FileEvent!
+}

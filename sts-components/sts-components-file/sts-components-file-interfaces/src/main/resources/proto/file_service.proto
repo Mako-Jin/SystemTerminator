@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package com.yaocode.sts.proto;
+
+option java_multiple_files = true;
+option java_package = "com.yaocode.sts.proto";
+option java_outer_classname = "FileStorageProto";
+
+// ==================== 服务定义 ====================
+service FileStorageService {
+  // 上传文件
+  rpc UploadFile (UploadRequest) returns (UploadResponse);
+
+  // 分片上传
+  rpc InitMultipartUpload (InitMultipartRequest) returns (InitMultipartResponse);
+  rpc UploadPart (UploadPartRequest) returns (UploadPartResponse);
+  rpc CompleteMultipartUpload (CompleteMultipartRequest) returns (UploadResponse);
+
+  // 下载文件
+  rpc DownloadFile (DownloadRequest) returns (stream DownloadResponse);
+
+  // 删除文件
+  rpc DeleteFile (DeleteRequest) returns (DeleteResponse);
+
+  // 获取文件信息
+  rpc GetFileInfo (FileInfoRequest) returns (FileInfoResponse);
+
+  // 秒传检测
+  rpc CheckFileExists (CheckFileRequest) returns (CheckFileResponse);
+
+  // 健康检查
+  rpc HealthCheck (HealthRequest) returns (HealthResponse);
+}
+
+// ==================== 消息定义 ====================
+
+// 上传请求
+message UploadRequest {
+  string file_name = 1;
+  bytes content = 2;
+  int64 file_size = 3;
+  string storage_type = 4;
+  string business_id = 5;
+  string business_type = 6;
+  map<string, string> metadata = 7;
+}
+
+// 上传响应
+message UploadResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string file_md5 = 4;
+  string file_url = 5;
+  string storage_type = 6;
+  int32 upload_status = 7;
+}
+
+// 分片上传初始化
+message InitMultipartRequest {
+  string file_name = 1;
+  int64 file_size = 2;
+  int64 chunk_size = 3;
+  string file_md5 = 4;
+  string storage_type = 5;
+  string business_id = 6;
+  string business_type = 7;
+}
+
+message InitMultipartResponse {
+  string upload_id = 1;
+  string file_id = 2;
+  int32 total_chunks = 3;
+  int64 chunk_size = 4;
+}
+
+// 上传分片
+message UploadPartRequest {
+  string upload_id = 1;
+  string file_id = 2;
+  int32 chunk_number = 3;
+  bytes chunk_data = 4;
+  string chunk_md5 = 5;
+}
+
+message UploadPartResponse {
+  string upload_id = 1;
+  int32 chunk_number = 2;
+  bool success = 3;
+}
+
+// 完成分片
+message CompleteMultipartRequest {
+  string upload_id = 1;
+}
+
+// 下载请求
+message DownloadRequest {
+  string file_id = 1;
+  string storage_type = 2;
+}
+
+// 下载响应（流式）
+message DownloadResponse {
+  bytes chunk_data = 1;
+  int64 chunk_number = 2;
+  bool is_last = 3;
+  int64 total_size = 4;
+}
+
+// 删除请求
+message DeleteRequest {
+  string file_id = 1;
+  string storage_type = 2;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// 文件信息
+message FileInfoRequest {
+  string file_id = 1;
+}
+
+message FileInfoResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string file_md5 = 4;
+  string storage_type = 5;
+  string file_url = 6;
+  int32 file_status = 7;
+  int64 upload_time = 8;
+  int32 download_count = 9;
+}
+
+// 秒传检测
+message CheckFileRequest {
+  string file_md5 = 1;
+  int64 file_size = 2;
+  string storage_type = 3;
+}
+
+message CheckFileResponse {
+  bool exists = 1;
+  string file_id = 2;
+  string file_name = 3;
+  string file_url = 4;
+}
+
+// 健康检查
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+  string version = 2;
+}

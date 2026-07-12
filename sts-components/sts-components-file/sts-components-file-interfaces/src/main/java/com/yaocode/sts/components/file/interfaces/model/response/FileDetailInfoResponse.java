@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 文件详细信息
@@ -103,5 +104,35 @@ public class FileDetailInfoResponse {
      * 最近操作日志
      */
     private List<FileAuditLogResponse> recentLogs;
+
+    // 审计信息
+    private String updatedUserId;
+    private String updatedUserName;
+    private LocalDateTime updatedTime;
+
+    // 存储详细信息
+    private String storageBucket;
+    private String storageRegion;
+    private Map<String, String> storageMetadata;
+
+    // 加密信息
+    private Boolean isEncrypted;
+    private String encryptionAlgorithm;
+
+    // 压缩信息
+    private Boolean isCompressed;
+    private String compressionAlgorithm;
+
+    // 访问统计
+    private List<AccessRecordResponse> recentAccessRecords;
+    private Map<String, Long> accessByDay;
+
+    // 版本信息
+    private Integer versionCount;
+    private Integer currentVersion;
+
+    // 业务信息
+    private String businessId;
+    private String businessType;
 
 }
