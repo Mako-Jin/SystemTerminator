@@ -4,7 +4,7 @@ import com.yaocode.sts.common.basic.exception.ParamCheckException;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.enums.ResultEnums;
 import com.yaocode.sts.common.web.model.ResultModel;
-import com.yaocode.sts.common.web.result.ResultUtils;
+import com.yaocode.sts.common.web.utils.ResultUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

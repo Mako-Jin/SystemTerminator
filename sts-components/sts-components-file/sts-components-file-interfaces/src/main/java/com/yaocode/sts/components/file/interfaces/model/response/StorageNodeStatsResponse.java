@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 存储节点统计
  */
 @Data
+@Builder
 public class StorageNodeStatsResponse {
     /**
      * 存储节点ID
@@ -41,5 +43,13 @@ public class StorageNodeStatsResponse {
      * 健康状态
      */
     private Integer healthStatus;
+
+    private String healthStatusDesc;
+
+    private Integer activeConnections;
+
+    private Long totalRequests;
+
+    private Double avgResponseTime;
 
 }

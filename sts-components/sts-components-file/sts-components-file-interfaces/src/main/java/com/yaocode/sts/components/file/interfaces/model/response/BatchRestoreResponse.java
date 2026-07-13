@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
  * 批量恢复结果
  */
 @Data
+@Builder
 public class BatchRestoreResponse {
     /**
      * 需要恢复的文件数
@@ -30,4 +32,6 @@ public class BatchRestoreResponse {
      * 恢复失败的文件ID到错误信息的映射
      */
     private Map<String, String> errors;
+
+    private Long executionTime;
 }

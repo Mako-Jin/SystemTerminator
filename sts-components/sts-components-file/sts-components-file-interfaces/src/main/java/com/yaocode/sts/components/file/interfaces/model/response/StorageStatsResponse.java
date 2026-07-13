@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 存储统计
  */
 @Data
+@Builder
 public class StorageStatsResponse {
 
     /**

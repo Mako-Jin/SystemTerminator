@@ -25,7 +25,8 @@
         <module>sts-components-file-runtime</module>
         <module>sts-components-file-plugins</module>
         <module>sts-components-file-starter</module>
-        <module>sts-components-file-service</module>
+        <module>sts-components-file-interfaces</module>
+        <module>sts-components-file-web</module>
     </modules>
 
     <properties>
@@ -37,6 +38,11 @@
     <dependencyManagement>
         <dependencies>
             <!-- 内部模块 -->
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-interfaces</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>com.yaocode.sts.components.file</groupId>
                 <artifactId>sts-components-file-core</artifactId>

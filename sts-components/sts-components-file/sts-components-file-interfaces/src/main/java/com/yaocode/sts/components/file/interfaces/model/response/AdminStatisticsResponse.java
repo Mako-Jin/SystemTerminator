@@ -1,7 +1,9 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +11,7 @@ import java.util.Map;
  * 管理员统计信息
  */
 @Data
+@Builder
 public class AdminStatisticsResponse {
 
     /**
@@ -32,6 +35,8 @@ public class AdminStatisticsResponse {
      */
     private Long todayDownloads;
 
+    private Long todaySize;
+
     /**
      * 存储统计
      */
@@ -45,5 +50,11 @@ public class AdminStatisticsResponse {
      * 下载趋势数据
      */
     private List<TrendDataResponse> downloadTrend;
+
+    private Map<String, Long> statusDistribution;
+
+    private Map<String, TypeStatsResponse> typeStats;
+
+    private LocalDateTime statisticsTime;
 
 }

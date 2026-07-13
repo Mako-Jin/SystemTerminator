@@ -1,13 +1,16 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * 文件审计日志
  */
 @Data
+@Builder
 public class FileAuditLogResponse {
 
     /**
@@ -64,5 +67,9 @@ public class FileAuditLogResponse {
      * 创建时间
      */
     private LocalDateTime createdTime;
+
+    private String operationTypeDesc;
+
+    private Map<String, Object> extraData;
 
 }

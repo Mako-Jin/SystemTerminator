@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 迁移任务状态
  */
 @Data
+@Builder
 public class MigrateTaskStatusResponse {
 
     /**
@@ -56,5 +58,11 @@ public class MigrateTaskStatusResponse {
      * 错误信息（失败时返回）
      */
     private String errorMessage;
+
+    private String fileName;
+
+    private String statusDesc;
+
+    private Long elapsedTime;
 
 }

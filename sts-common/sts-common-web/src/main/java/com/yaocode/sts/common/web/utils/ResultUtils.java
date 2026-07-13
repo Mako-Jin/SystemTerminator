@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.web.result;
+package com.yaocode.sts.common.web.utils;
 
 import com.yaocode.sts.common.web.enums.ResultEnums;
 import com.yaocode.sts.common.web.model.ResultModel;

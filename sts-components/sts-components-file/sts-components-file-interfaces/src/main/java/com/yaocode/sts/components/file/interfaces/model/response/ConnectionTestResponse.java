@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * 连接测试结果
  */
 @Data
+@Builder
 public class ConnectionTestResponse {
     /**
      * 是否成功
@@ -29,5 +31,9 @@ public class ConnectionTestResponse {
      * 测试时间
      */
     private LocalDateTime testTime;
+
+    private String serverInfo;
+
+    private Integer statusCode;
 
 }

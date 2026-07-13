@@ -81,7 +81,7 @@ public interface FileAdminApi {
      * @return 操作结果
      */
     @DeleteMapping("/{fileId}/permanent")
-    ResultModel<Void> permanentDeleteFile(@PathVariable String fileId);
+    ResultModel<String> permanentDeleteFile(@PathVariable String fileId);
 
     // ==================== 2. 文件恢复 ====================
 
@@ -113,7 +113,7 @@ public interface FileAdminApi {
      * @return 操作结果
      */
     @PostMapping("/{fileId}/archive")
-    ResultModel<Void> archiveFile(
+    ResultModel<String> archiveFile(
         @PathVariable String fileId,
         @RequestParam(defaultValue = "GLACIER") String archiveType
     );
@@ -125,7 +125,7 @@ public interface FileAdminApi {
      * @return 操作结果
      */
     @PostMapping("/{fileId}/unarchive")
-    ResultModel<Void> unarchiveFile(@PathVariable String fileId);
+    ResultModel<String> unarchiveFile(@PathVariable String fileId);
 
     /**
      * 批量归档文件
@@ -169,7 +169,7 @@ public interface FileAdminApi {
      * @return 操作结果
      */
     @DeleteMapping("/migrate/task/{taskId}")
-    ResultModel<Void> cancelMigrateTask(@PathVariable String taskId);
+    ResultModel<String> cancelMigrateTask(@PathVariable String taskId);
 
     // ==================== 5. 文件清理 ====================
 
@@ -286,7 +286,7 @@ public interface FileAdminApi {
      * @return 操作结果
      */
     @DeleteMapping("/storage-nodes/{nodeId}")
-    ResultModel<Void> deleteStorageNode(@PathVariable Long nodeId);
+    ResultModel<String> deleteStorageNode(@PathVariable Long nodeId);
 
     /**
      * 测试存储节点连接
@@ -332,7 +332,7 @@ public interface FileAdminApi {
      * @return 操作结果
      */
     @PostMapping("/audit/{fileId}")
-    ResultModel<Void> auditFile(
+    ResultModel<String> auditFile(
             @PathVariable String fileId,
             @RequestParam Boolean approved,
             @RequestParam(required = false) String comment

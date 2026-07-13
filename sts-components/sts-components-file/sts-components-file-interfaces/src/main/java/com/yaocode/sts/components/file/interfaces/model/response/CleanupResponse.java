@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 清理结果
  */
 @Data
+@Builder
 public class CleanupResponse {
 
     /**

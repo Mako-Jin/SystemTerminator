@@ -2,6 +2,8 @@ package com.yaocode.sts.components.file.interfaces.model.response;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 文件类型统计
  */
