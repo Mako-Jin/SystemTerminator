@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 异步上传响应
  */
 @Data
+@Builder
 public class AsyncUploadResponse {
     /**
      * 任务ID

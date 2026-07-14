@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 类型上传统计
  */
 @Data
+@Builder
 public class TypeUploadStatsResponse {
 
     /**

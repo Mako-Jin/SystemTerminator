@@ -92,4 +92,27 @@ public class FileInfoResult {
      * 租户ID
      */
     private String tenantId;
+
+    /** 上传状态码 */
+    private Integer uploadStatus;
+
+    /** 上传进度 */
+    private Integer uploadProgress;
+
+    /** 查看次数 */
+    private Long viewCount;
+
+    /** 上传时间 */
+    private LocalDateTime uploadTime;
+
+    /** 最后访问时间 */
+    private LocalDateTime lastAccessTime;
+
+    /** 最后修改时间 */
+    private LocalDateTime lastModifiedTime;
+
+    /**
+     * 文件扩展名
+     */
+    private String fileExtension;
 }

@@ -1,4 +1,4 @@
-package com.yaocode.sts.components.file.enums;
+package com.yaocode.sts.components.file.core.enums;
 
 import lombok.Getter;
 

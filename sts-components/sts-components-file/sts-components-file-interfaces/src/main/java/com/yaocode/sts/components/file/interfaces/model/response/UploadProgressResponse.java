@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 上传进度响应
  */
 @Data
+@Builder
 public class UploadProgressResponse {
     /**
      * 上传ID

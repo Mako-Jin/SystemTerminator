@@ -19,6 +19,10 @@
     <description>文件存储核心抽象层 - API、SPI、模型、异常</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.yaocode.sts.common</groupId>
+            <artifactId>sts-common-basic</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

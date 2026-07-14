@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 分片上传初始化响应
  */
 @Data
+@Builder
 public class MultipartInitResponse {
     /**
      * 上传ID

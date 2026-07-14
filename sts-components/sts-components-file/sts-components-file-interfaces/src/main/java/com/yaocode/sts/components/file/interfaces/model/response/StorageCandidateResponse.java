@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 存储候选
  */
 @Data
+@Builder
 public class StorageCandidateResponse {
 
     /**

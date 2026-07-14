@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 上传排行榜
  */
 @Data
+@Builder
 public class TopUploaderResponse {
 
     /**
