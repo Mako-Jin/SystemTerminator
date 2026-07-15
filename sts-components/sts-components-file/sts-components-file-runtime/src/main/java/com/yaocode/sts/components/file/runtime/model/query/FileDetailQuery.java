@@ -19,4 +19,7 @@ public class FileDetailQuery {
      * 租户ID
      */
     private String tenantId;
+
+    /** 用户ID */
+    private String userId;
 }

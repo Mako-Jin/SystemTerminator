@@ -5,6 +5,12 @@ import lombok.Data;
 
 /**
  * 分片上传初始化响应
+ * <p>
+ * 包含分片上传初始化后的关键信息，用于后续分片上传操作
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

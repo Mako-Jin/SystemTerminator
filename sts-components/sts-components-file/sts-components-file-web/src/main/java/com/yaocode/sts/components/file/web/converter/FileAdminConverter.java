@@ -1,11 +1,6 @@
 package com.yaocode.sts.components.file.web.converter;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
-import com.yaocode.sts.components.file.interfaces.model.request.*;
-import com.yaocode.sts.components.file.interfaces.model.response.*;
-import com.yaocode.sts.components.file.runtime.model.command.*;
-import com.yaocode.sts.components.file.runtime.model.query.*;
-import com.yaocode.sts.components.file.runtime.model.result.*;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

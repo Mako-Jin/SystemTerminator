@@ -9,6 +9,12 @@ import java.util.Map;
 
 /**
  * 秒传请求
+ * <p>
+ * 用于秒传场景，直接获取已存在文件的信息，无需重新上传
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class FastUploadRequest {

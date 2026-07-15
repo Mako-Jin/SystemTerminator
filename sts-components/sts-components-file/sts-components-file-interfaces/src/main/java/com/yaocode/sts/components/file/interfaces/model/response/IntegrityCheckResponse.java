@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * 完整性检查VO
  */
 @Data
+@Builder
 public class IntegrityCheckResponse {
 
     /**

@@ -7,6 +7,12 @@ import java.util.Map;
 
 /**
  * Base64上传请求
+ * <p>
+ * 用于将Base64编码的文件内容上传到存储系统
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class Base64UploadRequest {

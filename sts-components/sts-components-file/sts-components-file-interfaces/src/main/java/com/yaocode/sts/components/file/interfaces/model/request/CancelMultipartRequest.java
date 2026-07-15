@@ -4,7 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 取消分片请求
+ * 取消分片上传请求
+ * <p>
+ * 用于取消正在进行的分片上传会话
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class CancelMultipartRequest {

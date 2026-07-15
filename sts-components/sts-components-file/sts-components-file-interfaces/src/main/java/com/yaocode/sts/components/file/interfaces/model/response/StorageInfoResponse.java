@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * 存储信息VO
  */
 @Data
+@Builder
 public class StorageInfoResponse {
 
     /**
@@ -45,7 +47,7 @@ public class StorageInfoResponse {
     /**
      * 存储成本（估算）
      */
-    private Long storageCost;
+    private Double storageCost;
     /**
      * 存储类别：STANDARD, IA, GLACIER
      */

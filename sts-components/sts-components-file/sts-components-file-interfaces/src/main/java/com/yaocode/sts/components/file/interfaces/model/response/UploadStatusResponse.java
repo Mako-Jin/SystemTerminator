@@ -5,6 +5,12 @@ import lombok.Data;
 
 /**
  * 上传状态响应
+ * <p>
+ * 包含文件上传的详细状态信息，用于查询上传进度和状态
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

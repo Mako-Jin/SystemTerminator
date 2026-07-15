@@ -25,6 +25,9 @@ public class StorageStatsResult {
      */
     private Long fileCount;
 
+    /** 总大小（字节） */
+    private Long totalSize;
+
     /**
      * 已使用空间（字节）
      */

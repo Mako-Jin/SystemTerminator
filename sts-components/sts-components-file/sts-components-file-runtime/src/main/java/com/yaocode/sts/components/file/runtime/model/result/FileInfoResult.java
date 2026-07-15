@@ -22,7 +22,8 @@ public class FileInfoResult {
      * 文件名称
      */
     private String fileName;
-
+    /** 文件路径 */
+    private String filePath;
     /**
      * 文件大小（字节）
      */

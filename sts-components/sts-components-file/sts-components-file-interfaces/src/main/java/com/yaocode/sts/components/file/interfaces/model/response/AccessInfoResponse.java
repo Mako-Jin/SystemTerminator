@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
  * 访问信息VO
  */
 @Data
+@Builder
 public class AccessInfoResponse {
 
     /**
@@ -38,6 +40,10 @@ public class AccessInfoResponse {
      * 本周下载次数
      */
     private Long weekDownloads;
+    /** 本月下载 */
+    private Long monthDownloads;
+    /** 平均下载速度 */
+    private Double avgDownloadSpeed;
     /**
      * 下载趋势
      */

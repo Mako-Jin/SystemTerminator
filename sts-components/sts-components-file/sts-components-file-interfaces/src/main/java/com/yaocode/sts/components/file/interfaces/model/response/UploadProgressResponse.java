@@ -5,6 +5,12 @@ import lombok.Data;
 
 /**
  * 上传进度响应
+ * <p>
+ * 包含分片上传的进度信息，用于客户端查询上传进度
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

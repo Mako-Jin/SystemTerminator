@@ -549,6 +549,9 @@ public class FileUploadController implements FileUploadApi {
 
     // ==================== 10. Base64上传 ====================
 
+    /**
+     * Base64上传 - 将Base64编码的文件内容上传
+     */
     @Override
     public ResultModel<UploadResponse> base64Upload(@Valid Base64UploadRequest request) {
         log.info("Base64上传: {}", request.getFileName());
@@ -563,6 +566,9 @@ public class FileUploadController implements FileUploadApi {
 
     // ==================== 11. URL拉取上传 ====================
 
+    /**
+     * URL拉取上传 - 同步从指定URL拉取文件并上传
+     */
     @Override
     public ResultModel<UploadResponse> fetchFromUrl(@Valid UrlFetchRequest request) {
         log.info("URL拉取上传: {}", request.getFileUrl());
@@ -575,6 +581,9 @@ public class FileUploadController implements FileUploadApi {
         return ResultUtils.ok(response);
     }
 
+    /**
+     * URL拉取上传 - 异步从指定URL拉取文件并上传
+     */
     @Override
     public ResultModel<AsyncUploadResponse> asyncFetchFromUrl(@Valid UrlFetchRequest request) {
         log.info("异步URL拉取: {}", request.getFileUrl());
@@ -589,6 +598,9 @@ public class FileUploadController implements FileUploadApi {
 
     // ==================== 12. 混合云上传 ====================
 
+    /**
+     * 混合云上传 - 支持多存储引擎的智能选择
+     */
     @Override
     public ResultModel<HybridUploadResponse> hybridUpload(
             MultipartFile file,

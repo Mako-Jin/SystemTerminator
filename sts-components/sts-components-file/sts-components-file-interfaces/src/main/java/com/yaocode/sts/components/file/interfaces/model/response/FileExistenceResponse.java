@@ -6,7 +6,13 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 文件存在性VO
+ * 文件存在性检查响应
+ * <p>
+ * 用于秒传场景，检查文件是否已存在于存储系统中
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

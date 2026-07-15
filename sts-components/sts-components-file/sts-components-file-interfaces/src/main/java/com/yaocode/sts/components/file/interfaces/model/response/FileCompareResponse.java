@@ -1,11 +1,13 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 文件对比VO
  */
 @Data
+@Builder
 public class FileCompareResponse {
 
     /**

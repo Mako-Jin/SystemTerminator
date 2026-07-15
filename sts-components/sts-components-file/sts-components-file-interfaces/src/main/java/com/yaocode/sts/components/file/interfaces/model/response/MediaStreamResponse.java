@@ -1,21 +1,23 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 媒体流信息
  */
 @Data
+@Builder
 public class MediaStreamResponse {
 
     /**
      * 流类型 video, audio, subtitle
      */
-    private String type;
+    private String streamType;
     /**
      * 编码格式
      */
-    private String codec;
+    private String streamCodec;
     /**
      * 宽度（像素）
      */

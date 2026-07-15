@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * 下载Token
  */
 @Data
+@Builder
 public class DownloadTokenResponse {
 
     /**

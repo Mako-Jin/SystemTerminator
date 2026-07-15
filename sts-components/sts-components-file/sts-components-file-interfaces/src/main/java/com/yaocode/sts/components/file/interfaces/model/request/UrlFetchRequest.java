@@ -8,6 +8,12 @@ import java.util.Map;
 
 /**
  * URL拉取请求
+ * <p>
+ * 用于从指定URL拉取文件并上传到存储系统
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class UrlFetchRequest {

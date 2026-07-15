@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
  * 批量更新结果
  */
 @Data
+@Builder
 public class BatchUpdateResponse {
 
     /**

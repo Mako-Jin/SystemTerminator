@@ -9,6 +9,12 @@ import java.util.Map;
 
 /**
  * 分片上传初始化请求
+ * <p>
+ * 用于初始化分片上传会话，获取上传ID和分片信息
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class MultipartInitRequest {

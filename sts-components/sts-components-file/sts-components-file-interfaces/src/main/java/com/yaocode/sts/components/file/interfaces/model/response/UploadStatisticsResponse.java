@@ -8,6 +8,12 @@ import java.util.Map;
 
 /**
  * 上传统计响应
+ * <p>
+ * 包含文件上传的统计信息，包括总量、趋势、排行等数据
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

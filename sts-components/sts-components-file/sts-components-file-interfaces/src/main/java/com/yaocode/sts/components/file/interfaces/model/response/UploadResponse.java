@@ -4,7 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * 上传响应
+ * 文件上传响应
+ * <p>
+ * 包含上传结果的基本信息，用于普通上传、秒传、分片上传完成等场景
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

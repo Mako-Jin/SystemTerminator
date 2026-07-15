@@ -7,6 +7,12 @@ import java.time.LocalDateTime;
 
 /**
  * 异步任务状态响应
+ * <p>
+ * 包含异步上传任务的详细状态信息
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

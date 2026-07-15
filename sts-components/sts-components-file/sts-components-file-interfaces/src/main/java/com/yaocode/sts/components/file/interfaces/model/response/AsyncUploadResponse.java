@@ -5,6 +5,12 @@ import lombok.Data;
 
 /**
  * 异步上传响应
+ * <p>
+ * 包含异步上传任务的基本信息，用于查询异步上传任务状态
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

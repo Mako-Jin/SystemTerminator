@@ -404,7 +404,7 @@ public interface FileMetadataApi {
      * @return 操作结果
      */
     @PutMapping("/{fileId}/public")
-    ResultModel<Void> setFilePublic(
+    ResultModel<String> setFilePublic(
             @PathVariable String fileId,
             @RequestParam Boolean publicAccess
     );

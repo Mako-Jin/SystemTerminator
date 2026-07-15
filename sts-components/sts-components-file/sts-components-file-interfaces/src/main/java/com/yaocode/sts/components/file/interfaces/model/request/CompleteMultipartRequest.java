@@ -6,7 +6,13 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * 完成分片请求
+ * 完成分片上传请求
+ * <p>
+ * 用于合并所有已上传的分片，完成文件上传
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class CompleteMultipartRequest {

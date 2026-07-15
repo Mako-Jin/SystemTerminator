@@ -9,6 +9,12 @@ import java.util.Map;
 
 /**
  * 异步上传请求
+ * <p>
+ * 用于提交异步上传任务，支持通过Base64内容或URL拉取方式上传文件
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class AsyncUploadRequest {

@@ -7,6 +7,12 @@ import java.util.List;
 
 /**
  * 断点续传信息响应
+ * <p>
+ * 包含断点续传所需的信息，包括已上传分片和缺失分片列表
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 @Builder

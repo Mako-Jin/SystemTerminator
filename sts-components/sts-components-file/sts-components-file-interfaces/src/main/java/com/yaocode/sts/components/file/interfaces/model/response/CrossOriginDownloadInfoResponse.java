@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.Map;
  * 跨域下载信息
  */
 @Data
+@Builder
 public class CrossOriginDownloadInfoResponse {
 
     /**

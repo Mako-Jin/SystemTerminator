@@ -137,7 +137,7 @@ public class FileDetailInfoResponse {
     /**
      * 标签（逗号分隔）
      */
-    private String tags;
+    private List<String> tags;
 
     /**
      * 文件描述

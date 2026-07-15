@@ -42,4 +42,7 @@ public class StorageStatsResponse {
     private String storageTypeDesc;
     private Long availableSpace;
 
+    /** 总大小（字节） */
+    private Long totalSize;
+
 }

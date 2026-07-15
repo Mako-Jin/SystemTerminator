@@ -560,6 +560,9 @@ public class FileUploadConverter {
 
     // ==================== Query 转换 ====================
 
+    /**
+     * 构建上传进度查询
+     */
     public UploadProgressQuery toUploadProgressQuery(String uploadId) {
         return UploadProgressQuery.builder()
                 .uploadId(uploadId)
@@ -567,6 +570,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建分片会话查询
+     */
     public MultipartSessionQuery toMultipartSessionQuery(Integer page, Integer size) {
         return MultipartSessionQuery.builder()
                 .page(page != null ? page : 1)
@@ -575,6 +581,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建断点续传信息查询
+     */
     public ResumeInfoQuery toResumeInfoQuery(String fileId) {
         return ResumeInfoQuery.builder()
                 .fileId(fileId)
@@ -582,6 +591,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建异步任务查询
+     */
     public AsyncTaskQuery toAsyncTaskQuery(String taskId) {
         return AsyncTaskQuery.builder()
                 .taskId(taskId)
@@ -589,6 +601,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建异步任务列表查询
+     */
     public AsyncTaskListQuery toAsyncTaskListQuery(Integer taskStatus, Integer page, Integer size) {
         return AsyncTaskListQuery.builder()
                 .taskStatus(taskStatus)
@@ -598,6 +613,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建上传状态查询
+     */
     public UploadStatusQuery toUploadStatusQuery(String fileId) {
         return UploadStatusQuery.builder()
                 .fileId(fileId)
@@ -605,6 +623,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建用户文件列表查询
+     */
     public UploadFileListQuery toUploadFileListQuery(
             Integer page,
             Integer size,
@@ -635,6 +656,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 构建文件存在性查询
+     */
     public FileExistenceQuery toFileExistenceQuery(String fileMd5, Long fileSize, String storageType) {
         return FileExistenceQuery.builder()
                 .fileMd5(fileMd5)
@@ -646,6 +670,9 @@ public class FileUploadConverter {
 
     // ==================== Result → Response 转换 ====================
 
+    /**
+     * 上传结果 → 上传响应
+     */
     public UploadResponse toUploadResponse(UploadResult result) {
         if (result == null) {
             return null;
@@ -668,6 +695,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 上传结果列表 → 上传响应列表
+     */
     public List<UploadResponse> toUploadResponseList(List<UploadResult> results) {
         if (results == null) {
             return null;
@@ -677,6 +707,9 @@ public class FileUploadConverter {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 分片初始化结果 → 分片初始化响应
+     */
     public MultipartInitResponse toMultipartInitResponse(MultipartInitResult result) {
         if (result == null) {
             return null;
@@ -708,6 +741,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 上传进度结果 → 上传进度响应
+     */
     public UploadProgressResponse toUploadProgressResponse(UploadProgressResult result) {
         if (result == null) {
             return null;
@@ -750,6 +786,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 分片会话结果列表 → 分片会话响应列表
+     */
     public List<MultipartSessionResponse> toMultipartSessionResponseList(List<MultipartSessionResult> results) {
         if (results == null) {
             return null;
@@ -1058,6 +1097,9 @@ public class FileUploadConverter {
                 .build();
     }
 
+    /**
+     * 存储上传统计结果Map → 存储上传统计响应Map
+     */
     public Map<String, StorageUploadStatsResponse> toStorageUploadStatsResponseMap(Map<String, StorageUploadStatsResult> results) {
         if (CollectionUtils.isEmpty(results)) {
             return Collections.emptyMap();
@@ -1069,6 +1111,9 @@ public class FileUploadConverter {
                 ));
     }
 
+    /**
+     * 混合云上传结果 → 混合云上传响应
+     */
     public HybridUploadResponse toHybridUploadResponse(HybridUploadResult result) {
         if (result == null) {
             return null;

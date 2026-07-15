@@ -6,7 +6,13 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 恢复上传请求
+ * 断点续传请求
+ * <p>
+ * 用于恢复中断的上传任务，支持指定需要重传的分片
+ * </p>
+ *
+ * @author yaocode
+ * @since 1.0.0
  */
 @Data
 public class ResumeUploadRequest {
