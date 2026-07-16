@@ -4,19 +4,16 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * 永久删除命令
+ * 从回收站恢复文件命令
  *
  * @author yaocode
  * @since 1.0.0
  */
 @Data
 @Builder
-public class PermanentDeleteCommand {
+public class RestoreFromRecycleCommand {
     /** 文件ID */
     private String fileId;
-
-    /** 删除原因 */
-    private String reason;
 
     /** 租户ID */
     private String tenantId;

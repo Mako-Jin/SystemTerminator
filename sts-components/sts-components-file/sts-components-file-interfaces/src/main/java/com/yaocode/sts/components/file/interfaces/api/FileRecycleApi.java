@@ -38,7 +38,7 @@ public interface FileRecycleApi {
      * 从回收站恢复文件
      */
     @PostMapping("/{fileId}/restore")
-    ResultModel<Void> restoreFromRecycle(@PathVariable String fileId);
+    ResultModel<String> restoreFromRecycle(@PathVariable String fileId);
 
     /**
      * 批量从回收站恢复文件
@@ -50,7 +50,7 @@ public interface FileRecycleApi {
      * 从回收站彻底删除文件（物理删除）
      */
     @DeleteMapping("/{fileId}/permanent")
-    ResultModel<Void> permanentDelete(@PathVariable String fileId);
+    ResultModel<String> permanentDelete(@PathVariable String fileId);
 
     /**
      * 清空回收站（彻底删除所有文件）

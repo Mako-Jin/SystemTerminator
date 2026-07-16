@@ -3,20 +3,19 @@ package com.yaocode.sts.components.file.runtime.model.command;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 /**
- * 永久删除命令
+ * 批量从回收站恢复文件命令
  *
  * @author yaocode
  * @since 1.0.0
  */
 @Data
 @Builder
-public class PermanentDeleteCommand {
-    /** 文件ID */
-    private String fileId;
-
-    /** 删除原因 */
-    private String reason;
+public class BatchRestoreFromRecycleCommand {
+    /** 文件ID列表 */
+    private List<String> fileIds;
 
     /** 租户ID */
     private String tenantId;

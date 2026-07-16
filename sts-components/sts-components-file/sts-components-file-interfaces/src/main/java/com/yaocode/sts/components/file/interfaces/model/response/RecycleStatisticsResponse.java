@@ -1,5 +1,6 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
  * 回收站统计信息
  */
 @Data
+@Builder
 public class RecycleStatisticsResponse {
 
     /**
