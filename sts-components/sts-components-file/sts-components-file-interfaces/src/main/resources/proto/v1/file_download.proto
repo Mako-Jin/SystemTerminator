@@ -1,0 +1,408 @@
+syntax = "proto3";
+
+package com.yaocode.sts.proto.v1;
+
+import "file_common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.yaocode.sts.components.file.interfaces.proto.v1";
+option java_outer_classname = "FileDownloadProto";
+
+// ==================== 文件下载服务 ====================
+
+service FileDownloadService {
+
+  // ----- 基础下载 -----
+
+  // 下载文件
+  rpc DownloadFile (DownloadFileRequest) returns (stream DownloadFileResponse);
+
+  // 自定义文件名下载
+  rpc DownloadFileAs (DownloadFileAsRequest) returns (stream DownloadFileResponse);
+
+  // 下载指定版本
+  rpc DownloadVersion (DownloadVersionRequest) returns (stream DownloadFileResponse);
+
+  // 流式下载
+  rpc DownloadStream (DownloadStreamRequest) returns (stream DownloadFileResponse);
+
+  // 分段下载（Range）
+  rpc DownloadRange (DownloadRangeRequest) returns (stream DownloadFileResponse);
+
+  // ----- 在线预览 -----
+
+  // 预览文件
+  rpc PreviewFile (PreviewFileRequest) returns (stream DownloadFileResponse);
+
+  // 获取缩略图
+  rpc GetThumbnail (GetThumbnailRequest) returns (ThumbnailResponse);
+
+  // 获取媒体信息
+  rpc GetMediaInfo (GetMediaInfoRequest) returns (MediaInfoResponse);
+
+  // 获取PDF页面
+  rpc GetPdfPage (GetPdfPageRequest) returns (PdfPageResponse);
+
+  // ----- 批量下载 -----
+
+  // 批量下载（打包成ZIP）
+  rpc BatchDownload (BatchDownloadRequest) returns (stream DownloadFileResponse);
+
+  // 异步批量下载
+  rpc AsyncBatchDownload (BatchDownloadRequest) returns (AsyncBatchDownloadResponse);
+
+  // 获取批量下载任务状态
+  rpc GetBatchDownloadTask (GetBatchDownloadTaskRequest) returns (BatchDownloadTaskResponse);
+
+  // 下载批量打包结果
+  rpc DownloadBatchResult (DownloadBatchResultRequest) returns (stream DownloadFileResponse);
+
+  // ----- 安全下载 -----
+
+  // 获取下载Token
+  rpc GetDownloadToken (GetDownloadTokenRequest) returns (DownloadTokenResponse);
+
+  // 使用Token下载
+  rpc DownloadWithToken (DownloadWithTokenRequest) returns (stream DownloadFileResponse);
+
+  // 加密下载
+  rpc DownloadEncrypted (DownloadEncryptedRequest) returns (stream DownloadFileResponse);
+
+  // ----- 跨域下载 -----
+
+  // 获取跨域下载信息
+  rpc GetCrossOriginInfo (GetCrossOriginInfoRequest) returns (CrossOriginDownloadInfoResponse);
+
+  // 生成预签名URL
+  rpc GeneratePresignedUrl (GeneratePresignedUrlRequest) returns (PresignedUrlResponse);
+
+  // 直接下载
+  rpc DownloadDirect (DownloadDirectRequest) returns (stream DownloadFileResponse);
+
+  // ----- 下载管理 -----
+
+  // 获取下载历史
+  rpc GetDownloadHistory (GetDownloadHistoryRequest) returns (GetDownloadHistoryResponse);
+
+  // 获取下载统计
+  rpc GetDownloadStatistics (GetDownloadStatisticsRequest) returns (DownloadStatisticsResponse);
+
+  // 获取下载排行榜
+  rpc GetDownloadRanking (GetDownloadRankingRequest) returns (GetDownloadRankingResponse);
+}
+
+// ==================== 消息定义 ====================
+
+// ----- 基础下载 -----
+
+// 下载文件请求
+message DownloadFileRequest {
+  string file_id = 1;
+  string storage_type = 2;
+  bool preview = 3;
+}
+
+// 下载文件响应（流式）
+message DownloadFileResponse {
+  bytes chunk_data = 1;
+  int64 chunk_number = 2;
+  bool is_last = 3;
+  int64 total_size = 4;
+  string file_name = 5;
+  string file_id = 6;
+  string content_type = 7;
+  bool support_range = 8;
+}
+
+// 自定义文件名下载请求
+message DownloadFileAsRequest {
+  string file_id = 1;
+  string file_name = 2;
+  string storage_type = 3;
+}
+
+// 下载版本请求
+message DownloadVersionRequest {
+  string file_id = 1;
+  int32 version = 2;
+  string storage_type = 3;
+}
+
+// 流式下载请求
+message DownloadStreamRequest {
+  string file_id = 1;
+  string storage_type = 2;
+}
+
+// 分段下载请求
+message DownloadRangeRequest {
+  string file_id = 1;
+  string storage_type = 2;
+  int64 start = 3;
+  int64 end = 4;
+}
+
+// ----- 在线预览 -----
+
+// 预览文件请求
+message PreviewFileRequest {
+  string file_id = 1;
+  string storage_type = 2;
+}
+
+// 获取缩略图请求
+message GetThumbnailRequest {
+  string file_id = 1;
+  int32 width = 2;
+  int32 height = 3;
+  string storage_type = 4;
+}
+
+// 缩略图响应
+message ThumbnailResponse {
+  bytes data = 1;
+  string content_type = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+// 获取媒体信息请求
+message GetMediaInfoRequest {
+  string file_id = 1;
+  string storage_type = 2;
+}
+
+// 媒体信息响应
+message MediaInfoResponse {
+  string file_id = 1;
+  string file_name = 2;
+  string media_type = 3;  // image, video, audio, document
+  int64 duration = 4;     // 时长（秒）
+  int32 width = 5;
+  int32 height = 6;
+  string bitrate = 7;
+  string codec = 8;
+  string resolution = 9;
+  string frame_rate = 10;
+  int32 channels = 11;
+  string sample_rate = 12;
+  map<string, string> metadata = 13;
+}
+
+// 获取PDF页面请求
+message GetPdfPageRequest {
+  string file_id = 1;
+  int32 page = 2;
+  string storage_type = 3;
+}
+
+// PDF页面响应
+message PdfPageResponse {
+  bytes page_data = 1;
+  int32 page = 2;
+  int32 total_pages = 3;
+  string content_type = 4;
+}
+
+// ----- 批量下载 -----
+
+// 批量下载项
+message BatchDownloadItem {
+  string file_id = 1;
+  string file_name = 2;  // 重命名
+  string path = 3;       // ZIP中的目录路径
+}
+
+// 批量下载请求
+message BatchDownloadRequest {
+  repeated BatchDownloadItem files = 1;
+  string zip_file_name = 2;
+  bool preserve_structure = 3;
+}
+
+// 异步批量下载响应
+message AsyncBatchDownloadResponse {
+  string task_id = 1;
+  string status = 2;
+  int32 total_files = 3;
+  int64 total_size = 4;
+  int64 estimated_time = 5;
+}
+
+// 获取批量下载任务请求
+message GetBatchDownloadTaskRequest {
+  string task_id = 1;
+}
+
+// 批量下载任务响应
+message BatchDownloadTaskResponse {
+  string task_id = 1;
+  string status = 2;  // pending, processing, completed, failed
+  int32 total_files = 3;
+  int32 processed_files = 4;
+  int32 progress = 5;
+  string zip_file_name = 6;
+  int64 zip_file_size = 7;
+  string error_message = 8;
+  int64 create_time = 9;
+}
+
+// 下载批量结果请求
+message DownloadBatchResultRequest {
+  string task_id = 1;
+}
+
+// ----- 安全下载 -----
+
+// 获取下载Token请求
+message GetDownloadTokenRequest {
+  string file_id = 1;
+  int32 expire_seconds = 2;
+  bool limit_ip = 3;
+  string storage_type = 4;
+}
+
+// 下载Token响应
+message DownloadTokenResponse {
+  string token = 1;
+  string file_id = 2;
+  int64 expire_time = 3;
+  string download_url = 4;
+  string file_name = 5;
+  int64 file_size = 6;
+}
+
+// 使用Token下载请求
+message DownloadWithTokenRequest {
+  string token = 1;
+}
+
+// 加密下载请求
+message DownloadEncryptedRequest {
+  string file_id = 1;
+  string encryption_key = 2;
+  string storage_type = 3;
+}
+
+// ----- 跨域下载 -----
+
+// 获取跨域下载信息请求
+message GetCrossOriginInfoRequest {
+  string file_id = 1;
+  int32 expiry = 2;
+  string storage_type = 3;
+}
+
+// 跨域下载信息响应
+message CrossOriginDownloadInfoResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string download_url = 4;
+  int64 expiry_time = 5;
+  bool supports_range = 6;
+  string content_type = 7;
+}
+
+// 生成预签名URL请求
+message GeneratePresignedUrlRequest {
+  string file_id = 1;
+  int32 expiry = 2;
+  string method = 3;  // GET, PUT
+  string storage_type = 4;
+}
+
+// 预签名URL响应
+message PresignedUrlResponse {
+  string url = 1;
+  string file_id = 2;
+  int64 expiry_time = 3;
+  string method = 4;
+  string file_name = 5;
+}
+
+// 直接下载请求
+message DownloadDirectRequest {
+  string file_id = 1;
+  string storage_type = 2;
+}
+
+// ----- 下载管理 -----
+
+// 获取下载历史请求
+message GetDownloadHistoryRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string start_time = 3;
+  string end_time = 4;
+  string user_id = 5;
+  string file_id = 6;
+}
+
+// 下载记录
+message DownloadRecord {
+  string record_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  string user_id = 4;
+  string ip_address = 5;
+  string user_agent = 6;
+  int64 download_time = 7;
+  int64 file_size = 8;
+  string download_type = 9;  // direct, token, preview
+  string status = 10;
+}
+
+// 获取下载历史响应
+message GetDownloadHistoryResponse {
+  PageResponse page = 1;
+  repeated DownloadRecord records = 2;
+}
+
+// 获取下载统计请求
+message GetDownloadStatisticsRequest {
+  string file_id = 1;
+  string period = 2;  // day, week, month
+}
+
+// 下载统计响应
+message DownloadStatisticsResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 total_downloads = 3;
+  int64 unique_users = 4;
+  int64 today_downloads = 5;
+  int64 week_downloads = 6;
+  int64 month_downloads = 7;
+  repeated DownloadTrendItem daily_stats = 8;
+  map<string, int64> ip_stats = 9;
+}
+
+// 下载趋势项
+message DownloadTrendItem {
+  string date = 1;
+  int64 count = 2;
+}
+
+// 获取下载排行榜请求
+message GetDownloadRankingRequest {
+  string period = 1;  // day, week, month, all
+  int32 limit = 2;
+  string storage_type = 3;
+}
+
+// 下载排行榜响应
+message GetDownloadRankingResponse {
+  repeated DownloadRankItem rankings = 1;
+}
+
+// 下载排行项
+message DownloadRankItem {
+  string file_id = 1;
+  string file_name = 2;
+  string file_type = 3;
+  int64 download_count = 4;
+  int64 file_size = 5;
+  int64 rank = 6;
+  string storage_type = 7;
+}

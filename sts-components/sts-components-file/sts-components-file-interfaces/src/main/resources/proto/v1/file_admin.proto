@@ -1,0 +1,588 @@
+syntax = "proto3";
+
+package com.yaocode.sts.proto.v1;
+
+import "file_common.proto";
+import "v1/v1_common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.yaocode.sts.components.file.interfaces.proto.v1";
+option java_outer_classname = "FileAdminProto";
+
+// ==================== 文件管理后台服务 ====================
+
+service FileAdminService {
+
+  // ----- 文件删除 -----
+
+  // 管理员删除文件
+  rpc AdminDeleteFile (AdminDeleteFileRequest) returns (CommonResponse);
+
+  // 管理员批量删除文件
+  rpc AdminBatchDeleteFiles (AdminBatchDeleteFilesRequest) returns (BatchDeleteResponse);
+
+  // 管理员永久删除文件
+  rpc AdminPermanentDeleteFile (AdminPermanentDeleteFileRequest) returns (CommonResponse);
+
+  // ----- 文件恢复 -----
+
+  // 管理员恢复文件
+  rpc AdminRestoreFile (AdminRestoreFileRequest) returns (CommonResponse);
+
+  // 管理员批量恢复文件
+  rpc AdminBatchRestoreFiles (AdminBatchRestoreFilesRequest) returns (BatchRestoreResponse);
+
+  // ----- 文件归档 -----
+
+  // 管理员归档文件
+  rpc AdminArchiveFile (AdminArchiveFileRequest) returns (CommonResponse);
+
+  // 管理员取消归档
+  rpc AdminUnarchiveFile (AdminUnarchiveFileRequest) returns (CommonResponse);
+
+  // 管理员批量归档文件
+  rpc AdminBatchArchiveFiles (AdminBatchArchiveFilesRequest) returns (BatchArchiveResponse);
+
+  // ----- 文件迁移 -----
+
+  // 管理员迁移文件
+  rpc AdminMigrateFile (AdminMigrateFileRequest) returns (AdminMigrateFileResponse);
+
+  // 获取迁移任务状态
+  rpc AdminGetMigrateTaskStatus (AdminGetMigrateTaskStatusRequest) returns (MigrateTaskStatusResponse);
+
+  // 取消迁移任务
+  rpc AdminCancelMigrateTask (AdminCancelMigrateTaskRequest) returns (CommonResponse);
+
+  // ----- 文件清理 -----
+
+  // 清理过期文件
+  rpc AdminCleanExpiredFiles (AdminCleanExpiredFilesRequest) returns (CleanupResponse);
+
+  // 清理临时文件
+  rpc AdminCleanTempFiles (AdminCleanTempFilesRequest) returns (CleanupResponse);
+
+  // 清理重复文件
+  rpc AdminCleanDuplicateFiles (AdminCleanDuplicateFilesRequest) returns (DuplicateCleanResponse);
+
+  // ----- 统计信息 -----
+
+  // 获取管理统计信息
+  rpc AdminGetStatistics (AdminGetStatisticsRequest) returns (AdminStatisticsResponse);
+
+  // 获取趋势数据
+  rpc AdminGetTrendData (AdminGetTrendDataRequest) returns (AdminGetTrendDataResponse);
+
+  // 获取存储节点统计
+  rpc AdminGetStorageNodeStats (AdminGetStorageNodeStatsRequest) returns (AdminGetStorageNodeStatsResponse);
+
+  // ----- 存储节点管理 -----
+
+  // 获取存储节点列表
+  rpc AdminGetStorageNodes (AdminGetStorageNodesRequest) returns (AdminGetStorageNodesResponse);
+
+  // 添加存储节点
+  rpc AdminAddStorageNode (AdminAddStorageNodeRequest) returns (StorageNodeInfo);
+
+  // 更新存储节点
+  rpc AdminUpdateStorageNode (AdminUpdateStorageNodeRequest) returns (StorageNodeInfo);
+
+  // 删除存储节点
+  rpc AdminDeleteStorageNode (AdminDeleteStorageNodeRequest) returns (CommonResponse);
+
+  // 测试存储节点
+  rpc AdminTestStorageNode (AdminTestStorageNodeRequest) returns (ConnectionTestResponse);
+
+  // 刷新存储节点
+  rpc AdminRefreshStorageNode (AdminRefreshStorageNodeRequest) returns (StorageNodeInfo);
+
+  // ----- 文件审核与审计 -----
+
+  // 获取审核列表
+  rpc AdminGetAuditList (AdminGetAuditListRequest) returns (AdminGetAuditListResponse);
+
+  // 审核文件
+  rpc AdminAuditFile (AdminAuditFileRequest) returns (CommonResponse);
+
+  // 获取审核日志
+  rpc AdminGetAuditLogs (AdminGetAuditLogsRequest) returns (AdminGetAuditLogsResponse);
+
+  // ----- 文件信息查询 -----
+
+  // 获取文件详情（管理员）
+  rpc AdminGetFileDetail (AdminGetFileDetailRequest) returns (FileDetailInfo);
+
+  // 获取文件列表（管理员）
+  rpc AdminListFiles (AdminListFilesRequest) returns (FilePageResponse);
+
+  // 获取文件版本列表
+  rpc AdminGetFileVersions (AdminGetFileVersionsRequest) returns (AdminGetFileVersionsResponse);
+}
+
+// ==================== 消息定义 ====================
+
+// ----- 文件删除 -----
+
+// 管理员删除文件请求
+message AdminDeleteFileRequest {
+  string file_id = 1;
+  string delete_reason = 2;
+}
+
+// 批量删除响应
+message BatchDeleteResponse {
+  BatchOperationResult result = 1;
+  repeated string deleted_ids = 2;
+}
+
+// 管理员批量删除文件请求
+message AdminBatchDeleteFilesRequest {
+  repeated string file_ids = 1;
+  string delete_reason = 2;
+}
+
+// 管理员永久删除文件请求
+message AdminPermanentDeleteFileRequest {
+  string file_id = 1;
+  bool force = 2;
+}
+
+// ----- 文件恢复 -----
+
+// 管理员恢复文件请求
+message AdminRestoreFileRequest {
+  string file_id = 1;
+  string restore_path = 2;
+}
+
+// 管理员批量恢复文件请求
+message AdminBatchRestoreFilesRequest {
+  repeated string file_ids = 1;
+  string restore_path = 2;
+}
+
+// ----- 文件归档 -----
+
+// 管理员归档文件请求
+message AdminArchiveFileRequest {
+  string file_id = 1;
+  string archive_type = 2;  // standard, deep, glacier
+}
+
+// 管理员取消归档请求
+message AdminUnarchiveFileRequest {
+  string file_id = 1;
+}
+
+// 批量归档请求
+message AdminBatchArchiveFilesRequest {
+  repeated string file_ids = 1;
+  string archive_type = 2;
+}
+
+// 批量归档响应
+message BatchArchiveResponse {
+  BatchOperationResult result = 1;
+  repeated string archived_ids = 2;
+}
+
+// ----- 文件迁移 -----
+
+// 管理员迁移文件请求
+message AdminMigrateFileRequest {
+  string file_id = 1;
+  string target_storage_type = 2;
+  string target_storage_id = 3;
+  bool async = 4;
+  bool preserve_metadata = 5;
+  bool verify_after_migration = 6;
+}
+
+// 管理员迁移文件响应
+message AdminMigrateFileResponse {
+  string task_id = 1;
+  string file_id = 2;
+  string status = 3;  // pending, processing, completed, failed
+  string target_storage_type = 4;
+  int64 estimated_time = 5;
+}
+
+// 获取迁移任务状态请求
+message AdminGetMigrateTaskStatusRequest {
+  string task_id = 1;
+}
+
+// 迁移任务状态响应
+message MigrateTaskStatusResponse {
+  string task_id = 1;
+  string file_id = 2;
+  string source_storage = 3;
+  string target_storage = 4;
+  int64 file_size = 5;
+  int64 transferred_size = 6;
+  int32 progress = 7;
+  string status = 8;
+  string error_message = 9;
+  int64 create_time = 10;
+  int64 update_time = 11;
+}
+
+// 取消迁移任务请求
+message AdminCancelMigrateTaskRequest {
+  string task_id = 1;
+}
+
+// ----- 文件清理 -----
+
+// 清理过期文件请求
+message AdminCleanExpiredFilesRequest {
+  int32 days = 1;
+  bool dry_run = 2;
+  string storage_type = 3;
+  string file_type = 4;
+}
+
+// 清理临时文件请求
+message AdminCleanTempFilesRequest {
+  int32 hours = 1;
+  bool dry_run = 2;
+  string storage_type = 3;
+}
+
+// 清理重复文件请求
+message AdminCleanDuplicateFilesRequest {
+  string storage_type = 1;
+  bool dry_run = 2;
+  string strategy = 3;  // keep_first, keep_latest, keep_smallest
+}
+
+// 重复文件清理响应
+message DuplicateCleanResponse {
+  int32 total_groups = 1;
+  int64 total_duplicate_files = 2;
+  int64 total_duplicate_size = 3;
+  int32 cleaned_files = 4;
+  int64 cleaned_size = 5;
+  repeated DuplicateGroup duplicate_groups = 6;
+  string message = 7;
+}
+
+// 重复文件组
+message DuplicateGroup {
+  string file_md5 = 1;
+  int64 file_size = 2;
+  repeated FileInfo files = 3;
+  string kept_file_id = 4;
+}
+
+// 清理响应
+message CleanupResponse {
+  int32 total_processed = 1;
+  int64 total_size = 2;
+  int32 success_count = 3;
+  int32 failed_count = 4;
+  repeated string failed_ids = 5;
+  string message = 6;
+}
+
+// ----- 统计信息 -----
+
+// 获取管理统计请求
+message AdminGetStatisticsRequest {
+  string storage_type = 1;
+  string period = 2;  // day, week, month
+}
+
+// 管理统计响应
+message AdminStatisticsResponse {
+  AdminFileStats file_stats = 1;
+  AdminStorageStats storage_stats = 2;
+  AdminUserStats user_stats = 3;
+  AdminAuditStats audit_stats = 4;
+  map<string, AdminStorageTypeStats> storage_type_stats = 5;
+}
+
+// 文件统计
+message AdminFileStats {
+  int64 total_files = 1;
+  int64 total_size = 2;
+  int64 active_files = 3;
+  int64 archived_files = 4;
+  int64 deleted_files = 5;
+  int64 temporary_files = 6;
+  double avg_file_size = 7;
+}
+
+// 存储统计
+message AdminStorageStats {
+  int64 total_capacity = 1;
+  int64 used_capacity = 2;
+  int64 available_capacity = 3;
+  int32 usage_percent = 4;
+  int64 growth_rate = 5;
+}
+
+// 用户统计
+message AdminUserStats {
+  int64 total_users = 1;
+  int64 active_users = 2;
+  int64 new_users = 3;
+  int64 users_with_files = 4;
+}
+
+// 审计统计
+message AdminAuditStats {
+  int64 total_audits = 1;
+  int64 pending_audits = 2;
+  int64 approved_audits = 3;
+  int64 rejected_audits = 4;
+}
+
+// 存储类型统计
+message AdminStorageTypeStats {
+  string storage_type = 1;
+  int64 file_count = 2;
+  int64 total_size = 3;
+  int32 usage_percent = 4;
+}
+
+// 获取趋势数据请求
+message AdminGetTrendDataRequest {
+  string period = 1;  // day, week, month
+  string start_date = 2;
+  string end_date = 3;
+  string storage_type = 4;
+}
+
+// 趋势数据响应
+message AdminGetTrendDataResponse {
+  repeated TrendDataPoint uploads = 1;
+  repeated TrendDataPoint downloads = 2;
+  repeated TrendDataPoint storage_usage = 3;
+  repeated TrendDataPoint active_users = 4;
+}
+
+// 趋势数据点
+message TrendDataPoint {
+  string date = 1;
+  int64 value = 2;
+  string label = 3;
+}
+
+// 获取存储节点统计请求
+message AdminGetStorageNodeStatsRequest {
+  string storage_type = 1;
+}
+
+// 存储节点统计响应
+message AdminGetStorageNodeStatsResponse {
+  repeated StorageNodeStats stats = 1;
+}
+
+// 存储节点统计
+message StorageNodeStats {
+  string node_id = 1;
+  string node_name = 2;
+  string storage_type = 3;
+  int64 file_count = 4;
+  int64 total_size = 5;
+  int64 capacity = 6;
+  int64 used_size = 7;
+  int32 load_percent = 8;
+  int32 health_status = 9;
+  double request_rate = 10;
+  double error_rate = 11;
+}
+
+// ----- 存储节点管理 -----
+
+// 获取存储节点列表请求
+message AdminGetStorageNodesRequest {
+  bool enabled_only = 1;
+  string storage_type = 2;
+}
+
+// 存储节点信息
+message StorageNodeInfo {
+  string node_id = 1;
+  string node_name = 2;
+  string storage_type = 3;
+  string endpoint = 4;
+  string bucket = 5;
+  string region = 6;
+  bool enabled = 7;
+  int32 priority = 8;
+  int64 max_capacity = 9;
+  int64 current_usage = 10;
+  int32 health_status = 11;
+  string status_message = 12;
+  int64 create_time = 13;
+  int64 update_time = 14;
+  map<string, string> config = 15;
+}
+
+// 获取存储节点列表响应
+message AdminGetStorageNodesResponse {
+  repeated StorageNodeInfo nodes = 1;
+}
+
+// 添加存储节点请求
+message AdminAddStorageNodeRequest {
+  string node_name = 1;
+  string storage_type = 2;
+  string endpoint = 3;
+  string bucket = 4;
+  string region = 5;
+  string access_key = 6;
+  string secret_key = 7;
+  int32 priority = 8;
+  int64 max_capacity = 9;
+  bool enabled = 10;
+  map<string, string> config = 11;
+}
+
+// 更新存储节点请求
+message AdminUpdateStorageNodeRequest {
+  string node_id = 1;
+  string node_name = 2;
+  string endpoint = 3;
+  string bucket = 4;
+  string region = 5;
+  string access_key = 6;
+  string secret_key = 7;
+  int32 priority = 8;
+  int64 max_capacity = 9;
+  bool enabled = 10;
+  map<string, string> config = 11;
+}
+
+// 删除存储节点请求
+message AdminDeleteStorageNodeRequest {
+  string node_id = 1;
+  bool force = 2;
+}
+
+// 测试存储节点请求
+message AdminTestStorageNodeRequest {
+  string node_id = 1;
+}
+
+// 连接测试响应
+message ConnectionTestResponse {
+  bool success = 1;
+  string message = 2;
+  int32 latency = 3;  // 毫秒
+  bool writeable = 4;
+  bool readable = 5;
+  bool deletable = 6;
+}
+
+// 刷新存储节点请求
+message AdminRefreshStorageNodeRequest {
+  string node_id = 1;
+}
+
+// ----- 文件审核与审计 -----
+
+// 获取审核列表请求
+message AdminGetAuditListRequest {
+  int32 page = 1;
+  int32 size = 2;
+  int32 status = 3;  // 0:pending, 1:approved, 2:rejected
+  string file_id = 4;
+  string start_time = 5;
+  string end_time = 6;
+}
+
+// 审核信息
+message AuditInfo {
+  string audit_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  string user_id = 4;
+  string user_name = 5;
+  int32 status = 6;
+  string reason = 7;
+  int64 create_time = 8;
+  int64 update_time = 9;
+  string auditor_id = 10;
+  string auditor_name = 11;
+  string audit_comment = 12;
+}
+
+// 获取审核列表响应
+message AdminGetAuditListResponse {
+  PageResponse page = 1;
+  repeated AuditInfo records = 2;
+}
+
+// 审核文件请求
+message AdminAuditFileRequest {
+  string file_id = 1;
+  bool approved = 2;
+  string comment = 3;
+}
+
+// 获取审核日志请求
+message AdminGetAuditLogsRequest {
+  string file_id = 1;
+  int32 operation_type = 2;
+  string start_time = 3;
+  string end_time = 4;
+  int32 page = 5;
+  int32 size = 6;
+}
+
+// 审核日志
+message AuditLog {
+  string log_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  int32 operation_type = 4;
+  string operation_type_name = 5;
+  string operator_id = 6;
+  string operator_name = 7;
+  string detail = 8;
+  int64 create_time = 9;
+  string ip_address = 10;
+}
+
+// 获取审核日志响应
+message AdminGetAuditLogsResponse {
+  PageResponse page = 1;
+  repeated AuditLog records = 2;
+}
+
+// ----- 文件信息查询 -----
+
+// 获取文件详情请求（管理员）
+message AdminGetFileDetailRequest {
+  string file_id = 1;
+}
+
+// 获取文件列表请求（管理员）
+message AdminListFilesRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string file_name = 3;
+  string file_type = 4;
+  string storage_type = 5;
+  int32 file_status = 6;
+  string user_id = 7;
+  string business_id = 8;
+  string business_type = 9;
+  string start_time = 10;
+  string end_time = 11;
+  string sort_by = 12;
+  string sort_order = 13;
+}
+
+// 获取文件版本列表请求
+message AdminGetFileVersionsRequest {
+  string file_id = 1;
+}
+
+// 获取文件版本列表响应
+message AdminGetFileVersionsResponse {
+  repeated FileVersionInfo versions = 1;
+}

@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package com.yaocode.sts.proto;
+
+option java_multiple_files = true;
+option java_package = "com.yaocode.sts.components.file.interfaces.proto";
+option java_outer_classname = "FileCommonProto";
+
+// ==================== 公共消息定义 ====================
+
+// 分页请求
+message PageRequest {
+  int32 page = 1;       // 页码，从1开始
+  int32 size = 2;       // 每页大小
+  string sort_by = 3;   // 排序字段
+  string sort_order = 4; // 排序方向: asc/desc
+}
+
+// 分页响应
+message PageResponse {
+  int64 total = 1;      // 总记录数
+  int32 page = 2;       // 当前页码
+  int32 size = 3;       // 每页大小
+  int32 total_pages = 4; // 总页数
+}
+
+// 文件信息（基础）
+message FileInfo {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string file_md5 = 4;
+  string file_type = 5;
+  string storage_type = 6;
+  string file_url = 7;
+  int32 file_status = 8;      // 0:临时, 1:正常, 2:已删除, 3:已归档
+  int64 upload_time = 9;
+  int64 update_time = 10;
+  string business_id = 11;
+  string business_type = 12;
+  string upload_user_id = 13;
+  string tenant_id = 14;
+  bool is_public = 15;
+}
+
+// 文件详情（包含更多信息）
+message FileDetailInfo {
+  FileInfo base_info = 1;
+  string description = 2;
+  repeated string tags = 3;
+  map<string, string> metadata = 4;
+  int32 download_count = 5;
+  int32 version_count = 6;
+  repeated FileVersionInfo versions = 7;
+}
+
+// 文件版本信息
+message FileVersionInfo {
+  int32 version = 1;
+  string file_id = 2;
+  string file_name = 3;
+  int64 file_size = 4;
+  string file_md5 = 5;
+  int64 create_time = 6;
+  string create_user_id = 7;
+  string change_log = 8;
+}
+
+// 批量操作结果
+message BatchOperationResult {
+  int32 total = 1;
+  int32 success = 2;
+  int32 failed = 3;
+  repeated string failed_ids = 4;
+  string message = 5;
+}
+
+// ==================== 响应包装 ====================
+
+// 通用响应
+message CommonResponse {
+  int32 code = 1;
+  string message = 2;
+  bool success = 3;
+}
+
+// 文件上传响应（统一）
+message UploadResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string file_md5 = 4;
+  string file_url = 5;
+  string storage_type = 6;
+  int32 upload_status = 7;   // 0:上传中, 1:已完成, 2:失败
+  bool is_duplicate = 8;     // 是否重复文件（秒传）
+}
+
+// 删除响应
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+  string file_id = 3;
+}
+
+// 分页文件列表响应
+message FilePageResponse {
+  PageResponse page = 1;
+  repeated FileInfo records = 2;
+}

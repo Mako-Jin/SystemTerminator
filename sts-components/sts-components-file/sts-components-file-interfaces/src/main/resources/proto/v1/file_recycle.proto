@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package com.yaocode.sts.proto.v1;
+
+import "file_common.proto";
+import "v1/v1_common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.yaocode.sts.components.file.interfaces.proto.v1";
+option java_outer_classname = "FileRecycleProto";
+
+// ==================== 文件回收站服务 ====================
+
+service FileRecycleService {
+
+  // 获取回收站列表
+  rpc GetRecycleBin (GetRecycleBinRequest) returns (GetRecycleBinResponse);
+
+  // 获取回收站统计
+  rpc GetRecycleStatistics (GetRecycleStatisticsRequest) returns (RecycleStatisticsResponse);
+
+  // 从回收站恢复文件
+  rpc RestoreFromRecycle (RestoreFromRecycleRequest) returns (CommonResponse);
+
+  // 批量从回收站恢复文件
+  rpc BatchRestoreFromRecycle (BatchRestoreFromRecycleRequest) returns (BatchRestoreResponse);
+
+  // 从回收站永久删除文件
+  rpc PermanentDelete (PermanentDeleteRequest) returns (CommonResponse);
+
+  // 清空回收站
+  rpc EmptyRecycleBin (EmptyRecycleBinRequest) returns (DeletedCleanupResponse);
+
+  // 按条件清空回收站
+  rpc EmptyRecycleBinByConditions (EmptyRecycleBinByConditionsRequest) returns (DeletedCleanupResponse);
+}
+
+// ==================== 消息定义 ====================
+
+// 获取回收站列表请求
+message GetRecycleBinRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string file_name = 3;
+  string start_time = 4;
+  string end_time = 5;
+  string storage_type = 6;
+  string file_type = 7;
+}
+
+// 回收站文件信息
+message RecycleFileInfo {
+  string file_id = 1;
+  string file_name = 2;
+  string original_path = 3;
+  int64 file_size = 4;
+  string file_type = 5;
+  string storage_type = 6;
+  int64 delete_time = 7;
+  int64 expire_time = 8;
+  string delete_user_id = 9;
+  string delete_reason = 10;
+  bool can_restore = 11;
+  bool can_delete = 12;
+}
+
+// 获取回收站列表响应
+message GetRecycleBinResponse {
+  PageResponse page = 1;
+  repeated RecycleFileInfo records = 2;
+}
+
+// 获取回收站统计请求
+message GetRecycleStatisticsRequest {
+  string storage_type = 1;
+}
+
+// 回收站统计响应
+message RecycleStatisticsResponse {
+  int64 total_files = 1;
+  int64 total_size = 2;
+  int64 expired_files = 3;
+  int64 today_deleted = 4;
+  int64 week_deleted = 5;
+  int64 month_deleted = 6;
+  map<string, int64> storage_stats = 7;
+}
+
+// 从回收站恢复请求
+message RestoreFromRecycleRequest {
+  string file_id = 1;
+  string restore_path = 2;
+  bool overwrite = 3;
+}
+
+// 批量从回收站恢复请求
+message BatchRestoreFromRecycleRequest {
+  repeated string file_ids = 1;
+  string restore_path = 2;
+  bool overwrite = 3;
+}
+
+// 永久删除请求
+message PermanentDeleteRequest {
+  string file_id = 1;
+  bool force = 2;
+}
+
+// 清空回收站请求
+message EmptyRecycleBinRequest {
+  bool confirm = 1;
+  string storage_type = 2;
+}
+
+// 按条件清空回收站请求
+message EmptyRecycleBinByConditionsRequest {
+  int32 days = 1;
+  string storage_type = 2;
+  bool confirm = 3;
+  string file_type = 4;
+}
+
+// 清理响应
+message DeletedCleanupResponse {
+  int32 total_deleted = 1;
+  int64 total_size = 2;
+  int32 total_failed = 3;
+  repeated string failed_ids = 4;
+  string message = 5;
+}

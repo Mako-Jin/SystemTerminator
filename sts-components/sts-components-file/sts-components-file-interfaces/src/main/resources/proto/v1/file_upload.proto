@@ -1,0 +1,521 @@
+syntax = "proto3";
+
+package com.yaocode.sts.proto.v1;
+
+import "file_common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.yaocode.sts.components.file.interfaces.proto.v1";
+option java_outer_classname = "FileUploadProto";
+
+// ==================== 文件上传服务 ====================
+
+service FileUploadService {
+
+  // ----- 基础上传 -----
+
+  // 上传文件（单文件）
+  rpc UploadFile (UploadFileRequest) returns (UploadResponse);
+
+  // 批量上传文件
+  rpc UploadBatchFiles (UploadBatchRequest) returns (UploadBatchResponse);
+
+  // ----- 分片上传 -----
+
+  // 初始化分片上传
+  rpc InitMultipartUpload (InitMultipartRequest) returns (InitMultipartResponse);
+
+  // 上传分片
+  rpc UploadPart (UploadPartRequest) returns (UploadPartResponse);
+
+  // 完成分片上传（合并分片）
+  rpc CompleteMultipartUpload (CompleteMultipartRequest) returns (UploadResponse);
+
+  // 取消分片上传
+  rpc CancelMultipartUpload (CancelMultipartRequest) returns (CommonResponse);
+
+  // 获取分片上传进度
+  rpc GetMultipartProgress (GetMultipartProgressRequest) returns (UploadProgressResponse);
+
+  // 获取分片上传会话列表
+  rpc GetMultipartSessions (GetMultipartSessionsRequest) returns (GetMultipartSessionsResponse);
+
+  // ----- 断点续传 -----
+
+  // 获取断点续传信息
+  rpc GetResumeInfo (GetResumeInfoRequest) returns (ResumeInfoResponse);
+
+  // 恢复上传
+  rpc ResumeUpload (ResumeUploadRequest) returns (UploadResponse);
+
+  // 暂停上传
+  rpc PauseUpload (PauseUploadRequest) returns (CommonResponse);
+
+  // ----- 秒传 -----
+
+  // 秒传（快速上传，基于MD5）
+  rpc FastUpload (FastUploadRequest) returns (UploadResponse);
+
+  // ----- 流式上传 -----
+
+  // 流式上传
+  rpc StreamUpload (stream StreamUploadRequest) returns (UploadResponse);
+
+  // ----- 异步上传 -----
+
+  // 异步上传
+  rpc AsyncUpload (AsyncUploadRequest) returns (AsyncUploadResponse);
+
+  // 获取异步任务状态
+  rpc GetAsyncTaskStatus (GetAsyncTaskRequest) returns (AsyncTaskStatusResponse);
+
+  // 取消异步任务
+  rpc CancelAsyncTask (CancelAsyncTaskRequest) returns (CommonResponse);
+
+  // 获取异步任务列表
+  rpc GetAsyncTasks (GetAsyncTasksRequest) returns (GetAsyncTasksResponse);
+
+  // ----- URL拉取上传 -----
+
+  // URL拉取上传（同步）
+  rpc FetchFromUrl (FetchFromUrlRequest) returns (UploadResponse);
+
+  // URL拉取上传（异步）
+  rpc AsyncFetchFromUrl (FetchFromUrlRequest) returns (AsyncUploadResponse);
+
+  // ----- 其他上传方式 -----
+
+  // Base64上传
+  rpc Base64Upload (Base64UploadRequest) returns (UploadResponse);
+
+  // 自动策略上传（根据文件大小自动选择上传方式）
+  rpc AutoUpload (AutoUploadRequest) returns (UploadResponse);
+
+  // 可恢复上传
+  rpc ResumableUpload (ResumableUploadRequest) returns (UploadResponse);
+
+  // 混合云上传
+  rpc HybridUpload (HybridUploadRequest) returns (HybridUploadResponse);
+
+  // ----- 上传管理 -----
+
+  // 获取上传状态
+  rpc GetUploadStatus (GetUploadStatusRequest) returns (UploadStatusResponse);
+
+  // 获取用户文件列表
+  rpc GetUserFiles (GetUserFilesRequest) returns (FilePageResponse);
+
+  // 获取上传统计
+  rpc GetUploadStatistics (GetUploadStatisticsRequest) returns (UploadStatisticsResponse);
+}
+
+// ==================== 消息定义 ====================
+
+// ----- 基础上传 -----
+
+// 上传文件请求
+message UploadFileRequest {
+  string file_name = 1;
+  bytes content = 2;
+  int64 file_size = 3;
+  string storage_type = 4;
+  string business_id = 5;
+  string business_type = 6;
+  string tags = 7;
+  string description = 8;
+  bool is_public = 9;
+  bool enable_deduplication = 10;
+  map<string, string> metadata = 11;
+}
+
+// 批量上传请求
+message UploadBatchRequest {
+  repeated UploadFileRequest files = 1;
+  string storage_type = 2;
+  string business_id = 3;
+  string business_type = 4;
+  string tags = 5;
+  string description = 6;
+  bool is_public = 7;
+}
+
+// 批量上传响应
+message UploadBatchResponse {
+  repeated UploadResponse results = 1;
+  int32 total = 2;
+  int32 success_count = 3;
+  int32 failed_count = 4;
+}
+
+// ----- 分片上传 -----
+
+// 初始化分片上传请求
+message InitMultipartRequest {
+  string file_name = 1;
+  int64 file_size = 2;
+  int64 chunk_size = 3;
+  string file_md5 = 4;
+  string storage_type = 5;
+  string business_id = 6;
+  string business_type = 7;
+  string tags = 8;
+  string description = 9;
+  map<string, string> metadata = 10;
+}
+
+// 初始化分片上传响应
+message InitMultipartResponse {
+  string upload_id = 1;
+  string file_id = 2;
+  int32 total_chunks = 3;
+  int64 chunk_size = 4;
+  string storage_type = 5;
+  string upload_url = 6;
+}
+
+// 上传分片请求
+message UploadPartRequest {
+  string upload_id = 1;
+  string file_id = 2;
+  int32 chunk_number = 3;
+  int32 total_chunks = 4;
+  bytes chunk_data = 5;
+  string chunk_md5 = 6;
+}
+
+// 上传分片响应
+message UploadPartResponse {
+  string upload_id = 1;
+  int32 chunk_number = 2;
+  bool success = 3;
+  string chunk_md5 = 4;
+  int64 chunk_size = 5;
+}
+
+// 完成分片上传请求
+message CompleteMultipartRequest {
+  string upload_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  string storage_type = 4;
+  bool enable_deduplication = 5;
+}
+
+// 取消分片上传请求
+message CancelMultipartRequest {
+  string upload_id = 1;
+  string file_id = 2;
+}
+
+// 获取分片进度请求
+message GetMultipartProgressRequest {
+  string upload_id = 1;
+}
+
+// 上传进度响应
+message UploadProgressResponse {
+  string upload_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  int64 file_size = 4;
+  int32 total_chunks = 5;
+  int32 uploaded_chunks = 6;
+  int32 progress_percent = 7;
+  string status = 8;  // uploading, paused, completed, failed
+  repeated int32 uploaded_chunk_numbers = 9;
+}
+
+// 获取分片会话列表请求
+message GetMultipartSessionsRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string status = 3;
+}
+
+// 分片会话信息
+message MultipartSessionInfo {
+  string upload_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  int64 file_size = 4;
+  int32 total_chunks = 5;
+  int32 uploaded_chunks = 6;
+  string status = 7;
+  int64 create_time = 8;
+  int64 expire_time = 9;
+}
+
+// 获取分片会话列表响应
+message GetMultipartSessionsResponse {
+  PageResponse page = 1;
+  repeated MultipartSessionInfo records = 2;
+}
+
+// ----- 断点续传 -----
+
+// 获取断点续传信息请求
+message GetResumeInfoRequest {
+  string file_id = 1;
+}
+
+// 断点续传信息响应
+message ResumeInfoResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string file_md5 = 4;
+  int32 uploaded_size = 5;
+  int32 total_chunks = 6;
+  int32 uploaded_chunks = 7;
+  repeated int32 uploaded_chunk_numbers = 8;
+  bool can_resume = 9;
+  string storage_type = 10;
+}
+
+// 恢复上传请求
+message ResumeUploadRequest {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string file_md5 = 4;
+  string storage_type = 5;
+  string business_id = 6;
+  string business_type = 7;
+  bytes content = 8;
+}
+
+// 暂停上传请求
+message PauseUploadRequest {
+  string file_id = 1;
+}
+
+// ----- 秒传 -----
+
+// 秒传请求
+message FastUploadRequest {
+  string file_name = 1;
+  string file_md5 = 2;
+  int64 file_size = 3;
+  string storage_type = 4;
+  string business_id = 5;
+  string business_type = 6;
+  string tags = 7;
+  string description = 8;
+  bool is_public = 9;
+  map<string, string> metadata = 10;
+}
+
+// ----- 流式上传 -----
+
+// 流式上传请求（流式）
+message StreamUploadRequest {
+  string file_name = 1;
+  int64 file_size = 2;
+  string storage_type = 3;
+  string business_id = 4;
+  string business_type = 5;
+  bytes chunk_data = 6;
+  bool is_last = 7;
+}
+
+// ----- 异步上传 -----
+
+// 异步上传请求
+message AsyncUploadRequest {
+  string file_name = 1;
+  int64 file_size = 2;
+  string file_md5 = 3;
+  string storage_type = 4;
+  string business_id = 5;
+  string business_type = 6;
+  string tags = 7;
+  string description = 8;
+  bool is_public = 9;
+  string file_url = 10;  // 如果从URL上传
+  map<string, string> metadata = 11;
+}
+
+// 异步上传响应
+message AsyncUploadResponse {
+  string task_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  string status = 4;  // pending, processing, completed, failed
+  int64 create_time = 5;
+  string message = 6;
+}
+
+// 获取异步任务请求
+message GetAsyncTaskRequest {
+  string task_id = 1;
+}
+
+// 异步任务状态响应
+message AsyncTaskStatusResponse {
+  string task_id = 1;
+  string file_id = 2;
+  string file_name = 3;
+  int64 file_size = 4;
+  string status = 5;
+  int32 progress = 6;
+  string file_url = 7;
+  string error_message = 8;
+  int64 create_time = 9;
+  int64 update_time = 10;
+}
+
+// 取消异步任务请求
+message CancelAsyncTaskRequest {
+  string task_id = 1;
+}
+
+// 获取异步任务列表请求
+message GetAsyncTasksRequest {
+  int32 task_status = 1;
+  int32 page = 2;
+  int32 size = 3;
+}
+
+// 获取异步任务列表响应
+message GetAsyncTasksResponse {
+  PageResponse page = 1;
+  repeated AsyncTaskStatusResponse records = 2;
+}
+
+// ----- URL拉取上传 -----
+
+// URL拉取上传请求
+message FetchFromUrlRequest {
+  string file_url = 1;
+  string file_name = 2;
+  string storage_type = 3;
+  string business_id = 4;
+  string business_type = 5;
+  string tags = 6;
+  string description = 7;
+  bool is_public = 8;
+  bool follow_redirect = 9;
+  map<string, string> metadata = 10;
+}
+
+// ----- Base64上传 -----
+
+// Base64上传请求
+message Base64UploadRequest {
+  string file_name = 1;
+  string base64_content = 2;
+  int64 file_size = 3;
+  string storage_type = 4;
+  string business_id = 5;
+  string business_type = 6;
+  string tags = 7;
+  string description = 8;
+  bool is_public = 9;
+  map<string, string> metadata = 10;
+}
+
+// ----- 自动策略上传 -----
+
+// 自动策略上传请求
+message AutoUploadRequest {
+  string file_name = 1;
+  bytes content = 2;
+  int64 file_size = 3;
+  string storage_type = 4;
+  string business_id = 5;
+  string business_type = 6;
+  int64 chunk_threshold = 7;  // 分片阈值
+  string tags = 8;
+  string description = 9;
+  bool is_public = 10;
+  map<string, string> metadata = 11;
+}
+
+// ----- 可恢复上传 -----
+
+// 可恢复上传请求
+message ResumableUploadRequest {
+  string file_name = 1;
+  bytes content = 2;
+  int64 file_size = 3;
+  string file_id = 4;  // 已存在的file_id，用于恢复
+  string storage_type = 5;
+  string business_id = 6;
+  string business_type = 7;
+  string tags = 8;
+  string description = 9;
+  bool is_public = 10;
+  map<string, string> metadata = 11;
+}
+
+// ----- 混合云上传 -----
+
+// 混合云上传请求
+message HybridUploadRequest {
+  string file_name = 1;
+  bytes content = 2;
+  int64 file_size = 3;
+  string storage_type = 4;
+  repeated string preferred_storages = 5;
+  string strategy = 6;  // priority, load_balance, random
+  string business_id = 7;
+  string business_type = 8;
+  string tags = 9;
+  string description = 10;
+  bool is_public = 11;
+  map<string, string> metadata = 12;
+}
+
+// 混合云上传响应
+message HybridUploadResponse {
+  UploadResponse upload_result = 1;
+  string selected_storage = 2;
+  string strategy_used = 3;
+  string fallback_reason = 4;
+}
+
+// ----- 上传管理 -----
+
+// 获取上传状态请求
+message GetUploadStatusRequest {
+  string file_id = 1;
+}
+
+// 上传状态响应
+message UploadStatusResponse {
+  string file_id = 1;
+  string file_name = 2;
+  int64 file_size = 3;
+  int32 upload_status = 4;
+  string storage_type = 5;
+  int64 upload_time = 6;
+  string upload_user_id = 7;
+  string error_message = 8;
+}
+
+// 获取用户文件列表请求
+message GetUserFilesRequest {
+  int32 page = 1;
+  int32 size = 2;
+  int32 file_status = 3;
+  string storage_type = 4;
+  string file_name = 5;
+  string start_time = 6;
+  string end_time = 7;
+}
+
+// 获取上传统计请求
+message GetUploadStatisticsRequest {
+  string period = 1;  // day, week, month
+}
+
+// 上传统计响应
+message UploadStatisticsResponse {
+  int64 total_files = 1;
+  int64 total_size = 2;
+  int64 today_uploads = 3;
+  int64 week_uploads = 4;
+  int64 month_uploads = 5;
+  map<string, int64> storage_stats = 6;
+  map<string, int64> type_stats = 7;
+}
