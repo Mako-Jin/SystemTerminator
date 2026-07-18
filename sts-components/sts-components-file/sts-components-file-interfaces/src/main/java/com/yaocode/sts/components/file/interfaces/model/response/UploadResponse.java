@@ -1,7 +1,9 @@
 package com.yaocode.sts.components.file.interfaces.model.response;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * 文件上传响应
@@ -13,7 +15,9 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-@Builder
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UploadResponse {
     /**
      * 文件ID

@@ -1,9 +1,22 @@
 package com.yaocode.sts.components.file.web.controller;
 
+import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.common.web.model.PageResultModel;
 import com.yaocode.sts.common.web.model.ResultModel;
+import com.yaocode.sts.common.web.utils.PageResultUtils;
+import com.yaocode.sts.common.web.utils.ResultUtils;
 import com.yaocode.sts.components.file.interfaces.api.FileDownloadApi;
 import com.yaocode.sts.components.file.interfaces.model.request.BatchDownloadRequest;
+import com.yaocode.sts.components.file.interfaces.model.request.FileDownloadItemRequest;
+import com.yaocode.sts.components.file.interfaces.model.response.BatchDownloadTaskResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.CrossOriginDownloadInfoResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.DownloadRecordResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.DownloadTokenResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileDownloadRankResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileDownloadStatisticsResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.MediaInfoResponse;
+import com.yaocode.sts.components.file.runtime.model.result.DownloadRecordResult;
+import com.yaocode.sts.components.file.runtime.model.result.RangeDownloadResult;
 import com.yaocode.sts.components.file.runtime.service.FileDownloadService;
 import com.yaocode.sts.components.file.web.converter.FileDownloadConverter;
 import jakarta.annotation.Resource;
@@ -42,13 +55,13 @@ public class FileDownloadController implements FileDownloadApi {
     // ==================== 1. 基础下载 ====================
 
     @Override
-    public ResponseEntity<Resource> downloadFile(String fileId, Boolean preview,
+    public ResponseEntity<org.springframework.core.io.Resource> downloadFile(String fileId, Boolean preview,
                                                  HttpServletRequest request,
                                                  HttpServletResponse response) {
         log.info("下载文件: {}, preview: {}", fileId, preview);
 
         // 1. 获取文件资源
-        Resource resource = fileDownloadService.getFileResource(
+        org.springframework.core.io.Resource resource = fileDownloadService.getFileResource(
                 converter.toFileResourceQuery(fileId, preview)
         );
 
@@ -75,12 +88,12 @@ public class FileDownloadController implements FileDownloadApi {
     }
 
     @Override
-    public ResponseEntity<Resource> downloadFileAs(String fileId, String fileName,
+    public ResponseEntity<org.springframework.core.io.Resource> downloadFileAs(String fileId, String fileName,
                                                    HttpServletRequest request,
                                                    HttpServletResponse response) {
         log.info("下载文件: {}, 自定义文件名: {}", fileId, fileName);
 
-        Resource resource = fileDownloadService.getFileResource(
+        org.springframework.core.io.Resource resource = fileDownloadService.getFileResource(
                 converter.toFileResourceQuery(fileId, false)
         );
 
@@ -97,12 +110,12 @@ public class FileDownloadController implements FileDownloadApi {
     }
 
     @Override
-    public ResponseEntity<Resource> downloadVersion(String fileId, Integer version,
+    public ResponseEntity<org.springframework.core.io.Resource> downloadVersion(String fileId, Integer version,
                                                     HttpServletRequest request,
                                                     HttpServletResponse response) {
         log.info("下载文件版本: {}, version: {}", fileId, version);
 
-        Resource resource = fileDownloadService.getFileVersionResource(
+        org.springframework.core.io.Resource resource = fileDownloadService.getFileVersionResource(
                 converter.toFileVersionResourceQuery(fileId, version)
         );
 
@@ -125,12 +138,10 @@ public class FileDownloadController implements FileDownloadApi {
                                                                 HttpServletResponse response) {
         log.info("流式下载文件: {}", fileId);
 
-        StreamingResponseBody stream = outputStream -> {
-            fileDownloadService.downloadStream(
-                    converter.toStreamDownloadQuery(fileId),
-                    outputStream
-            );
-        };
+        StreamingResponseBody stream = outputStream -> fileDownloadService.downloadStream(
+                converter.toStreamDownloadQuery(fileId),
+                outputStream
+        );
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -228,9 +239,9 @@ public class FileDownloadController implements FileDownloadApi {
     // ==================== 4. 批量下载 ====================
 
     @Override
-    public void batchDownload(List<String> fileIds, String zipFileName,
+    public void batchDownload(List<FileDownloadItemRequest> files, String zipFileName,
                               HttpServletResponse response) {
-        log.info("批量下载: {} 个文件, zip: {}", fileIds.size(), zipFileName);
+        log.info("批量下载: {} 个文件, zip: {}", files.size(), zipFileName);
 
         try {
             String finalZipName = zipFileName != null ? zipFileName : "files.zip";
@@ -239,7 +250,7 @@ public class FileDownloadController implements FileDownloadApi {
                     "attachment; filename=\"" + encodeFileName(finalZipName) + "\"");
 
             fileDownloadService.batchDownload(
-                    converter.toBatchDownloadCommand(fileIds, zipFileName),
+                    converter.toBatchDownloadCommand(files, zipFileName),
                     response.getOutputStream()
             );
         } catch (IOException e) {
@@ -251,7 +262,7 @@ public class FileDownloadController implements FileDownloadApi {
     @Override
     public void batchDownloadWithStructure(BatchDownloadRequest request,
                                            HttpServletResponse response) {
-        log.info("批量下载（带结构）: {} 个文件", request.getFileIds().size());
+        log.info("批量下载（带结构）: {} 个文件", request.getFiles().size());
 
         try {
             String zipFileName = request.getZipFileName() != null
@@ -272,7 +283,7 @@ public class FileDownloadController implements FileDownloadApi {
 
     @Override
     public ResultModel<String> asyncBatchDownload(@Valid BatchDownloadRequest request) {
-        log.info("异步批量下载: {} 个文件", request.getFileIds().size());
+        log.info("异步批量下载: {} 个文件", request.getFiles().size());
 
         String taskId = fileDownloadService.asyncBatchDownload(
                 converter.toAsyncBatchDownloadCommand(request)
@@ -365,13 +376,7 @@ public class FileDownloadController implements FileDownloadApi {
                 converter.toDownloadHistoryQuery(page, size, startTime, endTime)
         );
 
-        return PageResultModel.<DownloadRecordResponse>builder()
-                .total(result.getTotal())
-                .page(result.getPage())
-                .size(result.getSize())
-                .totalPages(result.getTotalPages())
-                .records(converter.toDownloadRecordResponseList(result.getRecords()))
-                .build();
+        return PageResultUtils.ok(result.getTotal(), converter.toDownloadRecordResponseList(result.getRecords()));
     }
 
     @Override

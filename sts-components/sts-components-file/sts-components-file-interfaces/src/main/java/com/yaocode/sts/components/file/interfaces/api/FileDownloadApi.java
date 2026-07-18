@@ -4,6 +4,7 @@ import com.yaocode.sts.common.web.model.PageResultModel;
 import com.yaocode.sts.common.web.model.ResultModel;
 
 import com.yaocode.sts.components.file.interfaces.model.request.BatchDownloadRequest;
+import com.yaocode.sts.components.file.interfaces.model.request.FileDownloadItemRequest;
 import com.yaocode.sts.components.file.interfaces.model.response.BatchDownloadTaskResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.CrossOriginDownloadInfoResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.DownloadRecordResponse;
@@ -211,13 +212,13 @@ public interface FileDownloadApi {
     /**
      * 批量下载文件（打包为ZIP）
      *
-     * @param fileIds 文件ID列表
+     * @param files 文件列表
      * @param zipFileName ZIP文件名（可选）
      * @param response HTTP响应
      */
     @PostMapping("/download/batch")
     void batchDownload(
-            @RequestBody List<String> fileIds,
+            @RequestBody List<FileDownloadItemRequest> files,
             @RequestParam(required = false) String zipFileName,
             HttpServletResponse response
     );

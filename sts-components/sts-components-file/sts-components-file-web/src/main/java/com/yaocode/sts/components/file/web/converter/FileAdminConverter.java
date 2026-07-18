@@ -1,6 +1,75 @@
 package com.yaocode.sts.components.file.web.converter;
 
-import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.components.file.interfaces.model.request.BatchArchiveRequest;
+import com.yaocode.sts.components.file.interfaces.model.request.FileListQueryRequest;
+import com.yaocode.sts.components.file.interfaces.model.request.MigrateOptionsRequest;
+import com.yaocode.sts.components.file.interfaces.model.request.StorageNodeInfoRequest;
+import com.yaocode.sts.components.file.interfaces.model.response.AdminStatisticsResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.AuditHistoryResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.BatchArchiveResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.BatchDeleteResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.BatchRestoreResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.CleanupResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.ConnectionTestResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.DuplicateCleanResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileAuditInfoResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileAuditLogResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileDetailInfoResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileInfoResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.FileVersionInfoResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.MigrateTaskStatusResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.StorageNodeInfoResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.StorageNodeStatsResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.StorageStatsResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.TrendDataResponse;
+import com.yaocode.sts.components.file.interfaces.model.response.TypeStatsResponse;
+import com.yaocode.sts.components.file.runtime.model.command.AddStorageNodeCommand;
+import com.yaocode.sts.components.file.runtime.model.command.ArchiveFileCommand;
+import com.yaocode.sts.components.file.runtime.model.command.AuditFileCommand;
+import com.yaocode.sts.components.file.runtime.model.command.BatchArchiveCommand;
+import com.yaocode.sts.components.file.runtime.model.command.BatchDeleteCommand;
+import com.yaocode.sts.components.file.runtime.model.command.BatchRestoreCommand;
+import com.yaocode.sts.components.file.runtime.model.command.CancelMigrateCommand;
+import com.yaocode.sts.components.file.runtime.model.command.CleanDuplicateCommand;
+import com.yaocode.sts.components.file.runtime.model.command.CleanExpiredCommand;
+import com.yaocode.sts.components.file.runtime.model.command.CleanTempCommand;
+import com.yaocode.sts.components.file.runtime.model.command.DeleteFileCommand;
+import com.yaocode.sts.components.file.runtime.model.command.DeleteStorageNodeCommand;
+import com.yaocode.sts.components.file.runtime.model.command.MigrateFileCommand;
+import com.yaocode.sts.components.file.runtime.model.command.PermanentDeleteCommand;
+import com.yaocode.sts.components.file.runtime.model.command.RefreshStorageNodeCommand;
+import com.yaocode.sts.components.file.runtime.model.command.RestoreFileCommand;
+import com.yaocode.sts.components.file.runtime.model.command.TestStorageNodeCommand;
+import com.yaocode.sts.components.file.runtime.model.command.UnarchiveFileCommand;
+import com.yaocode.sts.components.file.runtime.model.command.UpdateStorageNodeCommand;
+import com.yaocode.sts.components.file.runtime.model.query.AdminFileListQuery;
+import com.yaocode.sts.components.file.runtime.model.query.AdminStatisticsQuery;
+import com.yaocode.sts.components.file.runtime.model.query.AuditListQuery;
+import com.yaocode.sts.components.file.runtime.model.query.AuditLogQuery;
+import com.yaocode.sts.components.file.runtime.model.query.FileDetailQuery;
+import com.yaocode.sts.components.file.runtime.model.query.FileVersionQuery;
+import com.yaocode.sts.components.file.runtime.model.query.StorageNodeQuery;
+import com.yaocode.sts.components.file.runtime.model.query.StorageNodeStatsQuery;
+import com.yaocode.sts.components.file.runtime.model.query.TrendDataQuery;
+import com.yaocode.sts.components.file.runtime.model.result.AdminStatisticsResult;
+import com.yaocode.sts.components.file.runtime.model.result.AuditHistoryResult;
+import com.yaocode.sts.components.file.runtime.model.result.BatchArchiveResult;
+import com.yaocode.sts.components.file.runtime.model.result.BatchDeleteResult;
+import com.yaocode.sts.components.file.runtime.model.result.BatchRestoreResult;
+import com.yaocode.sts.components.file.runtime.model.result.CleanupResult;
+import com.yaocode.sts.components.file.runtime.model.result.ConnectionTestResult;
+import com.yaocode.sts.components.file.runtime.model.result.DuplicateCleanResult;
+import com.yaocode.sts.components.file.runtime.model.result.FileAuditInfoResult;
+import com.yaocode.sts.components.file.runtime.model.result.FileAuditLogResult;
+import com.yaocode.sts.components.file.runtime.model.result.FileDetailInfoResult;
+import com.yaocode.sts.components.file.runtime.model.result.FileInfoResult;
+import com.yaocode.sts.components.file.runtime.model.result.FileVersionInfoResult;
+import com.yaocode.sts.components.file.runtime.model.result.MigrateTaskStatusResult;
+import com.yaocode.sts.components.file.runtime.model.result.StorageNodeInfoResult;
+import com.yaocode.sts.components.file.runtime.model.result.StorageNodeStatsResult;
+import com.yaocode.sts.components.file.runtime.model.result.StorageStatsResult;
+import com.yaocode.sts.components.file.runtime.model.result.TrendDataResult;
+import com.yaocode.sts.components.file.runtime.model.result.TypeStatsResult;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -814,7 +883,7 @@ public class FileAdminConverter {
                 .uploadProgress(result.getUploadProgress())
                 .downloadCount(result.getDownloadCount())
                 .viewCount(result.getViewCount())
-                .tags(String.join(SymbolConstants.COMMA, result.getTags()))
+                .tags(result.getTags())
                 .description(result.getDescription())
                 .businessId(result.getBusinessId())
                 .businessType(result.getBusinessType())

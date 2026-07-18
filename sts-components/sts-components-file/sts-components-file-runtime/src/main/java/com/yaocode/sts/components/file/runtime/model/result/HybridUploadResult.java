@@ -1,8 +1,11 @@
 package com.yaocode.sts.components.file.runtime.model.result;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +17,9 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Data
-@Builder
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class HybridUploadResult extends UploadResult {
     /** 最终选择的存储类型 */

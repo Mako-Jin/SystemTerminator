@@ -33,22 +33,23 @@
         <dependency>
             <groupId>com.yaocode.sts.components.file</groupId>
             <artifactId>sts-components-file-plugin-local</artifactId>
-            <version>${project.parent.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.yaocode.sts.components.file</groupId>
             <artifactId>sts-components-file-plugin-minio</artifactId>
-            <version>${project.parent.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.yaocode.sts.components.file</groupId>
             <artifactId>sts-components-file-plugin-oss</artifactId>
-            <version>${project.parent.version}</version>
             <optional>true</optional>
         </dependency>
-
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

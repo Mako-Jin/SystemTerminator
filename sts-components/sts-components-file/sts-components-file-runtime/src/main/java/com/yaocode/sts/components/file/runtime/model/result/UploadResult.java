@@ -1,7 +1,9 @@
 package com.yaocode.sts.components.file.runtime.model.result;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * 上传结果
@@ -10,7 +12,9 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-@Builder
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UploadResult {
     /** 文件ID */
     private String fileId;

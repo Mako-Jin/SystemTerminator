@@ -40,7 +40,7 @@ public class DuplicateCleanResult {
     /**
      * 重复文件组列表
      */
-    private List<DuplicateGroup> groups;
+    private List<DuplicateGroupResult> groups;
 
     /**
      * 执行时间（毫秒）
