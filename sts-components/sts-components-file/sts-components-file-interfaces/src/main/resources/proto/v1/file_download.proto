@@ -5,7 +5,7 @@ package com.yaocode.sts.proto.v1;
 import "file_common.proto";
 
 option java_multiple_files = true;
-option java_package = "com.yaocode.sts.components.file.interfaces.proto.v1";
+option java_package = "com.yaocode.sts.file.interfaces.proto.v1";
 option java_outer_classname = "FileDownloadProto";
 
 // ==================== 文件下载服务 ====================

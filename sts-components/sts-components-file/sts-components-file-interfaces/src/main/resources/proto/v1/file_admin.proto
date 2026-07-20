@@ -6,7 +6,7 @@ import "file_common.proto";
 import "v1/v1_common.proto";
 
 option java_multiple_files = true;
-option java_package = "com.yaocode.sts.components.file.interfaces.proto.v1";
+option java_package = "com.yaocode.sts.file.interfaces.proto.v1";
 option java_outer_classname = "FileAdminProto";
 
 // ==================== 文件管理后台服务 ====================

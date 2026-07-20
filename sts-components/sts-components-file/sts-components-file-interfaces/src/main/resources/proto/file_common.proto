@@ -3,7 +3,7 @@ syntax = "proto3";
 package com.yaocode.sts.proto;
 
 option java_multiple_files = true;
-option java_package = "com.yaocode.sts.components.file.interfaces.proto";
+option java_package = "com.yaocode.sts.file.interfaces.proto";
 option java_outer_classname = "FileCommonProto";
 
 // ==================== 公共消息定义 ====================

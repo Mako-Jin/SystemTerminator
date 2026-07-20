@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yaocode.sts.components.file.runtime.mapper.FileInfoMapper">
+<mapper namespace="com.yaocode.sts.file.runtime.mapper.FileInfoMapper">
 
     <!-- ==================== 基础查询 ==================== -->
 
-    <select id="selectByFileIdAndTenant" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+    <select id="selectByFileIdAndTenant" resultType="com.yaocode.sts.file.runtime.entity.FileInfoEntity">
         SELECT *
         FROM file_tbl_file_info
         WHERE file_id = #{fileId}
           AND tenant_id = #{tenantId}
     </select>
 
-    <select id="selectByFileIdsAndTenant" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+    <select id="selectByFileIdsAndTenant" resultType="com.yaocode.sts.file.runtime.entity.FileInfoEntity">
         SELECT *
         FROM file_tbl_file_info
         WHERE file_id IN
@@ -21,7 +21,7 @@
         AND tenant_id = #{tenantId}
     </select>
 
-    <select id="selectByMd5AndTenant" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+    <select id="selectByMd5AndTenant" resultType="com.yaocode.sts.file.runtime.entity.FileInfoEntity">
         SELECT *
         FROM file_tbl_file_info
         WHERE file_md5 = #{fileMd5}
@@ -55,7 +55,7 @@
 
     <!-- ==================== 回收站相关 ==================== -->
 
-    <select id="selectExpiredFiles" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+    <select id="selectExpiredFiles" resultType="com.yaocode.sts.file.runtime.entity.FileInfoEntity">
         SELECT *
         FROM file_tbl_file_info
         WHERE expire_time &lt; #{expireTime}
@@ -66,7 +66,7 @@
         </if>
     </select>
 
-    <select id="selectTempFiles" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+    <select id="selectTempFiles" resultType="com.yaocode.sts.file.runtime.entity.FileInfoEntity">
         SELECT *
         FROM file_tbl_file_info
         WHERE upload_status = 0
@@ -76,7 +76,7 @@
 
     <!-- ==================== 文件详情查询 ==================== -->
 
-    <resultMap id="fileDetailResultMap" type="com.yaocode.sts.components.file.runtime.model.result.FileDetailInfoResult">
+    <resultMap id="fileDetailResultMap" type="com.yaocode.sts.file.runtime.model.result.FileDetailInfoResult">
         <id property="fileId" column="file_id"/>
         <result property="fileName" column="file_name"/>
         <result property="filePath" column="file_path"/>
@@ -126,7 +126,7 @@
           AND f.tenant_id = #{tenantId}
     </select>
 
-    <select id="getFileVersions" resultType="com.yaocode.sts.components.file.runtime.model.result.FileVersionInfoResult">
+    <select id="getFileVersions" resultType="com.yaocode.sts.file.runtime.model.result.FileVersionInfoResult">
         SELECT version_id   AS versionId,
                file_id      AS fileId,
                version,
@@ -145,7 +145,7 @@
 
     <!-- ==================== 文件列表查询 ==================== -->
 
-    <resultMap id="fileInfoResultMap" type="com.yaocode.sts.components.file.runtime.model.result.FileInfoResult">
+    <resultMap id="fileInfoResultMap" type="com.yaocode.sts.file.runtime.model.result.FileInfoResult">
         <id property="fileId" column="file_id"/>
         <result property="fileName" column="file_name"/>
         <result property="filePath" column="file_path"/>
@@ -226,7 +226,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="getAuditList" resultType="com.yaocode.sts.components.file.runtime.model.result.FileAuditInfoResult">
+    <select id="getAuditList" resultType="com.yaocode.sts.file.runtime.model.result.FileAuditInfoResult">
         SELECT file_id          AS fileId,
         file_name        AS fileName,
         file_size        AS fileSize,
@@ -266,7 +266,7 @@
         <result property="fileMd5" column="file_md5"/>
         <result property="fileSize" column="file_size"/>
         <result property="fileCount" column="file_count"/>
-        <collection property="files" ofType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity"
+        <collection property="files" ofType="com.yaocode.sts.file.runtime.entity.FileInfoEntity"
                     select="selectFilesByMd5AndSize" column="{fileMd5=file_md5, fileSize=file_size}"/>
     </resultMap>
 
@@ -282,7 +282,7 @@
         HAVING COUNT(1) > 1
     </select>
 
-    <select id="selectFilesByMd5AndSize" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+    <select id="selectFilesByMd5AndSize" resultType="com.yaocode.sts.file.runtime.entity.FileInfoEntity">
         SELECT *
         FROM file_tbl_file_info
         WHERE file_md5 = #{fileMd5}
@@ -293,7 +293,7 @@
 
     <!-- ==================== 统计查询 ==================== -->
 
-    <select id="getAdminStatistics" resultType="com.yaocode.sts.components.file.runtime.model.result.AdminStatisticsResult">
+    <select id="getAdminStatistics" resultType="com.yaocode.sts.file.runtime.model.result.AdminStatisticsResult">
         SELECT
         COUNT(1) AS totalFiles,
         COALESCE(SUM(file_size), 0) AS totalSize,
@@ -307,7 +307,7 @@
         </if>
     </select>
 
-    <select id="getTrendData" resultType="com.yaocode.sts.components.file.runtime.model.result.TrendDataResult">
+    <select id="getTrendData" resultType="com.yaocode.sts.file.runtime.model.result.TrendDataResult">
         SELECT
         DATE_FORMAT(created_time, '%Y-%m-%d') AS date,
         COUNT(1) AS uploadCount,
