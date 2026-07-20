@@ -10,8 +10,11 @@ import com.yaocode.sts.common.tools.constants.ToolsI18nKeyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * JSON 工具类，兼容 jackson 和 fastjson2
@@ -212,6 +215,50 @@ public class JSONUtils {
             }
         } catch (Exception e) {
             logger.error("Failed to parse JSON to Map", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_MAP, e);
+        }
+    }
+
+    /**
+     * 将 JSON 字符串转换为 Map
+     *
+     * @param bytes byte[]
+     * @return Map 对象
+     */
+    public static Map<String, Object> parseMap(byte[] bytes) {
+        if (Objects.isNull(bytes) || bytes.length == 0) {
+            return Collections.emptyMap();
+        }
+        try {
+            if (currentProvider == JsonProvider.JACKSON) {
+                return OBJECT_MAPPER.readValue(bytes, new TypeReference<Map<String, Object>>() {});
+            } else {
+                return JSON.parseObject(bytes, new TypeReference<Map<String, Object>>() {}.getType());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to parse bytes to Map", e);
+            throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_MAP, e);
+        }
+    }
+
+    /**
+     * 将 JSON 字符串转换为 Map
+     *
+     * @param inputStream InputStream
+     * @return Map 对象
+     */
+    public static Map<String, Object> parseMap(InputStream inputStream) {
+        if (Objects.isNull(inputStream)) {
+            return Collections.emptyMap();
+        }
+        try {
+            if (currentProvider == JsonProvider.JACKSON) {
+                return OBJECT_MAPPER.readValue(inputStream, new TypeReference<Map<String, Object>>() {});
+            } else {
+                return JSON.parseObject(inputStream, new TypeReference<Map<String, Object>>() {}.getType());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to parse inputStream to Map", e);
             throw new RuntimeException(ToolsI18nKeyConstants.ERR_JSON_PARSE_TO_MAP, e);
         }
     }

@@ -25,7 +25,14 @@
     </properties>
 
     <dependencies>
-        <!-- 无外部依赖，保持核心纯净 -->
+        <dependency>
+            <groupId>com.yaocode.sts.common</groupId>
+            <artifactId>sts-common-basic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts.common</groupId>
+            <artifactId>sts-common-tools</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
