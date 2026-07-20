@@ -2,12 +2,10 @@ package com.yaocode.sts.components.file.interfaces.api;
 
 import com.yaocode.sts.common.web.model.PageResultModel;
 import com.yaocode.sts.common.web.model.ResultModel;
-import com.yaocode.sts.components.file.interfaces.model.request.BatchArchiveRequest;
 import com.yaocode.sts.components.file.interfaces.model.request.FileListQueryRequest;
 import com.yaocode.sts.components.file.interfaces.model.request.MigrateOptionsRequest;
 import com.yaocode.sts.components.file.interfaces.model.request.StorageNodeInfoRequest;
 import com.yaocode.sts.components.file.interfaces.model.response.AdminStatisticsResponse;
-import com.yaocode.sts.components.file.interfaces.model.response.BatchArchiveResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.BatchDeleteResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.BatchRestoreResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.CleanupResponse;
@@ -105,36 +103,36 @@ public interface FileAdminApi {
 
     // ==================== 3. 文件归档 ====================
 
-    /**
-     * 归档文件（迁移到冷存储）
-     *
-     * @param fileId 文件ID
-     * @param archiveType 归档类型（如：GLACIER, DEEP_ARCHIVE）
-     * @return 操作结果
-     */
-    @PostMapping("/{fileId}/archive")
-    ResultModel<String> archiveFile(
-        @PathVariable String fileId,
-        @RequestParam(defaultValue = "GLACIER") String archiveType
-    );
-
-    /**
-     * 取消归档（从冷存储恢复到热存储）
-     *
-     * @param fileId 文件ID
-     * @return 操作结果
-     */
-    @PostMapping("/{fileId}/unarchive")
-    ResultModel<String> unarchiveFile(@PathVariable String fileId);
-
-    /**
-     * 批量归档文件
-     *
-     * @param request 批量归档请求
-     * @return 操作结果
-     */
-    @PostMapping("/batch/archive")
-    ResultModel<BatchArchiveResponse> batchArchiveFiles(@RequestBody BatchArchiveRequest request);
+//    /**
+//     * 归档文件（迁移到冷存储）
+//     *
+//     * @param fileId 文件ID
+//     * @param archiveType 归档类型（如：GLACIER, DEEP_ARCHIVE）
+//     * @return 操作结果
+//     */
+//    @PostMapping("/{fileId}/archive")
+//    ResultModel<String> archiveFile(
+//        @PathVariable String fileId,
+//        @RequestParam(defaultValue = "GLACIER") String archiveType
+//    );
+//
+//    /**
+//     * 取消归档（从冷存储恢复到热存储）
+//     *
+//     * @param fileId 文件ID
+//     * @return 操作结果
+//     */
+//    @PostMapping("/{fileId}/unarchive")
+//    ResultModel<String> unarchiveFile(@PathVariable String fileId);
+//
+//    /**
+//     * 批量归档文件
+//     *
+//     * @param request 批量归档请求
+//     * @return 操作结果
+//     */
+//    @PostMapping("/batch/archive")
+//    ResultModel<BatchArchiveResponse> batchArchiveFiles(@RequestBody BatchArchiveRequest request);
 
     // ==================== 4. 文件迁移 ====================
 
@@ -149,7 +147,7 @@ public interface FileAdminApi {
     @PostMapping("/{fileId}/migrate")
     ResultModel<String> migrateFile(
             @PathVariable String fileId,
-            @RequestParam String targetStorageType,
+            @RequestParam Integer targetStorageType,
             @RequestBody(required = false) MigrateOptionsRequest options
     );
 

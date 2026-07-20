@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * 文件访问日志表(审计)
  */
 @Data
-@TableName("file_access_log")
+@TableName("file_tbl_access_log")
 public class FileAccessLogEntity {
 
     /**

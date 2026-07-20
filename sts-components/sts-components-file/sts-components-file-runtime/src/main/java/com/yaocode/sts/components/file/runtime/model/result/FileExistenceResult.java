@@ -33,7 +33,7 @@ public class FileExistenceResult {
     private String fileUrl;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
 
     /** 是否重复 */
     private Boolean isDuplicate;

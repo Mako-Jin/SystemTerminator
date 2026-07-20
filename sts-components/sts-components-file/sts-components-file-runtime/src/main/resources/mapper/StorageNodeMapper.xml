@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaocode.sts.components.file.runtime.mapper.StorageNodeMapper">
+
+    <select id="selectByNodeCode" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE node_code = #{nodeCode}
+    </select>
+
+    <select id="selectByTenantAndStatus" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE tenant_id = #{tenantId}
+        <if test="enabledOnly != null and enabledOnly == true">
+            AND enabled = 1
+        </if>
+        ORDER BY priority ASC, weight DESC
+    </select>
+
+    <select id="selectByStorageType" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE storage_type = #{storageType}
+          AND enabled = 1
+    </select>
+
+    <select id="selectEnabledByTenant" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE tenant_id = #{tenantId}
+          AND enabled = 1
+          AND node_status = 1
+    </select>
+
+    <select id="selectHealthyNodes" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE tenant_id = #{tenantId}
+          AND enabled = 1
+          AND node_status = 1
+          AND health_status = 1
+        ORDER BY priority ASC, weight DESC
+    </select>
+
+    <select id="selectByPriority" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE tenant_id = #{tenantId}
+          AND enabled = 1
+          AND node_status = 1
+          AND health_status = 1
+        ORDER BY priority ASC
+            LIMIT #{limit}
+    </select>
+
+    <select id="selectEnabledByWeight" resultType="com.yaocode.sts.components.file.runtime.entity.StorageNodeEntity">
+        SELECT *
+        FROM file_tbl_storage_node
+        WHERE tenant_id = #{tenantId}
+          AND enabled = 1
+          AND node_status = 1
+        ORDER BY weight DESC
+    </select>
+
+    <select id="countByTenant" resultType="int">
+        SELECT COUNT(1)
+        FROM file_tbl_storage_node
+        WHERE tenant_id = #{tenantId}
+    </select>
+
+    <update id="updateHealthStatus">
+        UPDATE file_tbl_storage_node
+        SET health_status = #{healthStatus},
+            last_health_check = NOW()
+        WHERE node_id = #{nodeId}
+    </update>
+
+    <update id="updateCapacity">
+        UPDATE file_tbl_storage_node
+        SET used_capacity = #{usedCapacity}
+        WHERE node_id = #{nodeId}
+    </update>
+
+    <update id="updateEnabled">
+        UPDATE file_tbl_storage_node
+        SET enabled = #{enabled},
+            updated_time = NOW()
+        WHERE node_id = #{nodeId}
+    </update>
+</mapper>

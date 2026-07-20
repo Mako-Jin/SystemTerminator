@@ -227,7 +227,7 @@ public class FileAdminConverter {
     /**
      * 转换为迁移命令
      */
-    public MigrateFileCommand toMigrateFileCommand(String fileId, String targetStorageType,
+    public MigrateFileCommand toMigrateFileCommand(String fileId, Integer targetStorageType,
                                                    MigrateOptionsRequest options) {
         return MigrateFileCommand.builder()
                 .fileId(fileId)

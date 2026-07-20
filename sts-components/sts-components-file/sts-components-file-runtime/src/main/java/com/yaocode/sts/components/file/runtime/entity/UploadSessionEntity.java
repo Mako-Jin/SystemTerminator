@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 上传会话表
  */
 @Data
-@TableName("upload_session")
+@TableName("file_tbl_upload_session")
 public class UploadSessionEntity {
 
     /**

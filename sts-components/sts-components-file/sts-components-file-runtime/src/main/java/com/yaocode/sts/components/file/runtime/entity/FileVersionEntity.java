@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 文件版本表
  */
 @Data
-@TableName("file_version")
+@TableName("file_tbl_file_version")
 public class FileVersionEntity {
 
     /**

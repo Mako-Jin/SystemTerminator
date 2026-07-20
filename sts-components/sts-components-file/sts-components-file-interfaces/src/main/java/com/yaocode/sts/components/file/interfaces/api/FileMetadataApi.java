@@ -345,7 +345,7 @@ public interface FileMetadataApi {
     ResultModel<FileExistenceResponse> verifyFileExists(
             @RequestParam String fileMd5,
             @RequestParam Long fileSize,
-            @RequestParam(required = false) String storageType
+            @RequestParam(required = false) Integer storageType
     );
 
     /**

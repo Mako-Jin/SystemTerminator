@@ -4,6 +4,7 @@ import com.yaocode.sts.components.file.runtime.model.dto.FileObjectDto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public class UploadFileCommand {
     private String fileMd5;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
 
     /** 业务ID */
     private String businessId;
@@ -56,4 +57,10 @@ public class UploadFileCommand {
 
     /** 用户ID */
     private String userId;
+
+    /** 优先存储列表 */
+    private List<String> preferredStorages;
+
+    /** 策略名称 */
+    private String strategy;
 }

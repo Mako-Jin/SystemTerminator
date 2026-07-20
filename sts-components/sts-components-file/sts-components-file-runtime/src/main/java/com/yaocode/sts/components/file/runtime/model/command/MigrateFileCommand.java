@@ -19,7 +19,7 @@ public class MigrateFileCommand {
     /**
      * 目标存储类型
      */
-    private String targetStorageType;
+    private Integer targetStorageType;
 
     /**
      * 是否异步执行

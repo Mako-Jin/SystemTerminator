@@ -247,6 +247,12 @@ public class FileInfoEntity {
     private LocalDateTime updatedTime;
 
     /**
+     * 租户ID
+     */
+    @TableField("tenant_id")
+    private String tenantId;
+
+    /**
      * 版本号(乐观锁)
      */
     @Version

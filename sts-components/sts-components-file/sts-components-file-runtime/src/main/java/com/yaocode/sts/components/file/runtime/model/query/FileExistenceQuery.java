@@ -19,7 +19,7 @@ public class FileExistenceQuery {
     private Long fileSize;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
 
     /** 租户ID */
     private String tenantId;

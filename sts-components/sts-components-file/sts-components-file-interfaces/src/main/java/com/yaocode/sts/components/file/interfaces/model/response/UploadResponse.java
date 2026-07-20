@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 /**
  * 文件上传响应
  * <p>
@@ -42,7 +44,7 @@ public class UploadResponse {
     /**
      * 存储类型
      */
-    private String storageType;
+    private Integer storageType;
     /**
      * 租户ID
      */
@@ -66,7 +68,7 @@ public class UploadResponse {
     /**
      * 上传时间（毫秒级时间戳）
      */
-    private Long uploadTime;
+    private LocalDateTime uploadTime;
     /**
      * 处理耗时（毫秒）
      */

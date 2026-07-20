@@ -2,9 +2,7 @@ package com.yaocode.sts.components.file.runtime.service;
 
 import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.components.file.runtime.model.command.AddStorageNodeCommand;
-import com.yaocode.sts.components.file.runtime.model.command.ArchiveFileCommand;
 import com.yaocode.sts.components.file.runtime.model.command.AuditFileCommand;
-import com.yaocode.sts.components.file.runtime.model.command.BatchArchiveCommand;
 import com.yaocode.sts.components.file.runtime.model.command.BatchDeleteCommand;
 import com.yaocode.sts.components.file.runtime.model.command.BatchRestoreCommand;
 import com.yaocode.sts.components.file.runtime.model.command.CancelMigrateCommand;
@@ -18,7 +16,6 @@ import com.yaocode.sts.components.file.runtime.model.command.PermanentDeleteComm
 import com.yaocode.sts.components.file.runtime.model.command.RefreshStorageNodeCommand;
 import com.yaocode.sts.components.file.runtime.model.command.RestoreFileCommand;
 import com.yaocode.sts.components.file.runtime.model.command.TestStorageNodeCommand;
-import com.yaocode.sts.components.file.runtime.model.command.UnarchiveFileCommand;
 import com.yaocode.sts.components.file.runtime.model.command.UpdateStorageNodeCommand;
 import com.yaocode.sts.components.file.runtime.model.query.AdminFileListQuery;
 import com.yaocode.sts.components.file.runtime.model.query.AdminStatisticsQuery;
@@ -30,7 +27,6 @@ import com.yaocode.sts.components.file.runtime.model.query.StorageNodeQuery;
 import com.yaocode.sts.components.file.runtime.model.query.StorageNodeStatsQuery;
 import com.yaocode.sts.components.file.runtime.model.query.TrendDataQuery;
 import com.yaocode.sts.components.file.runtime.model.result.AdminStatisticsResult;
-import com.yaocode.sts.components.file.runtime.model.result.BatchArchiveResult;
 import com.yaocode.sts.components.file.runtime.model.result.BatchDeleteResult;
 import com.yaocode.sts.components.file.runtime.model.result.BatchRestoreResult;
 import com.yaocode.sts.components.file.runtime.model.result.CleanupResult;
@@ -65,9 +61,8 @@ public interface FileAdminService {
      * 软删除文件
      *
      * @param command 删除命令
-     * @return 操作结果
      */
-    String deleteFile(DeleteFileCommand command);
+    void deleteFile(DeleteFileCommand command);
 
     /**
      * 批量软删除文件
@@ -90,9 +85,8 @@ public interface FileAdminService {
      * 恢复文件
      *
      * @param command 恢复命令
-     * @return 操作结果
      */
-    String restoreFile(RestoreFileCommand command);
+    void restoreFile(RestoreFileCommand command);
 
     /**
      * 批量恢复文件
@@ -104,27 +98,27 @@ public interface FileAdminService {
 
     // ==================== 3. 文件归档（命令） ====================
 
-    /**
-     * 归档文件
-     *
-     * @param command 归档命令
-     */
-    void archiveFile(ArchiveFileCommand command);
-
-    /**
-     * 取消归档
-     *
-     * @param command 取消归档命令
-     */
-    void unarchiveFile(UnarchiveFileCommand command);
-
-    /**
-     * 批量归档文件
-     *
-     * @param command 批量归档命令
-     * @return 批量归档结果
-     */
-    BatchArchiveResult batchArchiveFiles(BatchArchiveCommand command);
+//    /**
+//     * 归档文件
+//     *
+//     * @param command 归档命令
+//     */
+//    void archiveFile(ArchiveFileCommand command);
+//
+//    /**
+//     * 取消归档
+//     *
+//     * @param command 取消归档命令
+//     */
+//    void unarchiveFile(UnarchiveFileCommand command);
+//
+//    /**
+//     * 批量归档文件
+//     *
+//     * @param command 批量归档命令
+//     * @return 批量归档结果
+//     */
+//    BatchArchiveResult batchArchiveFiles(BatchArchiveCommand command);
 
     // ==================== 4. 文件迁移（命令） ====================
 

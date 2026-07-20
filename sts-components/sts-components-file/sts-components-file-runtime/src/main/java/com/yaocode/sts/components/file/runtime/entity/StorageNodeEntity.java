@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 存储节点管理表
  */
 @Data
-@TableName("storage_node")
+@TableName("file_tbl_storage_node")
 public class StorageNodeEntity {
 
     /**
@@ -150,6 +150,12 @@ public class StorageNodeEntity {
      */
     @TableField("updated_user_name")
     private String updatedUserName;
+
+    /**
+     * 租户ID
+     */
+    @TableField("tenant_id")
+    private String tenantId;
 
     /**
      * 创建时间

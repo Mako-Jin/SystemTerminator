@@ -305,7 +305,7 @@ public class FileMetadataController implements FileMetadataApi {
 
     @Override
     public ResultModel<FileExistenceResponse> verifyFileExists(String fileMd5, Long fileSize,
-                                                               String storageType) {
+                                                               Integer storageType) {
         log.info("验证文件是否存在: md5={}, size={}", fileMd5, fileSize);
         FileExistenceResponse response = converter.toFileExistenceResponse(
                 fileMetadataService.verifyFileExists(

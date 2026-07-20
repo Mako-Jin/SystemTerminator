@@ -80,3 +80,4 @@ replay_pid*
 /sts-components/sts-components-file/sts-components-file-starter/target/
 /sts-components/sts-components-file/sts-components-file-service/target/
 /sts-components/sts-components-file/sts-components-file-interfaces/target/
+/sts-components/sts-components-file/sts-components-file-web/target/

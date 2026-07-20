@@ -165,7 +165,7 @@ public class FileUploadConverter {
      */
     public UploadFileCommand toUploadFileCommand(
             MultipartFile file,
-            String storageType,
+            Integer storageType,
             String businessId,
             String businessType,
             Boolean enableDeduplication,
@@ -659,7 +659,7 @@ public class FileUploadConverter {
     /**
      * 构建文件存在性查询
      */
-    public FileExistenceQuery toFileExistenceQuery(String fileMd5, Long fileSize, String storageType) {
+    public FileExistenceQuery toFileExistenceQuery(String fileMd5, Long fileSize, Integer storageType) {
         return FileExistenceQuery.builder()
                 .fileMd5(fileMd5)
                 .fileSize(fileSize)

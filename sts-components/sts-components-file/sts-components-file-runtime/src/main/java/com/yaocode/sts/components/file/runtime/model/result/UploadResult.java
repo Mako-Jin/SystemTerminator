@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 /**
  * 上传结果
  *
@@ -32,7 +34,7 @@ public class UploadResult {
     private String fileUrl;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
 
     /** 租户ID */
     private String tenantId;
@@ -49,8 +51,8 @@ public class UploadResult {
     /** 重复文件ID（如果是重复文件） */
     private String duplicateFileId;
 
-    /** 上传时间戳 */
-    private Long uploadTime;
+    /** 上传时间 */
+    private LocalDateTime uploadTime;
 
     /** 处理耗时（毫秒） */
     private Long processingTime;

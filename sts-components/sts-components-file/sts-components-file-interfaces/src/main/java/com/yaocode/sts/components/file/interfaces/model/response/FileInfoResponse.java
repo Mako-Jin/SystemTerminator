@@ -51,7 +51,7 @@ public class FileInfoResponse {
     /**
      * 存储类型
      */
-    private String storageType;
+    private Integer storageType;
 
     /**
      * 存储URL

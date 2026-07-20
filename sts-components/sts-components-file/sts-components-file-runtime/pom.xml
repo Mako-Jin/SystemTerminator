@@ -20,6 +20,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.yaocode.sts.common</groupId>
+            <artifactId>sts-common-tools</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.yaocode.sts.components.file</groupId>
             <artifactId>sts-components-file-core</artifactId>
         </dependency>

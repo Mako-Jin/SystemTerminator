@@ -49,7 +49,7 @@ public class FileExistenceResponse {
     /**
      * 存储类型
      */
-    private String storageType;
+    private Integer storageType;
     /**
      * 重复文件列表
      */

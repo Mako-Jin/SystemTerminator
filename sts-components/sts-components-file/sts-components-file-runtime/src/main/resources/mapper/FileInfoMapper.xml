@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaocode.sts.components.file.runtime.mapper.FileInfoMapper">
+
+    <!-- ==================== 基础查询 ==================== -->
+
+    <select id="selectByFileIdAndTenant" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE file_id = #{fileId}
+          AND tenant_id = #{tenantId}
+    </select>
+
+    <select id="selectByFileIdsAndTenant" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE file_id IN
+        <foreach collection="fileIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND tenant_id = #{tenantId}
+    </select>
+
+    <select id="selectByMd5AndTenant" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE file_md5 = #{fileMd5}
+          AND tenant_id = #{tenantId}
+          AND file_status = 1
+    </select>
+
+    <select id="existsByFileNameAndTenant" resultType="int">
+        SELECT COUNT(1)
+        FROM file_tbl_file_info
+        WHERE file_name = #{fileName}
+          AND tenant_id = #{tenantId}
+          AND file_status = 1
+    </select>
+
+    <select id="countByStorageTypeAndTenant" resultType="long">
+        SELECT COUNT(1)
+        FROM file_tbl_file_info
+        WHERE storage_type = #{storageType}
+          AND tenant_id = #{tenantId}
+          AND file_status = 1
+    </select>
+
+    <select id="sumFileSizeByStorageTypeAndTenant" resultType="long">
+        SELECT COALESCE(SUM(file_size), 0)
+        FROM file_tbl_file_info
+        WHERE storage_type = #{storageType}
+          AND tenant_id = #{tenantId}
+          AND file_status = 1
+    </select>
+
+    <!-- ==================== 回收站相关 ==================== -->
+
+    <select id="selectExpiredFiles" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE expire_time &lt; #{expireTime}
+        AND file_status = 2
+        AND tenant_id = #{tenantId}
+        <if test="storageType != null and storageType != ''">
+            AND storage_type = #{storageType}
+        </if>
+    </select>
+
+    <select id="selectTempFiles" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE upload_status = 0
+          AND upload_start_time &lt; #{expireTime}
+          AND tenant_id = #{tenantId}
+    </select>
+
+    <!-- ==================== 文件详情查询 ==================== -->
+
+    <resultMap id="fileDetailResultMap" type="com.yaocode.sts.components.file.runtime.model.result.FileDetailInfoResult">
+        <id property="fileId" column="file_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileMd5" column="file_md5"/>
+        <result property="fileSha256" column="file_sha256"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileExtension" column="file_extension"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="storageBucket" column="storage_bucket"/>
+        <result property="storageRegion" column="storage_region"/>
+        <result property="storageUrl" column="storage_url"/>
+        <result property="storageMetadata" column="storage_metadata"/>
+        <result property="fileStatus" column="file_status"/>
+        <result property="uploadStatus" column="upload_status"/>
+        <result property="uploadProgress" column="upload_progress"/>
+        <result property="downloadCount" column="download_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="tags" column="tags"/>
+        <result property="description" column="description"/>
+        <result property="businessId" column="business_id"/>
+        <result property="businessType" column="business_type"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="createdUserId" column="created_user_id"/>
+        <result property="createdUserName" column="created_user_name"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="lastAccessTime" column="last_access_time"/>
+        <result property="lastModifiedTime" column="last_modified_time"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="updatedUserId" column="updated_user_id"/>
+        <result property="updatedUserName" column="updated_user_name"/>
+        <result property="updatedTime" column="updated_time"/>
+        <result property="isEncrypted" column="is_encrypted"/>
+        <result property="isCompressed" column="is_compressed"/>
+        <result property="isPublic" column="is_public"/>
+        <result property="versionCount" column="version_count"/>
+        <result property="currentVersion" column="current_version"/>
+    </resultMap>
+
+    <select id="getFileDetail" resultMap="fileDetailResultMap">
+        SELECT f.*,
+               (SELECT COUNT(1) FROM file_version WHERE file_id = f.file_id) AS version_count,
+               (SELECT MAX(version) FROM file_version WHERE file_id = f.file_id) AS current_version
+        FROM file_tbl_file_info f
+        WHERE f.file_id = #{fileId}
+          AND f.tenant_id = #{tenantId}
+    </select>
+
+    <select id="getFileVersions" resultType="com.yaocode.sts.components.file.runtime.model.result.FileVersionInfoResult">
+        SELECT version_id   AS versionId,
+               file_id      AS fileId,
+               version,
+               version_name AS versionName,
+               change_log   AS changeLog,
+               file_size    AS fileSize,
+               file_md5     AS fileMd5,
+               created_user_id   AS createdUserId,
+               created_user_name AS createdUserName,
+               created_time AS createdTime
+        FROM file_version
+        WHERE file_id = #{fileId}
+          AND tenant_id = #{tenantId}
+        ORDER BY version DESC
+    </select>
+
+    <!-- ==================== 文件列表查询 ==================== -->
+
+    <resultMap id="fileInfoResultMap" type="com.yaocode.sts.components.file.runtime.model.result.FileInfoResult">
+        <id property="fileId" column="file_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileMd5" column="file_md5"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileExtension" column="file_extension"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="storageUrl" column="storage_url"/>
+        <result property="fileStatus" column="file_status"/>
+        <result property="uploadStatus" column="upload_status"/>
+        <result property="uploadProgress" column="upload_progress"/>
+        <result property="downloadCount" column="download_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="tags" column="tags"/>
+        <result property="description" column="description"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="createdUserId" column="created_user_id"/>
+        <result property="createdUserName" column="created_user_name"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="lastAccessTime" column="last_access_time"/>
+        <result property="lastModifiedTime" column="last_modified_time"/>
+    </resultMap>
+
+    <select id="listFiles" resultMap="fileInfoResultMap">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE tenant_id = #{tenantId}
+        <if test="fileName != null and fileName != ''">
+            AND file_name LIKE CONCAT('%', #{fileName}, '%')
+        </if>
+        <if test="fileStatus != null">
+            AND file_status = #{fileStatus}
+        </if>
+        <if test="storageType != null and storageType != ''">
+            AND storage_type = #{storageType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND business_id = #{businessId}
+        </if>
+        <if test="businessType != null and businessType != ''">
+            AND business_type = #{businessType}
+        </if>
+        <if test="uploadUserId != null and uploadUserId != ''">
+            AND created_user_id = #{uploadUserId}
+        </if>
+        <if test="uploadUserName != null and uploadUserName != ''">
+            AND created_user_name LIKE CONCAT('%', #{uploadUserName}, '%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND created_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND created_time &lt;= #{endTime}
+        </if>
+        <if test="minSize != null">
+            AND file_size >= #{minSize}
+        </if>
+        <if test="maxSize != null">
+            AND file_size &lt;= #{maxSize}
+        </if>
+        <if test="tags != null and tags.size() > 0">
+            AND (
+            <foreach collection="tags" item="tag" separator=" OR ">
+                FIND_IN_SET(#{tag}, tags)
+            </foreach>
+            )
+        </if>
+        <choose>
+            <when test="orderBy != null and orderBy != ''">
+                ORDER BY ${orderBy} ${orderDirection}
+            </when>
+            <otherwise>
+                ORDER BY created_time DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getAuditList" resultType="com.yaocode.sts.components.file.runtime.model.result.FileAuditInfoResult">
+        SELECT file_id          AS fileId,
+        file_name        AS fileName,
+        file_size        AS fileSize,
+        file_type        AS fileType,
+        created_user_id  AS uploadUserId,
+        created_user_name AS uploadUserName,
+        created_time     AS uploadTime,
+        audit_status     AS auditStatus,
+        audit_comment    AS auditComment,
+        audit_user_id    AS auditUserId,
+        audit_user_name  AS auditUserName,
+        audit_time       AS auditTime
+        FROM file_tbl_file_info
+        WHERE tenant_id = #{tenantId}
+        <if test="status != null">
+            AND audit_status = #{status}
+        </if>
+        <if test="fileId != null and fileId != ''">
+            AND file_id = #{fileId}
+        </if>
+        <if test="fileName != null and fileName != ''">
+            AND file_name LIKE CONCAT('%', #{fileName}, '%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND created_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND created_time &lt;= #{endTime}
+        </if>
+        ORDER BY created_time DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- ==================== 重复文件查询 ==================== -->
+
+    <resultMap id="duplicateGroupResultMap" type="com.yaocode.sts.components.file.runtime.model.result.DuplicateGroup">
+        <result property="fileMd5" column="file_md5"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileCount" column="file_count"/>
+        <collection property="files" ofType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity"
+                    select="selectFilesByMd5AndSize" column="{fileMd5=file_md5, fileSize=file_size}"/>
+    </resultMap>
+
+    <select id="findDuplicateFiles" resultMap="duplicateGroupResultMap">
+        SELECT file_md5, file_size, COUNT(1) AS file_count
+        FROM file_tbl_file_info
+        WHERE tenant_id = #{tenantId}
+        AND file_status = 1
+        <if test="storageType != null and storageType != ''">
+            AND storage_type = #{storageType}
+        </if>
+        GROUP BY file_md5, file_size
+        HAVING COUNT(1) > 1
+    </select>
+
+    <select id="selectFilesByMd5AndSize" resultType="com.yaocode.sts.components.file.runtime.entity.FileInfoEntity">
+        SELECT *
+        FROM file_tbl_file_info
+        WHERE file_md5 = #{fileMd5}
+          AND file_size = #{fileSize}
+          AND tenant_id = #{tenantId}
+        ORDER BY created_time ASC
+    </select>
+
+    <!-- ==================== 统计查询 ==================== -->
+
+    <select id="getAdminStatistics" resultType="com.yaocode.sts.components.file.runtime.model.result.AdminStatisticsResult">
+        SELECT
+        COUNT(1) AS totalFiles,
+        COALESCE(SUM(file_size), 0) AS totalSize,
+        COUNT(DISTINCT created_user_id) AS totalUsers,
+        SUM(CASE WHEN DATE(created_time) = CURDATE() THEN 1 ELSE 0 END) AS todayUploads,
+        SUM(CASE WHEN DATE(created_time) = CURDATE() THEN file_size ELSE 0 END) AS todaySize
+        FROM file_tbl_file_info
+        WHERE tenant_id = #{tenantId}
+        <if test="storageType != null and storageType != ''">
+            AND storage_type = #{storageType}
+        </if>
+    </select>
+
+    <select id="getTrendData" resultType="com.yaocode.sts.components.file.runtime.model.result.TrendDataResult">
+        SELECT
+        DATE_FORMAT(created_time, '%Y-%m-%d') AS date,
+        COUNT(1) AS uploadCount,
+        SUM(file_size) AS totalSize,
+        COUNT(DISTINCT created_user_id) AS uniqueUsers
+        FROM file_tbl_file_info
+        WHERE tenant_id = #{tenantId}
+        AND created_time BETWEEN #{startDate} AND #{endDate}
+        <if test="storageType != null and storageType != ''">
+            AND storage_type = #{storageType}
+        </if>
+        GROUP BY DATE_FORMAT(created_time, '%Y-%m-%d')
+        ORDER BY date ASC
+    </select>
+
+    <!-- ==================== 更新操作 ==================== -->
+
+    <update id="incrementDownloadCount">
+        UPDATE file_tbl_file_info
+        SET download_count = download_count + 1,
+            last_access_time = NOW()
+        WHERE file_id = #{fileId}
+    </update>
+
+    <update id="incrementViewCount">
+        UPDATE file_tbl_file_info
+        SET view_count = view_count + 1,
+            last_access_time = NOW()
+        WHERE file_id = #{fileId}
+    </update>
+
+    <update id="updateMetadata">
+        UPDATE file_tbl_file_info
+        SET storage_metadata = #{metadata}
+        WHERE file_id = #{fileId}
+    </update>
+
+    <update id="updateAuditStatus">
+        UPDATE file_tbl_file_info
+        SET audit_status = #{auditStatus},
+            audit_comment = #{auditComment},
+            audit_user_id = #{auditUserId},
+            audit_user_name = #{auditUserName},
+            audit_time = #{auditTime},
+            updated_time = NOW()
+        WHERE file_id = #{fileId}
+    </update>
+
+    <update id="batchUpdateStatus">
+        UPDATE file_tbl_file_info
+        SET file_status = #{status},
+        updated_user_id = #{updatedUserId},
+        updated_time = NOW()
+        WHERE file_id IN
+        <foreach collection="fileIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

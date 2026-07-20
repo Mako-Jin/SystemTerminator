@@ -6,12 +6,10 @@ import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.utils.PageResultUtils;
 import com.yaocode.sts.common.web.utils.ResultUtils;
 import com.yaocode.sts.components.file.interfaces.api.FileAdminApi;
-import com.yaocode.sts.components.file.interfaces.model.request.BatchArchiveRequest;
 import com.yaocode.sts.components.file.interfaces.model.request.FileListQueryRequest;
 import com.yaocode.sts.components.file.interfaces.model.request.MigrateOptionsRequest;
 import com.yaocode.sts.components.file.interfaces.model.request.StorageNodeInfoRequest;
 import com.yaocode.sts.components.file.interfaces.model.response.AdminStatisticsResponse;
-import com.yaocode.sts.components.file.interfaces.model.response.BatchArchiveResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.BatchDeleteResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.BatchRestoreResponse;
 import com.yaocode.sts.components.file.interfaces.model.response.CleanupResponse;
@@ -62,10 +60,8 @@ public class FileAdminController implements FileAdminApi {
     @Override
     public ResultModel<String> deleteFile(String fileId) {
         log.info("管理员删除文件: {}", fileId);
-        String result = fileAdminService.deleteFile(
-                converter.toDeleteFileCommand(fileId)
-        );
-        return ResultUtils.ok(result);
+        fileAdminService.deleteFile(converter.toDeleteFileCommand(fileId));
+        return ResultUtils.ok();
     }
 
     @Override
@@ -93,10 +89,8 @@ public class FileAdminController implements FileAdminApi {
     @Override
     public ResultModel<String> restoreFile(String fileId) {
         log.info("管理员恢复文件: {}", fileId);
-        String result = fileAdminService.restoreFile(
-                converter.toRestoreFileCommand(fileId)
-        );
-        return ResultUtils.ok(result);
+        fileAdminService.restoreFile(converter.toRestoreFileCommand(fileId));
+        return ResultUtils.ok();
     }
 
     @Override
@@ -112,39 +106,39 @@ public class FileAdminController implements FileAdminApi {
 
     // ==================== 3. 文件归档 ====================
 
-    @Override
-    public ResultModel<String> archiveFile(String fileId, String archiveType) {
-        log.info("管理员归档文件: {}, 类型: {}", fileId, archiveType);
-        fileAdminService.archiveFile(
-                converter.toArchiveFileCommand(fileId, archiveType)
-        );
-        return ResultUtils.ok();
-    }
-
-    @Override
-    public ResultModel<String> unarchiveFile(String fileId) {
-        log.info("管理员取消归档文件: {}", fileId);
-        fileAdminService.unarchiveFile(
-                converter.toUnarchiveFileCommand(fileId)
-        );
-        return ResultUtils.ok();
-    }
-
-    @Override
-    public ResultModel<BatchArchiveResponse> batchArchiveFiles(@Valid BatchArchiveRequest request) {
-        log.info("管理员批量归档文件: {}", request.getFileIds());
-        BatchArchiveResponse response = converter.toBatchArchiveResponse(
-                fileAdminService.batchArchiveFiles(
-                        converter.toBatchArchiveCommand(request)
-                )
-        );
-        return ResultUtils.ok(response);
-    }
+//    @Override
+//    public ResultModel<String> archiveFile(String fileId, String archiveType) {
+//        log.info("管理员归档文件: {}, 类型: {}", fileId, archiveType);
+//        fileAdminService.archiveFile(
+//                converter.toArchiveFileCommand(fileId, archiveType)
+//        );
+//        return ResultUtils.ok();
+//    }
+//
+//    @Override
+//    public ResultModel<String> unarchiveFile(String fileId) {
+//        log.info("管理员取消归档文件: {}", fileId);
+//        fileAdminService.unarchiveFile(
+//                converter.toUnarchiveFileCommand(fileId)
+//        );
+//        return ResultUtils.ok();
+//    }
+//
+//    @Override
+//    public ResultModel<BatchArchiveResponse> batchArchiveFiles(@Valid BatchArchiveRequest request) {
+//        log.info("管理员批量归档文件: {}", request.getFileIds());
+//        BatchArchiveResponse response = converter.toBatchArchiveResponse(
+//                fileAdminService.batchArchiveFiles(
+//                        converter.toBatchArchiveCommand(request)
+//                )
+//        );
+//        return ResultUtils.ok(response);
+//    }
 
     // ==================== 4. 文件迁移 ====================
 
     @Override
-    public ResultModel<String> migrateFile(String fileId, String targetStorageType,
+    public ResultModel<String> migrateFile(String fileId, Integer targetStorageType,
                                            MigrateOptionsRequest options) {
         log.info("管理员迁移文件: {} -> {}", fileId, targetStorageType);
         String taskId = fileAdminService.migrateFile(
