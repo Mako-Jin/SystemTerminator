@@ -31,9 +31,11 @@ public interface StoragePlugin {
      * @param inputStream 文件输入流
      * @param fileName    文件名
      * @param fileSize    文件大小
+     * @param tenantId    租户id
+     * @param bucket    桶
      * @return 文件存储路径
      */
-    String upload(InputStream inputStream, String fileName, Long fileSize);
+    String upload(InputStream inputStream, String fileName, Long fileSize, String tenantId, String bucket);
 
     /**
      * 获取文件URL

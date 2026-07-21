@@ -21,7 +21,6 @@ public class FileInfoEntity {
      * 文件全局唯一标识(UUID)
      */
     @TableId(type = IdType.ASSIGN_UUID)
-    @TableField("file_id")
     private String fileId;
 
     /**

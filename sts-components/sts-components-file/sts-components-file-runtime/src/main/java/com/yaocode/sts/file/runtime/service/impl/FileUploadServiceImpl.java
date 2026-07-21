@@ -144,7 +144,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         String filePath = plugin.upload(
                 command.getFile().getInputStream(),
                 command.getFileName(),
-                command.getFileSize()
+                command.getFileSize(),
+                command.getTenantId(),
+                ""
         );
 
         // 9. 构建文件URL

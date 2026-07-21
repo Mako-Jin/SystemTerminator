@@ -27,6 +27,27 @@
             <groupId>com.yaocode.sts.components.file</groupId>
             <artifactId>sts-components-file-core</artifactId>
         </dependency>
+        <!-- 默认包含的插件（可选） -->
+        <dependency>
+            <groupId>com.yaocode.sts.components.file</groupId>
+            <artifactId>sts-components-file-plugin-local</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts.components.file</groupId>
+            <artifactId>sts-components-file-plugin-minio</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts.components.file</groupId>
+            <artifactId>sts-components-file-plugin-oss</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
         <!-- mybatis-plus start -->
         <dependency>
             <groupId>com.baomidou</groupId>

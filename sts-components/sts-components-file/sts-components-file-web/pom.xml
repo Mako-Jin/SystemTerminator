@@ -31,6 +31,11 @@
             <groupId>com.yaocode.sts.components.file</groupId>
             <artifactId>sts-components-file-runtime</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts.components.file</groupId>
+            <artifactId>sts-components-file-plugin-local</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- WebSocket 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

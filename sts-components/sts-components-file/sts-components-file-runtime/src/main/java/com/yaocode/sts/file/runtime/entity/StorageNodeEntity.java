@@ -20,7 +20,6 @@ public class StorageNodeEntity {
      * 主键ID
      */
     @TableId(type = IdType.AUTO)
-    @TableField("node_id")
     private Long nodeId;
 
     /**
