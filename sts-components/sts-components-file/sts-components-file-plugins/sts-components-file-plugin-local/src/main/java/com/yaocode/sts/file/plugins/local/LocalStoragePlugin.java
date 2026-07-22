@@ -1,5 +1,7 @@
 package com.yaocode.sts.file.plugins.local;
 
+import com.yaocode.sts.common.tools.id.IdFactory;
+import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.file.core.enums.StorageTypeEnums;
 import com.yaocode.sts.file.core.exception.FileNotFoundException;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
@@ -37,7 +39,7 @@ public class LocalStoragePlugin implements StoragePlugin {
 
     // 日期格式化器，用于按日期分目录
     private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            DateTimeFormatter.ofPattern("yyyyMMdd");
 
     /**
      * 无参构造方法 - SPI要求
@@ -115,16 +117,12 @@ public class LocalStoragePlugin implements StoragePlugin {
 
             // 3. 生成存储文件名
             String extension = FileUtils.getFileExtension(fileName);
-            String baseName = FileUtils.getBaseFileName(fileName);
 
             String storedFileName;
             if (properties.isKeepOriginalName()) {
                 storedFileName = FileUtils.sanitizeFileName(fileName);
             } else {
-                storedFileName = UUID.randomUUID().toString();
-                if (!extension.isEmpty()) {
-                    storedFileName += "." + extension;
-                }
+                storedFileName = IdFactory.generate(IdGeneratorType.UUID);
             }
 
             // 4. 处理重名文件
@@ -132,13 +130,7 @@ public class LocalStoragePlugin implements StoragePlugin {
             if (Files.exists(targetPath)) {
                 String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("_HHmmss"));
                 String nameWithoutExt = storedFileName;
-                String ext = "";
-                if (storedFileName.contains(".")) {
-                    int lastDot = storedFileName.lastIndexOf(".");
-                    nameWithoutExt = storedFileName.substring(0, lastDot);
-                    ext = storedFileName.substring(lastDot);
-                }
-                storedFileName = nameWithoutExt + timestamp + ext;
+                storedFileName = nameWithoutExt + timestamp;
                 targetPath = targetDir.resolve(storedFileName);
             }
 
@@ -148,7 +140,8 @@ public class LocalStoragePlugin implements StoragePlugin {
             }
 
             // 6. 返回相对路径
-            String relativePath = this.storagePath.relativize(targetPath).toString();
+            Path relativeToDateDir = targetDir.relativize(targetPath);
+            String relativePath = datePath + "/" + relativeToDateDir;
             logger.info("文件上传成功: tenant={}, bucket={}, path={}", tenantId, bucket, relativePath);
             return relativePath;
 

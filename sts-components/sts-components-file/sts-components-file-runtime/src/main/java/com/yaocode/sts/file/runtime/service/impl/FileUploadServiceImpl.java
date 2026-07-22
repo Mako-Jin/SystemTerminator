@@ -6,6 +6,7 @@ import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.file.core.enums.StorageTypeEnums;
 import com.yaocode.sts.file.core.model.StorageSelectionContext;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
+import com.yaocode.sts.file.core.utils.FileUtils;
 import com.yaocode.sts.file.runtime.converter.FileUploadRuntimeConverter;
 import com.yaocode.sts.file.runtime.entity.FileInfoEntity;
 import com.yaocode.sts.file.runtime.manager.StoragePluginManager;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -90,14 +93,25 @@ public class FileUploadServiceImpl implements FileUploadService {
 //                throw new BusinessException("不支持的文件类型");
 //            }
 
+        byte[] fileBytes;
+        try {
+            fileBytes = command.getFile().getInputStream().readAllBytes();
+        } catch (IOException e) {
+            throw new BusinessException("读取文件失败: " + e.getMessage());
+        }
+
         // 6. 生成文件ID
         String fileId = IdFactory.generate(IdGeneratorType.UUID);
 
-        // 2. 选择存储类型
+        // 4. 获取文件扩展名和MIME类型
+        // 获取文件扩展名和类型
+        String fileName = command.getFileName();
+        String fileExtension = FileUtils.getFileExtension(fileName);
+        // 5. 选择存储类型
         StorageSelectionContext context = StorageSelectionContext.builder()
                 .specifiedStorage(command.getStorageType())
-                .fileSize(command.getFile().getFileSize())
-                .fileExtension(command.getFile().getFileExtension())
+                .fileSize(command.getFileSize())
+                .fileExtension(fileExtension)
                 .preferredStorages(command.getPreferredStorages())
                 .strategy(command.getStrategy())
                 .tenantId(command.getTenantId())
@@ -107,18 +121,18 @@ public class FileUploadServiceImpl implements FileUploadService {
         StorageTypeEnums storageType = storageSelector.selectStorage(context);
         command.setStorageType(storageType.getCode());
 
-        // 4. 计算MD5（如果未提供）
+        // 6. 计算MD5
         String fileMd5 = command.getFileMd5();
         if (!StringUtils.hasText(fileMd5)) {
             try {
-                fileMd5 = FileMd5Util.calculateMd5(command.getFile().getInputStream());
-                command.getFile().getInputStream().reset();
+                ByteArrayInputStream md5Stream = new ByteArrayInputStream(fileBytes);
+                fileMd5 = FileMd5Util.calculateMd5(md5Stream);
             } catch (Exception e) {
                 log.warn("计算MD5失败: {}", e.getMessage());
             }
         }
 
-        // 5. 检查是否启用去重
+        // 7. 检查去重
         if (command.getEnableDeduplication() != null && command.getEnableDeduplication()) {
             FileExistenceResult existCheck = checkFileExists(
                     FileExistenceQuery.builder()
@@ -129,36 +143,40 @@ public class FileUploadServiceImpl implements FileUploadService {
                             .build()
             );
             if (Objects.nonNull(existCheck) && existCheck.getExists()) {
-                // 秒传
                 return fileUploadRuntimeConverter.toUploadResult(existCheck);
             }
         }
 
-        // 3. 获取存储插件
+        // 8. 获取存储插件
         StoragePlugin plugin = pluginManager.getPlugin(StorageTypeEnums.fromCode(command.getStorageType()));
         if (plugin == null) {
             throw new BusinessException("存储类型不支持: " + command.getStorageType());
         }
 
-        // 8. 上传文件到存储
-        String filePath = plugin.upload(
-                command.getFile().getInputStream(),
-                command.getFileName(),
-                command.getFileSize(),
-                command.getTenantId(),
-                ""
-        );
+        // 9. 上传文件
+        String bucket = command.getBusinessType() != null ? command.getBusinessType() : "default";
+        String filePath;
+        try (ByteArrayInputStream uploadStream = new ByteArrayInputStream(fileBytes)) {
+            filePath = plugin.upload(
+                    uploadStream,
+                    fileName,
+                    command.getFileSize(),
+                    command.getTenantId(),
+                    bucket
+            );
+        } catch (IOException e) {
+            throw new BusinessException("文件上传失败: " + e.getMessage());
+        }
 
-        // 9. 构建文件URL
         String fileUrl = plugin.getFileUrl(filePath);
 
-        // 10. 保存文件信息到数据库
+        // 10. 保存文件信息
         FileInfoEntity entity = fileUploadRuntimeConverter.toFileInfoEntity(
                 command, fileId, filePath, fileUrl, fileMd5
         );
+
         fileInfoMapper.insert(entity);
 
-        // 6. 构建结果
         return fileUploadRuntimeConverter.toUploadResult(entity);
     }
 

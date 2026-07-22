@@ -93,7 +93,7 @@ public interface FileUploadApi {
      * @param metadata           元数据（可选，自定义属性）
      * @return 上传响应
      */
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload/single", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResultModel<UploadResponse> uploadFile(
             @RequestPart("file") @NotNull(message = "文件不能为空") MultipartFile file,
             @RequestParam(required = false) Integer storageType,
