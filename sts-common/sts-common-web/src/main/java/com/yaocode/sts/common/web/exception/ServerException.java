@@ -15,20 +15,16 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ServerException extends BusinessException {
 
-    private String code;
-
     public ServerException() {
         super();
     }
 
     public ServerException(String code, String msg) {
-        super(msg);
-        this.code = code;
+        super(code, msg);
     }
 
     public ServerException(ResultEnums resultEnums) {
-        super(resultEnums.getMsg());
-        this.code = resultEnums.getCode();
+        super(resultEnums.getCode(), resultEnums.getMsg());
     }
 
 }

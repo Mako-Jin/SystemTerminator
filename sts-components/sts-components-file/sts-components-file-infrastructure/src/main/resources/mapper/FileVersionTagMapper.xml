@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaocode.sts.file.infrastructure.mapper.FileVersionTagMapper">
+
+    <resultMap id="BaseResultMap" type="com.yaocode.sts.file.infrastructure.entity.FileVersionTagEntity">
+        <id column="id" property="id"/>
+        <result column="tag_id" property="tagId"/>
+        <result column="file_id" property="fileId"/>
+        <result column="version_id" property="versionId"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="tag_type" property="tagType"/>
+        <result column="tag_description" property="tagDescription"/>
+        <result column="created_user_id" property="createdUserId"/>
+        <result column="created_user_name" property="createdUserName"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, tag_id, file_id, version_id, tag_name, tag_type, tag_description,
+        created_user_id, created_user_name, created_time, updated_time
+    </sql>
+
+    <insert id="insert" parameterType="com.yaocode.sts.file.infrastructure.entity.FileVersionTagEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file_tbl_version_tag (
+            tag_id, file_id, version_id, tag_name, tag_type, tag_description,
+            created_user_id, created_user_name, created_time, updated_time
+        ) VALUES (
+                     #{tagId}, #{fileId}, #{versionId}, #{tagName}, #{tagType}, #{tagDescription},
+                     #{createdUserId}, #{createdUserName}, #{createdTime}, #{updatedTime}
+                 )
+    </insert>
+
+    <select id="selectByTagId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_tag
+        WHERE tag_id = #{tagId}
+    </select>
+
+    <select id="selectByFileIdAndTagName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_tag
+        WHERE file_id = #{fileId}
+        AND tag_name = #{tagName}
+    </select>
+
+    <select id="selectByVersionId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_tag
+        WHERE version_id = #{versionId}
+        ORDER BY created_time DESC
+    </select>
+
+    <select id="selectByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_tag
+        WHERE file_id = #{fileId}
+        ORDER BY created_time DESC
+    </select>
+
+    <select id="selectByFileIdAndType" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_tag
+        WHERE file_id = #{fileId}
+        AND tag_type = #{tagType}
+        ORDER BY created_time DESC
+    </select>
+
+    <delete id="deleteByTagId">
+        DELETE FROM file_tbl_version_tag
+        WHERE tag_id = #{tagId}
+    </delete>
+
+    <delete id="deleteByVersionId">
+        DELETE FROM file_tbl_version_tag
+        WHERE version_id = #{versionId}
+    </delete>
+
+    <delete id="deleteByFileId">
+        DELETE FROM file_tbl_version_tag
+        WHERE file_id = #{fileId}
+    </delete>
+</mapper>

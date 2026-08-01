@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper">
+
+    <resultMap id="BaseResultMap" type="com.yaocode.sts.file.infrastructure.entity.FileVersionEntity">
+        <id column="id" property="id"/>
+        <result column="version_id" property="versionId"/>
+        <result column="file_id" property="fileId"/>
+        <result column="version_number" property="versionNumber"/>
+        <result column="version_type" property="versionType"/>
+        <result column="version_tag" property="versionTag"/>
+        <result column="version_name" property="versionName"/>
+        <result column="version_remark" property="versionRemark"/>
+        <result column="change_summary" property="changeSummary"/>
+        <result column="file_path" property="filePath"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="file_md5" property="fileMd5"/>
+        <result column="file_sha256" property="fileSha256"/>
+        <result column="storage_url" property="storageUrl"/>
+        <result column="parent_version_id" property="parentVersionId"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="is_current" property="isCurrent"/>
+        <result column="is_latest" property="isLatest"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_user_id" property="createdUserId"/>
+        <result column="created_user_name" property="createdUserName"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, version_id, file_id, version_number, version_type, version_tag,
+        version_name, version_remark, change_summary, file_path, file_size,
+        file_md5, file_sha256, storage_url, parent_version_id, branch_id,
+        is_current, is_latest, is_deleted, created_user_id, created_user_name,
+        created_time, updated_time
+    </sql>
+
+    <insert id="insert" parameterType="com.yaocode.sts.file.infrastructure.entity.FileVersionEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file_tbl_file_version (
+            version_id, file_id, version_number, version_type, version_tag,
+            version_name, version_remark, change_summary, file_path, file_size,
+            file_md5, file_sha256, storage_url, parent_version_id, branch_id,
+            is_current, is_latest, is_deleted, created_user_id, created_user_name,
+            created_time, updated_time
+        ) VALUES (
+                     #{versionId}, #{fileId}, #{versionNumber}, #{versionType}, #{versionTag},
+                     #{versionName}, #{versionRemark}, #{changeSummary}, #{filePath}, #{fileSize},
+                     #{fileMd5}, #{fileSha256}, #{storageUrl}, #{parentVersionId}, #{branchId},
+                     #{isCurrent}, #{isLatest}, #{isDeleted}, #{createdUserId}, #{createdUserName},
+                     #{createdTime}, #{updatedTime}
+                 )
+    </insert>
+
+    <select id="selectByVersionId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE version_id = #{versionId}
+        AND is_deleted = 0
+    </select>
+
+    <select id="selectLatestByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+        AND is_deleted = 0
+        ORDER BY version_number DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectCurrentByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+        AND is_current = 1
+        AND is_deleted = 0
+    </select>
+
+    <select id="selectByFileIdOrderByTime" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+        AND is_deleted = 0
+        ORDER BY created_time DESC
+        <if test="limit != null and offset != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="selectAllByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+        AND is_deleted = 0
+        ORDER BY version_number ASC
+    </select>
+
+    <select id="selectByVersionIds" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE version_id IN
+        <foreach collection="versionIds" item="versionId" open="(" separator="," close=")">
+            #{versionId}
+        </foreach>
+        AND is_deleted = 0
+        ORDER BY version_number ASC
+    </select>
+
+    <select id="selectByFileIdAndBranch" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+        AND branch_id = #{branchId}
+        AND is_deleted = 0
+        ORDER BY version_number DESC
+    </select>
+
+    <select id="countByFileId" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+          AND is_deleted = 0
+    </select>
+
+    <update id="updateLatestFlag">
+        UPDATE file_tbl_file_version
+        SET is_latest = #{isLatest}, updated_time = NOW()
+        WHERE version_id = #{versionId}
+    </update>
+
+    <update id="updateCurrentFlag">
+        UPDATE file_tbl_file_version
+        SET is_current = #{isCurrent}, updated_time = NOW()
+        WHERE version_id = #{versionId}
+    </update>
+
+    <update id="updateCurrentFlagByFileId">
+        UPDATE file_tbl_file_version
+        SET is_current = #{isCurrent}, updated_time = NOW()
+        WHERE file_id = #{fileId}
+          AND is_deleted = 0
+    </update>
+
+    <select id="getMaxVersionByFileId" resultType="java.lang.Integer">
+        SELECT MAX(version_number)
+        FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+          AND is_deleted = 0
+    </select>
+
+    <select id="getMaxVersionByBranchId" resultType="java.lang.Integer">
+        SELECT MAX(version_number)
+        FROM file_tbl_file_version
+        WHERE branch_id = #{branchId}
+          AND is_deleted = 0
+    </select>
+
+    <select id="selectVersionChain" resultMap="BaseResultMap">
+        WITH RECURSIVE version_chain AS (
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_version
+        WHERE version_id = #{versionId}
+        AND is_deleted = 0
+        UNION ALL
+        SELECT v.<include refid="Base_Column_List"/>
+        FROM file_version v
+        INNER JOIN version_chain vc ON v.version_id = vc.parent_version_id
+        WHERE v.is_deleted = 0
+        )
+        SELECT * FROM version_chain
+        ORDER BY version_number ASC
+    </select>
+
+    <select id="selectPathBetweenVersions" resultMap="BaseResultMap">
+        WITH RECURSIVE path_from AS (
+        SELECT <include refid="Base_Column_List"/>, 1 AS depth
+        FROM file_tbl_file_version
+        WHERE version_id = #{fromVersionId}
+        AND is_deleted = 0
+        UNION ALL
+        SELECT v.<include refid="Base_Column_List"/>, p.depth + 1
+        FROM file_tbl_file_version v
+        INNER JOIN path_from p ON v.version_id = p.parent_version_id
+        WHERE v.is_deleted = 0
+        ),
+        path_to AS (
+        SELECT <include refid="Base_Column_List"/>, 1 AS depth
+        FROM file_tbl_file_version
+        WHERE version_id = #{toVersionId}
+        AND is_deleted = 0
+        UNION ALL
+        SELECT v.<include refid="Base_Column_List"/>, p.depth + 1
+        FROM file_tbl_file_version v
+        INNER JOIN path_to p ON v.version_id = p.parent_version_id
+        WHERE v.is_deleted = 0
+        )
+        SELECT * FROM path_from
+        UNION
+        SELECT * FROM path_to
+        ORDER BY depth DESC
+    </select>
+
+    <select id="selectOlderThan" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_version
+        WHERE created_time &lt; #{dateTime}
+        AND is_deleted = 0
+        AND is_latest = 0
+        ORDER BY created_time ASC
+    </select>
+
+    <update id="softDelete">
+        UPDATE file_tbl_file_version
+        SET is_deleted = 1, updated_time = NOW()
+        WHERE version_id = #{versionId}
+    </update>
+
+    <delete id="deleteByVersionId">
+        DELETE FROM file_tbl_file_version
+        WHERE version_id = #{versionId}
+    </delete>
+
+    <delete id="deleteByFileId">
+        DELETE FROM file_tbl_file_version
+        WHERE file_id = #{fileId}
+    </delete>
+</mapper>

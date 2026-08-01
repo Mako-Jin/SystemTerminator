@@ -1,11 +1,11 @@
 package com.yaocode.sts.file.interfaces.advices;
 
+import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.advice.GlobalExceptionHandler;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
-import com.yaocode.sts.file.core.exception.StorageException;
-import jakarta.annotation.Resource;
+import com.yaocode.sts.file.core.exception.FileStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,9 +16,6 @@ import org.springframework.web.multipart.MultipartException;
 @Slf4j
 @RestControllerAdvice
 public class FileExceptionHandler extends GlobalExceptionHandler {
-
-    @Resource
-    private MessageUtils messageUtils;
 
     public FileExceptionHandler(MessageUtils messageUtils) {
         super(messageUtils);
@@ -45,19 +42,23 @@ public class FileExceptionHandler extends GlobalExceptionHandler {
     /**
      * 存储异常
      */
-    @ExceptionHandler(StorageException.class)
-    public ResultModel<?> handleStorageException(StorageException e) {
+    @ExceptionHandler(FileStorageException.class)
+    public ResultModel<?> handleStorageException(FileStorageException e) {
         log.error("存储异常 ==> {}", e.getMessage());
         return handle(FileErrorCodeEnums.STORAGE_ERROR, e);
     }
 
     private ResultModel<?> handle(FileErrorCodeEnums resultEnums, Exception exception) {
         String message = exception.getMessage();
-        message = StringUtils.hasText(message) ? message : resultEnums.getMessage();
+        message = StringUtils.hasText(message) ? message : resultEnums.getMsg();
+        Object[] args = {};
+        if (exception instanceof BusinessException businessException) {
+            args = businessException.getArgs() != null ? businessException.getArgs() : args;
+        }
         // if (exception instanceof DataExistException dataExistException) {
         //     return ResultUtils.error(resultEnums.getCode(), message, dataExistException.getData());
         // }
-        return super.handle(resultEnums.getCode(), message);
+        return super.handle(resultEnums.getCode(), message, args);
     }
 
 }

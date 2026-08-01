@@ -3,7 +3,7 @@ package com.yaocode.sts.file.plugins.local;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.file.core.enums.StorageTypeEnums;
-import com.yaocode.sts.file.core.exception.FileNotFoundException;
+import com.yaocode.sts.file.core.exception.FileNotExistException;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.core.utils.FileUtils;
 import org.slf4j.Logger;
@@ -168,7 +168,7 @@ public class LocalStoragePlugin implements StoragePlugin {
         try {
             Path path = resolvePath(filePath);
             if (!Files.exists(path) || !Files.isRegularFile(path)) {
-                throw new FileNotFoundException("文件不存在: " + filePath);
+                throw new FileNotExistException("文件不存在: " + filePath);
             }
             return Files.newInputStream(path);
         } catch (IOException e) {

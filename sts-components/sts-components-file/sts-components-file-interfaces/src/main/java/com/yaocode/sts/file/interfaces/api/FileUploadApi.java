@@ -1,49 +1,18 @@
 package com.yaocode.sts.file.interfaces.api;
 
-import com.yaocode.sts.common.web.model.PageResultModel;
 import com.yaocode.sts.common.web.model.ResultModel;
-import com.yaocode.sts.file.interfaces.model.request.AsyncUploadRequest;
-import com.yaocode.sts.file.interfaces.model.request.Base64UploadRequest;
-import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
-import com.yaocode.sts.file.interfaces.model.request.MultipartInitRequest;
-import com.yaocode.sts.file.interfaces.model.request.ResumeUploadRequest;
-import com.yaocode.sts.file.interfaces.model.request.CancelMultipartRequest;
-import com.yaocode.sts.file.interfaces.model.request.CompleteMultipartRequest;
-import com.yaocode.sts.file.interfaces.model.request.UploadCallbackRequest;
-import com.yaocode.sts.file.interfaces.model.request.UrlFetchRequest;
-import com.yaocode.sts.file.interfaces.model.response.AsyncTaskStatusResponse;
-import com.yaocode.sts.file.interfaces.model.response.AsyncUploadResponse;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
-import com.yaocode.sts.file.interfaces.model.response.HybridUploadResponse;
-import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
-import com.yaocode.sts.file.interfaces.model.response.MultipartSessionResponse;
-import com.yaocode.sts.file.interfaces.model.response.ResumeInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.UploadFileListResponse;
-import com.yaocode.sts.file.interfaces.model.response.UploadPartResponse;
-import com.yaocode.sts.file.interfaces.model.response.UploadProgressResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
-import com.yaocode.sts.file.interfaces.model.response.UploadStatisticsResponse;
-import com.yaocode.sts.file.interfaces.model.response.UploadStatusResponse;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -315,23 +284,23 @@ public interface FileUploadApi {
 //            @RequestBody InputStream inputStream
 //    );
 //
-//    // ==================== 5. 秒传 ====================
-//
-//    /**
-//     * 秒传 - 检查文件是否已存在
-//     *
-//     * @param fileMd5     文件MD5
-//     * @param fileSize    文件大小
-//     * @param storageType 存储类型（可选）
-//     * @return 检查响应
-//     */
-//    @PostMapping("/check")
-//    ResultModel<FileExistenceResponse> checkFileExists(
-//            @RequestParam @NotBlank(message = "文件MD5不能为空") String fileMd5,
-//            @RequestParam @Positive(message = "文件大小必须大于0") Long fileSize,
-//            @RequestParam(required = false) String storageType
-//    );
-//
+    // ==================== 5. 秒传 ====================
+
+    /**
+     * 秒传 - 检查文件是否已存在
+     *
+     * @param fileMd5     文件MD5
+     * @param fileSize    文件大小
+     * @param storageType 存储类型（可选）
+     * @return 检查响应
+     */
+    @PostMapping("/check")
+    ResultModel<FileExistenceResponse> checkFileExists(
+            @RequestParam @NotBlank(message = "文件MD5不能为空") String fileMd5,
+            @RequestParam @Positive(message = "文件大小必须大于0") Long fileSize,
+            @RequestParam(required = false) Integer storageType
+    );
+
 //    /**
 //     * 秒传 - 直接获取已存在文件的信息
 //     *

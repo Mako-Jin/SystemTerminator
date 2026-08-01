@@ -22,9 +22,10 @@
 
     <modules>
         <module>sts-components-file-core</module>
-        <module>sts-components-file-runtime</module>
         <module>sts-components-file-plugins</module>
         <module>sts-components-file-starter</module>
+        <module>sts-components-file-application</module>
+        <module>sts-components-file-infrastructure</module>
         <module>sts-components-file-interfaces</module>
         <module>sts-components-file-web</module>
     </modules>
@@ -50,7 +51,12 @@
             </dependency>
             <dependency>
                 <groupId>com.yaocode.sts.components.file</groupId>
-                <artifactId>sts-components-file-runtime</artifactId>
+                <artifactId>sts-components-file-infrastructure</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.file</groupId>
+                <artifactId>sts-components-file-application</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>

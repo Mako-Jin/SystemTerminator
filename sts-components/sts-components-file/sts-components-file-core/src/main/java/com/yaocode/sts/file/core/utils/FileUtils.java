@@ -1,6 +1,5 @@
 package com.yaocode.sts.file.core.utils;
 
-import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.file.core.enums.FileExtensionEnums;
 import com.yaocode.sts.file.core.enums.FileTypeEnums;
@@ -28,28 +27,36 @@ public class FileUtils {
      * 获取文件扩展名（不含点）
      */
     public static String getFileExtension(String fileName) {
-        if (fileName == null || fileName.isEmpty()) {
-            return SymbolConstants.EMPTY_STR;
-        }
-        int lastDotIndex = fileName.lastIndexOf(SymbolConstants.DOT);
-        if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
-            return fileName.substring(lastDotIndex + 1);
-        }
-        return SymbolConstants.EMPTY_STR;
+        return FileNameUtils.getFileExtension(fileName);
     }
 
     /**
      * 获取基础文件名（不含扩展名）
      */
     public static String getBaseFileName(String fileName) {
-        if (fileName == null || fileName.isEmpty()) {
-            return SymbolConstants.EMPTY_STR;
-        }
-        int lastDotIndex = fileName.lastIndexOf(SymbolConstants.DOT);
-        if (lastDotIndex > 0) {
-            return fileName.substring(0, lastDotIndex);
-        }
-        return fileName;
+        return FileNameUtils.getBaseFileName(fileName);
+    }
+
+    /**
+     * 安全化文件名
+     * 安全的文件名（移除特殊字符）
+     */
+    public static String sanitizeFileName(String fileName) {
+        return FileNameUtils.sanitizeFileName(fileName);
+    }
+
+    /**
+     * 生成唯一文件名（委托给 FileNameUtils）
+     */
+    public static String generateUniqueFileName(String originalFileName) {
+        return FileNameUtils.generateUniqueFileName(originalFileName);
+    }
+
+    /**
+     * 校验文件名是否合法（委托给 FileNameUtils）
+     */
+    public static boolean isValidFileName(String fileName) {
+        return FileNameUtils.isValidFileName(fileName);
     }
 
     /**
@@ -83,18 +90,6 @@ public class FileUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("MD5算法不可用", e);
         }
-    }
-
-    /**
-     * 安全的文件名（移除特殊字符）
-     */
-    public static String sanitizeFileName(String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-        // 移除路径遍历字符和特殊字符
-        return fileName.replaceAll("[\\\\/:*?\"<>|]", "_")
-                .replaceAll("\\s+", "_");
     }
 
     /**
@@ -147,7 +142,7 @@ public class FileUtils {
     /**
      * 获取文件类型枚举
      */
-    public static FileTypeEnums getFileTypeEnum(String fileName) {
+    public static FileTypeEnums getFileTypeEnums(String fileName) {
         String extension = getFileExtension(fileName);
         if (extension.isEmpty()) {
             return FileTypeEnums.OTHER;
@@ -160,7 +155,7 @@ public class FileUtils {
      * 获取文件类型代码（用于数据库）
      */
     public static int getFileTypeCode(String fileName) {
-        return getFileTypeEnum(fileName).getCode();
+        return getFileTypeEnums(fileName).getCode();
     }
 
     /**

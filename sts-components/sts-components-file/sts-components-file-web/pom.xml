@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.yaocode.sts.components.file</groupId>
-            <artifactId>sts-components-file-runtime</artifactId>
+            <artifactId>sts-components-file-application</artifactId>
         </dependency>
         <dependency>
             <groupId>com.yaocode.sts.components.file</groupId>

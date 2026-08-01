@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaocode.sts.file.infrastructure.mapper.FileVersionDiffMapper">
+
+    <resultMap id="BaseResultMap" type="com.yaocode.sts.file.infrastructure.entity.FileVersionDiffEntity">
+        <id column="id" property="id"/>
+        <result column="diff_id" property="diffId"/>
+        <result column="file_id" property="fileId"/>
+        <result column="from_version_id" property="fromVersionId"/>
+        <result column="to_version_id" property="toVersionId"/>
+        <result column="diff_type" property="diffType"/>
+        <result column="diff_path" property="diffPath"/>
+        <result column="diff_size" property="diffSize"/>
+        <result column="change_type" property="changeType"/>
+        <result column="change_percentage" property="changePercentage"/>
+        <result column="added_lines" property="addedLines"/>
+        <result column="deleted_lines" property="deletedLines"/>
+        <result column="modified_lines" property="modifiedLines"/>
+        <result column="created_time" property="createdTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, diff_id, file_id, from_version_id, to_version_id, diff_type,
+        diff_path, diff_size, change_type, change_percentage,
+        added_lines, deleted_lines, modified_lines, created_time
+    </sql>
+
+    <insert id="insert" parameterType="com.yaocode.sts.file.infrastructure.entity.FileVersionDiffEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file_tbl_version_diff (
+            diff_id, file_id, from_version_id, to_version_id, diff_type,
+            diff_path, diff_size, change_type, change_percentage,
+            added_lines, deleted_lines, modified_lines, created_time
+        ) VALUES (
+                     #{diffId}, #{fileId}, #{fromVersionId}, #{toVersionId}, #{diffType},
+                     #{diffPath}, #{diffSize}, #{changeType}, #{changePercentage},
+                     #{addedLines}, #{deletedLines}, #{modifiedLines}, #{createdTime}
+                 )
+    </insert>
+
+    <select id="selectByDiffId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_diff
+        WHERE diff_id = #{diffId}
+    </select>
+
+    <select id="selectByVersionId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_diff
+        WHERE to_version_id = #{versionId}
+        ORDER BY created_time DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectByFromAndTo" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_diff
+        WHERE from_version_id = #{fromVersionId}
+        AND to_version_id = #{toVersionId}
+    </select>
+
+    <select id="selectByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_diff
+        WHERE file_id = #{fileId}
+        ORDER BY created_time DESC
+    </select>
+
+    <select id="selectPath" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_version_diff
+        WHERE (from_version_id = #{fromVersionId} AND to_version_id = #{toVersionId})
+        OR (from_version_id IN (
+        SELECT version_id FROM file_version
+        WHERE version_id IN (
+        SELECT to_version_id FROM file_tbl_version_diff
+        WHERE from_version_id = #{fromVersionId}
+        )
+        ))
+        ORDER BY created_time ASC
+    </select>
+
+    <delete id="deleteByDiffId">
+        DELETE FROM file_tbl_version_diff
+        WHERE diff_id = #{diffId}
+    </delete>
+
+    <delete id="deleteByVersionId">
+        DELETE FROM file_tbl_version_diff
+        WHERE from_version_id = #{versionId}
+           OR to_version_id = #{versionId}
+    </delete>
+
+    <delete id="deleteByFileId">
+        DELETE FROM file_tbl_version_diff
+        WHERE file_id = #{fileId}
+    </delete>
+</mapper>

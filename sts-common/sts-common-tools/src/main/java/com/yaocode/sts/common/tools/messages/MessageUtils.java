@@ -54,7 +54,7 @@ public class MessageUtils {
      * @param key 消息key
      * @return 国际化消息
      */
-    public String getMessage(String key, Object[] args){
+    public String getMessage(String key, Object... args){
         try {
             return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
         } catch (NoSuchMessageException noSuchMessageException) {

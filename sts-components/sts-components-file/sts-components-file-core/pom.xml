@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.yaocode.sts.common</groupId>
-            <artifactId>sts-common-tools</artifactId>
+            <artifactId>sts-common-crypto</artifactId>
         </dependency>
     </dependencies>
 

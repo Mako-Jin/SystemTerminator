@@ -4,8 +4,13 @@ import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.utils.ResultUtils;
 import com.yaocode.sts.file.interfaces.api.FileUploadApi;
+import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
-import com.yaocode.sts.file.runtime.service.FileUploadService;
+import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
+import com.yaocode.sts.file.application.model.result.FileExistenceResult;
+import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.application.service.FileUploadService;
 import com.yaocode.sts.file.web.converter.FileUploadConverter;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -50,15 +55,12 @@ public class FileUploadController implements FileUploadApi {
     ) {
 
         log.info("文件上传: {}, 大小: {}, 存储类型: {}", file.getOriginalFilename(), file.getSize(), storageType);
-
-        UploadResponse response = converter.toUploadResponse(
-                fileUploadService.upload(
-                        converter.toUploadFileCommand(
-                                file, storageType, businessId, businessType,
-                                enableDeduplication, tags, description, isPublic, metadata
-                        )
-                )
+        UploadFileCommand uploadFileCommand = converter.toUploadFileCommand(
+                file, storageType, businessId, businessType,
+                enableDeduplication, tags, description, isPublic, metadata
         );
+        UploadResult uploadResult = fileUploadService.upload(uploadFileCommand);
+        UploadResponse response = converter.toUploadResponse(uploadResult);
         return ResultUtils.ok(response);
     }
 
@@ -302,23 +304,20 @@ public class FileUploadController implements FileUploadApi {
 //        return ResultUtils.ok(response);
 //    }
 //
-//    // ==================== 5. 秒传 ====================
-//
-//    /**
-//     * 秒传 - 检查文件是否已存在
-//     */
-//    @Override
-//    public ResultModel<FileExistenceResponse> checkFileExists(String fileMd5, Long fileSize, String storageType) {
-//        log.info("检查文件是否存在: md5={}, size={}", fileMd5, fileSize);
-//
-//        FileExistenceResponse response = converter.toFileExistenceResponse(
-//                fileUploadService.checkFileExists(
-//                        converter.toFileExistenceQuery(fileMd5, fileSize, storageType)
-//                )
-//        );
-//        return ResultUtils.ok(response);
-//    }
-//
+    // ==================== 5. 秒传 ====================
+
+    /**
+     * 秒传 - 检查文件是否已存在
+     */
+    @Override
+    public ResultModel<FileExistenceResponse> checkFileExists(String fileMd5, Long fileSize, Integer storageType) {
+        log.info("检查文件是否存在: md5={}, size={}", fileMd5, fileSize);
+        FileExistenceQuery query = converter.toFileExistenceQuery(fileMd5, fileSize, storageType);
+        FileExistenceResult result = fileUploadService.checkFileExists(query);
+        FileExistenceResponse response = converter.toFileExistenceResponse(result);
+        return ResultUtils.ok(response);
+    }
+
 //    /**
 //     * 秒传 - 直接获取已存在文件的信息
 //     */

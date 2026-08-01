@@ -1,5 +1,6 @@
 package com.yaocode.sts.common.web.advice;
 
+import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.common.basic.exception.ParamCheckException;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.common.web.enums.ResultEnums;
@@ -46,17 +47,26 @@ public class GlobalExceptionHandler {
         return handle(ResultEnums.SYSTEM_ERROR, exception);
     }
 
-    private ResultModel<?> handle(ResultEnums resultEnums, Exception exception) {
+    protected ResultModel<?> handle(ResultEnums resultEnums, Exception exception) {
         String message = exception.getMessage();
+        Object[] args = {};
+        if (exception instanceof BusinessException businessException) {
+            args = businessException.getArgs() != null ? businessException.getArgs() : args;
+        }
         message = StringUtils.hasText(message) ? message : resultEnums.getMsg();
         // if (exception instanceof DataExistException dataExistException) {
         //     return ResultUtils.error(resultEnums.getCode(), message, dataExistException.getData());
         // }
-        return handle(resultEnums.getCode(), message);
+        return handle(resultEnums.getCode(), message, args);
     }
 
     protected ResultModel<?> handle(String code, String message) {
         message = messageUtils.getMessage(message);
+        return ResultUtils.error(code, message);
+    }
+
+    protected ResultModel<?> handle(String code, String message, Object... args) {
+        message = messageUtils.getMessage(message, args);
         return ResultUtils.error(code, message);
     }
 

@@ -41,7 +41,7 @@ public class FileInfoResponse {
     /**
      * 文件类型
      */
-    private String fileType;
+    private Integer fileType;
 
     /**
      * 文件扩展名

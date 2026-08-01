@@ -1,10 +1,10 @@
 package com.yaocode.sts.file.web.websocket;
 
 import com.yaocode.sts.common.tools.JSONUtils;
-import com.yaocode.sts.file.runtime.model.dto.FileObjectDto;
-import com.yaocode.sts.file.runtime.model.command.UploadFileCommand;
-import com.yaocode.sts.file.runtime.model.result.UploadResult;
-import com.yaocode.sts.file.runtime.service.FileUploadService;
+import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.dto.FileObjectDto;
+import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.application.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

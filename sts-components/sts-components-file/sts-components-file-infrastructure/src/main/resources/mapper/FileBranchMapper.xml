@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper">
+
+    <resultMap id="BaseResultMap" type="com.yaocode.sts.file.infrastructure.entity.FileBranchEntity">
+        <id column="id" property="id"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="file_id" property="fileId"/>
+        <result column="branch_name" property="branchName"/>
+        <result column="branch_type" property="branchType"/>
+        <result column="branch_description" property="branchDescription"/>
+        <result column="head_version_id" property="headVersionId"/>
+        <result column="source_branch_id" property="sourceBranchId"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="is_active" property="isActive"/>
+        <result column="created_user_id" property="createdUserId"/>
+        <result column="created_user_name" property="createdUserName"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, branch_id, file_id, branch_name, branch_type, branch_description,
+        head_version_id, source_branch_id, is_default, is_active,
+        created_user_id, created_user_name, created_time, updated_time
+    </sql>
+
+    <insert id="insert" parameterType="com.yaocode.sts.file.infrastructure.entity.FileBranchEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file_tbl_file_branch (
+            branch_id, file_id, branch_name, branch_type, branch_description,
+            head_version_id, source_branch_id, is_default, is_active,
+            created_user_id, created_user_name, created_time, updated_time
+        ) VALUES (
+                     #{branchId}, #{fileId}, #{branchName}, #{branchType}, #{branchDescription},
+                     #{headVersionId}, #{sourceBranchId}, #{isDefault}, #{isActive},
+                     #{createdUserId}, #{createdUserName}, #{createdTime}, #{updatedTime}
+                 )
+    </insert>
+
+    <select id="selectByBranchId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_branch
+        WHERE branch_id = #{branchId}
+    </select>
+
+    <select id="selectByFileIdAndBranchName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_branch
+        WHERE file_id = #{fileId}
+        AND branch_name = #{branchName}
+        AND is_active = 1
+    </select>
+
+    <select id="selectDefaultByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_branch
+        WHERE file_id = #{fileId}
+        AND is_default = 1
+        AND is_active = 1
+    </select>
+
+    <select id="selectByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_branch
+        WHERE file_id = #{fileId}
+        ORDER BY is_default DESC, created_time ASC
+    </select>
+
+    <select id="selectActiveByFileId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM file_tbl_file_branch
+        WHERE file_id = #{fileId}
+        AND is_active = 1
+        ORDER BY is_default DESC, created_time ASC
+    </select>
+
+    <update id="updateHeadVersion">
+        UPDATE file_tbl_file_branch
+        SET head_version_id = #{headVersionId}, updated_time = NOW()
+        WHERE branch_id = #{branchId}
+    </update>
+
+    <update id="setDefaultBranch">
+        UPDATE file_tbl_file_branch
+        SET is_default = 1, updated_time = NOW()
+        WHERE branch_id = #{branchId}
+    </update>
+
+    <update id="unsetDefaultBranch">
+        UPDATE file_tbl_file_branch
+        SET is_default = 0, updated_time = NOW()
+        WHERE file_id = #{fileId}
+    </update>
+
+    <update id="updateById" parameterType="com.yaocode.sts.file.infrastructure.entity.FileBranchEntity">
+        UPDATE file_tbl_file_branch
+        <set>
+            <if test="branchName != null">branch_name = #{branchName},</if>
+            <if test="branchType != null">branch_type = #{branchType},</if>
+            <if test="branchDescription != null">branch_description = #{branchDescription},</if>
+            <if test="headVersionId != null">head_version_id = #{headVersionId},</if>
+            <if test="sourceBranchId != null">source_branch_id = #{sourceBranchId},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            updated_time = NOW()
+        </set>
+        WHERE branch_id = #{branchId}
+    </update>
+
+    <delete id="deleteByBranchId">
+        DELETE FROM file_tbl_file_branch
+        WHERE branch_id = #{branchId}
+    </delete>
+
+    <delete id="deleteByFileId">
+        DELETE FROM file_tbl_file_branch
+        WHERE file_id = #{fileId}
+    </delete>
+</mapper>
