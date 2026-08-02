@@ -40,19 +40,25 @@
             <dependency>
                 <groupId>com.yaocode.sts.components.scheduler</groupId>
                 <artifactId>sts-components-scheduler-common</artifactId>
-                <version>${project.version}</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>com.yaocode.sts.components.scheduler</groupId>
                 <artifactId>sts-components-scheduler-api</artifactId>
-                <version>${project.version}</version>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>com.yaocode.sts.components.scheduler</groupId>
                 <artifactId>sts-components-scheduler-plugins</artifactId>
-                <version>${project.version}</version>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yaocode.sts.components.scheduler</groupId>
+                <artifactId>sts-components-scheduler-executor</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
