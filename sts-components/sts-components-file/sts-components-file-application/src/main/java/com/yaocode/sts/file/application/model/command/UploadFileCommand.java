@@ -35,14 +35,11 @@ public class UploadFileCommand {
     /** 存储类型 */
     private Integer storageType;
 
-    /** 业务ID */
-    private String businessId;
-
-    /** 业务类型 */
-    private String businessType;
+    /** 存储桶 */
+    private String bucket;
 
     /** 是否启用去重 */
-    private Boolean enableDeduplication;
+    private Integer enableDeduplication;
 
     /** 文件标签（逗号分隔） */
     private String tags;
@@ -51,7 +48,7 @@ public class UploadFileCommand {
     private String description;
 
     /** 是否公开 */
-    private Boolean isPublic;
+    private Integer isPublic;
 
     /** 自定义元数据 */
     private Map<String, String> metadata;

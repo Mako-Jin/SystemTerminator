@@ -266,10 +266,10 @@ public class FileInfoEntity {
     /**
      * 当前版本号
      */
-    private Integer currentVersionNumber;
+    private Integer versionNumber;
 
     /**
      * 当前版本ID
      */
-    private String currentVersionId;
+    private String versionId;
 }

@@ -1,6 +1,7 @@
 package com.yaocode.sts.file.application.converter;
 
 import com.yaocode.sts.common.tools.JSONUtils;
+import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
@@ -50,10 +51,11 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "processingTime", ignore = true)
     UploadResult toUploadResultFromExistence(FileExistenceResult result);
 
+    @Mapping(target = "fileUrl", source = "storageUrl")
     @Mapping(target = "uploadStatusDesc", expression = "java(UploadStatusEnums.fromCode(entity.getUploadStatus()).getDesc())")
     @Mapping(target = "uploadTime", source = "uploadTime")
     @Mapping(target = "processingTime", ignore = true)
-    @Mapping(target = "isDuplicate", ignore = true)
+    @Mapping(target = "isDuplicate", constant = "false")
     @Mapping(target = "duplicateFileId", ignore = true)
     @Mapping(target = "message", constant = "上传成功")
     UploadResult toUploadResultFromEntity(FileInfoEntity entity);
@@ -62,7 +64,6 @@ public interface FileUploadApplicationConverter {
 
     // ==================== FileInfoEntity 构建 ====================
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "fileId", source = "fileId")
     @Mapping(target = "fileName", source = "command.fileName")
     @Mapping(target = "filePath", source = "filePath")
@@ -76,7 +77,7 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "fileExtension", expression = "java(getFileExtensionCode(command))")
     @Mapping(target = "tenantId", expression = "java(getTenantId(command))")
     @Mapping(target = "createdUserId", expression = "java(getUserId(command))")
-    @Mapping(target = "tags", source = "command.tags")
+    @Mapping(target = "tags", expression = "java(toJsonArray(command.getTags()))")
     @Mapping(target = "description", source = "command.description")
     @Mapping(target = "isPublic", expression = "java(getIsPublic(command))")
     @Mapping(target = "storageMetadata", expression = "java(getStorageMetadata(command))")
@@ -96,9 +97,8 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "createdUserName", ignore = true)
     @Mapping(target = "updatedUserId", ignore = true)
     @Mapping(target = "updatedUserName", ignore = true)
-    @Mapping(target = "currentVersionNumber", ignore = true)
+    @Mapping(target = "versionNumber", ignore = true)
     @Mapping(target = "versionControlEnabled", ignore = true)
-    @Mapping(target = "versionCount", ignore = true)
     FileInfoEntity toFileInfoEntity(
             UploadFileCommand command,
             String fileId,
@@ -110,9 +110,9 @@ public interface FileUploadApplicationConverter {
 
     // ==================== FileInfoResult 转换 ====================
 
-    @Mapping(target = "tags", expression = "java(parseTags(entity.getTags()))")
-    @Mapping(target = "fileStatusDesc", ignore = true)
-    @Mapping(target = "uploadStatusDesc", ignore = true)
+    @Mapping(target = "tags", expression = "java(parseJsonArray(entity.getTags()))")
+//    @Mapping(target = "fileStatusDesc", ignore = true)
+//    @Mapping(target = "uploadStatusDesc", ignore = true)
     @Mapping(target = "filePath", ignore = true)
     @Mapping(target = "fileSha256", ignore = true)
     FileInfoResult toFileInfoResult(FileInfoEntity entity);
@@ -144,8 +144,8 @@ public interface FileUploadApplicationConverter {
 
     @Named("getBucket")
     default String getBucket(UploadFileCommand command) {
-        return command.getBusinessType() != null && !command.getBusinessType().isEmpty()
-                ? command.getBusinessType() : "default";
+        return StringUtils.hasText(command.getBucket())
+                ? command.getBucket() : "default";
     }
 
     @Named("getFileType")
@@ -176,7 +176,7 @@ public interface FileUploadApplicationConverter {
 
     @Named("getIsPublic")
     default Integer getIsPublic(UploadFileCommand command) {
-        return command.getIsPublic() != null && command.getIsPublic() ? 1 : 0;
+        return command.getIsPublic();
     }
 
     @Named("getStorageMetadata")
@@ -187,11 +187,58 @@ public interface FileUploadApplicationConverter {
         return null;
     }
 
-    @Named("parseTags")
-    default List<String> parseTags(String tags) {
+    /**
+     * 将前端传入的逗号分隔标签字符串转为 JSON 数组存储。
+     * 支持两种输入格式：
+     *   1) 逗号分隔字符串："合同,重要,2024" → ["合同","重要","2024"]
+     *   2) 已经是 JSON 数组：   '["合同","重要"]' → 直接使用
+     */
+    @Named("toJsonArray")
+    default String toJsonArray(String tags) {
+        if (tags == null || tags.trim().isEmpty()) {
+            return null;
+        }
+        String trimmed = tags.trim();
+        // 如果已经是 JSON 数组格式，直接返回
+        if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+            return trimmed;
+        }
+        // 逗号分隔：先拆分为 List，再序列化为 JSON 数组
+        List<String> list = Arrays.stream(trimmed.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return JSONUtils.toJson(list);
+    }
+
+    /**
+     * 解析数据库中存储的 JSON 数组标签为 List<String>。
+     * 兼容历史数据：若不是 JSON 数组则回退到逗号分隔解析。
+     */
+    @Named("parseJsonArray")
+    default List<String> parseJsonArray(String tags) {
         if (tags == null || tags.isEmpty()) {
             return Collections.emptyList();
         }
-        return Arrays.asList(tags.split(","));
+        String trimmed = tags.trim();
+        // 正常 JSON 数组
+        if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+            try {
+                List<String> result = JSONUtils.parseArray(trimmed, String.class);
+                if (result != null && !result.isEmpty()) {
+                    return result;
+                }
+            } catch (Exception e) {
+                // 解析失败回退
+            }
+        }
+        // 兼容历史逗号分隔格式
+        return Arrays.stream(trimmed.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
     }
 }

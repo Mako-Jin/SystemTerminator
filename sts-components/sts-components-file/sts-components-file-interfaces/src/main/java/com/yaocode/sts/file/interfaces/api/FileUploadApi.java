@@ -5,7 +5,9 @@ import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,9 +55,8 @@ public interface FileUploadApi {
      *
      * @param file               上传的文件（必填）
      * @param storageType        存储类型（可选，默认使用系统配置）
-     * @param businessId         业务ID（可选，用于业务关联）
-     * @param businessType       业务类型（可选，用于业务分类）
-     * @param enableDeduplication 是否启用去重（默认true）
+     * @param bucket             存储桶（可选，默认使用系统配置）
+     * @param enableDeduplication 是否启用去重（默认1）
      * @param tags               文件标签（可选，逗号分隔）
      * @param description        文件描述（可选）
      * @param isPublic           是否公开（默认false）
@@ -66,12 +67,14 @@ public interface FileUploadApi {
     ResultModel<UploadResponse> uploadFile(
             @RequestPart("file") @NotNull(message = "文件不能为空") MultipartFile file,
             @RequestParam(required = false) Integer storageType,
-            @RequestParam(required = false) String businessId,
-            @RequestParam(required = false) String businessType,
-            @RequestParam(defaultValue = "true") Boolean enableDeduplication,
-            @RequestParam(required = false) String tags,
+            @RequestParam(required = false) String bucket,
+            @RequestParam(defaultValue = "true") Integer enableDeduplication,
+            @RequestParam(required = false)
+            @Size(max = 2000, message = "标签总长度不能超过2000字符")
+            @Pattern(regexp = "^(\\[[^\\]]*\\]|[\\p{IsHan}A-Za-z0-9_,\\s]*)$", message = "标签格式不正确，支持逗号分隔或 JSON 数组")
+            String tags,
             @RequestParam(required = false) String description,
-            @RequestParam(defaultValue = "false") Boolean isPublic,
+            @RequestParam(defaultValue = "false") Integer isPublic,
             @RequestParam(required = false) Map<String, String> metadata
     );
 

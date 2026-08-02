@@ -56,7 +56,7 @@ public class FileUploadExecutionHandler implements FileUploadHandler {
         }
 
         UploadFileCommand command = fileUploadDto.getCommand();
-        String bucket = command.getBusinessType() != null ? command.getBusinessType() : "default";
+        String bucket = command.getBucket() != null ? command.getBucket() : "default";
 
         try (InputStream is = Files.newInputStream(fileUploadDto.getTempFile())) {
             String filePath = plugin.upload(is, command.getFileName(), command.getFileSize(),

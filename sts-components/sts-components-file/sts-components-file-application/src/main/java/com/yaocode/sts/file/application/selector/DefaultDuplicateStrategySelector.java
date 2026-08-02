@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.application.selector;
 
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -54,7 +56,7 @@ public class DefaultDuplicateStrategySelector implements DuplicateStrategySelect
 
     @Override
     public DuplicateFileStrategyEnums selectStrategy(FileUploadContext context, FileExistenceContext existFile) {
-        if (context.getEnableDeduplication() == null || !context.getEnableDeduplication()) {
+        if (!Objects.equals(EnableEnums.ENABLED.getCode(), context.getEnableDeduplication())) {
             log.debug("去重未启用，跳过策略选择");
             return null;
         }

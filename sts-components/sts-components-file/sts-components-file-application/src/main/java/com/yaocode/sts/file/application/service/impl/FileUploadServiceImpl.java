@@ -14,15 +14,11 @@ import com.yaocode.sts.file.application.service.handler.FileUploadCleanupHandler
 import com.yaocode.sts.file.application.service.handler.FileUploadExecutionHandler;
 import com.yaocode.sts.file.application.service.handler.FileUploadPreparationHandler;
 import com.yaocode.sts.file.application.service.handler.FileUploadValidationHandler;
-import com.yaocode.sts.file.infrastructure.entity.FileDeduplicationEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
-import com.yaocode.sts.file.infrastructure.mapper.FileDeduplicationMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
+import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 文件上传服务实现（完整优化版）
@@ -58,9 +54,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     private FileUploadCleanupHandler cleanupHandler;
     // 仅用于 checkFileExists 接口查询
     @Resource
-    private FileDeduplicationMapper fileDeduplicationMapper;
+    private FileDeduplicationDao fileDeduplicationDao;
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
     @Resource
     private FileUploadApplicationConverter fileUploadApplicationConverter;
 
@@ -90,37 +86,6 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public FileExistenceResult checkFileExists(FileExistenceQuery query) {
-        String fingerprint = query.getFileMd5() + "_" + query.getFileSize() + "_" +
-                (query.getStorageType() != null ? query.getStorageType() : "default") + "_" + query.getTenantId();
-
-        FileDeduplicationEntity dedup = fileDeduplicationMapper.selectByFingerprint(fingerprint);
-        if (dedup == null) {
-            return FileExistenceResult.builder().exists(false).build();
-        }
-
-        FileInfoEntity file = fileInfoMapper.selectByFileIdAndTenant(dedup.getFileId(), query.getTenantId());
-        if (file == null) {
-            return FileExistenceResult.builder().exists(false).build();
-        }
-
-        FileExistenceResult result = FileExistenceResult.builder()
-                .exists(true)
-                .fileId(file.getFileId())
-                .fileName(file.getFileName())
-                .fileSize(file.getFileSize())
-                .fileMd5(file.getFileMd5())
-                .fileSha256(file.getFileSha256())
-                .fileUrl(file.getStorageUrl())
-                .storageType(file.getStorageType())
-                .tenantId(file.getTenantId())
-                .userId(file.getCreatedUserId())
-                .versionNumber(file.getCurrentVersionNumber())
-                .build();
-
-        List<FileInfoEntity> duplicates = fileInfoMapper.selectByMd5AndTenant(query.getFileMd5(), query.getTenantId());
-        result.setIsDuplicate(duplicates.size() > 1);
-        result.setDuplicateFiles(fileUploadApplicationConverter.toFileInfoResultList(duplicates));
-
-        return result;
+        return deduplicationHandler.checkFileExists(query.getFileMd5(), query.getFileSize(), query.getStorageType(), query.getTenantId());
     }
 }

@@ -1,6 +1,7 @@
 package com.yaocode.sts.file.application.service.handler;
 
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
+import com.yaocode.sts.file.core.utils.FileFingerprintUtils;
 
 /**
  * 文件上传处理器接口
@@ -36,5 +37,9 @@ public interface FileUploadHandler {
      */
     default String getName() {
         return getClass().getSimpleName();
+    }
+
+    default String buildFingerprint(String fileMd5, Long fileSize, Integer storageType, String tenantId) {
+        return FileFingerprintUtils.buildFingerprint(fileMd5, fileSize, storageType, tenantId);
     }
 }

@@ -65,7 +65,7 @@ public class FileUploadContext {
     /**
      * 是否启用去重
      */
-    private Boolean enableDeduplication;
+    private Integer enableDeduplication;
 
     /**
      * 用户指定的策略

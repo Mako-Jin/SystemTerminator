@@ -1,7 +1,7 @@
 package com.yaocode.sts.file.application.service.impl;
 
 import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
 import com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper;
 import com.yaocode.sts.file.application.service.FileBranchService;
 import jakarta.annotation.Resource;
@@ -18,7 +18,7 @@ public class FileBranchServiceImpl implements FileBranchService {
     @Resource
     private FileVersionMapper fileVersionMapper;
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoMapper fileInfoMapper;
 
     /**
      * 创建分支

@@ -166,12 +166,11 @@ public class FileUploadConverter {
     public UploadFileCommand toUploadFileCommand(
             MultipartFile file,
             Integer storageType,
-            String businessId,
-            String businessType,
-            Boolean enableDeduplication,
+            String bucket,
+            Integer enableDeduplication,
             String tags,
             String description,
-            Boolean isPublic,
+            Integer isPublic,
             java.util.Map<String, String> metadata
     ) {
 
@@ -182,12 +181,11 @@ public class FileUploadConverter {
                 .fileName(fileObject != null ? fileObject.getFileName() : null)
                 .fileSize(fileObject != null ? fileObject.getFileSize() : 0)
                 .storageType(storageType)
-                .businessId(businessId)
-                .businessType(businessType)
-                .enableDeduplication(enableDeduplication != null ? enableDeduplication : true)
+                .bucket(bucket)
+                .enableDeduplication(enableDeduplication)
                 .tags(tags)
                 .description(description)
-                .isPublic(isPublic != null ? isPublic : false)
+                .isPublic(isPublic)
                 .metadata(metadata)
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())
@@ -899,7 +897,7 @@ public class FileUploadConverter {
                 .storageType(result.getStorageType())
                 .storageUrl(result.getStorageUrl())
                 .fileStatus(result.getFileStatus())
-                .fileStatusDesc(result.getFileStatusDesc())
+//                .fileStatusDesc(result.getFileStatusDesc())
                 .downloadCount(result.getDownloadCount())
                 .tags(result.getTags())
                 .description(result.getDescription())

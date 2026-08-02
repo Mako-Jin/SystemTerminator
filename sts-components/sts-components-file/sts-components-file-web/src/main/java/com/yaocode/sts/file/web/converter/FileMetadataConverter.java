@@ -498,7 +498,7 @@ public class FileMetadataConverter {
                 .storageType(result.getStorageType())
                 .storageUrl(result.getStorageUrl())
                 .fileStatus(result.getFileStatus())
-                .fileStatusDesc(result.getFileStatusDesc())
+//                .fileStatusDesc(result.getFileStatusDesc())
                 .uploadStatus(result.getUploadStatus())
                 .uploadProgress(result.getUploadProgress())
                 .downloadCount(result.getDownloadCount())

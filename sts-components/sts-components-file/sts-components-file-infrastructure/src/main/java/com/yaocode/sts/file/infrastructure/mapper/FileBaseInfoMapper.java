@@ -15,31 +15,13 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface FileInfoMapper extends BaseMapper<FileInfoEntity> {
-
-    // ==================== 基础查询 ====================
-
-    /**
-     * 根据文件ID和租户ID查询
-     */
-    FileInfoEntity selectByFileIdAndTenant(
-            @Param("fileId") String fileId,
-            @Param("tenantId") String tenantId
-    );
+public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
 
     /**
      * 根据文件ID列表和租户ID批量查询
      */
     List<FileInfoEntity> selectByFileIdsAndTenant(
             @Param("fileIds") List<String> fileIds,
-            @Param("tenantId") String tenantId
-    );
-
-    /**
-     * 根据MD5和租户ID查询
-     */
-    List<FileInfoEntity> selectByMd5AndTenant(
-            @Param("fileMd5") String fileMd5,
             @Param("tenantId") String tenantId
     );
 

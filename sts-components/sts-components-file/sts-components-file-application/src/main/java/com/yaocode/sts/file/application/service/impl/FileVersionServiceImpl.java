@@ -6,12 +6,12 @@ import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.file.application.converter.FileVersionApplicationConverter;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.entity.FileBranchEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileVersionEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileVersionTagEntity;
 import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
 import com.yaocode.sts.file.infrastructure.mapper.FileVersionDiffMapper;
 import com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper;
 import com.yaocode.sts.file.infrastructure.mapper.FileVersionTagMapper;
@@ -75,7 +75,7 @@ public class FileVersionServiceImpl implements FileVersionService {
     @Resource
     private FileVersionMapper fileVersionMapper;
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
     @Resource
     private FileBranchMapper fileBranchMapper;
     @Resource
@@ -708,7 +708,7 @@ public class FileVersionServiceImpl implements FileVersionService {
         if (!StringUtils.hasText(fileId)) {
             return null;
         }
-        FileInfoEntity fileInfo = fileInfoMapper.selectByFileIdAndTenant(fileId, tenantId);
+        FileInfoEntity fileInfo = fileBaseInfoDao.selectByFileIdAndTenant(fileId, tenantId);
         return fileInfo != null ? fileInfo.getFileName() : null;
     }
 

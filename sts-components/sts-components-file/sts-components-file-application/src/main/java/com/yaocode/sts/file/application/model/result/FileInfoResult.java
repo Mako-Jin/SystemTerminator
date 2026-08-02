@@ -35,6 +35,11 @@ public class FileInfoResult {
     private String fileMd5;
 
     /**
+     * 文件sha256值
+     */
+    private String fileSha256;
+
+    /**
      * 文件类型
      */
     private Integer fileType;
@@ -57,7 +62,7 @@ public class FileInfoResult {
     /**
      * 文件状态描述
      */
-    private String fileStatusDesc;
+//    private String fileStatusDesc;
 
     /**
      * 下载次数

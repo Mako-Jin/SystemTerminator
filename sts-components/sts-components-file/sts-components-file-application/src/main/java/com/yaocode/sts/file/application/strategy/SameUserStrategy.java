@@ -5,8 +5,8 @@ import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
 import com.yaocode.sts.file.core.strategy.AbstractDuplicateStrategy;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -28,7 +28,7 @@ import java.util.Objects;
 public class SameUserStrategy extends AbstractDuplicateStrategy {
 
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
 
     public SameUserStrategy() {
         this.name = "同一用户覆盖策略";
@@ -53,7 +53,7 @@ public class SameUserStrategy extends AbstractDuplicateStrategy {
             byte[] fileBytes
     ) {
         // 1. 更新文件信息
-        FileInfoEntity entity = fileInfoMapper.selectByFileIdAndTenant(
+        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 existFile.getFileId(), context.getTenantId()
         );
 
@@ -70,7 +70,7 @@ public class SameUserStrategy extends AbstractDuplicateStrategy {
         entity.setUpdatedTime(LocalDateTime.now());
         entity.setVersion(entity.getVersion() + 1);
 
-        fileInfoMapper.updateById(entity);
+        fileBaseInfoDao.updateById(entity);
 
         return ExecuteResult.builder()
                 .fileId(existFile.getFileId())

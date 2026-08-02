@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.interfaces.model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -68,6 +69,7 @@ public class UploadResponse {
     /**
      * 上传时间（毫秒级时间戳）
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime uploadTime;
     /**
      * 处理耗时（毫秒）

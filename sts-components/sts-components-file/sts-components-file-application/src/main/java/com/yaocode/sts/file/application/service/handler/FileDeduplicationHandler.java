@@ -1,25 +1,28 @@
 package com.yaocode.sts.file.application.service.handler;
 
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.DuplicateStrategyService;
 import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
+import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.exception.FileException;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
+import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import com.yaocode.sts.file.infrastructure.entity.FileDeduplicationEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
-import com.yaocode.sts.file.infrastructure.mapper.FileDeduplicationMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,20 +47,20 @@ import java.util.Objects;
 public class FileDeduplicationHandler implements FileUploadHandler {
 
     @Resource
-    private FileDeduplicationMapper fileDeduplicationMapper;
+    private FileDeduplicationDao fileDeduplicationDao;
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
     @Resource
     private FileUploadApplicationConverter converter;
     @Resource
-    private DuplicateStrategyService strategyService;
+    private DuplicateStrategyService duplicateStrategyService;
 
     @Override
     public void handle(FileUploadDto fileUploadDto) {
         UploadFileCommand command = fileUploadDto.getCommand();
 
         // 未启用去重，直接跳过
-        if (command.getEnableDeduplication() == null || !command.getEnableDeduplication()) {
+        if (!Objects.equals(EnableEnums.ENABLED.getCode(), command.getEnableDeduplication())) {
             return;
         }
 
@@ -94,14 +97,14 @@ public class FileDeduplicationHandler implements FileUploadHandler {
         fileUploadDto.setExistenceContext(existenceContext);
 
         // 执行策略
-        ExecuteResult strategyResult = strategyService.execute(
+        ExecuteResult strategyResult = duplicateStrategyService.execute(
                 uploadContext, existenceContext, fileUploadDto.getTempFile(), fileMd5, fileSha256
         );
 
         if (strategyResult != null) {
             // 策略短路：复用 / 覆盖 / 新版本 等场景，跳过后续上传
             fileUploadDto.setCompleted(true);
-            fileUploadDto.setResult(convertToUploadResult(strategyResult));
+            fileUploadDto.setResult(convertToUploadResult(strategyResult, fileUploadDto));
             log.info("重复文件策略已完成: fileId={}, strategy={}",
                     fileUploadDto.getFileId(), strategyResult.getMessage());
         }
@@ -109,16 +112,16 @@ public class FileDeduplicationHandler implements FileUploadHandler {
 
     // ========== 内部方法 ==========
 
-    private FileExistenceResult checkFileExists(
+    public FileExistenceResult checkFileExists(
             String fileMd5, Long fileSize, Integer storageType, String tenantId) {
         String fingerprint = buildFingerprint(fileMd5, fileSize, storageType, tenantId);
 
-        FileDeduplicationEntity dedup = fileDeduplicationMapper.selectByFingerprint(fingerprint);
+        FileDeduplicationEntity dedup = fileDeduplicationDao.selectByFingerprint(fingerprint);
         if (dedup == null) {
             return FileExistenceResult.builder().exists(false).build();
         }
 
-        FileInfoEntity file = fileInfoMapper.selectByFileIdAndTenant(dedup.getFileId(), tenantId);
+        FileInfoEntity file = fileBaseInfoDao.selectByFileIdAndTenant(dedup.getFileId(), tenantId);
         if (file == null) {
             return FileExistenceResult.builder().exists(false).build();
         }
@@ -134,19 +137,14 @@ public class FileDeduplicationHandler implements FileUploadHandler {
                 .storageType(file.getStorageType())
                 .tenantId(file.getTenantId())
                 .userId(file.getCreatedUserId())
-                .versionNumber(file.getCurrentVersionNumber())
+                .versionNumber(file.getVersionNumber())
                 .build();
 
-        List<FileInfoEntity> duplicates = fileInfoMapper.selectByMd5AndTenant(fileMd5, tenantId);
+        List<FileInfoEntity> duplicates = fileBaseInfoDao.selectByMd5AndTenant(fileMd5, tenantId);
         result.setIsDuplicate(duplicates.size() > 1);
         result.setDuplicateFiles(converter.toFileInfoResultList(duplicates));
 
         return result;
-    }
-
-    private String buildFingerprint(String fileMd5, Long fileSize, Integer storageType, String tenantId) {
-        return fileMd5 + "_" + fileSize + "_" +
-                (storageType != null ? storageType : "default") + "_" + tenantId;
     }
 
     private boolean isHashConsistent(String fileSha256, String existSha256) {
@@ -156,10 +154,12 @@ public class FileDeduplicationHandler implements FileUploadHandler {
         return Objects.equals(fileSha256, existSha256);
     }
 
-    private UploadResult convertToUploadResult(ExecuteResult executeResult) {
+    private UploadResult convertToUploadResult(ExecuteResult executeResult, FileUploadDto fileUploadDto) {
         if (executeResult == null) {
             return null;
         }
+        long processingTime = fileUploadDto.getProcessingTime();
+        String uploadStatusDesc = UploadStatusEnums.fromCode(executeResult.getUploadStatus()).getDesc();
         return UploadResult.builder()
                 .fileId(executeResult.getFileId())
                 .fileName(executeResult.getFileName())
@@ -171,9 +171,13 @@ public class FileDeduplicationHandler implements FileUploadHandler {
                         executeResult.getStorageType() : null)
                 .tenantId(executeResult.getTenantId())
                 .uploadStatus(executeResult.getUploadStatus())
+                .uploadStatusDesc(uploadStatusDesc)
                 .isDuplicate(executeResult.getIsDuplicate())
+                .duplicateFileId(executeResult.getSourceFileId())
                 .sourceFileId(executeResult.getSourceFileId())
                 .versionNumber(executeResult.getVersionNumber())
+                .uploadTime(LocalDateTime.now())
+                .processingTime(processingTime)
                 .message(executeResult.getMessage())
                 .build();
     }

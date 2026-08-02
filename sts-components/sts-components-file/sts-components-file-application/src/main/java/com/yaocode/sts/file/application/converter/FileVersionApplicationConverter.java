@@ -53,7 +53,6 @@ public interface FileVersionApplicationConverter {
     /**
      * 构建 FileVersionEntity
      */
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "versionId", source = "versionId")
     @Mapping(target = "fileId", source = "command.fileId")
     @Mapping(target = "versionNumber", source = "versionNumber")

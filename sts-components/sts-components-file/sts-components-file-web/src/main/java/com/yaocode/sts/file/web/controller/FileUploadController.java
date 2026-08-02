@@ -45,19 +45,18 @@ public class FileUploadController implements FileUploadApi {
     public ResultModel<UploadResponse> uploadFile(
             MultipartFile file,
             Integer storageType,
-            String businessId,
-            String businessType,
-            Boolean enableDeduplication,
+            String bucket,
+            Integer enableDeduplication,
             String tags,
             String description,
-            Boolean isPublic,
+            Integer isPublic,
             Map<String, String> metadata
     ) {
 
         log.info("文件上传: {}, 大小: {}, 存储类型: {}", file.getOriginalFilename(), file.getSize(), storageType);
         UploadFileCommand uploadFileCommand = converter.toUploadFileCommand(
-                file, storageType, businessId, businessType,
-                enableDeduplication, tags, description, isPublic, metadata
+                file, storageType, bucket, enableDeduplication, tags, description,
+                isPublic, metadata
         );
         UploadResult uploadResult = fileUploadService.upload(uploadFileCommand);
         UploadResponse response = converter.toUploadResponse(uploadResult);

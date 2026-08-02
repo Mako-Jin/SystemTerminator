@@ -4,9 +4,9 @@ import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.file.core.enums.FileStatusEnums;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
 import com.yaocode.sts.file.infrastructure.entity.StorageNodeEntity;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
 import com.yaocode.sts.file.infrastructure.mapper.StorageNodeMapper;
 import com.yaocode.sts.file.application.model.command.AddStorageNodeCommand;
 import com.yaocode.sts.file.application.model.command.AuditFileCommand;
@@ -36,7 +36,6 @@ import com.yaocode.sts.file.application.model.query.TrendDataQuery;
 import com.yaocode.sts.file.application.model.result.AdminStatisticsResult;
 import com.yaocode.sts.file.application.model.result.BatchDeleteResult;
 import com.yaocode.sts.file.application.model.result.BatchRestoreResult;
-import com.yaocode.sts.file.application.model.result.CleanupDetailResult;
 import com.yaocode.sts.file.application.model.result.CleanupResult;
 import com.yaocode.sts.file.application.model.result.ConnectionTestResult;
 import com.yaocode.sts.file.application.model.result.DuplicateCleanResult;
@@ -77,7 +76,7 @@ import java.util.stream.Collectors;
 public class FileAdminServiceImpl implements FileAdminService {
 
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
 
     @Resource
     private StorageNodeMapper storageNodeMapper;
@@ -91,8 +90,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteFile(DeleteFileCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileInfoMapper.selectByFileIdAndTenant(
-                command.getFileId(), command.getTenantId());
+        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
         }
@@ -115,7 +113,7 @@ public class FileAdminServiceImpl implements FileAdminService {
 //        entity.setDeletedUserName(command.getUserName());
         entity.setUpdatedUserId(command.getUserId());
         entity.setUpdatedTime(LocalDateTime.now());
-        fileInfoMapper.updateById(entity);
+        fileBaseInfoDao.updateById(entity);
         log.info("文件删除成功: {}, 操作人: {}", command.getFileId(), command.getUserName());
     }
 
@@ -157,7 +155,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public void permanentDeleteFile(PermanentDeleteCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileInfoMapper.selectByFileIdAndTenant(
+        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
@@ -177,7 +175,7 @@ public class FileAdminServiceImpl implements FileAdminService {
         }
 
         // 4. 物理删除数据库记录
-        fileInfoMapper.deleteById(entity.getFileId());
+        fileBaseInfoDao.removeById(entity.getFileId());
 
         log.warn("文件永久删除: {}, 操作人: {}", command.getFileId(), command.getUserName());
     }
@@ -188,7 +186,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public void restoreFile(RestoreFileCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileInfoMapper.selectByFileIdAndTenant(
+        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
@@ -212,7 +210,7 @@ public class FileAdminServiceImpl implements FileAdminService {
 //        entity.setDeletedUserName(null);
         entity.setUpdatedUserId(command.getUserId());
         entity.setUpdatedTime(LocalDateTime.now());
-        fileInfoMapper.updateById(entity);
+        fileBaseInfoDao.updateById(entity);
 
         log.info("文件恢复成功: {}, 操作人: {}", command.getFileId(), command.getUserName());
     }
@@ -366,7 +364,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public String migrateFile(MigrateFileCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileInfoMapper.selectByFileIdAndTenant(
+        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
@@ -403,7 +401,7 @@ public class FileAdminServiceImpl implements FileAdminService {
             entity.setStorageType(command.getTargetStorageType());
             entity.setUpdatedUserId(command.getUserId());
             entity.setUpdatedTime(LocalDateTime.now());
-            fileInfoMapper.updateById(entity);
+            fileBaseInfoDao.updateById(entity);
             log.info("文件迁移完成（同步）: {}", command.getFileId());
         }
 
@@ -426,109 +424,111 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CleanupResult cleanExpiredFiles(CleanExpiredCommand command) {
-        LocalDateTime expireTime = LocalDateTime.now().minusDays(command.getDays());
-        List<FileInfoEntity> expiredFiles = fileInfoMapper.selectExpiredFiles(
-                expireTime, command.getStorageType(), command.getTenantId());
-
-        int deleted = 0;
-        long freedSpace = 0;
-        List<CleanupDetailResult> details = new ArrayList<>();
-
-        for (FileInfoEntity entity : expiredFiles) {
-            if (command.getDryRun() != null && command.getDryRun()) {
-                // 试运行，只统计
-                details.add(CleanupDetailResult.builder()
-                        .fileId(entity.getFileId())
-                        .fileName(entity.getFileName())
-                        .fileSize(entity.getFileSize())
-                        .reason("文件已过期（试运行）")
-                        .deleted(false)
-                        .build());
-            } else {
-                // 实际删除
-                try {
-                    fileStorageService.deleteFile(entity.getFilePath(), entity.getStorageType());
-                    fileInfoMapper.deleteById(entity.getFileId());
-                    deleted++;
-                    freedSpace += entity.getFileSize();
-                    details.add(CleanupDetailResult.builder()
-                            .fileId(entity.getFileId())
-                            .fileName(entity.getFileName())
-                            .fileSize(entity.getFileSize())
-                            .reason("文件已过期")
-                            .deleted(true)
-                            .build());
-                } catch (Exception e) {
-                    log.error("清理过期文件失败: {}, 原因: {}", entity.getFileId(), e.getMessage());
-                    details.add(CleanupDetailResult.builder()
-                            .fileId(entity.getFileId())
-                            .fileName(entity.getFileName())
-                            .fileSize(entity.getFileSize())
-                            .reason("删除失败: " + e.getMessage())
-                            .deleted(false)
-                            .build());
-                }
-            }
-        }
-
-        String message = command.getDryRun() != null && command.getDryRun()
-                ? "试运行完成，共扫描 " + expiredFiles.size() + " 个过期文件"
-                : "清理完成，共删除 " + deleted + " 个文件，释放 " + freedSpace + " 字节";
-
-        return CleanupResult.builder()
-                .totalScanned(expiredFiles.size())
-                .totalDeleted(deleted)
-                .totalFreedSpace(freedSpace)
-                .executionTime(System.currentTimeMillis())
-                .message(message)
-                .details(details)
-                .build();
+//        LocalDateTime expireTime = LocalDateTime.now().minusDays(command.getDays());
+//        List<FileInfoEntity> expiredFiles = fileBaseInfoDao.selectExpiredFiles(
+//                expireTime, command.getStorageType(), command.getTenantId());
+//
+//        int deleted = 0;
+//        long freedSpace = 0;
+//        List<CleanupDetailResult> details = new ArrayList<>();
+//
+//        for (FileInfoEntity entity : expiredFiles) {
+//            if (command.getDryRun() != null && command.getDryRun()) {
+//                // 试运行，只统计
+//                details.add(CleanupDetailResult.builder()
+//                        .fileId(entity.getFileId())
+//                        .fileName(entity.getFileName())
+//                        .fileSize(entity.getFileSize())
+//                        .reason("文件已过期（试运行）")
+//                        .deleted(false)
+//                        .build());
+//            } else {
+//                // 实际删除
+//                try {
+//                    fileStorageService.deleteFile(entity.getFilePath(), entity.getStorageType());
+//                    fileInfoMapper.deleteById(entity.getFileId());
+//                    deleted++;
+//                    freedSpace += entity.getFileSize();
+//                    details.add(CleanupDetailResult.builder()
+//                            .fileId(entity.getFileId())
+//                            .fileName(entity.getFileName())
+//                            .fileSize(entity.getFileSize())
+//                            .reason("文件已过期")
+//                            .deleted(true)
+//                            .build());
+//                } catch (Exception e) {
+//                    log.error("清理过期文件失败: {}, 原因: {}", entity.getFileId(), e.getMessage());
+//                    details.add(CleanupDetailResult.builder()
+//                            .fileId(entity.getFileId())
+//                            .fileName(entity.getFileName())
+//                            .fileSize(entity.getFileSize())
+//                            .reason("删除失败: " + e.getMessage())
+//                            .deleted(false)
+//                            .build());
+//                }
+//            }
+//        }
+//
+//        String message = command.getDryRun() != null && command.getDryRun()
+//                ? "试运行完成，共扫描 " + expiredFiles.size() + " 个过期文件"
+//                : "清理完成，共删除 " + deleted + " 个文件，释放 " + freedSpace + " 字节";
+//
+//        return CleanupResult.builder()
+//                .totalScanned(expiredFiles.size())
+//                .totalDeleted(deleted)
+//                .totalFreedSpace(freedSpace)
+//                .executionTime(System.currentTimeMillis())
+//                .message(message)
+//                .details(details)
+//                .build();
+        return null;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CleanupResult cleanTempFiles(CleanTempCommand command) {
-        LocalDateTime expireTime = LocalDateTime.now().minusHours(command.getHours());
-        List<FileInfoEntity> tempFiles = fileInfoMapper.selectTempFiles(expireTime, command.getTenantId());
-
-        int deleted = 0;
-        long freedSpace = 0;
-        List<CleanupDetailResult> details = new ArrayList<>();
-
-        for (FileInfoEntity entity : tempFiles) {
-            try {
-                // 删除临时文件
-                fileStorageService.deleteFile(entity.getFilePath(), entity.getStorageType());
-                fileInfoMapper.deleteById(entity.getFileId());
-                deleted++;
-                freedSpace += entity.getFileSize();
-                details.add(CleanupDetailResult.builder()
-                        .fileId(entity.getFileId())
-                        .fileName(entity.getFileName())
-                        .fileSize(entity.getFileSize())
-                        .reason("临时文件超时（" + command.getHours() + "小时）")
-                        .deleted(true)
-                        .build());
-            } catch (Exception e) {
-                log.error("清理临时文件失败: {}, 原因: {}", entity.getFileId(), e.getMessage());
-                details.add(CleanupDetailResult.builder()
-                        .fileId(entity.getFileId())
-                        .fileName(entity.getFileName())
-                        .fileSize(entity.getFileSize())
-                        .reason("删除失败: " + e.getMessage())
-                        .deleted(false)
-                        .build());
-            }
-        }
-
-        return CleanupResult.builder()
-                .totalScanned(tempFiles.size())
-                .totalDeleted(deleted)
-                .totalFreedSpace(freedSpace)
-                .executionTime(System.currentTimeMillis())
-                .message("清理完成，共删除 " + deleted + " 个临时文件")
-                .details(details)
-                .build();
+//        LocalDateTime expireTime = LocalDateTime.now().minusHours(command.getHours());
+//        List<FileInfoEntity> tempFiles = fileInfoMapper.selectTempFiles(expireTime, command.getTenantId());
+//
+//        int deleted = 0;
+//        long freedSpace = 0;
+//        List<CleanupDetailResult> details = new ArrayList<>();
+//
+//        for (FileInfoEntity entity : tempFiles) {
+//            try {
+//                // 删除临时文件
+//                fileStorageService.deleteFile(entity.getFilePath(), entity.getStorageType());
+//                fileInfoMapper.deleteById(entity.getFileId());
+//                deleted++;
+//                freedSpace += entity.getFileSize();
+//                details.add(CleanupDetailResult.builder()
+//                        .fileId(entity.getFileId())
+//                        .fileName(entity.getFileName())
+//                        .fileSize(entity.getFileSize())
+//                        .reason("临时文件超时（" + command.getHours() + "小时）")
+//                        .deleted(true)
+//                        .build());
+//            } catch (Exception e) {
+//                log.error("清理临时文件失败: {}, 原因: {}", entity.getFileId(), e.getMessage());
+//                details.add(CleanupDetailResult.builder()
+//                        .fileId(entity.getFileId())
+//                        .fileName(entity.getFileName())
+//                        .fileSize(entity.getFileSize())
+//                        .reason("删除失败: " + e.getMessage())
+//                        .deleted(false)
+//                        .build());
+//            }
+//        }
+//
+//        return CleanupResult.builder()
+//                .totalScanned(tempFiles.size())
+//                .totalDeleted(deleted)
+//                .totalFreedSpace(freedSpace)
+//                .executionTime(System.currentTimeMillis())
+//                .message("清理完成，共删除 " + deleted + " 个临时文件")
+//                .details(details)
+//                .build();
+        return null;
     }
 
     @Override
@@ -717,25 +717,25 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteStorageNode(DeleteStorageNodeCommand command) {
-        // 1. 检查节点是否存在
-        StorageNodeEntity entity = storageNodeMapper.selectById(command.getNodeId());
-        if (entity == null) {
-            throw new BusinessException("存储节点不存在: " + command.getNodeId());
-        }
-
-        // 2. 检查是否有文件存储在该节点（如果有文件，需要先迁移或删除文件）
-        if (!command.getForce()) {
-            long fileCount = fileInfoMapper.countByStorageTypeAndTenant(
-                    entity.getStorageType(), entity.getTenantId()
-            );
-            if (fileCount > 0) {
-                throw new BusinessException("该节点下存在 " + fileCount + " 个文件，请先迁移或删除文件");
-            }
-        }
-
-        // 3. 删除节点
-        storageNodeMapper.deleteById(command.getNodeId());
-        log.info("删除存储节点成功: {}", command.getNodeId());
+//        // 1. 检查节点是否存在
+//        StorageNodeEntity entity = storageNodeMapper.selectById(command.getNodeId());
+//        if (entity == null) {
+//            throw new BusinessException("存储节点不存在: " + command.getNodeId());
+//        }
+//
+//        // 2. 检查是否有文件存储在该节点（如果有文件，需要先迁移或删除文件）
+//        if (!command.getForce()) {
+//            long fileCount = fileInfoMapper.countByStorageTypeAndTenant(
+//                    entity.getStorageType(), entity.getTenantId()
+//            );
+//            if (fileCount > 0) {
+//                throw new BusinessException("该节点下存在 " + fileCount + " 个文件，请先迁移或删除文件");
+//            }
+//        }
+//
+//        // 3. 删除节点
+//        storageNodeMapper.deleteById(command.getNodeId());
+//        log.info("删除存储节点成功: {}", command.getNodeId());
     }
 
     @Override
@@ -788,33 +788,34 @@ public class FileAdminServiceImpl implements FileAdminService {
 
     @Override
     public StorageNodeInfoResult refreshStorageNode(RefreshStorageNodeCommand command) {
-        // 1. 检查节点是否存在
-        StorageNodeEntity entity = storageNodeMapper.selectById(command.getNodeId());
-        if (entity == null) {
-            throw new BusinessException("存储节点不存在: " + command.getNodeId());
-        }
-
-        // 2. 获取最新状态
-        long usedCapacity = fileInfoMapper.sumFileSizeByStorageTypeAndTenant(
-                entity.getStorageType(), entity.getTenantId());
-
-        // 3. 测试连接
-        boolean connected = fileStorageService.testConnection(
-                entity.getStorageType(),
-                entity.getEndpoint(),
-                entity.getAccessKey(),
-                entity.getSecretKey()
-        );
-
-        // 4. 更新节点信息
-        entity.setUsedCapacity(usedCapacity);
-        entity.setHealthStatus(connected ? 1 : 0);
-        entity.setLastHealthCheck(LocalDateTime.now());
-        storageNodeMapper.updateById(entity);
-
-        log.info("刷新存储节点状态成功: {}", command.getNodeId());
-
-        return convertToStorageNodeInfoResult(entity);
+//        // 1. 检查节点是否存在
+//        StorageNodeEntity entity = storageNodeMapper.selectById(command.getNodeId());
+//        if (entity == null) {
+//            throw new BusinessException("存储节点不存在: " + command.getNodeId());
+//        }
+//
+//        // 2. 获取最新状态
+//        long usedCapacity = fileInfoMapper.sumFileSizeByStorageTypeAndTenant(
+//                entity.getStorageType(), entity.getTenantId());
+//
+//        // 3. 测试连接
+//        boolean connected = fileStorageService.testConnection(
+//                entity.getStorageType(),
+//                entity.getEndpoint(),
+//                entity.getAccessKey(),
+//                entity.getSecretKey()
+//        );
+//
+//        // 4. 更新节点信息
+//        entity.setUsedCapacity(usedCapacity);
+//        entity.setHealthStatus(connected ? 1 : 0);
+//        entity.setLastHealthCheck(LocalDateTime.now());
+//        storageNodeMapper.updateById(entity);
+//
+//        log.info("刷新存储节点状态成功: {}", command.getNodeId());
+//
+//        return convertToStorageNodeInfoResult(entity);
+        return null;
     }
 
     // ==================== 8. 文件审核与审计 ====================

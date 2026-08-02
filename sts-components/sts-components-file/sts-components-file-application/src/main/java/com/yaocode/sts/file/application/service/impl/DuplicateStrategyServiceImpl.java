@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.application.service.impl;
 
+import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.file.application.model.command.CreateVersionCommand;
 import com.yaocode.sts.file.application.service.FileVersionService;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
@@ -15,10 +16,11 @@ import com.yaocode.sts.file.core.model.FileUploadContext;
 import com.yaocode.sts.file.application.service.DuplicateStrategyService;
 import com.yaocode.sts.file.core.spi.DuplicateStrategySelector;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
+import com.yaocode.sts.file.core.utils.FileFingerprintUtils;
 import com.yaocode.sts.file.core.utils.FileNameUtils;
+import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import com.yaocode.sts.file.infrastructure.manager.StoragePluginManager;
-import com.yaocode.sts.file.infrastructure.mapper.FileDeduplicationMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileInfoMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -41,10 +43,10 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
     private DuplicateStrategySelector strategySelector;
 
     @Resource
-    private FileInfoMapper fileInfoMapper;
+    private FileBaseInfoMapper fileInfoMapper;
 
     @Resource
-    private FileDeduplicationMapper fileDeduplicationMapper;
+    private FileDeduplicationDao fileDeduplicationDao;
 
     @Resource
     private StoragePluginManager pluginManager;
@@ -322,9 +324,10 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
                 LocalDateTime.now(),
                 context.getTenantId()
         );
-        String fingerprint = fileMd5 + "_" + context.getFileSize() + "_" +
-                context.getStorageType() + "_" + context.getTenantId();
-        fileDeduplicationMapper.updateByFileId(
+        String fingerprint = FileFingerprintUtils.buildFingerprint(
+                fileMd5, context.getFileSize(), context.getStorageType(), context.getTenantId()
+        );
+        fileDeduplicationDao.updateByFileId(
                 existFile.getFileId(),
                 fingerprint,
                 fileMd5,
@@ -337,7 +340,7 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
     private ExecuteResult handleAutoRename(FileUploadContext context, Path tempFile) {
         String newFileName = FileNameUtils.generateUniqueFileName(context.getFileName());
         context.setFileName(newFileName);
-        context.setEnableDeduplication(false);
+        context.setEnableDeduplication(EnableEnums.DISABLED.getCode());
         cleanupTempFile(tempFile);
         return ExecuteResult.builder()
                 .fileName(newFileName)

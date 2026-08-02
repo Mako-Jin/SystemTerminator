@@ -931,7 +931,7 @@ public class FileAdminConverter {
                 .storageType(result.getStorageType())
                 .storageUrl(result.getStorageUrl())
                 .fileStatus(result.getFileStatus())
-                .fileStatusDesc(result.getFileStatusDesc())
+//                .fileStatusDesc(result.getFileStatusDesc())
                 .downloadCount(result.getDownloadCount())
                 .tags(result.getTags())
                 .description(result.getDescription())
