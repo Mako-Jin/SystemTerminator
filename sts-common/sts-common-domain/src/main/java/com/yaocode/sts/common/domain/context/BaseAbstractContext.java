@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.web.context;
+package com.yaocode.sts.common.domain.context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

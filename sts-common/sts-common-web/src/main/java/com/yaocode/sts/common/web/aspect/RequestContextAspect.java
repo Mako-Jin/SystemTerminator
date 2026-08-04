@@ -1,15 +1,24 @@
 package com.yaocode.sts.common.web.aspect;
 
+import com.yaocode.sts.common.domain.constants.HeaderConstants;
+import com.yaocode.sts.common.domain.constants.RequestConstants;
+import com.yaocode.sts.common.domain.context.ClientInfoContext;
+import com.yaocode.sts.common.domain.context.DeviceInfoContext;
+import com.yaocode.sts.common.domain.context.RequestContext;
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
+import com.yaocode.sts.common.domain.context.TenantInfoContext;
+import com.yaocode.sts.common.domain.context.UserInfoContext;
+import com.yaocode.sts.common.domain.context.spi.ClientInfoResolver;
+import com.yaocode.sts.common.domain.context.spi.DeviceInfoResolver;
+import com.yaocode.sts.common.domain.context.spi.TenantInfoResolver;
+import com.yaocode.sts.common.domain.context.spi.UserInfoResolver;
+import com.yaocode.sts.common.domain.valueobject.IpAddress;
+import com.yaocode.sts.common.domain.web.HttpRequestContext;
+import com.yaocode.sts.common.infrastructure.web.adapter.ServletRequestContext;
 import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
-import com.yaocode.sts.common.web.constants.HeaderConstants;
 import com.yaocode.sts.common.web.constants.HttpConstants;
-import com.yaocode.sts.common.web.constants.RequestConstants;
-import com.yaocode.sts.common.web.context.ClientInfoContext;
-import com.yaocode.sts.common.web.context.DeviceInfoContext;
-import com.yaocode.sts.common.web.context.RequestContext;
-import com.yaocode.sts.common.web.context.RequestContextHolder;
 import com.yaocode.sts.common.web.utils.WebHttpRequestUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
@@ -33,6 +42,18 @@ public class RequestContextAspect {
 
     @Resource
     private HttpServletRequest request;
+
+    @Resource
+    private TenantInfoResolver tenantInfoResolver;
+
+    @Resource
+    private UserInfoResolver userInfoResolver;
+
+    @Resource
+    private ClientInfoResolver clientInfoResolver;
+
+    @Resource
+    private DeviceInfoResolver deviceInfoResolver;
 
     @Pointcut("execution(* com.yaocode.sts..*.controller..*(..))")
     public void controllerMethods() {}
@@ -69,20 +90,20 @@ public class RequestContextAspect {
      * 构建请求上下文
      */
     private RequestContext buildRequestContext() {
-        // 提取客户端信息
-        ClientInfoContext clientInfo = extractClientInfo(request);
+        // 1. 适配为领域层接口
+        HttpRequestContext httpContext = new ServletRequestContext(request);
 
-        // 提取设备信息
-        DeviceInfoContext deviceInfo = extractDeviceInfo(request);
-
-        // 提取 Remember Me Token（从参数、Cookie、Header 三个地方尝试）
-//        String rememberMeToken = extractRememberMeToken(request);
+        // 2. 通过 SPI 解析器构建子 Context
+        TenantInfoContext tenantInfo = tenantInfoResolver.resolve(httpContext).orElse(TenantInfoContext.createDefault());
+        UserInfoContext userInfo = userInfoResolver.resolve(httpContext).orElse(UserInfoContext.createDefault());
+        ClientInfoContext clientInfo = clientInfoResolver.resolve(httpContext).orElse(ClientInfoContext.createDefault());
+        DeviceInfoContext deviceInfo = deviceInfoResolver.resolve(httpContext).orElse(DeviceInfoContext.createDefault());
 
         // 构建请求上下文
         return RequestContext.builder()
                 // 请求基础信息
                 .traceId(extractTraceId(request))
-                .spanId(extractSpanId(request))
+                .spanId(extractSpanId())
                 .parentSpanId(extractParentSpanId(request))
                 .requestId(extractRequestId(request))
                 .requestTime(Instant.now().toEpochMilli())
@@ -92,10 +113,10 @@ public class RequestContextAspect {
                 .contentType(request.getContentType())
 
                 // 网络信息
-                .ipAddress(getClientIp(request))
+                .ipAddress(getClientIp())
                 .userAgent(request.getHeader(HeaderConstants.USER_AGENT))
-                .headers(getHeaders(request))
-                .cookies(getCookies(request))
+                .headers(getHeaders())
+                .cookies(getCookies())
                 .domain(request.getServerName())
 
                 // CSRF/Session
@@ -111,6 +132,8 @@ public class RequestContextAspect {
                 // 聚合的子Context
                 .clientInfo(clientInfo)
                 .deviceInfo(deviceInfo)
+                .tenantInfo(tenantInfo)
+                .userInfo(userInfo)
                 .build();
     }
 
@@ -143,7 +166,7 @@ public class RequestContextAspect {
      * 提取 SpanId
      * 如果没有传递，服务端自动生成
      */
-    private String extractSpanId(HttpServletRequest request) {
+    private String extractSpanId() {
         // 自动生成
         return generateSpanId();
     }
@@ -189,176 +212,38 @@ public class RequestContextAspect {
     // ==========================================
 
     /**
-     * 生成 TraceId
-     * 格式：trace-{timestamp}-{uuid前8位}
+     * 生成 TraceId（格式：trace-{timestamp}-{uuid简写}）
      */
     private String generateTraceId() {
         return String.format(RequestConstants.TRACE_ID_FORMAT,
                 System.currentTimeMillis(),
-                IdFactory.generate());
+                IdFactory.generate(IdGeneratorType.UUID));
     }
 
     /**
-     * 生成 SpanId
-     * 格式：span-{timestamp}-{uuid前6位}
+     * 生成 SpanId（格式：span-{timestamp}-{uuid简写}）
      */
     private String generateSpanId() {
         return String.format(RequestConstants.SPAN_ID_FORMAT,
                 System.currentTimeMillis(),
-                IdFactory.generate());
+                IdFactory.generate(IdGeneratorType.UUID));
+    }
+
+    // ==========================================
+    // HTTP 工具方法
+    // ==========================================
+
+    /**
+     * 获取客户端真实 IP
+     */
+    private IpAddress getClientIp() {
+        return IpAddress.of(WebHttpRequestUtils.getClientIp(request));
     }
 
     /**
-     * 提取客户端信息
+     * 获取所有请求头（只读快照）
      */
-    private ClientInfoContext extractClientInfo(HttpServletRequest request) {
-        ClientInfoContext context = ClientInfoContext.createDefault();
-
-        // 从请求参数中获取
-        context.setClientId(getHeader(request, HeaderConstants.CLIENT_ID, request.getParameter(RequestConstants.CLIENT_ID)));
-        context.setClientType(getHeader(request, HeaderConstants.CLIENT_TYPE, request.getParameter(RequestConstants.CLIENT_TYPE)));
-        context.setClientVersion(getHeader(request, HeaderConstants.CLIENT_VERSION, request.getParameter(RequestConstants.CLIENT_VERSION)));
-        context.setClientName(getHeader(request, HeaderConstants.CLIENT_NAME, request.getParameter(RequestConstants.CLIENT_NAME)));
-
-        context.setAppId(getHeader(request, HeaderConstants.APP_ID, request.getParameter(RequestConstants.APP_ID)));
-        context.setAppVersion(getHeader(request, HeaderConstants.APP_VERSION, request.getParameter(RequestConstants.APP_VERSION)));
-        context.setAppPackage(getHeader(request, HeaderConstants.APP_PACKAGE, request.getParameter(RequestConstants.APP_PACKAGE)));
-        context.setGrantType(getHeader(request, HeaderConstants.GRANT_TYPE, request.getParameter(RequestConstants.GRANT_TYPE)));
-        context.setScope(getHeader(request, HeaderConstants.SCOPE, request.getParameter(RequestConstants.SCOPE)));
-        context.setRedirectUri(getHeader(request, HeaderConstants.REDIRECT_URI, request.getParameter(RequestConstants.REDIRECT_URI)));
-
-        return context;
-    }
-
-    /**
-     * 提取设备信息
-     */
-    private DeviceInfoContext extractDeviceInfo(HttpServletRequest request) {
-        DeviceInfoContext context = DeviceInfoContext.createDefault();
-
-        context.setDeviceId(getHeader(request, HeaderConstants.DEVICE_ID, request.getParameter(RequestConstants.DEVICE_ID)));
-        context.setDeviceType(getHeader(request, HeaderConstants.DEVICE_TYPE, request.getParameter(RequestConstants.DEVICE_TYPE)));
-        context.setDeviceName(getHeader(request, HeaderConstants.DEVICE_NAME, request.getParameter(RequestConstants.DEVICE_NAME)));
-        context.setDeviceModel(getHeader(request, HeaderConstants.DEVICE_MODEL, request.getParameter(RequestConstants.DEVICE_MODEL)));
-        context.setOsName(getHeader(request, HeaderConstants.OS_NAME, request.getParameter(RequestConstants.OS_NAME)));
-        context.setOsVersion(getHeader(request, HeaderConstants.OS_VERSION, request.getParameter(RequestConstants.OS_VERSION)));
-        context.setOsBuild(getHeader(request, HeaderConstants.OS_BUILD, request.getParameter(RequestConstants.OS_BUILD)));
-        context.setScreenResolution(getHeader(request, HeaderConstants.SCREEN_RESOLUTION, request.getParameter(RequestConstants.SCREEN_RESOLUTION)));
-        context.setScreenSize(getHeader(request, HeaderConstants.SCREEN_SIZE, request.getParameter(RequestConstants.SCREEN_SIZE)));
-        context.setDeviceFingerprint(getHeader(request, HeaderConstants.DEVICE_FINGERPRINT, request.getParameter(RequestConstants.DEVICE_FINGERPRINT)));
-        context.setImei(getHeader(request, HeaderConstants.IMEI, request.getParameter(RequestConstants.IMEI)));
-        context.setIdfa(getHeader(request, HeaderConstants.IDFA, request.getParameter(RequestConstants.IDFA)));
-        context.setMacAddress(getHeader(request, HeaderConstants.MAC_ADDRESS, request.getParameter(RequestConstants.MAC_ADDRESS)));
-        context.setCountryCode(getHeader(request, HeaderConstants.COUNTRY_CODE, request.getParameter(RequestConstants.COUNTRY_CODE)));
-        context.setLanguage(getHeader(request, HeaderConstants.LANGUAGE, request.getParameter(RequestConstants.LANGUAGE)));
-        context.setTimezone(getHeader(request, HeaderConstants.TIMEZONE, request.getParameter(RequestConstants.TIMEZONE)));
-
-        String jailBrokenStr = getHeader(request, HeaderConstants.IS_JAIL_BROKEN, request.getParameter(RequestConstants.IS_JAIL_BROKEN));
-        if (jailBrokenStr != null) {
-            context.setIsJailbroken(Boolean.parseBoolean(jailBrokenStr));
-        }
-
-        String emulatorStr = getHeader(request, HeaderConstants.IS_EMULATOR, request.getParameter(RequestConstants.IS_EMULATOR));
-        if (emulatorStr != null) {
-            context.setIsEmulator(Boolean.parseBoolean(emulatorStr));
-        }
-
-        // ===== 屏幕密度（Integer） =====
-        String densityStr = getHeader(request, HeaderConstants.SCREEN_DENSITY, request.getParameter(RequestConstants.SCREEN_DENSITY));
-        if (densityStr != null) {
-            try {
-                context.setScreenDensity(Integer.parseInt(densityStr));
-            } catch (NumberFormatException ignored) {}
-        }
-
-        // ===== 默认值 =====
-        if (context.getDeviceType() == null) {
-            context.setDeviceType(RequestConstants.DEFAULT_DEVICE_TYPE);
-        }
-        if (context.getLanguage() == null) {
-            context.setLanguage(RequestConstants.DEFAULT_LANGUAGE);
-        }
-        if (context.getTimezone() == null) {
-            context.setTimezone(RequestConstants.DEFAULT_TIMEZONE);
-        }
-        if (context.getIsJailbroken() == null) {
-            context.setIsJailbroken(RequestConstants.DEFAULT_IS_JAIL_BROKEN);
-        }
-        if (context.getIsEmulator() == null) {
-            context.setIsEmulator(RequestConstants.DEFAULT_IS_EMULATOR);
-        }
-        if (context.getIsTrusted() == null) {
-            context.setIsTrusted(RequestConstants.DEFAULT_IS_TRUSTED);
-        }
-
-        return context;
-    }
-
-    /**
-     * 提取 Remember Me Token
-     * 优先级：参数 > Cookie > Header
-     */
-    private String extractRememberMeToken(HttpServletRequest request) {
-        // 1. 从请求参数中获取
-        String token = request.getParameter(RequestConstants.REMEMBER_ME_TOKEN);
-        if (token != null && !token.isEmpty()) {
-            return token;
-        }
-
-        token = request.getParameter(RequestConstants.PARAM_REMEMBER_ME_CAMEL);
-        if (token != null && !token.isEmpty()) {
-            return token;
-        }
-
-        // 2. 从 Cookie 中获取
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (RequestConstants.COOKIE_REMEMBER_ME_UNDERSCORE.equals(cookie.getName())
-                        || RequestConstants.COOKIE_REMEMBER_ME_DASH.equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-
-        // 3. 从 Header 中获取
-        token = request.getHeader(HeaderConstants.REMEMBER_ME_TOKEN);
-        if (token != null && !token.isEmpty()) {
-            return token;
-        }
-
-        token = request.getHeader(RequestConstants.HEADER_COOKIE_REMEMBER_ME);
-        if (token != null && !token.isEmpty()) {
-            return token;
-        }
-
-        return null;
-    }
-
-    /**
-     * 获取请求参数（防止 null）
-     */
-    private String getParameter(HttpServletRequest request, String name) {
-        String value = request.getParameter(name);
-        return value != null && !value.isEmpty() ? value : null;
-    }
-
-    /**
-     * 获取客户端真实IP
-     */
-    private String getClientIp(HttpServletRequest request) {
-        return WebHttpRequestUtils.getClientIp(request);
-    }
-
-    private String getHeader(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getHeader(name);
-        return value != null && !value.isEmpty() ? value : defaultValue;
-    }
-
-    /**
-     * 获取所有请求头
-     */
-    private Map<String, String> getHeaders(HttpServletRequest request) {
+    private Map<String, String> getHeaders() {
         Map<String, String> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         if (headerNames != null) {
@@ -371,9 +256,9 @@ public class RequestContextAspect {
     }
 
     /**
-     * 获取所有Cookie
+     * 获取所有 Cookie
      */
-    private Map<String, String> getCookies(HttpServletRequest request) {
+    private Map<String, String> getCookies() {
         Map<String, String> cookies = new HashMap<>();
         Cookie[] cookieArray = request.getCookies();
         if (cookieArray != null) {
@@ -382,18 +267,5 @@ public class RequestContextAspect {
             }
         }
         return cookies;
-    }
-
-    /**
-     * 创建默认上下文（当无法获取请求对象时）
-     */
-    private RequestContext createDefaultContext() {
-        return RequestContext.builder()
-                .traceId(generateTraceId())
-                .requestId(IdFactory.generate(IdGeneratorType.UUID))
-                .requestTime(Instant.now().toEpochMilli())
-                .clientInfo(ClientInfoContext.createDefault())
-                .deviceInfo(DeviceInfoContext.createDefault())
-                .build();
     }
 }

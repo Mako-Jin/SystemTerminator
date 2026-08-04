@@ -1,8 +1,7 @@
-package com.yaocode.sts.auth.domain.valueobjects.primitives;
+package com.yaocode.sts.common.domain.valueobject;
 
-import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.RegexConstants;
-import com.yaocode.sts.common.domain.valueobject.Identifier;
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
+import com.yaocode.sts.common.domain.constants.RegexConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -26,11 +25,11 @@ public class IpAddress extends Identifier<String> {
 
     public static IpAddress of (String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(AuthI18nKeyConstants.IP_ADDRESS_CANNOT_BE_BLANK);
+            throw new IllegalArgumentException(DomainI18nKeyConstants.IP_ADDRESS_CANNOT_BE_BLANK);
         }
         String trimmed = value.trim();
         if (!IPV4_PATTERN.matcher(trimmed).matches() && !IPV6_PATTERN.matcher(trimmed).matches()) {
-            throw new IllegalArgumentException(AuthI18nKeyConstants.IP_ADDRESS_FORMAT_INVALID);
+            throw new IllegalArgumentException(DomainI18nKeyConstants.IP_ADDRESS_FORMAT_INVALID);
         }
         return new IpAddress(trimmed);
     }

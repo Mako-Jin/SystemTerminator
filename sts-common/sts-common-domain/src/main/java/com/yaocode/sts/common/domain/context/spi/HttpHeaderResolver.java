@@ -1,6 +1,6 @@
 package com.yaocode.sts.common.domain.context.spi;
 
-import com.yaocode.sts.common.domain.valueobject.Identifier;
+import com.yaocode.sts.common.domain.context.BaseAbstractContext;
 import com.yaocode.sts.common.domain.web.HttpRequestContext;
 
 import java.util.Optional;
@@ -10,7 +10,7 @@ import java.util.Optional;
  * @author: Jin-LiangBo
  * @date: 2026年04月15日 11:48
  */
-public interface HttpHeaderResolver<T extends Identifier<String>> {
+public interface HttpHeaderResolver<T extends BaseAbstractContext<T>> {
 
     /**
      * 解析方法

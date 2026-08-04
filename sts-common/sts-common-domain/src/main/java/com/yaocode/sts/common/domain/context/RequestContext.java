@@ -1,5 +1,10 @@
-package com.yaocode.sts.common.web.context;
+package com.yaocode.sts.common.domain.context;
 
+import com.yaocode.sts.common.domain.valueobject.ClientId;
+import com.yaocode.sts.common.domain.valueobject.DeviceId;
+import com.yaocode.sts.common.domain.valueobject.IpAddress;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
 import lombok.Builder;
 import lombok.Data;
 
@@ -49,7 +54,7 @@ public class RequestContext {
     private String contentType;        // Content-Type
 
     // ========== 网络信息 ==========
-    private String ipAddress;
+    private IpAddress ipAddress;
     private String ipLocation;          // IP归属地
     private String userAgent;
     private Map<String, String> headers;
@@ -82,19 +87,19 @@ public class RequestContext {
     private Map<String, Object> extras;
 
     // ========== 便捷方法 ==========
-    public String getClientId() {
+    public ClientId getClientId() {
         return clientInfo != null ? clientInfo.getClientId() : null;
     }
 
-    public String getDeviceId() {
+    public DeviceId getDeviceId() {
         return deviceInfo != null ? deviceInfo.getDeviceId() : null;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userInfo != null ? userInfo.getUserId() : null;
     }
 
-    public String getTenantId() {
+    public TenantId getTenantId() {
         return tenantInfo != null ? tenantInfo.getTenantId() : null;
     }
 

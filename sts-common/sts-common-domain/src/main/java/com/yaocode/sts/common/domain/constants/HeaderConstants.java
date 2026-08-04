@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.web.constants;
+package com.yaocode.sts.common.domain.constants;
 
 public interface HeaderConstants {
 
@@ -220,6 +220,90 @@ public interface HeaderConstants {
      * 重定向URI
      */
     String REQUESTED_WITH = "X-Requested-With";
+
+    // ==========================================
+    // 用户信息（网关/认证服务自动注入）
+    // ==========================================
+
+    /**
+     * 用户ID
+     */
+    String USER_ID = "X-User-Id";
+
+    /**
+     * 用户名
+     */
+    String USER_NAME = "X-User-Name";
+
+    /**
+     * 昵称
+     */
+    String NICKNAME = "X-Nickname";
+
+    /**
+     * 真实姓名
+     */
+    String REAL_NAME = "X-Real-Name";
+
+    /**
+     * 邮箱
+     */
+    String EMAIL = "X-Email";
+
+    /**
+     * 手机号
+     */
+    String PHONE = "X-Phone";
+
+    /**
+     * 头像URL
+     */
+    String AVATAR_URL = "X-Avatar-Url";
+
+    /**
+     * 角色（多个用逗号分隔）
+     */
+    String ROLE = "X-Role";
+
+    /**
+     * 是否管理员
+     */
+    String IS_ADMIN = "X-Is-Admin";
+
+    /**
+     * 是否可信
+     */
+    String IS_TRUSTED = "X-Is-Trusted";
+
+    /**
+     * 租户ID
+     */
+    String TENANT_ID = "X-Tenant-Id";
+
+    /**
+     * 租户名称
+     */
+    String TENANT_NAME = "X-Tenant-Name";
+
+    /**
+     * 租户编码
+     */
+    String TENANT_CODE = "X-Tenant-Code";
+
+    /**
+     * Access Token
+     */
+    String ACCESS_TOKEN = "X-Access-Token";
+
+    /**
+     * 组织ID
+     */
+    String ORGANIZATION_ID = "X-Organization-Id";
+
+    /**
+     * 部门ID
+     */
+    String DEPARTMENT_ID = "X-Department-Id";
 
     // ==========================================
     // IP获取相关

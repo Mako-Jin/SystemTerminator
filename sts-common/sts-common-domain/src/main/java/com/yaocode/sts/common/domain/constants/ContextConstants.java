@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.web.constants;
+package com.yaocode.sts.common.domain.constants;
 
 /**
  * 上下文常量类

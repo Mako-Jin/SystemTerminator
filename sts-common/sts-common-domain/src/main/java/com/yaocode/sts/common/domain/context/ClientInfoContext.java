@@ -1,6 +1,7 @@
-package com.yaocode.sts.common.web.context;
+package com.yaocode.sts.common.domain.context;
 
-import com.yaocode.sts.common.web.constants.ContextConstants;
+import com.yaocode.sts.common.domain.constants.ContextConstants;
+import com.yaocode.sts.common.domain.valueobject.ClientId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +14,7 @@ import lombok.EqualsAndHashCode;
 public class ClientInfoContext extends BaseAbstractContext<ClientInfoContext> {
 
     // ========== 基础信息 ==========
-    private String clientId;
+    private ClientId clientId;
     private String clientType;      // WEB / APP / MINI_PROGRAM / H5
     private String clientVersion;
     private String clientName;

@@ -1,68 +1,78 @@
 package com.yaocode.sts.common.domain.context;
 
-import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
-import com.yaocode.sts.common.domain.exception.TenantIdNullException;
-import com.yaocode.sts.common.domain.exception.TenantNotFoundException;
+import com.yaocode.sts.common.domain.constants.ContextConstants;
+import com.yaocode.sts.common.domain.valueobject.TenantCode;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.NamedThreadLocal;
-
-import java.util.Objects;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 租户信息上下文
- * @author: Jin-LiangBo
- * @date: 2026年04月14日 16:42
- * TODO 怎样和common-web里面的租户上下文合并
+ * 包含：租户ID、名称、配置等
  */
-public final class TenantInfoContext {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class TenantInfoContext extends BaseAbstractContext<TenantInfoContext> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TenantInfoContext.class);
-
-    private static final NamedThreadLocal<TenantInfoContext> CURRENT_TENANT_INFO =
-            new NamedThreadLocal<>("Current Tenant Info");
-
+    // ========== 租户基础信息 ==========
     private TenantId tenantId;
+    private String tenantName;
+    private TenantCode tenantCode;
+    private String tenantDesc;
+    private Integer tenantLevel;
+    private String parentId;
+    private String tenantCodePath;
 
-    public static TenantInfoContext getInstance() {
-        if (Objects.isNull(CURRENT_TENANT_INFO.get())) {
-            CURRENT_TENANT_INFO.set(new TenantInfoContext());
-        }
-        return CURRENT_TENANT_INFO.get();
+    // ========== 租户配置 ==========
+    private String brandId;
+    private String brandName;
+    private String logoUrl;
+    private String loginTitle;
+    private String primaryColor;
+    private String loginBackgroundUrl;
+
+    // ========== 租户策略 ==========
+    private Boolean passwordLoginEnabled;
+    private Boolean smsLoginEnabled;
+    private Boolean emailLoginEnabled;
+    private Boolean qrCodeLoginEnabled;
+    private Boolean captchaEnabled;
+    private Boolean mfaRequired;
+    private Integer maxLoginAttempts;
+    private Integer sessionTimeout;
+
+    // ========== 状态 ==========
+    private Boolean isEnabled;
+    private Boolean allowRegister;
+    private Boolean allowAdd;
+
+    public static TenantInfoContext createDefault() {
+        TenantInfoContext context = new TenantInfoContext();
+        context.setIsEnabled(true);
+        context.setAllowRegister(true);
+        context.setAllowAdd(true);
+        context.setPasswordLoginEnabled(true);
+        context.setCaptchaEnabled(true);
+        return context;
     }
 
-    // public static void preHandle(HttpServletRequest request) {
-    //     getInstance();
-    //     setUserId(request.getHeader(USER_ID_HEADER_KEY));
-    //     setUserName(request.getHeader(USER_NAME_HEADER_KEY));
-    //     setOrganizationList(request.getHeader(DEPT_LIST_HEADER_KEY));
-    // }
-
-    public static void reset() {
-        CURRENT_TENANT_INFO.remove();
+    @Override
+    protected TenantInfoContext getDefault() {
+        return createDefault();
     }
 
-    /**
-     * 设置当前租户ID
-     */
-    public static void setTenantId(TenantId tenantId) {
-        if (Objects.isNull(tenantId)) {
-            throw new TenantIdNullException(DomainI18nKeyConstants.TENANT_ID_NULL);
-        }
-        CURRENT_TENANT_INFO.get().tenantId = tenantId;
-        logger.debug("set current tenant id: {}", tenantId);
+    @Override
+    protected String getContextName() {
+        return ContextConstants.CONTEXT_NAME_TENANT_INFO;
     }
 
-    /**
-     * 获取租户ID
-     */
-    public static TenantId getTenantId() {
-        TenantId tenantId = getInstance().tenantId;
-        if (Objects.isNull(tenantId)) {
-            throw new TenantNotFoundException(DomainI18nKeyConstants.TENANT_INFO_NOT_FOUND);
-        }
-        return tenantId;
+    // ========== 便捷方法 ==========
+    public boolean isRootTenant() {
+        return parentId == null || parentId.isEmpty();
+    }
+
+    public boolean hasBrandConfig() {
+        return brandId != null && !brandId.isEmpty();
     }
 
 }

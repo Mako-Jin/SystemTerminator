@@ -1,6 +1,6 @@
 package com.yaocode.sts.common.web.filter;
 
-import com.yaocode.sts.common.web.constants.HeaderConstants;
+import com.yaocode.sts.common.domain.constants.HeaderConstants;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

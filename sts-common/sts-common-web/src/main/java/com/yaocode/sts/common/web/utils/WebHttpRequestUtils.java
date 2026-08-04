@@ -1,7 +1,7 @@
 package com.yaocode.sts.common.web.utils;
 
 import com.yaocode.sts.common.basic.constants.SymbolConstants;
-import com.yaocode.sts.common.web.constants.HeaderConstants;
+import com.yaocode.sts.common.domain.constants.HeaderConstants;
 import com.yaocode.sts.common.web.constants.WebConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;

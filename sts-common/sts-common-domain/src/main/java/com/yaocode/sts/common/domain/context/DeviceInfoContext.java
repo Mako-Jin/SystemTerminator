@@ -1,6 +1,7 @@
-package com.yaocode.sts.common.web.context;
+package com.yaocode.sts.common.domain.context;
 
-import com.yaocode.sts.common.web.constants.ContextConstants;
+import com.yaocode.sts.common.domain.constants.ContextConstants;
+import com.yaocode.sts.common.domain.valueobject.DeviceId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +14,7 @@ import lombok.EqualsAndHashCode;
 public class DeviceInfoContext extends BaseAbstractContext<DeviceInfoContext> {
 
     // ========== 设备基础信息 ==========
-    private String deviceId;
+    private DeviceId deviceId;
     private String deviceType;      // IOS / ANDROID / WINDOWS / MAC / LINUX
     private String deviceName;      // iPhone 15 Pro / Xiaomi 14
     private String deviceModel;     // 设备型号

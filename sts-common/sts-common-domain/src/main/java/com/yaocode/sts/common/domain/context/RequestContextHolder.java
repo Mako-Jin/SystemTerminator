@@ -1,6 +1,13 @@
-package com.yaocode.sts.common.web.context;
+package com.yaocode.sts.common.domain.context;
 
-import com.yaocode.sts.common.web.constants.ContextConstants;
+import com.yaocode.sts.common.domain.constants.ContextConstants;
+import com.yaocode.sts.common.domain.valueobject.ClientId;
+import com.yaocode.sts.common.domain.valueobject.DeviceId;
+import com.yaocode.sts.common.domain.valueobject.IpAddress;
+import com.yaocode.sts.common.domain.valueobject.TenantCode;
+import com.yaocode.sts.common.domain.valueobject.TenantId;
+import com.yaocode.sts.common.domain.valueobject.UserId;
+import com.yaocode.sts.common.domain.valueobject.Username;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -107,7 +114,7 @@ public class RequestContextHolder {
     // 常用字段快速访问（避免深层调用）
     // ==========================================
 
-    public static String getClientId() {
+    public static ClientId getClientId() {
         ClientInfoContext client = getClientInfo();
         return client != null ? client.getClientId() : null;
     }
@@ -122,7 +129,7 @@ public class RequestContextHolder {
         return client != null ? client.getClientVersion() : null;
     }
 
-    public static String getDeviceId() {
+    public static DeviceId getDeviceId() {
         DeviceInfoContext device = getDeviceInfo();
         return device != null ? device.getDeviceId() : null;
     }
@@ -137,27 +144,27 @@ public class RequestContextHolder {
         return device != null ? device.getLanguage() : null;
     }
 
-    public static String getUserId() {
+    public static UserId getUserId() {
         UserInfoContext user = getUserInfo();
         return user != null ? user.getUserId() : null;
     }
 
-    public static String getUsername() {
+    public static Username getUsername() {
         UserInfoContext user = getUserInfo();
         return user != null ? user.getUsername() : null;
     }
 
-    public static String getTenantId() {
+    public static TenantId getTenantId() {
         TenantInfoContext tenant = getTenantInfo();
         return tenant != null ? tenant.getTenantId() : null;
     }
 
-    public static String getTenantCode() {
+    public static TenantCode getTenantCode() {
         TenantInfoContext tenant = getTenantInfo();
         return tenant != null ? tenant.getTenantCode() : null;
     }
 
-    public static String getIpAddress() {
+    public static IpAddress getIpAddress() {
         return getContext().getIpAddress();
     }
 

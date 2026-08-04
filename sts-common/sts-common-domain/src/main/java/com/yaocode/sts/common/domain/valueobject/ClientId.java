@@ -1,7 +1,6 @@
-package com.yaocode.sts.auth.domain.valueobjects.identifiers;
+package com.yaocode.sts.common.domain.valueobject;
 
-import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.common.domain.valueobject.Identifier;
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -17,7 +16,7 @@ public class ClientId extends Identifier<String> {
 
     public static ClientId of(String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException(AuthI18nKeyConstants.IDENTIFIER_VALUE_CANNOT_BE_NULL);
+            throw new IllegalArgumentException(DomainI18nKeyConstants.COMMON_DOMAIN_IDENTIFIER_VALUE_NULL);
         }
         return new ClientId(value);
     }

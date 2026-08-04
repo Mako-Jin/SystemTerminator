@@ -1,8 +1,7 @@
-package com.yaocode.sts.auth.domain.valueobjects.primitives;
+package com.yaocode.sts.common.domain.valueobject;
 
-import com.yaocode.sts.auth.domain.constants.AuthI18nKeyConstants;
-import com.yaocode.sts.auth.domain.constants.RegexConstants;
-import com.yaocode.sts.common.domain.valueobject.Identifier;
+import com.yaocode.sts.common.domain.constants.DomainI18nKeyConstants;
+import com.yaocode.sts.common.domain.constants.RegexConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -22,10 +21,10 @@ public class TenantCode extends Identifier<String> {
 
     public static TenantCode of (String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(AuthI18nKeyConstants.TENANT_CODE_CANNOT_BE_BLANK);
+            throw new IllegalArgumentException(DomainI18nKeyConstants.TENANT_CODE_CANNOT_BE_BLANK);
         }
         if (!RegexConstants.CODE_PATTERN_COMPILED.matcher(value).matches()) {
-            throw new IllegalArgumentException(AuthI18nKeyConstants.CODE_FORMAT_INVALID);
+            throw new IllegalArgumentException(DomainI18nKeyConstants.CODE_FORMAT_INVALID);
         }
         return new TenantCode(value);
     }

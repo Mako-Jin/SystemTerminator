@@ -1,4 +1,4 @@
-package com.yaocode.sts.common.web.constants;
+package com.yaocode.sts.common.domain.constants;
 
 public interface RequestConstants {
 
@@ -245,6 +245,184 @@ public interface RequestConstants {
      * 参数 - rememberMe
      */
     String REMEMBER_ME = "rememberMe";
+
+    // ==========================================
+    // 租户参数名称
+    // ==========================================
+
+    /**
+     * 参数 - 租户ID
+     */
+    String TENANT_ID = "tenantId";
+
+    /**
+     * 参数 - 租户名称
+     */
+    String TENANT_NAME = "tenantName";
+
+    /**
+     * 参数 - 租户编码
+     */
+    String TENANT_CODE = "tenantCode";
+
+    /**
+     * 参数 - 租户描述
+     */
+    String TENANT_DESC = "tenantDesc";
+
+    /**
+     * 参数 - 租户层级
+     */
+    String TENANT_LEVEL = "tenantLevel";
+
+    /**
+     * 参数 - 父租户ID
+     */
+    String PARENT_ID = "parentId";
+
+    /**
+     * 参数 - 租户编码路径
+     */
+    String TENANT_CODE_PATH = "tenantCodePath";
+
+    /**
+     * 参数 - 品牌ID
+     */
+    String BRAND_ID = "brandId";
+
+    /**
+     * 参数 - 品牌名称
+     */
+    String BRAND_NAME = "brandName";
+
+    /**
+     * 参数 - Logo URL
+     */
+    String LOGO_URL = "logoUrl";
+
+    /**
+     * 参数 - 登录标题
+     */
+    String LOGIN_TITLE = "loginTitle";
+
+    /**
+     * 参数 - 主色调
+     */
+    String PRIMARY_COLOR = "primaryColor";
+
+    /**
+     * 参数 - 登录背景图URL
+     */
+    String LOGIN_BACKGROUND_URL = "loginBackgroundUrl";
+
+    /**
+     * 参数 - 密码登录是否启用
+     */
+    String PASSWORD_LOGIN_ENABLED = "passwordLoginEnabled";
+
+    /**
+     * 参数 - 短信登录是否启用
+     */
+    String SMS_LOGIN_ENABLED = "smsLoginEnabled";
+
+    /**
+     * 参数 - 邮箱登录是否启用
+     */
+    String EMAIL_LOGIN_ENABLED = "emailLoginEnabled";
+
+    /**
+     * 参数 - 扫码登录是否启用
+     */
+    String QR_CODE_LOGIN_ENABLED = "qrCodeLoginEnabled";
+
+    /**
+     * 参数 - 验证码是否启用
+     */
+    String CAPTCHA_ENABLED = "captchaEnabled";
+
+    /**
+     * 参数 - 是否需要多因素认证
+     */
+    String MFA_REQUIRED = "mfaRequired";
+
+    /**
+     * 参数 - 最大登录尝试次数
+     */
+    String MAX_LOGIN_ATTEMPTS = "maxLoginAttempts";
+
+    /**
+     * 参数 - 会话超时时间（分钟）
+     */
+    String SESSION_TIMEOUT = "sessionTimeout";
+
+    /**
+     * 参数 - 是否启用
+     */
+    String IS_ENABLED = "isEnabled";
+
+    /**
+     * 参数 - 是否允许注册
+     */
+    String ALLOW_REGISTER = "allowRegister";
+
+    /**
+     * 参数 - 是否允许新增
+     */
+    String ALLOW_ADD = "allowAdd";
+
+    // ==========================================
+    // 用户参数名称
+    // ==========================================
+
+    /**
+     * 参数 - 用户ID
+     */
+    String USER_ID = "userId";
+
+    /**
+     * 参数 - 用户名
+     */
+    String USER_NAME = "userName";
+
+    /**
+     * 参数 - 昵称
+     */
+    String NICKNAME = "nickname";
+
+    /**
+     * 参数 - 真实姓名
+     */
+    String REAL_NAME = "realName";
+
+    /**
+     * 参数 - 邮箱
+     */
+    String EMAIL = "email";
+
+    /**
+     * 参数 - 手机号
+     */
+    String PHONE = "phone";
+
+    /**
+     * 参数 - 头像URL
+     */
+    String AVATAR_URL = "avatarUrl";
+
+    /**
+     * 参数 - 角色
+     */
+    String ROLE = "role";
+
+    /**
+     * 参数 - 是否管理员
+     */
+    String IS_ADMIN = "isAdmin";
+
+    /**
+     * 参数 - 是否可信
+     */
+    String IS_TRUSTED = "isTrusted";
 
     // ==========================================
     // MDC 键名

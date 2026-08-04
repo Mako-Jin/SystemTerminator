@@ -64,6 +64,10 @@
             <groupId>com.yaocode.sts.common</groupId>
             <artifactId>sts-common-tools</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts.common</groupId>
+            <artifactId>sts-common-infrastructure</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
