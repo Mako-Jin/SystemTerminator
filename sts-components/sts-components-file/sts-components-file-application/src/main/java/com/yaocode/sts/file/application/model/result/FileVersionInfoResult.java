@@ -56,17 +56,17 @@ public class FileVersionInfoResult {
     /**
      * 创建用户ID
      */
-    private String createdUserId;
+    private String createUserId;
 
     /**
      * 创建用户名称
      */
-    private String createdUserName;
+    private String createUsername;
 
     /**
      * 创建时间
      */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     /**
      * 租户ID

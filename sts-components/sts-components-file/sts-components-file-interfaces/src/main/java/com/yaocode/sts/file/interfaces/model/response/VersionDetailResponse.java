@@ -30,8 +30,8 @@ public class VersionDetailResponse {
     private String parentVersionId;
     private Boolean isCurrent;
     private Boolean isLatest;
-    private String createdUserId;
-    private String createdUserName;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+    private String createUserId;
+    private String createUsername;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 }

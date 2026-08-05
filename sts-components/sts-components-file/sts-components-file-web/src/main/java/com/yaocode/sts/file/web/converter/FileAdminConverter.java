@@ -1,28 +1,6 @@
 package com.yaocode.sts.file.web.converter;
 
-import com.yaocode.sts.file.interfaces.model.request.BatchArchiveRequest;
-import com.yaocode.sts.file.interfaces.model.request.FileListQueryRequest;
-import com.yaocode.sts.file.interfaces.model.request.MigrateOptionsRequest;
-import com.yaocode.sts.file.interfaces.model.request.StorageNodeInfoRequest;
-import com.yaocode.sts.file.interfaces.model.response.AdminStatisticsResponse;
-import com.yaocode.sts.file.interfaces.model.response.AuditHistoryResponse;
-import com.yaocode.sts.file.interfaces.model.response.BatchArchiveResponse;
-import com.yaocode.sts.file.interfaces.model.response.BatchDeleteResponse;
-import com.yaocode.sts.file.interfaces.model.response.BatchRestoreResponse;
-import com.yaocode.sts.file.interfaces.model.response.CleanupResponse;
-import com.yaocode.sts.file.interfaces.model.response.ConnectionTestResponse;
-import com.yaocode.sts.file.interfaces.model.response.DuplicateCleanResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileAuditInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileAuditLogResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileDetailInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileVersionInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.MigrateTaskStatusResponse;
-import com.yaocode.sts.file.interfaces.model.response.StorageNodeInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.StorageNodeStatsResponse;
-import com.yaocode.sts.file.interfaces.model.response.StorageStatsResponse;
-import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
-import com.yaocode.sts.file.interfaces.model.response.TypeStatsResponse;
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
 import com.yaocode.sts.file.application.model.command.AddStorageNodeCommand;
 import com.yaocode.sts.file.application.model.command.ArchiveFileCommand;
 import com.yaocode.sts.file.application.model.command.AuditFileCommand;
@@ -70,6 +48,29 @@ import com.yaocode.sts.file.application.model.result.StorageNodeStatsResult;
 import com.yaocode.sts.file.application.model.result.StorageStatsResult;
 import com.yaocode.sts.file.application.model.result.TrendDataResult;
 import com.yaocode.sts.file.application.model.result.TypeStatsResult;
+import com.yaocode.sts.file.interfaces.model.request.BatchArchiveRequest;
+import com.yaocode.sts.file.interfaces.model.request.FileListQueryRequest;
+import com.yaocode.sts.file.interfaces.model.request.MigrateOptionsRequest;
+import com.yaocode.sts.file.interfaces.model.request.StorageNodeInfoRequest;
+import com.yaocode.sts.file.interfaces.model.response.AdminStatisticsResponse;
+import com.yaocode.sts.file.interfaces.model.response.AuditHistoryResponse;
+import com.yaocode.sts.file.interfaces.model.response.BatchArchiveResponse;
+import com.yaocode.sts.file.interfaces.model.response.BatchDeleteResponse;
+import com.yaocode.sts.file.interfaces.model.response.BatchRestoreResponse;
+import com.yaocode.sts.file.interfaces.model.response.CleanupResponse;
+import com.yaocode.sts.file.interfaces.model.response.ConnectionTestResponse;
+import com.yaocode.sts.file.interfaces.model.response.DuplicateCleanResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileAuditInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileAuditLogResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileDetailInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileVersionInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.MigrateTaskStatusResponse;
+import com.yaocode.sts.file.interfaces.model.response.StorageNodeInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.StorageNodeStatsResponse;
+import com.yaocode.sts.file.interfaces.model.response.StorageStatsResponse;
+import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
+import com.yaocode.sts.file.interfaces.model.response.TypeStatsResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -92,27 +93,27 @@ public class FileAdminConverter {
     // ==================== 获取上下文信息 ====================
 
     /**
-     * 获取当前租户ID（从SecurityContext或ThreadLocal）
+     * 获取当前租户ID（从 RequestContextHolder 获取）
      */
     private String getCurrentTenantId() {
-        // 实际实现从上下文获取
-        return "default";
+        var tenantId = RequestContextHolder.getTenantId();
+        return tenantId != null ? tenantId.getValue() : null;
     }
 
     /**
      * 获取当前用户ID
      */
     private String getCurrentUserId() {
-        // 实际实现从上下文获取
-        return "system";
+        var userId = RequestContextHolder.getUserId();
+        return userId != null ? userId.getValue() : null;
     }
 
     /**
      * 获取当前用户名
      */
     private String getCurrentUserName() {
-        // 实际实现从上下文获取
-        return "admin";
+        var username = RequestContextHolder.getUsername();
+        return username != null ? username.getValue() : null;
     }
 
     // ==================== 1. 文件删除转换 ====================
@@ -667,8 +668,8 @@ public class FileAdminConverter {
                 .weight(result.getWeight())
                 .priority(result.getPriority())
                 .lastHealthCheck(result.getLastHealthCheck())
-                .createdTime(result.getCreatedTime())
-                .updatedTime(result.getUpdatedTime())
+                .createTime(result.getCreateTime())
+                .updateTime(result.getUpdateTime())
                 .build();
     }
 
@@ -852,7 +853,7 @@ public class FileAdminConverter {
                 .success(result.getSuccess())
                 .errorMessage(result.getErrorMessage())
                 .costTime(result.getCostTime())
-                .createdTime(result.getCreatedTime())
+                .createTime(result.getCreateTime())
                 .extraData(result.getExtraData())
                 .build();
     }
@@ -887,16 +888,16 @@ public class FileAdminConverter {
                 .description(result.getDescription())
                 .businessId(result.getBusinessId())
                 .businessType(result.getBusinessType())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .uploadTime(result.getUploadTime())
                 .lastAccessTime(result.getLastAccessTime())
                 .lastModifiedTime(result.getLastModifiedTime())
                 .expireTime(result.getExpireTime())
-                .updatedUserId(result.getUpdatedUserId())
+                .updateUserId(result.getUpdateUserId())
                 .updatedUserName(result.getUpdatedUserName())
-                .updatedTime(result.getUpdatedTime())
+                .updateTime(result.getUpdateTime())
                 .isEncrypted(result.getIsEncrypted())
                 .isCompressed(result.getIsCompressed())
                 .isPublic(result.getIsPublic())
@@ -935,9 +936,9 @@ public class FileAdminConverter {
                 .downloadCount(result.getDownloadCount())
                 .tags(result.getTags())
                 .description(result.getDescription())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .build();
     }
 
@@ -965,9 +966,9 @@ public class FileAdminConverter {
                 .changeLog(result.getChangeLog())
                 .fileSize(result.getFileSize())
                 .fileMd5(result.getFileMd5())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .build();
     }
 

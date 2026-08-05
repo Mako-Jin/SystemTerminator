@@ -1,10 +1,10 @@
 package com.yaocode.sts.file.application.strategy;
 
-import com.yaocode.sts.file.core.strategy.AbstractDuplicateStrategy;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
+import com.yaocode.sts.file.core.strategy.AbstractDuplicateStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

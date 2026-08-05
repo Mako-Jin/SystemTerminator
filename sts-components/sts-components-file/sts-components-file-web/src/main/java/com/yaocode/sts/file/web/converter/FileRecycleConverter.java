@@ -1,10 +1,6 @@
 package com.yaocode.sts.file.web.converter;
 
-import com.yaocode.sts.file.interfaces.model.response.BatchRestoreResponse;
-import com.yaocode.sts.file.interfaces.model.response.CleanupResponse;
-import com.yaocode.sts.file.interfaces.model.response.RecycleFileInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.RecycleStatisticsResponse;
-import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
 import com.yaocode.sts.file.application.model.command.BatchRestoreFromRecycleCommand;
 import com.yaocode.sts.file.application.model.command.EmptyRecycleBinByConditionsCommand;
 import com.yaocode.sts.file.application.model.command.EmptyRecycleBinCommand;
@@ -16,6 +12,11 @@ import com.yaocode.sts.file.application.model.result.CleanupResult;
 import com.yaocode.sts.file.application.model.result.RecycleFileInfoResult;
 import com.yaocode.sts.file.application.model.result.RecycleStatisticsResult;
 import com.yaocode.sts.file.application.model.result.TrendDataResult;
+import com.yaocode.sts.file.interfaces.model.response.BatchRestoreResponse;
+import com.yaocode.sts.file.interfaces.model.response.CleanupResponse;
+import com.yaocode.sts.file.interfaces.model.response.RecycleFileInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.RecycleStatisticsResponse;
+import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -35,18 +36,18 @@ public class FileRecycleConverter {
     // ==================== 上下文信息获取 ====================
 
     private String getCurrentTenantId() {
-        // TODO: 从 SecurityContext 获取
-        return "default";
+        var tenantId = RequestContextHolder.getTenantId();
+        return tenantId != null ? tenantId.getValue() : null;
     }
 
     private String getCurrentUserId() {
-        // TODO: 从 SecurityContext 获取
-        return "system";
+        var userId = RequestContextHolder.getUserId();
+        return userId != null ? userId.getValue() : null;
     }
 
     private String getCurrentUserName() {
-        // TODO: 从 SecurityContext 获取
-        return "system";
+        var username = RequestContextHolder.getUsername();
+        return username != null ? username.getValue() : null;
     }
 
     // ==================== Query 转换 ====================

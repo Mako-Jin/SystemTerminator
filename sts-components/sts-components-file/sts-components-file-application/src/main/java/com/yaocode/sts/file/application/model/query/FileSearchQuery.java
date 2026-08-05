@@ -48,10 +48,10 @@ public class FileSearchQuery {
     private String lastAccessEnd;
 
     /** 创建开始时间 */
-    private String createdTimeStart;
+    private String createTimeStart;
 
     /** 创建结束时间 */
-    private String createdTimeEnd;
+    private String createTimeEnd;
 
     /** 最小文件大小 */
     private Long minSize;

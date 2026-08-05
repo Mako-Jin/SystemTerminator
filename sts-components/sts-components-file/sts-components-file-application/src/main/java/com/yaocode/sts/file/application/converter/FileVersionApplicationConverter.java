@@ -39,10 +39,10 @@ public interface FileVersionApplicationConverter {
     @Mapping(target = "branchId", source = "branchId")
     @Mapping(target = "isCurrent", source = "isCurrent")
     @Mapping(target = "isLatest", source = "isLatest")
-    @Mapping(target = "createdUserId", source = "createdUserId")
-    @Mapping(target = "createdUserName", source = "createdUserName")
-    @Mapping(target = "createdTime", source = "createdTime")
-    @Mapping(target = "updatedTime", source = "updatedTime")
+    @Mapping(target = "createUserId", source = "createUserId")
+    @Mapping(target = "createUserName", source = "createUserName")
+    @Mapping(target = "createTime", source = "createTime")
+    @Mapping(target = "updateTime", source = "updateTime")
     VersionInfoResult toVersionInfoResult(FileVersionEntity entity);
 
     /**
@@ -70,11 +70,11 @@ public interface FileVersionApplicationConverter {
     @Mapping(target = "branchId", source = "branchId")
     @Mapping(target = "isCurrent", constant = "false")
     @Mapping(target = "isLatest", constant = "true")
-    @Mapping(target = "isDeleted", constant = "false")
-    @Mapping(target = "createdUserId", source = "command.userId")
-    @Mapping(target = "createdUserName", source = "command.userName")
-    @Mapping(target = "createdTime", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "updatedTime", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "isDeleted", constant = "0")
+    @Mapping(target = "createUserId", source = "command.userId")
+    @Mapping(target = "createUserName", source = "command.userName")
+    @Mapping(target = "createTime", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "updateTime", expression = "java(LocalDateTime.now())")
     FileVersionEntity toFileVersionEntity(
             CreateVersionCommand command,
             String versionId,

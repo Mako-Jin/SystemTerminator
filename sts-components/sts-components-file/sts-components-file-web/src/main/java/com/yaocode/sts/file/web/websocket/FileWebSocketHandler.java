@@ -1,19 +1,23 @@
 package com.yaocode.sts.file.web.websocket;
 
+import com.yaocode.sts.common.domain.constants.HeaderConstants;
+import com.yaocode.sts.common.domain.constants.RequestConstants;
 import com.yaocode.sts.common.tools.JSONUtils;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,6 +45,11 @@ public class FileWebSocketHandler extends TextWebSocketHandler {
      */
     private final ConcurrentHashMap<String, UploadContext> uploadContexts = new ConcurrentHashMap<>();
 
+    /**
+     * 存储会话对应的请求上下文（从握手请求中解析）
+     */
+    private final ConcurrentHashMap<String, RequestContext> requestContexts = new ConcurrentHashMap<>();
+
     public FileWebSocketHandler(FileUploadService fileUploadService) {
         this.fileUploadService = fileUploadService;
     }
@@ -49,16 +58,29 @@ public class FileWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         String sessionId = session.getId();
         sessions.put(sessionId, session);
-        log.info("WebSocket连接建立: {}", sessionId);
+
+        // 从握手请求中解析上下文信息
+        RequestContext ctx = resolveRequestContext(session);
+        requestContexts.put(sessionId, ctx);
+
+        log.info("WebSocket连接建立: {}, tenantId={}, userId={}",
+                sessionId, ctx.tenantId(), ctx.userId());
 
         // 发送连接成功消息
         sendMessage(session, WebSocketMessage.success("连接成功", Map.of("sessionId", sessionId)));
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(
+            @NonNull WebSocketSession session,
+            TextMessage message
+    ) throws Exception {
         String payload = message.getPayload();
         WebSocketMessage wsMessage = JSONUtils.parseObject(payload, WebSocketMessage.class);
+        if (Objects.isNull(wsMessage)) {
+            sendError(session, "消息解析失败");
+            return;
+        }
 
         String type = wsMessage.getType();
 
@@ -179,13 +201,20 @@ public class FileWebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             // 构建上传命令
+            // 从会话上下文中获取用户信息
+            RequestContext ctx = requestContexts.get(session.getId());
+            String tenantId = ctx != null ? ctx.tenantId() : null;
+            String userId = ctx != null ? ctx.userId() : null;
+            String userName = ctx != null ? ctx.userName() : null;
+
             UploadFileCommand command = UploadFileCommand.builder()
                     .file(fileObject)
                     .fileName(context.getFileName())
                     .fileSize((long) fileData.length)
                     .fileMd5(context.getFileMd5())
-                    .tenantId("default")
-                    .userId("websocket")
+                    .tenantId(tenantId)
+                    .userId(userId)
+                    .username(userName)
                     .build();
 
             // 执行上传
@@ -206,6 +235,59 @@ public class FileWebSocketHandler extends TextWebSocketHandler {
             log.error("完成上传失败", e);
             sendError(session, "完成上传失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 从 WebSocket 握手请求中解析请求上下文
+     */
+    private RequestContext resolveRequestContext(WebSocketSession session) {
+        String tenantId = null;
+        String userId = null;
+        String userName = null;
+
+        // 尝试从握手请求的 headers 中获取上下文信息
+        try {
+            HttpHeaders headers = session.getHandshakeHeaders();
+            tenantId = firstHeader(headers, HeaderConstants.TENANT_ID, "tenant-id");
+            userId = firstHeader(headers, HeaderConstants.USER_ID, "user-id");
+            userName = firstHeader(headers, HeaderConstants.USER_NAME, "user-name");
+        } catch (Exception e) {
+            log.warn("解析 WebSocket 握手上下文失败", e);
+        }
+
+        // 如果 headers 中没有，则尝试从 attributes 中获取（由握手拦截器设置）
+        if (tenantId == null) {
+            tenantId = getAttribute(session, RequestConstants.TENANT_ID);
+        }
+        if (userId == null) {
+            userId = getAttribute(session, RequestConstants.USER_ID);
+        }
+        if (userName == null) {
+            userName = getAttribute(session, RequestConstants.USER_NAME);
+        }
+
+        return new RequestContext(tenantId, userId, userName);
+    }
+
+    private String firstHeader(HttpHeaders headers, String... names) {
+        for (String name : names) {
+            String value = headers.getFirst(name);
+            if (value != null && !value.isEmpty()) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private String getAttribute(WebSocketSession session, String name) {
+        Object value = session.getAttributes().get(name);
+        return value instanceof String ? (String) value : null;
+    }
+
+    /**
+     * WebSocket 请求上下文（轻量级内部类）
+     */
+    private record RequestContext(String tenantId, String userId, String userName) {
     }
 
     /**

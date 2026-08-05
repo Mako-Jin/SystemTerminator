@@ -22,10 +22,10 @@
         <result column="is_current" property="isCurrent"/>
         <result column="is_latest" property="isLatest"/>
         <result column="is_deleted" property="isDeleted"/>
-        <result column="created_user_id" property="createdUserId"/>
-        <result column="created_user_name" property="createdUserName"/>
-        <result column="created_time" property="createdTime"/>
-        <result column="updated_time" property="updatedTime"/>
+        <result column="created_user_id" property="createUserId"/>
+        <result column="created_user_name" property="createUsername"/>
+        <result column="created_time" property="createTime"/>
+        <result column="updated_time" property="updateTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -48,8 +48,8 @@
                      #{versionId}, #{fileId}, #{versionNumber}, #{versionType}, #{versionTag},
                      #{versionName}, #{versionRemark}, #{changeSummary}, #{filePath}, #{fileSize},
                      #{fileMd5}, #{fileSha256}, #{storageUrl}, #{parentVersionId}, #{branchId},
-                     #{isCurrent}, #{isLatest}, #{isDeleted}, #{createdUserId}, #{createdUserName},
-                     #{createdTime}, #{updatedTime}
+                     #{isCurrent}, #{isLatest}, #{isDeleted}, #{createUserId}, #{createUsername},
+                     #{createTime}, #{updateTime}
                  )
     </insert>
 

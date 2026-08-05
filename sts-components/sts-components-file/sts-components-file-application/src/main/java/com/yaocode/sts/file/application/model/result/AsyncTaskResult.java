@@ -63,5 +63,5 @@ public class AsyncTaskResult {
     private Boolean callbackSuccess;
 
     /** 创建时间 */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 }

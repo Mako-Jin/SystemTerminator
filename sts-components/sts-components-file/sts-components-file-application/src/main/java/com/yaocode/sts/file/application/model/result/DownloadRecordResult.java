@@ -45,7 +45,7 @@ public class DownloadRecordResult {
     private Boolean success;
 
     /** 创建时间 */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     /** 租户ID */
     private String tenantId;

@@ -1,12 +1,13 @@
 package com.yaocode.sts.file.infrastructure.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +16,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("file_tbl_file_info")
-public class FileInfoEntity {
+@EqualsAndHashCode(callSuper = true)
+public class FileInfoEntity extends BasePo {
 
     /**
      * 文件全局唯一标识(UUID)
@@ -206,50 +208,6 @@ public class FileInfoEntity {
      */
     @TableField("delete_time")
     private LocalDateTime deleteTime;
-
-    // ========== 审计信息 ==========
-
-    /**
-     * 创建人ID
-     */
-    @TableField("created_user_id")
-    private String createdUserId;
-
-    /**
-     * 创建人名称
-     */
-    @TableField("update_user_name")
-    private String createdUserName;
-
-    /**
-     * 更新人ID
-     */
-    @TableField("updated_user_id")
-    private String updatedUserId;
-
-    /**
-     * 更新人名称
-     */
-    @TableField("updated_user_name")
-    private String updatedUserName;
-
-    /**
-     * 创建时间
-     */
-    @TableField(value = "created_time", fill = FieldFill.INSERT)
-    private LocalDateTime createdTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField(value = "updated_time", fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updatedTime;
-
-    /**
-     * 租户ID
-     */
-    @TableField("tenant_id")
-    private String tenantId;
 
     /**
      * 版本号(乐观锁)

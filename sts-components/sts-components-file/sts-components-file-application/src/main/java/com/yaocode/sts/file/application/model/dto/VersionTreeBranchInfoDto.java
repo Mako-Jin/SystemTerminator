@@ -17,5 +17,5 @@ public class VersionTreeBranchInfoDto {
     private Integer headVersionNumber;
     private Boolean isDefault;
     private Boolean isActive;
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 }

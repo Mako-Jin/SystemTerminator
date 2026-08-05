@@ -1,13 +1,12 @@
 package com.yaocode.sts.file.infrastructure.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -15,7 +14,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("file_tbl_access_log")
-public class FileAccessLogEntity {
+@EqualsAndHashCode(callSuper = true)
+public class FileAccessLogEntity extends BasePo {
 
     /**
      * 主键ID
@@ -95,10 +95,4 @@ public class FileAccessLogEntity {
      */
     @TableField("cost_time")
     private Long costTime;
-
-    /**
-     * 创建时间
-     */
-    @TableField(value = "created_time", fill = FieldFill.INSERT)
-    private LocalDateTime createdTime;
 }

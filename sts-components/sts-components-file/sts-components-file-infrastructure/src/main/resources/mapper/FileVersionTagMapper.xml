@@ -10,10 +10,10 @@
         <result column="tag_name" property="tagName"/>
         <result column="tag_type" property="tagType"/>
         <result column="tag_description" property="tagDescription"/>
-        <result column="created_user_id" property="createdUserId"/>
-        <result column="created_user_name" property="createdUserName"/>
-        <result column="created_time" property="createdTime"/>
-        <result column="updated_time" property="updatedTime"/>
+        <result column="created_user_id" property="createUserId"/>
+        <result column="created_user_name" property="createUsername"/>
+        <result column="created_time" property="createTime"/>
+        <result column="updated_time" property="updateTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -28,7 +28,7 @@
             created_user_id, created_user_name, created_time, updated_time
         ) VALUES (
                      #{tagId}, #{fileId}, #{versionId}, #{tagName}, #{tagType}, #{tagDescription},
-                     #{createdUserId}, #{createdUserName}, #{createdTime}, #{updatedTime}
+                     #{createUserId}, #{createUsername}, #{createTime}, #{updateTime}
                  )
     </insert>
 

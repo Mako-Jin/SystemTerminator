@@ -1,9 +1,12 @@
 package com.yaocode.sts.file.infrastructure.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
 /**
  * 文件版本标签实体
@@ -13,11 +16,14 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
-public class FileVersionTagEntity {
+@TableName("file_tbl_version_tag")
+@EqualsAndHashCode(callSuper = true)
+public class FileVersionTagEntity extends BasePo {
 
     /**
      * 主键ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -49,24 +55,4 @@ public class FileVersionTagEntity {
      * 标签描述
      */
     private String tagDescription;
-
-    /**
-     * 创建用户ID
-     */
-    private String createdUserId;
-
-    /**
-     * 创建用户名
-     */
-    private String createdUserName;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updatedTime;
 }

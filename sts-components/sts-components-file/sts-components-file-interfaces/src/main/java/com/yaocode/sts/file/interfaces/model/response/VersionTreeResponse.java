@@ -45,9 +45,9 @@ public class VersionTreeResponse {
         private Boolean isMergeCommit;
         private Integer depth;
         private Integer position;
-        private String createdUserId;
-        private String createdUserName;
-        private LocalDateTime createdTime;
+        private String createUserId;
+        private String createUsername;
+        private LocalDateTime createTime;
     }
 
     /**
@@ -74,6 +74,6 @@ public class VersionTreeResponse {
         private Integer headVersionNumber;
         private Boolean isDefault;
         private Boolean isActive;
-        private LocalDateTime createdTime;
+        private LocalDateTime createTime;
     }
 }

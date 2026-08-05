@@ -2,6 +2,7 @@ package com.yaocode.sts.file.application.service.impl;
 
 import com.yaocode.sts.common.basic.enums.EnableEnums;
 import com.yaocode.sts.file.application.model.command.CreateVersionCommand;
+import com.yaocode.sts.file.application.service.DuplicateStrategyService;
 import com.yaocode.sts.file.application.service.FileVersionService;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
 import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
@@ -13,7 +14,6 @@ import com.yaocode.sts.file.core.exception.FileStorageException;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
-import com.yaocode.sts.file.application.service.DuplicateStrategyService;
 import com.yaocode.sts.file.core.spi.DuplicateStrategySelector;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.core.utils.FileFingerprintUtils;

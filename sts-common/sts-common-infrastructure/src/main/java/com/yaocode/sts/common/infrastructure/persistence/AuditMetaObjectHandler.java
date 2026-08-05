@@ -7,9 +7,9 @@ import com.yaocode.sts.common.domain.valueobject.UserId;
 import org.apache.ibatis.reflection.MetaObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * MyBatis-Plus 审计字段自动填充处理器
@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
  * <p>
  * 字段来源：{@link RequestContextHolder} 统一提供当前请求的用户/租户信息，
  */
-@Component
 public class AuditMetaObjectHandler implements MetaObjectHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditMetaObjectHandler.class);
@@ -87,14 +86,15 @@ public class AuditMetaObjectHandler implements MetaObjectHandler {
      */
     private void fillUserFields(MetaObject metaObject, boolean isCreate) {
         UserId userId = RequestContextHolder.getUserId();
-        if (userId != null) {
-            if (isCreate) {
-                this.strictInsertFill(metaObject, "createUserId", String.class, userId.getValue());
-                this.strictInsertFill(metaObject, "create_user_id", String.class, userId.getValue());
-            } else {
-                this.strictInsertFill(metaObject, "updateUserId", String.class, userId.getValue());
-                this.strictInsertFill(metaObject, "update_user_id", String.class, userId.getValue());
-            }
+        if (Objects.isNull(userId)) {
+            throw new IllegalArgumentException("UserId is null");
+        }
+        if (isCreate) {
+            this.strictInsertFill(metaObject, "createUserId", String.class, userId.getValue());
+            this.strictInsertFill(metaObject, "create_user_id", String.class, userId.getValue());
+        } else {
+            this.strictInsertFill(metaObject, "updateUserId", String.class, userId.getValue());
+            this.strictInsertFill(metaObject, "update_user_id", String.class, userId.getValue());
         }
 
         var username = RequestContextHolder.getUsername();
@@ -117,9 +117,10 @@ public class AuditMetaObjectHandler implements MetaObjectHandler {
      */
     private void fillTenantField(MetaObject metaObject) {
         TenantId tenantId = RequestContextHolder.getTenantId();
-        if (tenantId != null) {
-            this.strictInsertFill(metaObject, "tenantId", String.class, tenantId.getValue());
-            this.strictInsertFill(metaObject, "tenant_id", String.class, tenantId.getValue());
+        if (Objects.isNull(tenantId)) {
+            throw new IllegalArgumentException("TenantId is null");
         }
+        this.strictInsertFill(metaObject, "tenantId", String.class, tenantId.getValue());
+        this.strictInsertFill(metaObject, "tenant_id", String.class, tenantId.getValue());
     }
 }

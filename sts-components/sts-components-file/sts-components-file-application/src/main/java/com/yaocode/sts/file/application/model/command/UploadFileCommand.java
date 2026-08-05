@@ -1,15 +1,12 @@
 package com.yaocode.sts.file.application.model.command;
 
-import com.yaocode.sts.common.basic.enums.YesNoEnums;
-import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
-import com.yaocode.sts.file.application.model.result.FileExistenceResult;
+import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 上传文件命令

@@ -3,11 +3,6 @@ package com.yaocode.sts.file.application.service.impl;
 import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.common.tools.id.IdFactory;
-import com.yaocode.sts.file.core.enums.FileStatusEnums;
-import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
-import com.yaocode.sts.file.infrastructure.entity.StorageNodeEntity;
-import com.yaocode.sts.file.infrastructure.mapper.StorageNodeMapper;
 import com.yaocode.sts.file.application.model.command.AddStorageNodeCommand;
 import com.yaocode.sts.file.application.model.command.AuditFileCommand;
 import com.yaocode.sts.file.application.model.command.BatchDeleteCommand;
@@ -50,6 +45,11 @@ import com.yaocode.sts.file.application.model.result.StorageNodeStatsResult;
 import com.yaocode.sts.file.application.model.result.TrendDataResult;
 import com.yaocode.sts.file.application.service.FileAdminService;
 import com.yaocode.sts.file.application.service.FileStorageService;
+import com.yaocode.sts.file.core.enums.FileStatusEnums;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
+import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.StorageNodeEntity;
+import com.yaocode.sts.file.infrastructure.mapper.StorageNodeMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -111,8 +111,8 @@ public class FileAdminServiceImpl implements FileAdminService {
         entity.setExpireTime(LocalDateTime.now().plusDays(30)); // 回收站保留30天
 //        entity.setDeletedUserId(command.getUserId());
 //        entity.setDeletedUserName(command.getUserName());
-        entity.setUpdatedUserId(command.getUserId());
-        entity.setUpdatedTime(LocalDateTime.now());
+        entity.setUpdateUserId(command.getUserId());
+        entity.setUpdateTime(LocalDateTime.now());
         fileBaseInfoDao.updateById(entity);
         log.info("文件删除成功: {}, 操作人: {}", command.getFileId(), command.getUserName());
     }
@@ -208,8 +208,8 @@ public class FileAdminServiceImpl implements FileAdminService {
         entity.setExpireTime(null);
 //        entity.setDeletedUserId(null);
 //        entity.setDeletedUserName(null);
-        entity.setUpdatedUserId(command.getUserId());
-        entity.setUpdatedTime(LocalDateTime.now());
+        entity.setUpdateUserId(command.getUserId());
+        entity.setUpdateTime(LocalDateTime.now());
         fileBaseInfoDao.updateById(entity);
 
         log.info("文件恢复成功: {}, 操作人: {}", command.getFileId(), command.getUserName());
@@ -281,8 +281,8 @@ public class FileAdminServiceImpl implements FileAdminService {
 //        entity.setArchiveType(command.getArchiveType());
 //        entity.setArchiveLocation(archiveLocation);
 //        entity.setArchiveTime(LocalDateTime.now());
-//        entity.setUpdatedUserId(command.getUserId());
-//        entity.setUpdatedTime(LocalDateTime.now());
+//        entity.setupdateUserId(command.getUserId());
+//        entity.setupdateTime(LocalDateTime.now());
 //        fileInfoMapper.updateById(entity);
 
 //        log.info("文件归档成功: {}, 类型: {}", command.getFileId(), command.getArchiveType());
@@ -315,8 +315,8 @@ public class FileAdminServiceImpl implements FileAdminService {
 //        entity.setArchiveType(null);
 //        entity.setArchiveLocation(null);
 //        entity.setArchiveTime(null);
-//        entity.setUpdatedUserId(command.getUserId());
-//        entity.setUpdatedTime(LocalDateTime.now());
+//        entity.setupdateUserId(command.getUserId());
+//        entity.setupdateTime(LocalDateTime.now());
 //        fileInfoMapper.updateById(entity);
 //
 //        log.info("文件取消归档成功: {}", command.getFileId());
@@ -399,8 +399,8 @@ public class FileAdminServiceImpl implements FileAdminService {
             );
             entity.setFilePath(newPath);
             entity.setStorageType(command.getTargetStorageType());
-            entity.setUpdatedUserId(command.getUserId());
-            entity.setUpdatedTime(LocalDateTime.now());
+            entity.setUpdateUserId(command.getUserId());
+            entity.setUpdateTime(LocalDateTime.now());
             fileBaseInfoDao.updateById(entity);
             log.info("文件迁移完成（同步）: {}", command.getFileId());
         }
@@ -651,9 +651,9 @@ public class FileAdminServiceImpl implements FileAdminService {
         entity.setHealthStatus(1); // 健康
         entity.setLastHealthCheck(LocalDateTime.now());
 //        entity.setTenantId(command.getTenantId());
-        entity.setCreatedUserId(command.getUserId());
-        entity.setCreatedTime(LocalDateTime.now());
-        entity.setUpdatedTime(LocalDateTime.now());
+        entity.setCreateUserId(command.getUserId());
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdateTime(LocalDateTime.now());
 
         storageNodeMapper.insert(entity);
         log.info("添加存储节点成功: {}", command.getNodeName());
@@ -705,8 +705,8 @@ public class FileAdminServiceImpl implements FileAdminService {
             entity.setEnabled(command.getEnabled());
         }
 
-        entity.setUpdatedUserId(command.getUserId());
-        entity.setUpdatedTime(LocalDateTime.now());
+        entity.setUpdateUserId(command.getUserId());
+        entity.setUpdateTime(LocalDateTime.now());
 
         storageNodeMapper.updateById(entity);
         log.info("更新存储节点成功: {}", command.getNodeId());
@@ -847,8 +847,8 @@ public class FileAdminServiceImpl implements FileAdminService {
 //        entity.setAuditUserId(command.getUserId());
 //        entity.setAuditUserName(command.getUserName());
 //        entity.setAuditTime(LocalDateTime.now());
-//        entity.setUpdatedUserId(command.getUserId());
-//        entity.setUpdatedTime(LocalDateTime.now());
+//        entity.setupdateUserId(command.getUserId());
+//        entity.setupdateTime(LocalDateTime.now());
 //        fileInfoMapper.updateById(entity);
 
         log.info("文件审核完成: {}, 结果: {}", command.getFileId(),
@@ -910,8 +910,8 @@ public class FileAdminServiceImpl implements FileAdminService {
                 .weight(entity.getWeight())
                 .priority(entity.getPriority())
                 .lastHealthCheck(entity.getLastHealthCheck())
-                .createdTime(entity.getCreatedTime())
-                .updatedTime(entity.getUpdatedTime())
+                .createTime(entity.getCreateTime())
+                .updateTime(entity.getUpdateTime())
                 .build();
     }
 }

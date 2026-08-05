@@ -1,9 +1,9 @@
 package com.yaocode.sts.file.application.service.impl;
 
-import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper;
 import com.yaocode.sts.file.application.service.FileBranchService;
+import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -69,10 +69,10 @@ public class FileBranchServiceImpl implements FileBranchService {
 //                .sourceBranchId(sourceBranch.getBranchId())
 //                .isDefault(false)
 //                .isActive(true)
-//                .createdUserId(command.getUserId())
-//                .createdUserName(command.getUserName())
-//                .createdTime(LocalDateTime.now())
-//                .updatedTime(LocalDateTime.now())
+//                .createUserId(command.getUserId())
+//                .createUsername(command.getUserName())
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
 //                .build();
 //
 //        fileBranchMapper.insert(branch);
@@ -84,7 +84,7 @@ public class FileBranchServiceImpl implements FileBranchService {
 //                .headVersionId(headVersion.getVersionId())
 //                .headVersionNumber(headVersion.getVersionNumber())
 //                .sourceBranchId(sourceBranch.getBranchId())
-//                .createdTime(branch.getCreatedTime())
+//                .createTime(branch.getCreateTime())
 //                .build();
 //    }
 //

@@ -6,7 +6,6 @@ import com.yaocode.sts.common.domain.context.ClientInfoContext;
 import com.yaocode.sts.common.domain.context.spi.ClientInfoResolver;
 import com.yaocode.sts.common.domain.valueobject.ClientId;
 import com.yaocode.sts.common.domain.web.HttpRequestContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -16,7 +15,6 @@ import java.util.Optional;
  * 支持双通道解析：优先从 Query/Form Parameter 获取，Parameter 不存在时从 HTTP Header 获取
  * 典型场景：前端 SDK 通过 Header 注入客户端信息，第三方回调通过 Parameter 传递
  */
-@Component
 public class ClientInfoResolverImpl implements ClientInfoResolver {
 
     @Override

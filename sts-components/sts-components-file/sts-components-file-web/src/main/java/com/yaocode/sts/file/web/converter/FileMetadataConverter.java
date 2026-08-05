@@ -1,32 +1,6 @@
 package com.yaocode.sts.file.web.converter;
 
-import com.yaocode.sts.file.interfaces.model.request.BatchUpdateRequest;
-import com.yaocode.sts.file.interfaces.model.request.FileSearchRequest;
-import com.yaocode.sts.file.interfaces.model.request.UpdateDescriptionRequest;
-import com.yaocode.sts.file.interfaces.model.request.UpdateFileNameRequest;
-import com.yaocode.sts.file.interfaces.model.request.UpdatePermissionRequest;
-import com.yaocode.sts.file.interfaces.model.request.UpdateTagsRequest;
-import com.yaocode.sts.file.interfaces.model.response.AccessInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.AccessRecordResponse;
-import com.yaocode.sts.file.interfaces.model.response.BatchUpdateResponse;
-import com.yaocode.sts.file.interfaces.model.response.CompareDetailsResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileAuditLogResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileCompareResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileDetailInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileTypeResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileTypeStatisticsResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileVersionInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.IntegrityCheckResponse;
-import com.yaocode.sts.file.interfaces.model.response.PermissionInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.PermissionItemResponse;
-import com.yaocode.sts.file.interfaces.model.response.SizeDistributionResponse;
-import com.yaocode.sts.file.interfaces.model.response.SizeRangeResponse;
-import com.yaocode.sts.file.interfaces.model.response.StorageInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.StorageStatsResponse;
-import com.yaocode.sts.file.interfaces.model.response.StorageTypeStatsResponse;
-import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
 import com.yaocode.sts.file.application.model.command.AddTagsCommand;
 import com.yaocode.sts.file.application.model.command.BatchUpdateCommand;
 import com.yaocode.sts.file.application.model.command.RemoveTagCommand;
@@ -74,6 +48,33 @@ import com.yaocode.sts.file.application.model.result.StorageInfoResult;
 import com.yaocode.sts.file.application.model.result.StorageStatsResult;
 import com.yaocode.sts.file.application.model.result.StorageTypeStatsResult;
 import com.yaocode.sts.file.application.model.result.TrendDataResult;
+import com.yaocode.sts.file.interfaces.model.request.BatchUpdateRequest;
+import com.yaocode.sts.file.interfaces.model.request.FileSearchRequest;
+import com.yaocode.sts.file.interfaces.model.request.UpdateDescriptionRequest;
+import com.yaocode.sts.file.interfaces.model.request.UpdateFileNameRequest;
+import com.yaocode.sts.file.interfaces.model.request.UpdatePermissionRequest;
+import com.yaocode.sts.file.interfaces.model.request.UpdateTagsRequest;
+import com.yaocode.sts.file.interfaces.model.response.AccessInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.AccessRecordResponse;
+import com.yaocode.sts.file.interfaces.model.response.BatchUpdateResponse;
+import com.yaocode.sts.file.interfaces.model.response.CompareDetailsResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileAuditLogResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileCompareResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileDetailInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileTypeResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileTypeStatisticsResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileVersionInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.IntegrityCheckResponse;
+import com.yaocode.sts.file.interfaces.model.response.PermissionInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.PermissionItemResponse;
+import com.yaocode.sts.file.interfaces.model.response.SizeDistributionResponse;
+import com.yaocode.sts.file.interfaces.model.response.SizeRangeResponse;
+import com.yaocode.sts.file.interfaces.model.response.StorageInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.StorageStatsResponse;
+import com.yaocode.sts.file.interfaces.model.response.StorageTypeStatsResponse;
+import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -94,18 +95,18 @@ public class FileMetadataConverter {
     // ==================== 上下文信息获取 ====================
 
     private String getCurrentTenantId() {
-        // TODO: 从 SecurityContext 获取
-        return "default";
+        var tenantId = RequestContextHolder.getTenantId();
+        return tenantId != null ? tenantId.getValue() : null;
     }
 
     private String getCurrentUserId() {
-        // TODO: 从 SecurityContext 获取
-        return "system";
+        var userId = RequestContextHolder.getUserId();
+        return userId != null ? userId.getValue() : null;
     }
 
     private String getCurrentUserName() {
-        // TODO: 从 SecurityContext 获取
-        return "system";
+        var username = RequestContextHolder.getUsername();
+        return username != null ? username.getValue() : null;
     }
 
     // ==================== Query 转换 ====================
@@ -192,8 +193,8 @@ public class FileMetadataConverter {
                 .uploadTimeEnd(request.getUploadTimeEnd())
                 .lastAccessStart(request.getLastAccessStart())
                 .lastAccessEnd(request.getLastAccessEnd())
-                .createdTimeStart(request.getCreatedTimeStart())
-                .createdTimeEnd(request.getCreatedTimeEnd())
+                .createTimeStart(request.getCreateTimeStart())
+                .createTimeEnd(request.getCreateTimeEnd())
                 .minSize(request.getMinSize())
                 .maxSize(request.getMaxSize())
                 .uploadUserId(request.getUploadUserId())
@@ -505,9 +506,9 @@ public class FileMetadataConverter {
                 .viewCount(result.getViewCount())
                 .tags(result.getTags())
                 .description(result.getDescription())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .uploadTime(result.getUploadTime())
                 .lastAccessTime(result.getLastAccessTime())
                 .lastModifiedTime(result.getLastModifiedTime())
@@ -558,16 +559,16 @@ public class FileMetadataConverter {
                 .description(result.getDescription())
                 .businessId(result.getBusinessId())
                 .businessType(result.getBusinessType())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .uploadTime(result.getUploadTime())
                 .lastAccessTime(result.getLastAccessTime())
                 .lastModifiedTime(result.getLastModifiedTime())
                 .expireTime(result.getExpireTime())
-                .updatedUserId(result.getUpdatedUserId())
+                .updateUserId(result.getUpdateUserId())
                 .updatedUserName(result.getUpdatedUserName())
-                .updatedTime(result.getUpdatedTime())
+                .updateTime(result.getUpdateTime())
                 .isEncrypted(result.getIsEncrypted())
                 .isCompressed(result.getIsCompressed())
                 .isPublic(result.getIsPublic())
@@ -596,7 +597,7 @@ public class FileMetadataConverter {
                 .success(result.getSuccess())
                 .errorMessage(result.getErrorMessage())
                 .costTime(result.getCostTime())
-                .createdTime(result.getCreatedTime())
+                .createTime(result.getCreateTime())
                 .extraData(result.getExtraData())
                 .build();
     }
@@ -623,9 +624,9 @@ public class FileMetadataConverter {
                 .changeLog(result.getChangeLog())
                 .fileSize(result.getFileSize())
                 .fileMd5(result.getFileMd5())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .build();
     }
 

@@ -28,7 +28,7 @@ public class VersionHistoryItemDto {
     private String graphInfo;
     private Integer depth;
     private List<String> parents;
-    private String createdUserId;
-    private String createdUserName;
-    private LocalDateTime createdTime;
+    private String createUserId;
+    private String createUsername;
+    private LocalDateTime createTime;
 }

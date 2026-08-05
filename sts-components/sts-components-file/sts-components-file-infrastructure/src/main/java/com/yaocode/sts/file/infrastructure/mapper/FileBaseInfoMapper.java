@@ -183,7 +183,7 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
 //    int batchUpdateStatus(
 //            @Param("fileIds") List<String> fileIds,
 //            @Param("status") Integer status,
-//            @Param("updatedUserId") String updatedUserId
+//            @Param("updateUserId") String updateUserId
 //    );
 
     /**

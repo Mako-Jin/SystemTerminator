@@ -51,13 +51,13 @@ public class UploadFileResult {
     private String description;
 
     /** 创建用户ID */
-    private String createdUserId;
+    private String createUserId;
 
     /** 创建用户名 */
-    private String createdUserName;
+    private String createUsername;
 
     /** 创建时间 */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     /** 租户ID */
     private String tenantId;

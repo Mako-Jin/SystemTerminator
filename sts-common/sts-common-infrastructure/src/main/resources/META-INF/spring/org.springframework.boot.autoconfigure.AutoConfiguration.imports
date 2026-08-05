@@ -1,0 +1,2 @@
+com.yaocode.sts.common.infrastructure.config.ContextResolverAutoConfiguration
+com.yaocode.sts.common.infrastructure.config.MybatisPlusAutoConfiguration

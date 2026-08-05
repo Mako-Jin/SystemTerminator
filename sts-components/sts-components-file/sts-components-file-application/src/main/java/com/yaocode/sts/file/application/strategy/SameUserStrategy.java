@@ -67,7 +67,7 @@ public class SameUserStrategy extends AbstractDuplicateStrategy {
         entity.setFileSize(context.getFileSize());
         entity.setFileMd5(context.getFileMd5());
         entity.setFileSha256(context.getFileSha256());
-        entity.setUpdatedTime(LocalDateTime.now());
+        entity.setUpdateTime(LocalDateTime.now());
         entity.setVersion(entity.getVersion() + 1);
 
         fileBaseInfoDao.updateById(entity);

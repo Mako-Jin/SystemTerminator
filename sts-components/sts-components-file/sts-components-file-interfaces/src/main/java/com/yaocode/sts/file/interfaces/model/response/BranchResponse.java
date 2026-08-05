@@ -23,7 +23,7 @@ public class BranchResponse {
     private String sourceBranchName;
     private Boolean isDefault;
     private Boolean isActive;
-    private String createdUserId;
-    private String createdUserName;
-    private LocalDateTime createdTime;
+    private String createUserId;
+    private String createUsername;
+    private LocalDateTime createTime;
 }

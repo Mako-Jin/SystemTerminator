@@ -1,22 +1,21 @@
 package com.yaocode.sts.file.infrastructure.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
 /**
  * 文件版本表
  */
 @Data
-@Builder
 @TableName("file_tbl_file_version")
-public class FileVersionEntity {
+@EqualsAndHashCode(callSuper = true)
+public class FileVersionEntity extends BasePo {
 
     /**
      * 主键ID
@@ -66,44 +65,6 @@ public class FileVersionEntity {
      */
     @TableField("change_log")
     private String changeLog;
-
-    // ========== 审计信息 ==========
-
-    /**
-     * 创建人ID
-     */
-    @TableField("created_user_id")
-    private String createdUserId;
-
-    /**
-     * 创建人名称
-     */
-    @TableField("update_user_name")
-    private String createdUserName;
-
-    /**
-     * 更新人ID
-     */
-    @TableField("updated_user_id")
-    private String updatedUserId;
-
-    /**
-     * 更新人名称
-     */
-    @TableField("updated_user_name")
-    private String updatedUserName;
-
-    /**
-     * 创建时间
-     */
-    @TableField(value = "created_time", fill = FieldFill.INSERT)
-    private LocalDateTime createdTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField(value = "updated_time", fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updatedTime;
 
     /**
      * 版本号（从1开始递增）
@@ -159,15 +120,5 @@ public class FileVersionEntity {
      * 是否为最新版本: 0-否 1-是
      */
     private Boolean isLatest;
-
-    /**
-     * 是否已删除: 0-否 1-是
-     */
-    private Boolean isDeleted;
-
-    /**
-     * 租户ID
-     */
-    private String tenantId;
 
 }

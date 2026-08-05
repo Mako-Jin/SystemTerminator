@@ -13,10 +13,10 @@
         <result column="source_branch_id" property="sourceBranchId"/>
         <result column="is_default" property="isDefault"/>
         <result column="is_active" property="isActive"/>
-        <result column="created_user_id" property="createdUserId"/>
-        <result column="created_user_name" property="createdUserName"/>
-        <result column="created_time" property="createdTime"/>
-        <result column="updated_time" property="updatedTime"/>
+        <result column="created_user_id" property="createUserId"/>
+        <result column="created_user_name" property="createUsername"/>
+        <result column="created_time" property="createTime"/>
+        <result column="updated_time" property="updateTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -34,7 +34,7 @@
         ) VALUES (
                      #{branchId}, #{fileId}, #{branchName}, #{branchType}, #{branchDescription},
                      #{headVersionId}, #{sourceBranchId}, #{isDefault}, #{isActive},
-                     #{createdUserId}, #{createdUserName}, #{createdTime}, #{updatedTime}
+                     #{createUserId}, #{createUsername}, #{createTime}, #{updateTime}
                  )
     </insert>
 

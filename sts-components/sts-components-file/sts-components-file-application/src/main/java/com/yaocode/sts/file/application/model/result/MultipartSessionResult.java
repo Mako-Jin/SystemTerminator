@@ -48,5 +48,5 @@ public class MultipartSessionResult {
     private Long lastActiveTime;
 
     /** 创建时间 */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 }

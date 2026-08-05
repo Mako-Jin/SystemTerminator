@@ -16,7 +16,7 @@
         <result column="added_lines" property="addedLines"/>
         <result column="deleted_lines" property="deletedLines"/>
         <result column="modified_lines" property="modifiedLines"/>
-        <result column="created_time" property="createdTime"/>
+        <result column="created_time" property="createTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -34,7 +34,7 @@
         ) VALUES (
                      #{diffId}, #{fileId}, #{fromVersionId}, #{toVersionId}, #{diffType},
                      #{diffPath}, #{diffSize}, #{changeType}, #{changePercentage},
-                     #{addedLines}, #{deletedLines}, #{modifiedLines}, #{createdTime}
+                     #{addedLines}, #{deletedLines}, #{modifiedLines}, #{createTime}
                  )
     </insert>
 

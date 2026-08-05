@@ -27,7 +27,7 @@ public class VersionTreeNodeDto {
     private Boolean isMergeCommit;
     private Integer depth;
     private Integer position;
-    private String createdUserId;
-    private String createdUserName;
-    private LocalDateTime createdTime;
+    private String createUserId;
+    private String createUsername;
+    private LocalDateTime createTime;
 }

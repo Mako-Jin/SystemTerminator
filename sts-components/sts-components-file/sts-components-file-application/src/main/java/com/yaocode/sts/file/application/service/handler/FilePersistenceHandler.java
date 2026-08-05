@@ -138,8 +138,8 @@ public class FilePersistenceHandler implements FileUploadHandler {
             dedup.setStorageType(command.getStorageType());
             dedup.setTenantId(command.getTenantId());
             dedup.setReferenceCount(1);
-            dedup.setCreatedTime(LocalDateTime.now());
-            dedup.setUpdatedTime(LocalDateTime.now());
+            dedup.setCreateTime(LocalDateTime.now());
+            dedup.setUpdateTime(LocalDateTime.now());
 
             fileDeduplicationDao.save(dedup);
             log.debug("去重记录新增成功: fingerprint={}, fileId={}", fingerprint, fileUploadDto.getFileId());

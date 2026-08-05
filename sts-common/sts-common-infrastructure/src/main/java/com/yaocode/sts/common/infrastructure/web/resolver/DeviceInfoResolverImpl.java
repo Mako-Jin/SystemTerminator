@@ -6,7 +6,6 @@ import com.yaocode.sts.common.domain.context.DeviceInfoContext;
 import com.yaocode.sts.common.domain.context.spi.DeviceInfoResolver;
 import com.yaocode.sts.common.domain.valueobject.DeviceId;
 import com.yaocode.sts.common.domain.web.HttpRequestContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -16,7 +15,6 @@ import java.util.Optional;
  * 支持双通道解析：优先从 Query/Form Parameter 获取，Parameter 不存在时从 HTTP Header 获取
  * 典型场景：前端 SDK 通过 Header 注入设备指纹/操作系统信息
  */
-@Component
 public class DeviceInfoResolverImpl implements DeviceInfoResolver {
 
     @Override

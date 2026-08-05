@@ -1,11 +1,12 @@
 package com.yaocode.sts.file.infrastructure.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
 
 /**
  * 文件版本差异实体
@@ -14,14 +15,14 @@ import java.time.LocalDateTime;
  * @since 1.0.0
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class FileVersionDiffEntity {
+@TableName("file_tbl_version_diff")
+@EqualsAndHashCode(callSuper = true)
+public class FileVersionDiffEntity extends BasePo {
 
     /**
      * 主键ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -83,9 +84,4 @@ public class FileVersionDiffEntity {
      * 修改行数
      */
     private Integer modifiedLines;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdTime;
 }

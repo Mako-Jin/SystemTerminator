@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.application.converter;
 
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
 import com.yaocode.sts.common.tools.JSONUtils;
 import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
@@ -76,7 +77,7 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "fileType", expression = "java(getFileType(command))")
     @Mapping(target = "fileExtension", expression = "java(getFileExtensionCode(command))")
     @Mapping(target = "tenantId", expression = "java(getTenantId(command))")
-    @Mapping(target = "createdUserId", expression = "java(getUserId(command))")
+    @Mapping(target = "createUserId", expression = "java(getUserId(command))")
     @Mapping(target = "tags", expression = "java(toJsonArray(command.getTags()))")
     @Mapping(target = "description", source = "command.description")
     @Mapping(target = "isPublic", expression = "java(getIsPublic(command))")
@@ -92,11 +93,11 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "downloadCount", constant = "0L")
     @Mapping(target = "viewCount", constant = "0L")
     @Mapping(target = "version", constant = "1")
-    @Mapping(target = "createdTime", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "updatedTime", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "createdUserName", ignore = true)
-    @Mapping(target = "updatedUserId", ignore = true)
-    @Mapping(target = "updatedUserName", ignore = true)
+    @Mapping(target = "createTime", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "updateTime", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "createUserName", ignore = true)
+    @Mapping(target = "updateUserId", ignore = true)
+    @Mapping(target = "updateUserName", ignore = true)
     @Mapping(target = "versionNumber", ignore = true)
     @Mapping(target = "versionControlEnabled", ignore = true)
     FileInfoEntity toFileInfoEntity(
@@ -164,14 +165,26 @@ public interface FileUploadApplicationConverter {
 
     @Named("getTenantId")
     default String getTenantId(UploadFileCommand command) {
-        return command.getTenantId() != null && !command.getTenantId().isEmpty()
-                ? command.getTenantId() : "default";
+        if (command.getTenantId() != null && !command.getTenantId().isEmpty()) {
+            return command.getTenantId();
+        }
+        var tenantId = RequestContextHolder.getTenantId();
+        if (tenantId != null) {
+            return tenantId.getValue();
+        }
+        return "default";
     }
 
     @Named("getUserId")
     default String getUserId(UploadFileCommand command) {
-        return command.getUserId() != null && !command.getUserId().isEmpty()
-                ? command.getUserId() : "system";
+        if (command.getUserId() != null && !command.getUserId().isEmpty()) {
+            return command.getUserId();
+        }
+        var userId = RequestContextHolder.getUserId();
+        if (userId != null) {
+            return userId.getValue();
+        }
+        return "system";
     }
 
     @Named("getIsPublic")

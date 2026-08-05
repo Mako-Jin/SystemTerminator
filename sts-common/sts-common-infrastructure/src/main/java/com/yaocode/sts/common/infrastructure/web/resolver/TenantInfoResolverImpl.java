@@ -7,7 +7,6 @@ import com.yaocode.sts.common.domain.context.spi.TenantInfoResolver;
 import com.yaocode.sts.common.domain.valueobject.TenantCode;
 import com.yaocode.sts.common.domain.valueobject.TenantId;
 import com.yaocode.sts.common.domain.web.HttpRequestContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -15,7 +14,6 @@ import java.util.Optional;
  * 基于 HTTP Header / Parameter 的租户信息解析器
  * 优先级：Parameter > Header
  */
-@Component
 public class TenantInfoResolverImpl implements TenantInfoResolver {
 
     @Override

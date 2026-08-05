@@ -1,11 +1,13 @@
 package com.yaocode.sts.file.infrastructure.entity;
 
-import lombok.AllArgsConstructor;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.yaocode.sts.common.infrastructure.po.BasePo;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
 
 /**
  * 文件分支实体
@@ -14,14 +16,14 @@ import java.time.LocalDateTime;
  * @since 1.0.0
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class FileBranchEntity {
+@TableName("file_tbl_file_branch")
+@EqualsAndHashCode(callSuper = true)
+public class FileBranchEntity extends BasePo {
 
     /**
      * 主键ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -69,23 +71,4 @@ public class FileBranchEntity {
      */
     private Boolean isActive;
 
-    /**
-     * 创建用户ID
-     */
-    private String createdUserId;
-
-    /**
-     * 创建用户名
-     */
-    private String createdUserName;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updatedTime;
 }

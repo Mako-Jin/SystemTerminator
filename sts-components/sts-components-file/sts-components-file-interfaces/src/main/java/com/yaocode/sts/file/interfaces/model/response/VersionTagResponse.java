@@ -20,7 +20,7 @@ public class VersionTagResponse {
     private Integer versionNumber;
     private String versionTag;
     private String fileId;
-    private String createdUserId;
-    private String createdUserName;
-    private LocalDateTime createdTime;
+    private String createUserId;
+    private String createUsername;
+    private LocalDateTime createTime;
 }

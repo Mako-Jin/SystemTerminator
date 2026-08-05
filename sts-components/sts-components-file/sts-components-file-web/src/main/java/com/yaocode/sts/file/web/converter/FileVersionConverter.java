@@ -1,25 +1,6 @@
 package com.yaocode.sts.file.web.converter;
 
-import com.yaocode.sts.file.interfaces.model.request.CreateBranchRequest;
-import com.yaocode.sts.file.interfaces.model.request.CreateVersionRequest;
-import com.yaocode.sts.file.interfaces.model.request.CreateVersionTagRequest;
-import com.yaocode.sts.file.interfaces.model.request.DeleteBranchRequest;
-import com.yaocode.sts.file.interfaces.model.request.DeleteVersionTagRequest;
-import com.yaocode.sts.file.interfaces.model.request.MergeBranchRequest;
-import com.yaocode.sts.file.interfaces.model.request.RollbackVersionRequest;
-import com.yaocode.sts.file.interfaces.model.request.SwitchBranchRequest;
-import com.yaocode.sts.file.interfaces.model.request.VersionCompareRequest;
-import com.yaocode.sts.file.interfaces.model.request.VersionsBatchRequest;
-import com.yaocode.sts.file.interfaces.model.response.BranchResponse;
-import com.yaocode.sts.file.interfaces.model.response.MergeResponse;
-import com.yaocode.sts.file.interfaces.model.response.SwitchBranchResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionDetailResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionDiffResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionHistoryResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionRollbackResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionTagResponse;
-import com.yaocode.sts.file.interfaces.model.response.VersionTreeResponse;
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
 import com.yaocode.sts.file.application.model.command.CreateBranchCommand;
 import com.yaocode.sts.file.application.model.command.CreateVersionCommand;
 import com.yaocode.sts.file.application.model.command.CreateVersionTagCommand;
@@ -46,6 +27,26 @@ import com.yaocode.sts.file.application.model.result.VersionInfoResult;
 import com.yaocode.sts.file.application.model.result.VersionRollbackResult;
 import com.yaocode.sts.file.application.model.result.VersionTagResult;
 import com.yaocode.sts.file.application.model.result.VersionTreeResult;
+import com.yaocode.sts.file.interfaces.model.request.CreateBranchRequest;
+import com.yaocode.sts.file.interfaces.model.request.CreateVersionRequest;
+import com.yaocode.sts.file.interfaces.model.request.CreateVersionTagRequest;
+import com.yaocode.sts.file.interfaces.model.request.DeleteBranchRequest;
+import com.yaocode.sts.file.interfaces.model.request.DeleteVersionTagRequest;
+import com.yaocode.sts.file.interfaces.model.request.MergeBranchRequest;
+import com.yaocode.sts.file.interfaces.model.request.RollbackVersionRequest;
+import com.yaocode.sts.file.interfaces.model.request.SwitchBranchRequest;
+import com.yaocode.sts.file.interfaces.model.request.VersionCompareRequest;
+import com.yaocode.sts.file.interfaces.model.request.VersionsBatchRequest;
+import com.yaocode.sts.file.interfaces.model.response.BranchResponse;
+import com.yaocode.sts.file.interfaces.model.response.MergeResponse;
+import com.yaocode.sts.file.interfaces.model.response.SwitchBranchResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionDetailResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionDiffResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionHistoryResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionRollbackResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionTagResponse;
+import com.yaocode.sts.file.interfaces.model.response.VersionTreeResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -62,6 +63,23 @@ import java.util.stream.Collectors;
  */
 @Component
 public class FileVersionConverter {
+
+    // ==================== 上下文信息获取 ====================
+
+    private String getCurrentTenantId() {
+        var tenantId = RequestContextHolder.getTenantId();
+        return tenantId != null ? tenantId.getValue() : null;
+    }
+
+    private String getCurrentUserId() {
+        var userId = RequestContextHolder.getUserId();
+        return userId != null ? userId.getValue() : null;
+    }
+
+    private String getCurrentUserName() {
+        var username = RequestContextHolder.getUsername();
+        return username != null ? username.getValue() : null;
+    }
 
     // ==================== Request -> Command 转换 ====================
 
@@ -84,9 +102,9 @@ public class FileVersionConverter {
                 .changeSummary(request.getChangeSummary())
                 .branchId(request.getBranchId())
                 .setAsCurrent(request.getSetAsCurrent())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
-                .userName(request.getUserName())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
+                .userName(request.getUserName() != null ? request.getUserName() : getCurrentUserName())
                 .build();
     }
 
@@ -114,9 +132,9 @@ public class FileVersionConverter {
                 .fileId(request.getFileId())
                 .targetVersionId(request.getTargetVersionId())
                 .rollbackReason(request.getRollbackReason())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
-                .userName(request.getUserName())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
+                .userName(request.getUserName() != null ? request.getUserName() : getCurrentUserName())
                 .build();
     }
 
@@ -145,9 +163,9 @@ public class FileVersionConverter {
                 .branchType(request.getBranchType())
                 .branchDescription(request.getBranchDescription())
                 .sourceBranchId(request.getSourceBranchId())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
-                .userName(request.getUserName())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
+                .userName(request.getUserName() != null ? request.getUserName() : getCurrentUserName())
                 .build();
     }
 
@@ -164,9 +182,9 @@ public class FileVersionConverter {
                 .toBranchId(request.getToBranchId())
                 .mergeMessage(request.getMergeMessage())
                 .autoResolve(request.getAutoResolve())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
-                .userName(request.getUserName())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
+                .userName(request.getUserName() != null ? request.getUserName() : getCurrentUserName())
                 .build();
     }
 
@@ -180,8 +198,8 @@ public class FileVersionConverter {
         return SwitchBranchCommand.builder()
                 .fileId(request.getFileId())
                 .targetBranchId(request.getTargetBranchId())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
                 .build();
     }
 
@@ -194,8 +212,8 @@ public class FileVersionConverter {
         }
         return DeleteBranchCommand.builder()
                 .branchId(request.getBranchId())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
                 .build();
     }
 
@@ -212,9 +230,9 @@ public class FileVersionConverter {
                 .tagName(request.getTagName())
                 .tagType(request.getTagType())
                 .tagDescription(request.getTagDescription())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
-                .userName(request.getUserName())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
+                .userName(request.getUserName() != null ? request.getUserName() : getCurrentUserName())
                 .build();
     }
 
@@ -227,8 +245,8 @@ public class FileVersionConverter {
         }
         return DeleteVersionTagCommand.builder()
                 .tagId(request.getTagId())
-                .tenantId(request.getTenantId())
-                .userId(request.getUserId())
+                .tenantId(request.getTenantId() != null ? request.getTenantId() : getCurrentTenantId())
+                .userId(request.getUserId() != null ? request.getUserId() : getCurrentUserId())
                 .build();
     }
 
@@ -255,9 +273,9 @@ public class FileVersionConverter {
                 .branchName(result.getBranchName())
                 .isCurrent(result.getIsCurrent())
                 .isLatest(result.getIsLatest())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUserName(result.getCreateUserName())
+                .createTime(result.getCreateTime())
                 .build();
     }
 
@@ -318,9 +336,9 @@ public class FileVersionConverter {
                         .graphInfo(item.getGraphInfo())
                         .depth(item.getDepth())
                         .parents(item.getParents())
-                        .createdUserId(item.getCreatedUserId())
-                        .createdUserName(item.getCreatedUserName())
-                        .createdTime(item.getCreatedTime())
+                        .createUserId(item.getCreateUserId())
+                        .createUsername(item.getCreateUsername())
+                        .createTime(item.getCreateTime())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -379,7 +397,7 @@ public class FileVersionConverter {
                 .versionId(versionRef.getVersionId())
                 .versionNumber(versionRef.getVersionNumber())
                 .versionTag(versionRef.getVersionTag())
-                .createdTime(versionRef.getCreatedTime())
+                .createTime(versionRef.getCreateTime())
                 .build();
     }
 
@@ -462,10 +480,10 @@ public class FileVersionConverter {
                 .parentVersionId(result.getParentVersionId())
                 .isCurrent(result.getIsCurrent())
                 .isLatest(result.getIsLatest())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
-                .updatedTime(result.getUpdatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
+                .updateTime(result.getUpdateTime())
                 .build();
     }
 
@@ -512,9 +530,9 @@ public class FileVersionConverter {
                         .isMergeCommit(node.getIsMergeCommit())
                         .depth(node.getDepth())
                         .position(node.getPosition())
-                        .createdUserId(node.getCreatedUserId())
-                        .createdUserName(node.getCreatedUserName())
-                        .createdTime(node.getCreatedTime())
+                        .createUserId(node.getCreateUserId())
+                        .createUsername(node.getCreateUsername())
+                        .createTime(node.getCreateTime())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -556,7 +574,7 @@ public class FileVersionConverter {
                         .headVersionNumber(branch.getHeadVersionNumber())
                         .isDefault(branch.getIsDefault())
                         .isActive(branch.getIsActive())
-                        .createdTime(branch.getCreatedTime())
+                        .createTime(branch.getCreateTime())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -580,9 +598,9 @@ public class FileVersionConverter {
                 .sourceBranchName(result.getSourceBranchName())
                 .isDefault(result.getIsDefault())
                 .isActive(result.getIsActive())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .build();
     }
 
@@ -670,9 +688,9 @@ public class FileVersionConverter {
                 .versionNumber(result.getVersionNumber())
                 .versionTag(result.getVersionTag())
                 .fileId(result.getFileId())
-                .createdUserId(result.getCreatedUserId())
-                .createdUserName(result.getCreatedUserName())
-                .createdTime(result.getCreatedTime())
+                .createUserId(result.getCreateUserId())
+                .createUsername(result.getCreateUsername())
+                .createTime(result.getCreateTime())
                 .build();
     }
 

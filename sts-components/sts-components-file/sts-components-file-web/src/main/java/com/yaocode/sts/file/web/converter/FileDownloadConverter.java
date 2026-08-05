@@ -1,16 +1,7 @@
 package com.yaocode.sts.file.web.converter;
 
-import com.yaocode.sts.file.interfaces.model.request.BatchDownloadRequest;
-import com.yaocode.sts.file.interfaces.model.request.FileDownloadItemRequest;
-import com.yaocode.sts.file.interfaces.model.response.BatchDownloadTaskResponse;
-import com.yaocode.sts.file.interfaces.model.response.CrossOriginDownloadInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.DownloadRecordResponse;
-import com.yaocode.sts.file.interfaces.model.response.DownloadTokenResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileDownloadRankResponse;
-import com.yaocode.sts.file.interfaces.model.response.FileDownloadStatisticsResponse;
-import com.yaocode.sts.file.interfaces.model.response.MediaInfoResponse;
-import com.yaocode.sts.file.interfaces.model.response.MediaStreamResponse;
-import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
+import com.yaocode.sts.common.domain.context.RequestContextHolder;
+import com.yaocode.sts.common.domain.valueobject.IpAddress;
 import com.yaocode.sts.file.application.model.command.AsyncBatchDownloadCommand;
 import com.yaocode.sts.file.application.model.command.BatchDownloadCommand;
 import com.yaocode.sts.file.application.model.command.DownloadTokenCommand;
@@ -42,6 +33,17 @@ import com.yaocode.sts.file.application.model.result.FileDownloadStatisticsResul
 import com.yaocode.sts.file.application.model.result.MediaInfoResult;
 import com.yaocode.sts.file.application.model.result.MediaStreamResult;
 import com.yaocode.sts.file.application.model.result.TrendDataResult;
+import com.yaocode.sts.file.interfaces.model.request.BatchDownloadRequest;
+import com.yaocode.sts.file.interfaces.model.request.FileDownloadItemRequest;
+import com.yaocode.sts.file.interfaces.model.response.BatchDownloadTaskResponse;
+import com.yaocode.sts.file.interfaces.model.response.CrossOriginDownloadInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.DownloadRecordResponse;
+import com.yaocode.sts.file.interfaces.model.response.DownloadTokenResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileDownloadRankResponse;
+import com.yaocode.sts.file.interfaces.model.response.FileDownloadStatisticsResponse;
+import com.yaocode.sts.file.interfaces.model.response.MediaInfoResponse;
+import com.yaocode.sts.file.interfaces.model.response.MediaStreamResponse;
+import com.yaocode.sts.file.interfaces.model.response.TrendDataResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -61,18 +63,18 @@ public class FileDownloadConverter {
     // ==================== 上下文信息获取 ====================
 
     private String getCurrentTenantId() {
-        // TODO: 从 SecurityContext 获取
-        return "default";
+        var tenantId = RequestContextHolder.getTenantId();
+        return tenantId != null ? tenantId.getValue() : null;
     }
 
     private String getCurrentUserId() {
-        // TODO: 从 SecurityContext 获取
-        return "system";
+        var userId = RequestContextHolder.getUserId();
+        return userId != null ? userId.getValue() : null;
     }
 
     private String getCurrentIp() {
-        // TODO: 从 RequestContext 获取
-        return "127.0.0.1";
+        IpAddress ipAddress = RequestContextHolder.getIpAddress();
+        return ipAddress != null ? ipAddress.getValue() : null;
     }
 
     // ==================== Query 转换 ====================
@@ -454,7 +456,7 @@ public class FileDownloadConverter {
                 .downloadTime(result.getDownloadTime())
                 .downloadSize(result.getDownloadSize())
                 .success(result.getSuccess())
-                .createdTime(result.getCreatedTime())
+                .createTime(result.getCreateTime())
                 .build();
     }
 

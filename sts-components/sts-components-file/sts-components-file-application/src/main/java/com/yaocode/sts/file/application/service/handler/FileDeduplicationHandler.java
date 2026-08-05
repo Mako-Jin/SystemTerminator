@@ -1,12 +1,12 @@
 package com.yaocode.sts.file.application.service.handler;
 
 import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.DuplicateStrategyService;
-import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
 import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.exception.FileException;
 import com.yaocode.sts.file.core.model.ExecuteResult;
@@ -136,7 +136,7 @@ public class FileDeduplicationHandler implements FileUploadHandler {
                 .fileUrl(file.getStorageUrl())
                 .storageType(file.getStorageType())
                 .tenantId(file.getTenantId())
-                .userId(file.getCreatedUserId())
+                .userId(file.getCreateUserId())
                 .versionNumber(file.getVersionNumber())
                 .build();
 

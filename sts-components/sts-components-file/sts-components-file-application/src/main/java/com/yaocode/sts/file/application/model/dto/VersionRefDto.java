@@ -12,5 +12,5 @@ public class VersionRefDto {
     private String versionId;
     private Integer versionNumber;
     private String versionTag;
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 }

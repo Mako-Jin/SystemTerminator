@@ -29,8 +29,8 @@ public class VersionInfoResponse {
     private Boolean isLatest;
     private Boolean isRollback;
     private Integer rollbackFromVersion;
-    private String createdUserId;
-    private String createdUserName;
-    private LocalDateTime createdTime;
+    private String createUserId;
+    private String createUserName;
+    private LocalDateTime createTime;
 
 }

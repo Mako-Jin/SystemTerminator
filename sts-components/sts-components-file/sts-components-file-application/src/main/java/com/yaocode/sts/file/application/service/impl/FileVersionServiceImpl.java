@@ -5,16 +5,6 @@ import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.file.application.converter.FileVersionApplicationConverter;
-import com.yaocode.sts.file.core.spi.StoragePlugin;
-import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
-import com.yaocode.sts.file.infrastructure.entity.FileBranchEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileVersionEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileVersionTagEntity;
-import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileVersionDiffMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper;
-import com.yaocode.sts.file.infrastructure.mapper.FileVersionTagMapper;
 import com.yaocode.sts.file.application.model.command.CreateBranchCommand;
 import com.yaocode.sts.file.application.model.command.CreateVersionCommand;
 import com.yaocode.sts.file.application.model.command.CreateVersionTagCommand;
@@ -41,7 +31,17 @@ import com.yaocode.sts.file.application.model.result.VersionRollbackResult;
 import com.yaocode.sts.file.application.model.result.VersionTagResult;
 import com.yaocode.sts.file.application.model.result.VersionTreeResult;
 import com.yaocode.sts.file.application.service.FileVersionService;
+import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.core.utils.DiffUtils;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
+import com.yaocode.sts.file.infrastructure.entity.FileBranchEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileVersionEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileVersionTagEntity;
+import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileVersionDiffMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileVersionMapper;
+import com.yaocode.sts.file.infrastructure.mapper.FileVersionTagMapper;
 import jakarta.annotation.Resource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -158,7 +158,7 @@ public class FileVersionServiceImpl implements FileVersionService {
 //        fileInfo.setFileSize(command.getFileSize());
 //        fileInfo.setFilePath(filePath);
 //        fileInfo.setStorageUrl(fileUrl);
-//        fileInfo.setUpdatedTime(LocalDateTime.now());
+//        fileInfo.setupdateTime(LocalDateTime.now());
 //        fileInfoMapper.updateById(fileInfo);
 //
 //        // 11. 标记之前的版本
@@ -330,10 +330,10 @@ public class FileVersionServiceImpl implements FileVersionService {
 //                .branchId(targetVersion.getBranchId())
 //                .isCurrent(true)
 //                .isLatest(true)
-//                .createdUserId(command.getUserId())
-//                .createdUserName(command.getUserName())
-//                .createdTime(LocalDateTime.now())
-//                .updatedTime(LocalDateTime.now())
+//                .createUserId(command.getUserId())
+//                .createUsername(command.getUserName())
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
 //                .build();
 //
 //        fileVersionMapper.insert(rollbackVersion);
@@ -348,7 +348,7 @@ public class FileVersionServiceImpl implements FileVersionService {
 //            fileInfo.setFileSize(targetVersion.getFileSize());
 //            fileInfo.setFilePath(filePath);
 //            fileInfo.setStorageUrl(fileUrl);
-//            fileInfo.setUpdatedTime(LocalDateTime.now());
+//            fileInfo.setupdateTime(LocalDateTime.now());
 //            fileInfoMapper.updateById(fileInfo);
 //        }
 //
@@ -506,7 +506,7 @@ public class FileVersionServiceImpl implements FileVersionService {
 //                fileInfo.setFileMd5(fromHead.getFileMd5());
 //                fileInfo.setFileSha256(fromHead.getFileSha256());
 //                fileInfo.setFileSize(fromHead.getFileSize());
-//                fileInfo.setUpdatedTime(LocalDateTime.now());
+//                fileInfo.setupdateTime(LocalDateTime.now());
 //                fileInfoMapper.updateById(fileInfo);
 //            }
 //
@@ -557,7 +557,7 @@ public class FileVersionServiceImpl implements FileVersionService {
 //        fileInfo.setFileMd5(headVersion.getFileMd5());
 //        fileInfo.setFileSha256(headVersion.getFileSha256());
 //        fileInfo.setFileSize(headVersion.getFileSize());
-//        fileInfo.setUpdatedTime(LocalDateTime.now());
+//        fileInfo.setupdateTime(LocalDateTime.now());
 //        fileInfoMapper.updateById(fileInfo);
 //
 //        // 更新当前版本标记
@@ -604,7 +604,7 @@ public class FileVersionServiceImpl implements FileVersionService {
         }
 
         branch.setIsActive(false);
-        branch.setUpdatedTime(LocalDateTime.now());
+        branch.setUpdateTime(LocalDateTime.now());
         fileBranchMapper.updateById(branch);
     }
 
@@ -672,25 +672,25 @@ public class FileVersionServiceImpl implements FileVersionService {
     /**
      * 创建默认分支
      */
-    private FileBranchEntity createDefaultBranch(FileInfoEntity fileInfo, String userId) {
-        String branchId = IdFactory.generate(IdGeneratorType.UUID);
-        FileBranchEntity branch = FileBranchEntity.builder()
-                .branchId(branchId)
-                .fileId(fileInfo.getFileId())
-                .branchName("main")
-                .branchType(1)
-                .branchDescription("主分支")
-                .headVersionId(null)
-                .sourceBranchId(null)
-                .isDefault(true)
-                .isActive(true)
-                .createdUserId(userId)
-                .createdTime(LocalDateTime.now())
-                .updatedTime(LocalDateTime.now())
-                .build();
-        fileBranchMapper.insert(branch);
-        return branch;
-    }
+//    private FileBranchEntity createDefaultBranch(FileInfoEntity fileInfo, String userId) {
+//        String branchId = IdFactory.generate(IdGeneratorType.UUID);
+//        FileBranchEntity branch = FileBranchEntity.builder()
+//                .branchId(branchId)
+//                .fileId(fileInfo.getFileId())
+//                .branchName("main")
+//                .branchType(1)
+//                .branchDescription("主分支")
+//                .headVersionId(null)
+//                .sourceBranchId(null)
+//                .isDefault(true)
+//                .isActive(true)
+//                .createUserId(userId)
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
+//                .build();
+//        fileBranchMapper.insert(branch);
+//        return branch;
+//    }
 
     /**
      * 获取分支名称
@@ -859,7 +859,7 @@ public class FileVersionServiceImpl implements FileVersionService {
 //                    fileInfo.setFileMd5(mergeVersion.getFileMd5());
 //                    fileInfo.setFileSha256(mergeVersion.getFileSha256());
 //                    fileInfo.setFileSize(mergeVersion.getFileSize());
-//                    fileInfo.setUpdatedTime(LocalDateTime.now());
+//                    fileInfo.setupdateTime(LocalDateTime.now());
 //                    fileInfoMapper.updateById(fileInfo);
 //                }
 //            }
@@ -1017,10 +1017,10 @@ public class FileVersionServiceImpl implements FileVersionService {
 //                .branchId(toBranch.getBranchId())
 //                .isCurrent(true)
 //                .isLatest(true)
-//                .createdUserId(command.getUserId())
-//                .createdUserName(command.getUserName())
-//                .createdTime(LocalDateTime.now())
-//                .updatedTime(LocalDateTime.now())
+//                .createUserId(command.getUserId())
+//                .createUsername(command.getUserName())
+//                .createTime(LocalDateTime.now())
+//                .updateTime(LocalDateTime.now())
 //                .build();
 //
 //        fileVersionMapper.insert(mergeVersion);

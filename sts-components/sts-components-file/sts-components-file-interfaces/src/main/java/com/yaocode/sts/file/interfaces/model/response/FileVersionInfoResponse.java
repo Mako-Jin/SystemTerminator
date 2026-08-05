@@ -43,14 +43,14 @@ public class FileVersionInfoResponse {
     /**
      * 创建用户ID
      */
-    private String createdUserId;
+    private String createUserId;
     /**
      * 创建用户名
      */
-    private String createdUserName;
+    private String createUsername;
     /**
      * 创建时间
      */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
 }

@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "yaocode.file")
+@ConfigurationProperties(prefix = "yaocode.storage")
 public class FileStorageConfig {
 
     /** 上传配置 */
@@ -53,7 +53,7 @@ public class FileStorageConfig {
         private int tempExpireHours = 24;
 
         /** 临时文件目录 */
-        private String tempDir = "${java.io.tmpdir}/file-upload";
+        private String tempDir = "./uploads/tmp";
 
         /** 允许的文件扩展名 */
         private List<String> allowedExtensions = new ArrayList<>();

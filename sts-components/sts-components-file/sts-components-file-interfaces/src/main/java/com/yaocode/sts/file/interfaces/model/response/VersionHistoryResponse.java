@@ -42,9 +42,9 @@ public class VersionHistoryResponse {
         private Boolean isCurrent;
         private Boolean isLatest;
         private List<String> tags;
-        private String createdUserId;
-        private String createdUserName;
-        private LocalDateTime createdTime;
+        private String createUserId;
+        private String createUsername;
+        private LocalDateTime createTime;
 
         /**
          * 版本图显示信息（用于git log --graph风格）

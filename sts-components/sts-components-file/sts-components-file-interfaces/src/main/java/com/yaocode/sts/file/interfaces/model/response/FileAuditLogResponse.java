@@ -66,7 +66,7 @@ public class FileAuditLogResponse {
     /**
      * 创建时间
      */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     private String operationTypeDesc;
 

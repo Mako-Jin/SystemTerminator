@@ -102,17 +102,17 @@ public class FileDetailInfoResponse {
     /**
      * 创建用户ID
      */
-    private String createdUserId;
+    private String createUserId;
 
     /**
      * 创建用户名称
      */
-    private String createdUserName;
+    private String createUsername;
 
     /**
      * 创建时间
      */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     /**
      * 上传时间
@@ -152,7 +152,7 @@ public class FileDetailInfoResponse {
     /**
      * 更新用户ID
      */
-    private String updatedUserId;
+    private String updateUserId;
 
     /**
      * 更新用户名称
@@ -162,7 +162,7 @@ public class FileDetailInfoResponse {
     /**
      * 更新时间
      */
-    private LocalDateTime updatedTime;
+    private LocalDateTime updateTime;
 
     /**
      * 存储桶名称
