@@ -2,6 +2,7 @@ package com.yaocode.sts.common.crypto.algorithm.hash;
 
 import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.constants.CryptoConstants;
+import com.yaocode.sts.common.crypto.utils.HexUtils;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -59,7 +60,7 @@ public final class SM3Algorithm {
      */
     public static String digestHex(String data) {
         byte[] hash = digest(data);
-        return bytesToHex(hash);
+        return HexUtils.bytesToHex(hash);
     }
 
     /**
@@ -69,7 +70,7 @@ public final class SM3Algorithm {
      */
     public static String digestHex(byte[] data) {
         byte[] hash = digest(data);
-        return bytesToHex(hash);
+        return HexUtils.bytesToHex(hash);
     }
 
     /**
@@ -122,7 +123,7 @@ public final class SM3Algorithm {
      * @return 验证结果
      */
     public static boolean verifyHex(String data, String hexDigest) {
-        byte[] expected = hexToBytes(hexDigest);
+        byte[] expected = HexUtils.hexToBytes(hexDigest);
         byte[] actual = digest(data);
         return Arrays.equals(actual, expected);
     }
@@ -164,7 +165,7 @@ public final class SM3Algorithm {
      */
     public static String hmacHex(byte[] key, String data) {
         byte[] hmac = hmac(key, data);
-        return bytesToHex(hmac);
+        return HexUtils.bytesToHex(hmac);
     }
 
     /**
@@ -175,7 +176,7 @@ public final class SM3Algorithm {
      */
     public static String hmacHex(byte[] key, byte[] data) {
         byte[] hmac = hmac(key, data);
-        return bytesToHex(hmac);
+        return HexUtils.bytesToHex(hmac);
     }
 
     /**
@@ -189,33 +190,4 @@ public final class SM3Algorithm {
         return Base64Algorithm.encryptByBase64(hmac);
     }
 
-    // ==================== 辅助方法 ====================
-
-    /**
-     * 字节数组转十六进制字符串
-     * @param bytes 字节数组
-     * @return 十六进制字符串
-     */
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format(CryptoConstants.HEX_FORMAT, b));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * 十六进制字符串转字节数组
-     * @param hex 十六进制字符串
-     * @return 字节数组
-     */
-    private static byte[] hexToBytes(String hex) {
-        int len = hex.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
-                    + Character.digit(hex.charAt(i + 1), 16));
-        }
-        return data;
-    }
 }

@@ -4,6 +4,7 @@ import com.yaocode.sts.common.crypto.algorithm.encode.Base64Algorithm;
 import com.yaocode.sts.common.crypto.constants.CryptoConstants;
 import com.yaocode.sts.common.crypto.constants.CryptoI18nKeyConstants;
 import com.yaocode.sts.common.crypto.exception.CryptoException;
+import com.yaocode.sts.common.crypto.utils.HexUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -189,7 +190,7 @@ public final class DigestAlgorithm {
      */
     private static String digestHex(byte[] input, String algorithm) {
         byte[] digest = digest(input, algorithm);
-        return bytesToHex(digest);
+        return HexUtils.bytesToHex(digest);
     }
 
     /**
@@ -230,16 +231,4 @@ public final class DigestAlgorithm {
         }
     }
 
-    /**
-     * 字节数组转十六进制字符串
-     * @param bytes 字节数组
-     * @return 十六进制字符串
-     */
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format(CryptoConstants.HEX_FORMAT, b));
-        }
-        return sb.toString();
-    }
 }

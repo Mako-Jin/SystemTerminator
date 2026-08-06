@@ -25,6 +25,17 @@ public enum AlgorithmTypeEnums {
             "Java标准算法"
     ),
 
+    SHA_384(
+            "SHA-384",
+            "SHA-384",
+            AlgorithmCategoryEnums.HASH,
+            SecurityLevelEnums.HIGH,
+            true,
+            false,
+            "安全哈希算法384位",
+            "Java标准算法"
+    ),
+
     SHA_512(
             "SHA-512",
             "SHA-512",

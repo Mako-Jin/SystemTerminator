@@ -52,4 +52,6 @@ public interface SymbolConstants {
 
     String SYMBOL_ASTERISK = "*";
 
+    String UNDERSCORE = "_";
+
 }
