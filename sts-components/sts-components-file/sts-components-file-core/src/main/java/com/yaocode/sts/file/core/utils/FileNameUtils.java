@@ -1,6 +1,8 @@
 package com.yaocode.sts.file.core.utils;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.tools.StringUtils;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -20,9 +22,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public final class FileNameUtils {
 
-    private static final Pattern INVALID_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|]");
-    private static final Pattern SPACE_PATTERN = Pattern.compile("\\s+");
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+    private static final Pattern INVALID_CHARS_PATTERN = Pattern.compile(FileConstants.INVALID_FILE_NAME_REGEX);
+    private static final Pattern SPACE_PATTERN = Pattern.compile(FileConstants.WHITESPACE_REGEX);
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(FileConstants.TIMESTAMP_FORMATTER_PATTERN);
 
     private FileNameUtils() {
     }
@@ -36,7 +38,7 @@ public final class FileNameUtils {
      * 获取完整文件名（基名 + 扩展名）
      */
     public String getFullName() {
-        return extension.isEmpty() ? baseName : baseName + "." + extension;
+        return extension.isEmpty() ? baseName : baseName + FileConstants.EXTENSION_SEPARATOR + extension;
     }
     }
 
@@ -45,17 +47,17 @@ public final class FileNameUtils {
      */
     public static FileNameParts parseFileName(String fileName) {
         if (!StringUtils.hasText(fileName)) {
-            return new FileNameParts("", "");
+            return new FileNameParts(SymbolConstants.EMPTY_STR, SymbolConstants.EMPTY_STR);
         }
 
-        int lastDotIndex = fileName.lastIndexOf(".");
+        int lastDotIndex = fileName.lastIndexOf(FileConstants.EXTENSION_SEPARATOR);
         if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
             String baseName = fileName.substring(0, lastDotIndex);
             String extension = fileName.substring(lastDotIndex + 1);
             return new FileNameParts(baseName, extension);
         }
 
-        return new FileNameParts(fileName, "");
+        return new FileNameParts(fileName, SymbolConstants.EMPTY_STR);
     }
 
     /**
@@ -63,13 +65,13 @@ public final class FileNameUtils {
      */
     public static String getFileExtension(String fileName) {
         if (!StringUtils.hasText(fileName)) {
-            return "";
+            return SymbolConstants.EMPTY_STR;
         }
-        int lastDotIndex = fileName.lastIndexOf(".");
+        int lastDotIndex = fileName.lastIndexOf(FileConstants.EXTENSION_SEPARATOR);
         if (lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
             return fileName.substring(lastDotIndex + 1);
         }
-        return "";
+        return SymbolConstants.EMPTY_STR;
     }
 
     /**
@@ -77,9 +79,9 @@ public final class FileNameUtils {
      */
     public static String getBaseFileName(String fileName) {
         if (!StringUtils.hasText(fileName)) {
-            return "";
+            return SymbolConstants.EMPTY_STR;
         }
-        int lastDotIndex = fileName.lastIndexOf(".");
+        int lastDotIndex = fileName.lastIndexOf(FileConstants.EXTENSION_SEPARATOR);
         if (lastDotIndex > 0) {
             return fileName.substring(0, lastDotIndex);
         }
@@ -94,8 +96,8 @@ public final class FileNameUtils {
             return fileName;
         }
         // 移除路径遍历字符和特殊字符
-        String sanitized = INVALID_CHARS_PATTERN.matcher(fileName).replaceAll("_");
-        sanitized = SPACE_PATTERN.matcher(sanitized).replaceAll("_");
+        String sanitized = INVALID_CHARS_PATTERN.matcher(fileName).replaceAll(FileConstants.UNIQUE_NAME_SEPARATOR);
+        sanitized = SPACE_PATTERN.matcher(sanitized).replaceAll(FileConstants.UNIQUE_NAME_SEPARATOR);
         // 去除首尾空白
         sanitized = sanitized.trim();
         return sanitized;
@@ -106,12 +108,13 @@ public final class FileNameUtils {
      */
     public static String generateUniqueFileName(String originalFileName) {
         if (!StringUtils.hasText(originalFileName)) {
-            return "file_" + generateTimestamp();
+            return FileConstants.DEFAULT_FILE_PREFIX + generateTimestamp();
         }
 
         FileNameParts parts = parseFileName(originalFileName);
         String timestamp = generateTimestamp();
-        return parts.baseName() + "_" + timestamp + (parts.extension().isEmpty() ? "" : "." + parts.extension());
+        return parts.baseName() + FileConstants.UNIQUE_NAME_SEPARATOR + timestamp
+                + (parts.extension().isEmpty() ? SymbolConstants.EMPTY_STR : FileConstants.EXTENSION_SEPARATOR + parts.extension());
     }
 
     /**
@@ -119,11 +122,12 @@ public final class FileNameUtils {
      */
     public static String generateUniqueFileName(String originalFileName, String suffix) {
         if (!StringUtils.hasText(originalFileName)) {
-            return "file_" + suffix;
+            return FileConstants.DEFAULT_FILE_PREFIX + suffix;
         }
 
         FileNameParts parts = parseFileName(originalFileName);
-        return parts.baseName() + "_" + suffix + (parts.extension().isEmpty() ? "" : "." + parts.extension());
+        return parts.baseName() + FileConstants.UNIQUE_NAME_SEPARATOR + suffix
+                + (parts.extension().isEmpty() ? SymbolConstants.EMPTY_STR : FileConstants.EXTENSION_SEPARATOR + parts.extension());
     }
 
     /**
@@ -145,7 +149,7 @@ public final class FileNameUtils {
             return false;
         }
         // 不允许以点开头或结尾
-        if (fileName.startsWith(".") || fileName.endsWith(".")) {
+        if (fileName.startsWith(FileConstants.EXTENSION_SEPARATOR) || fileName.endsWith(FileConstants.EXTENSION_SEPARATOR)) {
             return false;
         }
         // 不允许包含非法字符

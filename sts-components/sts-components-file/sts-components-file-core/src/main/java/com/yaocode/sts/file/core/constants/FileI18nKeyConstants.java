@@ -94,4 +94,15 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     String STRATEGY_EXECUTION_FAILED = "strategy.execution.failed";
     String STRATEGY_NOT_FOUND = "strategy.not.found";
     String DUPLICATE_STRATEGY_NOT_SUPPORTED = "duplicate.strategy.not.supported";
+
+    // ==================== 哈希 (150-169) ====================
+    String HASH_ALGORITHM_UNAVAILABLE = "hash.algorithm.unavailable";
+    String HASH_MD5_UNAVAILABLE = "hash.md5.unavailable";
+    String HASH_SHA_UNAVAILABLE = "hash.sha.unavailable";
+    String HASH_SM3_UNAVAILABLE = "hash.sm3.unavailable";
+    String HASH_CALCULATE_FAILED = "hash.calculate.failed";
+    String HASH_FILE_NOT_VALID = "hash.file.not.valid";
+    String HASH_INPUT_STREAM_NULL = "hash.input.stream.null";
+    String HASH_DATA_EMPTY = "hash.data.empty";
+    String HASH_TEXT_EMPTY = "hash.text.empty";
 }

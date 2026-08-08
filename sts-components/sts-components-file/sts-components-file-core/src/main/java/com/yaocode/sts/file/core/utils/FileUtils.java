@@ -1,8 +1,13 @@
 package com.yaocode.sts.file.core.utils;
 
+import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
+import com.yaocode.sts.common.crypto.utils.HexUtils;
 import com.yaocode.sts.common.tools.StringUtils;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.core.enums.FileExtensionEnums;
 import com.yaocode.sts.file.core.enums.FileTypeEnums;
+import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
+import com.yaocode.sts.file.core.exception.FileHashException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -20,8 +25,6 @@ import java.security.NoSuchAlgorithmException;
  */
 @Slf4j
 public class FileUtils {
-
-    private static final int BUFFER_SIZE = 8192;
 
     /**
      * 获取文件扩展名（不含点）
@@ -64,8 +67,8 @@ public class FileUtils {
      */
     public static String saveAndCalculateMD5(InputStream inputStream, Path targetPath) throws IOException {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] buffer = new byte[BUFFER_SIZE];
+            MessageDigest md = MessageDigest.getInstance(AlgorithmTypeEnums.MD5.getDisplayName());
+            byte[] buffer = new byte[FileConstants.BUFFER_SIZE];
             int bytesRead;
 
             // 确保父目录存在
@@ -80,15 +83,10 @@ public class FileUtils {
             }
 
             // 转换为十六进制
-            byte[] digest = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
+            return HexUtils.bytesToHex(md.digest());
 
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("MD5算法不可用", e);
+            throw new FileHashException(FileErrorCodeEnums.HASH_MD5_UNAVAILABLE, e);
         }
     }
 
@@ -211,7 +209,7 @@ public class FileUtils {
      */
     public static String getMimeTypeByExtension(String extension) {
         if (extension == null) {
-            return FileTypeEnums.OTHER.getMimePrefix();
+            return FileExtensionEnums.UNKNOWN.getMimeType();
         }
         FileExtensionEnums extEnum = FileExtensionEnums.fromExtension(extension);
         return extEnum.getMimeType();
@@ -228,14 +226,14 @@ public class FileUtils {
      * 格式化文件大小
      */
     public static String formatFileSize(long size) {
-        if (size < 1024) {
-            return size + " B";
-        } else if (size < 1024 * 1024) {
-            return String.format("%.2f KB", size / 1024.0);
-        } else if (size < 1024 * 1024 * 1024) {
-            return String.format("%.2f MB", size / (1024.0 * 1024));
+        if (size < FileConstants.ONE_KB) {
+            return String.format(FileConstants.SIZE_FORMAT_B, size);
+        } else if (size < FileConstants.ONE_MB) {
+            return String.format(FileConstants.SIZE_FORMAT_KB, size / 1024.0);
+        } else if (size < FileConstants.ONE_GB) {
+            return String.format(FileConstants.SIZE_FORMAT_MB, size / (1024.0 * 1024));
         } else {
-            return String.format("%.2f GB", size / (1024.0 * 1024 * 1024));
+            return String.format(FileConstants.SIZE_FORMAT_GB, size / (1024.0 * 1024 * 1024));
         }
     }
 

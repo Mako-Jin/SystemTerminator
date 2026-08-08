@@ -1,5 +1,8 @@
 package com.yaocode.sts.file.core.utils;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
+import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.enums.DiffTypeEnums;
 import com.yaocode.sts.file.core.model.DiffResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,24 +32,24 @@ public class DiffUtils {
     public static DiffResult calculateDiff(byte[] content1, byte[] content2) {
         if (content1 == null || content2 == null) {
             return DiffResult.builder()
-                    .diffType("UNKNOWN")
+                    .diffType(DiffTypeEnums.UNKNOWN)
                     .changePercentage(0.0)
                     .addedLines(0)
                     .deletedLines(0)
                     .modifiedLines(0)
-                    .diffContent("")
+                    .diffContent(SymbolConstants.EMPTY_STR)
                     .build();
         }
 
         // 如果内容完全相同
         if (Arrays.equals(content1, content2)) {
             return DiffResult.builder()
-                    .diffType("IDENTICAL")
+                    .diffType(DiffTypeEnums.IDENTICAL)
                     .changePercentage(0.0)
                     .addedLines(0)
                     .deletedLines(0)
                     .modifiedLines(0)
-                    .diffContent("文件内容完全相同")
+                    .diffContent(FileConstants.DIFF_CONTENT_IDENTICAL)
                     .build();
         }
 
@@ -71,8 +74,8 @@ public class DiffUtils {
      * 计算文本文件差异
      */
     private static DiffResult calculateTextDiff(String text1, String text2) {
-        String[] lines1 = text1.split("\n");
-        String[] lines2 = text2.split("\n");
+        String[] lines1 = text1.split(SymbolConstants.LINE_SEPARATOR);
+        String[] lines2 = text2.split(SymbolConstants.LINE_SEPARATOR);
 
         // 使用最长公共子序列算法计算差异
         DiffMatchPatch dmp = new DiffMatchPatch();
@@ -85,27 +88,30 @@ public class DiffUtils {
         for (DiffMatchPatch.Diff diff : diffs) {
             String text = diff.text;
             // 移除换行符用于显示
-            String displayText = text.replace("\n", "\\n\n");
+            String displayText = text.replace(SymbolConstants.LINE_SEPARATOR,
+                    SymbolConstants.DISPLAY_NEWLINE + SymbolConstants.LINE_SEPARATOR);
 
             switch (diff.operation) {
                 case INSERT:
                     added += countLines(text);
-                    diffContent.append("+ ").append(displayText);
+                    diffContent.append(FileConstants.DIFF_ADDED_PREFIX).append(displayText);
                     break;
                 case DELETE:
                     deleted += countLines(text);
-                    diffContent.append("- ").append(displayText);
+                    diffContent.append(FileConstants.DIFF_DELETED_PREFIX).append(displayText);
                     break;
                 case EQUAL:
                     modified += countLines(text);
                     // 只显示部分上下文（最多3行）
-                    String[] equalLines = text.split("\n");
+                    String[] equalLines = text.split(SymbolConstants.LINE_SEPARATOR);
                     int showLines = Math.min(equalLines.length, 3);
                     for (int i = 0; i < showLines; i++) {
-                        diffContent.append("  ").append(equalLines[i]).append("\n");
+                        diffContent.append(FileConstants.DIFF_CONTEXT_PREFIX)
+                                .append(equalLines[i])
+                                .append(SymbolConstants.LINE_SEPARATOR);
                     }
                     if (equalLines.length > 3) {
-                        diffContent.append("  ... (").append(equalLines.length - 3).append(" lines skipped)\n");
+                        diffContent.append(String.format(FileConstants.DIFF_SKIPPED_LINES_TEMPLATE, equalLines.length - 3));
                     }
                     break;
             }
@@ -115,7 +121,7 @@ public class DiffUtils {
                 (double) (added + deleted) / lines1.length * 100 : 0;
 
         return DiffResult.builder()
-                .diffType("TEXT_DIFF")
+                .diffType(DiffTypeEnums.TEXT)
                 .changePercentage(Math.min(percentage, 100))
                 .addedLines(added)
                 .deletedLines(deleted)
@@ -140,19 +146,15 @@ public class DiffUtils {
                 diffBytes++;
             }
         }
-        diffBytes += Math.abs(content1.length - content2.length);
+        diffBytes += (int) sizeDiff;
 
         return DiffResult.builder()
-                .diffType("BINARY_DIFF")
+                .diffType(DiffTypeEnums.BINARY)
                 .changePercentage(Math.min(percentage, 100))
                 .addedLines(Math.max(content2.length - content1.length, 0))
                 .deletedLines(Math.max(content1.length - content2.length, 0))
                 .modifiedLines(diffBytes)
-                .diffContent(String.format(
-                        "二进制文件差异:\n" +
-                                "  文件大小: %d -> %d bytes (变化: %d bytes)\n" +
-                                "  差异字节数: %d\n" +
-                                "  变更百分比: %.2f%%",
+                .diffContent(String.format(FileConstants.DIFF_BINARY_TEMPLATE,
                         content1.length, content2.length,
                         content2.length - content1.length,
                         diffBytes,
@@ -168,8 +170,8 @@ public class DiffUtils {
         if (content == null || content.length == 0) {
             return false;
         }
-        // 检查前 1024 字节
-        int checkLen = Math.min(content.length, 1024);
+        // 检查前 BINARY_CHECK_MAX_BYTES 字节
+        int checkLen = Math.min(content.length, FileConstants.BINARY_CHECK_MAX_BYTES);
         for (int i = 0; i < checkLen; i++) {
             byte b = content[i];
             // 如果包含不可打印字符（除了常见的空白字符）
@@ -188,7 +190,7 @@ public class DiffUtils {
         if (text == null || text.isEmpty()) {
             return 0;
         }
-        return (int) text.chars().filter(ch -> ch == '\n').count() + 1;
+        return (int) text.chars().filter(ch -> ch == SymbolConstants.NEWLINE_CHAR).count() + 1;
     }
 
     /**
@@ -198,13 +200,13 @@ public class DiffUtils {
         if (inputStream == null) {
             return new byte[0];
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[FileConstants.BUFFER_SIZE];
         int len;
         while ((len = inputStream.read(buffer)) != -1) {
-            baos.write(buffer, 0, len);
+            byteArrayOutputStream.write(buffer, 0, len);
         }
-        return baos.toByteArray();
+        return byteArrayOutputStream.toByteArray();
     }
 
     /**
@@ -261,8 +263,8 @@ public class DiffUtils {
             }
 
             // 使用 LCS 算法计算差异
-            String[] lines1 = text1.split("\n", -1);
-            String[] lines2 = text2.split("\n", -1);
+            String[] lines1 = text1.split(SymbolConstants.LINE_SEPARATOR, -1);
+            String[] lines2 = text2.split(SymbolConstants.LINE_SEPARATOR, -1);
 
             int[][] lcs = computeLCS(lines1, lines2);
             buildDiffsFromLCS(lines1, lines2, lcs, diffs);
@@ -301,14 +303,14 @@ public class DiffUtils {
 
             while (i > 0 || j > 0) {
                 if (i > 0 && j > 0 && lines1[i - 1].equals(lines2[j - 1])) {
-                    tempDiffs.addFirst(new Diff(Operation.EQUAL, lines1[i - 1] + "\n"));
+                    tempDiffs.addFirst(new Diff(Operation.EQUAL, lines1[i - 1] + SymbolConstants.LINE_SEPARATOR));
                     i--;
                     j--;
                 } else if (j > 0 && (i == 0 || lcs[i][j - 1] >= lcs[i - 1][j])) {
-                    tempDiffs.addFirst(new Diff(Operation.INSERT, lines2[j - 1] + "\n"));
+                    tempDiffs.addFirst(new Diff(Operation.INSERT, lines2[j - 1] + SymbolConstants.LINE_SEPARATOR));
                     j--;
-                } else if (i > 0 && (j == 0 || lcs[i - 1][j] > lcs[i][j - 1])) {
-                    tempDiffs.addFirst(new Diff(Operation.DELETE, lines1[i - 1] + "\n"));
+                } else if (j == 0 || lcs[i - 1][j] > lcs[i][j - 1]) {
+                    tempDiffs.addFirst(new Diff(Operation.DELETE, lines1[i - 1] + SymbolConstants.LINE_SEPARATOR));
                     i--;
                 }
             }

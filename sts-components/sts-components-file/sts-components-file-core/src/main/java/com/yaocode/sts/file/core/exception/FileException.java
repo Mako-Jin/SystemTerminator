@@ -24,6 +24,10 @@ public class FileException extends BusinessException {
         super(code, message, args);
     }
 
+    public FileException(FileErrorCodeEnums fileErrorCodeEnums) {
+        super(fileErrorCodeEnums.getCode(), fileErrorCodeEnums.getMsg());
+    }
+
     public FileException(FileErrorCodeEnums fileErrorCodeEnums, Object... args) {
         super(fileErrorCodeEnums.getCode(), fileErrorCodeEnums.getMsg(), args);
     }

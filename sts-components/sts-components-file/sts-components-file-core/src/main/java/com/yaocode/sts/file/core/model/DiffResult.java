@@ -1,12 +1,13 @@
 package com.yaocode.sts.file.core.model;
 
+import com.yaocode.sts.file.core.enums.DiffTypeEnums;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 public class DiffResult {
-    private String diffType;
+    private DiffTypeEnums diffType;
     private Double changePercentage;
     private Integer addedLines;
     private Integer deletedLines;

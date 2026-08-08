@@ -1,5 +1,10 @@
 package com.yaocode.sts.file.core.utils;
 
+import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
+import com.yaocode.sts.common.crypto.utils.HexUtils;
+import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
+import com.yaocode.sts.file.core.exception.FileHashException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -20,8 +25,6 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 public final class FileMd5Utils {
 
-    private static final int BUFFER_SIZE = 8192;
-
     private FileMd5Utils() {
         // 工具类私有构造
     }
@@ -34,13 +37,13 @@ public final class FileMd5Utils {
      */
     public static String calculateMd5(File file) {
         if (file == null || !file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("文件不存在或不是有效文件");
+            throw new FileHashException(FileErrorCodeEnums.HASH_FILE_NOT_VALID);
         }
         try (FileInputStream fis = new FileInputStream(file)) {
             return calculateMd5(fis);
         } catch (IOException e) {
             log.error("计算文件MD5失败: {}", file.getPath(), e);
-            throw new RuntimeException("计算文件MD5失败", e);
+            throw new FileHashException(FileErrorCodeEnums.HASH_CALCULATE_FAILED, e);
         }
     }
 
@@ -52,13 +55,13 @@ public final class FileMd5Utils {
      */
     public static String calculateMd5(Path path) {
         if (path == null || !Files.exists(path) || !Files.isRegularFile(path)) {
-            throw new IllegalArgumentException("文件不存在或不是有效文件");
+            throw new FileHashException(FileErrorCodeEnums.HASH_FILE_NOT_VALID);
         }
         try (InputStream is = Files.newInputStream(path)) {
             return calculateMd5(is);
         } catch (IOException e) {
             log.error("计算文件MD5失败: {}", path, e);
-            throw new RuntimeException("计算文件MD5失败", e);
+            throw new FileHashException(FileErrorCodeEnums.HASH_CALCULATE_FAILED, e);
         }
     }
 
@@ -73,21 +76,21 @@ public final class FileMd5Utils {
      */
     public static String calculateMd5(InputStream inputStream) {
         if (inputStream == null) {
-            throw new IllegalArgumentException("输入流不能为空");
+            throw new FileHashException(FileErrorCodeEnums.HASH_INPUT_STREAM_NULL);
         }
         try (inputStream) {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] buffer = new byte[BUFFER_SIZE];
+            MessageDigest md = MessageDigest.getInstance(AlgorithmTypeEnums.MD5.getDisplayName());
+            byte[] buffer = new byte[FileConstants.BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 md.update(buffer, 0, bytesRead);
             }
-            return bytesToHex(md.digest());
+            return HexUtils.bytesToHex(md.digest());
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("MD5算法不可用", e);
+            throw new FileHashException(FileErrorCodeEnums.HASH_MD5_UNAVAILABLE, e);
         } catch (IOException e) {
             log.error("读取输入流计算MD5失败", e);
-            throw new RuntimeException("计算MD5失败", e);
+            throw new FileHashException(FileErrorCodeEnums.HASH_CALCULATE_FAILED, e);
         }
 
     }
@@ -100,13 +103,13 @@ public final class FileMd5Utils {
      */
     public static String calculateMd5(byte[] data) {
         if (data == null || data.length == 0) {
-            throw new IllegalArgumentException("数据不能为空");
+            throw new FileHashException(FileErrorCodeEnums.HASH_DATA_EMPTY);
         }
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return bytesToHex(md.digest(data));
+            MessageDigest md = MessageDigest.getInstance(AlgorithmTypeEnums.MD5.getDisplayName());
+            return HexUtils.bytesToHex(md.digest(data));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("MD5算法不可用", e);
+            throw new FileHashException(FileErrorCodeEnums.HASH_MD5_UNAVAILABLE, e);
         }
     }
 
@@ -118,7 +121,7 @@ public final class FileMd5Utils {
      */
     public static String calculateMd5(String text) {
         if (text == null || text.isEmpty()) {
-            throw new IllegalArgumentException("文本不能为空");
+            throw new FileHashException(FileErrorCodeEnums.HASH_TEXT_EMPTY);
         }
         return calculateMd5(text.getBytes());
     }
@@ -151,20 +154,6 @@ public final class FileMd5Utils {
         }
         String actualMd5 = calculateMd5(inputStream);
         return actualMd5.equalsIgnoreCase(expectedMd5);
-    }
-
-    /**
-     * 字节数组转十六进制字符串
-     *
-     * @param bytes 字节数组
-     * @return 十六进制字符串（小写）
-     */
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
     }
 
     /**

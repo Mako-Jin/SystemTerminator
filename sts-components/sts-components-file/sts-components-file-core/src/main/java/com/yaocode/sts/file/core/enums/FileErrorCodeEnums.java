@@ -52,7 +52,7 @@ public enum FileErrorCodeEnums {
     DOWNLOAD_TOKEN_INVALID("105003", FileI18nKeyConstants.DOWNLOAD_TOKEN_INVALID),
     DOWNLOAD_TOKEN_EXPIRED("105004", FileI18nKeyConstants.DOWNLOAD_TOKEN_EXPIRED),
     DOWNLOAD_RANGE_INVALID("105005", FileI18nKeyConstants.DOWNLOAD_RANGE_INVALID),
-    DOWNLOAD_STREAM_FAILED("10506", FileI18nKeyConstants.DOWNLOAD_STREAM_FAILED),
+    DOWNLOAD_STREAM_FAILED("105006", FileI18nKeyConstants.DOWNLOAD_STREAM_FAILED),
 
     // ==================== 存储错误 (70-89) ====================
     STORAGE_ERROR("107000", FileI18nKeyConstants.STORAGE_ERROR),
@@ -97,6 +97,17 @@ public enum FileErrorCodeEnums {
     STRATEGY_EXECUTION_FAILED("130002", FileI18nKeyConstants.STRATEGY_EXECUTION_FAILED),
     STRATEGY_NOT_FOUND("130003", FileI18nKeyConstants.STRATEGY_NOT_FOUND),
     DUPLICATE_STRATEGY_NOT_SUPPORTED("130004", FileI18nKeyConstants.DUPLICATE_STRATEGY_NOT_SUPPORTED),
+
+    // ==================== 哈希错误 (150-169) ====================
+    HASH_ALGORITHM_UNAVAILABLE("101500", FileI18nKeyConstants.HASH_ALGORITHM_UNAVAILABLE),
+    HASH_MD5_UNAVAILABLE("101501", FileI18nKeyConstants.HASH_MD5_UNAVAILABLE),
+    HASH_SHA_UNAVAILABLE("101502", FileI18nKeyConstants.HASH_SHA_UNAVAILABLE),
+    HASH_SM3_UNAVAILABLE("101503", FileI18nKeyConstants.HASH_SM3_UNAVAILABLE),
+    HASH_CALCULATE_FAILED("101504", FileI18nKeyConstants.HASH_CALCULATE_FAILED),
+    HASH_FILE_NOT_VALID("101505", FileI18nKeyConstants.HASH_FILE_NOT_VALID),
+    HASH_INPUT_STREAM_NULL("101506", FileI18nKeyConstants.HASH_INPUT_STREAM_NULL),
+    HASH_DATA_EMPTY("101507", FileI18nKeyConstants.HASH_DATA_EMPTY),
+    HASH_TEXT_EMPTY("101508", FileI18nKeyConstants.HASH_TEXT_EMPTY),
     ;
 
     private final String code;
@@ -122,10 +133,4 @@ public enum FileErrorCodeEnums {
         return null;
     }
 
-    /**
-     * 获取错误码（带模块前缀）
-     */
-    public String getFullCode() {
-        return "FILE_" + this.code;
-    }
 }

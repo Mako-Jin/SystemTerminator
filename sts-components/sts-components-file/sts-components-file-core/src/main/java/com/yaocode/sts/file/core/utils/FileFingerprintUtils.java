@@ -1,5 +1,8 @@
 package com.yaocode.sts.file.core.utils;
 
+import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.enums.StorageTypeEnums;
+
 /**
  * 文件指纹工具类
  * <p>
@@ -11,8 +14,6 @@ package com.yaocode.sts.file.core.utils;
  * @since 1.0.0
  */
 public final class FileFingerprintUtils {
-
-    private static final String DEFAULT_STORAGE_TYPE = "default";
 
     private FileFingerprintUtils() {
         // 工具类私有构造
@@ -31,7 +32,7 @@ public final class FileFingerprintUtils {
      * @return 指纹字符串
      */
     public static String buildFingerprint(String fileMd5, Long fileSize, Integer storageType, String tenantId) {
-        String st = storageType != null ? String.valueOf(storageType) : DEFAULT_STORAGE_TYPE;
-        return fileMd5 + "_" + fileSize + "_" + st + "_" + tenantId;
+        String st = storageType != null ? String.valueOf(storageType) : StorageTypeEnums.DEFAULT.getType();
+        return fileMd5 + FileConstants.UNIQUE_NAME_SEPARATOR + fileSize + FileConstants.UNIQUE_NAME_SEPARATOR + st + FileConstants.UNIQUE_NAME_SEPARATOR + tenantId;
     }
 }

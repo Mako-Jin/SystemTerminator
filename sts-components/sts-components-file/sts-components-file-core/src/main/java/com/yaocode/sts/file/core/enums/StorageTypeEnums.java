@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum StorageTypeEnums {
 
+    DEFAULT(0, "default", "默认存储"),
     LOCAL(1, "local", "本地存储"),
     MINIO(2, "minio", "MinIO对象存储"),
     OSS(3, "oss", "阿里云OSS"),
