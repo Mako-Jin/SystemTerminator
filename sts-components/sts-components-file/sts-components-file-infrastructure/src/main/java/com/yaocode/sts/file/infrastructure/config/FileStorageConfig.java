@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.infrastructure.config;
 
+import com.yaocode.sts.file.infrastructure.constants.FileInfrastructureConstants;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -41,19 +42,19 @@ public class FileStorageConfig {
     @Data
     public static class UploadConfig {
         /** 分片大小（默认10MB） */
-        private long chunkSize = 10 * 1024 * 1024L;
+        private long chunkSize = FileInfrastructureConstants.DEFAULT_CHUNK_SIZE;
 
         /** 最大文件大小（默认1GB） */
-        private long maxFileSize = 1024 * 1024 * 1024L;
+        private long maxFileSize = FileInfrastructureConstants.DEFAULT_MAX_FILE_SIZE;
 
         /** 最大并发上传数 */
         private int maxConcurrentUploads = 10;
 
         /** 临时文件过期时间（小时） */
-        private int tempExpireHours = 24;
+        private int tempExpireHours = FileInfrastructureConstants.DEFAULT_TEMP_EXPIRE_HOURS;
 
         /** 临时文件目录 */
-        private String tempDir = "./uploads/tmp";
+        private String tempDir = FileInfrastructureConstants.DEFAULT_TEMP_DIR;
 
         /** 允许的文件扩展名 */
         private List<String> allowedExtensions = new ArrayList<>();
@@ -62,34 +63,34 @@ public class FileStorageConfig {
         private List<String> blockedExtensions = List.of("exe", "bat", "sh", "com", "scr");
 
         /** 流式上传缓冲区大小 */
-        private int streamBufferSize = 8192;
+        private int streamBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
 
         /** 上传超时时间（秒） */
-        private int uploadTimeout = 300;
+        private int uploadTimeout = FileInfrastructureConstants.DEFAULT_UPLOAD_TIMEOUT;
 
         private boolean deduplicationEnabled = true;
-        private String defaultDeduplicationStrategy = "REUSE";
+        private String defaultDeduplicationStrategy = FileInfrastructureConstants.DEFAULT_DEDUP_STRATEGY;
     }
 
     @Data
     public static class StorageConfig {
         /** 默认存储类型 */
-        private String defaultType = "local";
+        private String defaultType = FileInfrastructureConstants.DEFAULT_STORAGE_TYPE;
 
         /** 存储插件配置 */
         private Map<String, StoragePluginConfig> plugins = new HashMap<>();
 
         /** 存储切换阈值（超过此大小切换到对象存储） */
-        private long switchThreshold = 100 * 1024 * 1024L;
+        private long switchThreshold = FileInfrastructureConstants.STORAGE_SWITCH_THRESHOLD;
 
         /** 是否启用存储健康检查 */
         private boolean healthCheckEnabled = true;
 
         /** 健康检查间隔（秒） */
-        private int healthCheckInterval = 60;
+        private int healthCheckInterval = FileInfrastructureConstants.DEFAULT_HEALTH_CHECK_INTERVAL;
 
         /** 存储节点选择策略 */
-        private String selectionStrategy = "auto";
+        private String selectionStrategy = FileInfrastructureConstants.DEFAULT_SELECTION_STRATEGY;
     }
 
     @Data
@@ -113,10 +114,10 @@ public class FileStorageConfig {
         private String region;
 
         /** 连接超时（毫秒） */
-        private int connectTimeout = 5000;
+        private int connectTimeout = FileInfrastructureConstants.DEFAULT_CONNECT_TIMEOUT;
 
         /** 读取超时（毫秒） */
-        private int readTimeout = 30000;
+        private int readTimeout = FileInfrastructureConstants.DEFAULT_READ_TIMEOUT;
 
         /** 自定义配置 */
         private Map<String, Object> extra = new HashMap<>();
@@ -128,7 +129,7 @@ public class FileStorageConfig {
         private boolean enabled = true;
 
         /** 默认去重策略 */
-        private String defaultStrategy = "REUSE";
+        private String defaultStrategy = FileInfrastructureConstants.DEFAULT_DEDUP_STRATEGY;
 
         /** 是否允许跨租户复用 */
         private boolean crossTenantEnabled = true;
@@ -140,7 +141,7 @@ public class FileStorageConfig {
     @Data
     public static class SecurityConfig {
         /** 最大文件名长度 */
-        private int maxFilenameLength = 255;
+        private int maxFilenameLength = FileInfrastructureConstants.DEFAULT_MAX_FILENAME_LENGTH;
 
         /** 是否验证MIME类型 */
         private boolean validateMimeType = true;
@@ -152,7 +153,7 @@ public class FileStorageConfig {
         private boolean virusScanEnabled = false;
 
         /** 病毒扫描超时（秒） */
-        private int virusScanTimeout = 60;
+        private int virusScanTimeout = FileInfrastructureConstants.DEFAULT_VIRUS_SCAN_TIMEOUT;
 
         /** 是否启用文件内容校验 */
         private boolean contentValidationEnabled = true;
@@ -161,7 +162,7 @@ public class FileStorageConfig {
     @Data
     public static class VersionConfig {
         /** 最大版本数（0表示不限制） */
-        private int maxVersions = 100;
+        private int maxVersions = FileInfrastructureConstants.DEFAULT_MAX_VERSIONS;
 
         /** 是否启用版本分支 */
         private boolean branchEnabled = true;
@@ -178,11 +179,11 @@ public class FileStorageConfig {
 
     @Data
     public static class PerformanceProperties {
-        private int hashBufferSize = 8192;
-        private int uploadBufferSize = 8192;
-        private int downloadBufferSize = 8192;
+        private int hashBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
+        private int uploadBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
+        private int downloadBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
         private boolean enableStreaming = true;
         private boolean enableParallel = false;
-        private int parallelThreshold = 100 * 1024 * 1024;
+        private long parallelThreshold = FileInfrastructureConstants.PARALLEL_THRESHOLD;
     }
 }
