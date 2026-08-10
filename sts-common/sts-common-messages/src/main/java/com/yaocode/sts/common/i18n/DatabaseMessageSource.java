@@ -1,6 +1,6 @@
 package com.yaocode.sts.common.i18n;
 
-import com.yaocode.sts.common.basic.constants.FileConstants;
+import com.yaocode.sts.common.basic.constants.CommonFileConstants;
 import com.yaocode.sts.common.i18n.constants.I18nKeyConstants;
 import com.yaocode.sts.common.i18n.properties.I18nMessageProperties;
 import com.yaocode.sts.common.i18n.repository.I18nMessageRepository;
@@ -92,7 +92,7 @@ public class DatabaseMessageSource extends AbstractMessageSource {
             for (Resource resource : resources) {
                 String path = resource.getURL().toString();
                 // 提取路径：i18n/common/messages.properties -> i18n/common/messages
-                String basename = path.substring(path.indexOf(I18nKeyConstants.I18N_DIR_PREFIX), path.lastIndexOf(FileConstants.SUFFIX_PROPERTIES));
+                String basename = path.substring(path.indexOf(I18nKeyConstants.I18N_DIR_PREFIX), path.lastIndexOf(CommonFileConstants.SUFFIX_PROPERTIES));
                 baseNames.add(basename);
             }
         } catch (IOException e) {

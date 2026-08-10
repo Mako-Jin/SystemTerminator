@@ -29,9 +29,13 @@ public interface SymbolConstants {
     char SEMICOLON = ';';
     char LEFT_PARENTHESIS = '(';
     String QUESTION_MARKS = "?";
-
-    String LINE_SEPARATOR = "\n";
+    /** 换行字符 */
+    char NEWLINE_CHAR = '\n';
+    String LINE_SEPARATOR = String.valueOf(NEWLINE_CHAR);
     String LINE_SEPARATOR_CRLF = "\r\n";
+
+    /** 可视化换行符（用于把真实换行替换为文本 \n） */
+    String DISPLAY_NEWLINE = "\\n";
 
     char EQUAL_SIGN = '=';
 

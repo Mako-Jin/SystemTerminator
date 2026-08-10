@@ -1,11 +1,15 @@
 package com.yaocode.sts.file.plugins.local;
 
+import com.yaocode.sts.common.basic.constants.SymbolConstants;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.core.enums.StorageTypeEnums;
-import com.yaocode.sts.file.core.exception.FileNotExistException;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.core.utils.FileUtils;
+import com.yaocode.sts.file.plugins.local.exception.LocalChunkOperationException;
+import com.yaocode.sts.file.plugins.local.exception.LocalStorageInitException;
+import com.yaocode.sts.file.plugins.local.exception.LocalStorageOperationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +43,7 @@ public class LocalStoragePlugin implements StoragePlugin {
 
     // 日期格式化器，用于按日期分目录
     private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMdd");
+            DateTimeFormatter.ofPattern(LocalStorageConstants.DATE_FORMATTER_PATTERN);
 
     /**
      * 无参构造方法 - SPI要求
@@ -65,7 +69,7 @@ public class LocalStoragePlugin implements StoragePlugin {
             logger.info("本地存储插件初始化成功，根目录: {}", storagePath);
         } catch (IOException e) {
             logger.error("初始化本地存储目录失败: {}", e.getMessage(), e);
-            throw new RuntimeException("初始化本地存储目录失败", e);
+            throw new LocalStorageInitException(LocalStorageErrorCodeEnums.INIT_FAILED, e);
         }
     }
 
@@ -92,22 +96,22 @@ public class LocalStoragePlugin implements StoragePlugin {
     @Override
     public String upload(InputStream inputStream, String fileName, Long fileSize, String tenantId, String bucket) {
         if (inputStream == null) {
-            throw new IllegalArgumentException("文件输入流不能为空");
+            throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.INPUT_STREAM_NULL);
         }
         if (fileName == null || fileName.trim().isEmpty()) {
-            throw new IllegalArgumentException("文件名不能为空");
+            throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.FILE_NAME_EMPTY);
         }
 
         try {
             // 1. 校验文件大小
             if (fileSize != null && fileSize > properties.getMaxFileSize() * 1024 * 1024) {
-                throw new IllegalArgumentException("文件大小超过限制: " + properties.getMaxFileSize() + "MB");
+                throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.FILE_SIZE_EXCEEDED, properties.getMaxFileSize());
             }
 
             // 2. 构建存储路径：basePath/tenantId/bucket/yyyy/MM/dd/
             String datePath = LocalDateTime.now().format(DATE_FORMATTER);
-            String tenantDir = tenantId != null && !tenantId.trim().isEmpty() ? tenantId : "default";
-            String bucketDir = bucket != null && !bucket.trim().isEmpty() ? bucket : "default";
+            String tenantDir = tenantId != null && !tenantId.trim().isEmpty() ? tenantId : LocalStorageConstants.DEFAULT_TENANT_ID;
+            String bucketDir = bucket != null && !bucket.trim().isEmpty() ? bucket : LocalStorageConstants.DEFAULT_BUCKET;
 
             Path targetDir = this.storagePath
                     .resolve(tenantDir)
@@ -128,7 +132,7 @@ public class LocalStoragePlugin implements StoragePlugin {
             // 4. 处理重名文件
             Path targetPath = targetDir.resolve(storedFileName);
             if (Files.exists(targetPath)) {
-                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("_HHmmss"));
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(LocalStorageConstants.RENAME_TIMESTAMP_FORMAT));
                 String nameWithoutExt = storedFileName;
                 storedFileName = nameWithoutExt + timestamp;
                 targetPath = targetDir.resolve(storedFileName);
@@ -141,13 +145,13 @@ public class LocalStoragePlugin implements StoragePlugin {
 
             // 6. 返回相对路径
             Path relativeToDateDir = targetDir.relativize(targetPath);
-            String relativePath = datePath + "/" + relativeToDateDir;
+            String relativePath = datePath + SymbolConstants.FORWARD_SLASH + relativeToDateDir;
             logger.info("文件上传成功: tenant={}, bucket={}, path={}", tenantId, bucket, relativePath);
             return relativePath;
 
         } catch (IOException e) {
             logger.error("文件上传失败: {}", e.getMessage(), e);
-            throw new RuntimeException("文件上传失败: " + e.getMessage(), e);
+            throw new LocalStorageOperationException(LocalStorageErrorCodeEnums.UPLOAD_FAILED, e);
         }
     }
 
@@ -162,18 +166,18 @@ public class LocalStoragePlugin implements StoragePlugin {
     @Override
     public InputStream download(String filePath) {
         if (filePath == null || filePath.trim().isEmpty()) {
-            throw new IllegalArgumentException("文件路径不能为空");
+            throw new LocalStorageOperationException(LocalStorageErrorCodeEnums.FILE_PATH_EMPTY);
         }
 
         try {
             Path path = resolvePath(filePath);
             if (!Files.exists(path) || !Files.isRegularFile(path)) {
-                throw new FileNotExistException("文件不存在: " + filePath);
+                throw new LocalStorageOperationException(LocalStorageErrorCodeEnums.FILE_NOT_EXIST, filePath);
             }
             return Files.newInputStream(path);
         } catch (IOException e) {
             logger.error("文件下载失败: {}", e.getMessage(), e);
-            throw new RuntimeException("文件下载失败", e);
+            throw new LocalStorageOperationException(LocalStorageErrorCodeEnums.DOWNLOAD_FAILED, e);
         }
     }
 
@@ -196,7 +200,7 @@ public class LocalStoragePlugin implements StoragePlugin {
             }
         } catch (IOException e) {
             logger.error("文件删除失败: {}", e.getMessage(), e);
-            throw new RuntimeException("文件删除失败: " + e.getMessage(), e);
+            throw new LocalStorageOperationException(LocalStorageErrorCodeEnums.DELETE_FAILED, e);
         }
     }
 
@@ -220,11 +224,11 @@ public class LocalStoragePlugin implements StoragePlugin {
         // 本地存储分片上传实现
         try {
             // 构建分片存储目录：basePath/chunks/uploadId/
-            Path chunkDir = this.storagePath.resolve("chunks").resolve(uploadId);
+            Path chunkDir = this.storagePath.resolve(LocalStorageConstants.CHUNKS_DIR).resolve(uploadId);
             Files.createDirectories(chunkDir);
 
             // 分片文件名：chunk_{chunkNumber}.part
-            String chunkFileName = String.format("chunk_%d.part", chunkNumber);
+            String chunkFileName = String.format(LocalStorageConstants.CHUNK_FILE_NAME_TEMPLATE, chunkNumber);
             Path chunkPath = chunkDir.resolve(chunkFileName);
 
             try (InputStream is = inputStream) {
@@ -236,7 +240,7 @@ public class LocalStoragePlugin implements StoragePlugin {
 
         } catch (IOException e) {
             logger.error("分片上传失败: {}", e.getMessage(), e);
-            throw new RuntimeException("分片上传失败: " + e.getMessage(), e);
+            throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.CHUNK_UPLOAD_FAILED, e);
         }
     }
 
@@ -244,25 +248,28 @@ public class LocalStoragePlugin implements StoragePlugin {
     public String mergeChunks(String uploadId, String fileId) {
         try {
             // 分片目录
-            Path chunkDir = this.storagePath.resolve("chunks").resolve(uploadId);
+            Path chunkDir = this.storagePath.resolve(LocalStorageConstants.CHUNKS_DIR).resolve(uploadId);
             if (!Files.exists(chunkDir)) {
-                throw new RuntimeException("分片目录不存在: " + uploadId);
+                throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.CHUNK_DIR_NOT_FOUND, uploadId);
             }
 
             // 获取所有分片文件
-            List<Path> chunks = Files.list(chunkDir)
-                    .filter(Files::isRegularFile)
-                    .sorted((p1, p2) -> {
-                        String name1 = p1.getFileName().toString();
-                        String name2 = p2.getFileName().toString();
-                        int num1 = Integer.parseInt(name1.replaceAll("\\D", ""));
-                        int num2 = Integer.parseInt(name2.replaceAll("\\D", ""));
-                        return Integer.compare(num1, num2);
-                    })
-                    .toList();
+            List<Path> chunks;
+            try (java.util.stream.Stream<Path> stream = Files.list(chunkDir)) {
+                chunks = stream
+                        .filter(Files::isRegularFile)
+                        .sorted((p1, p2) -> {
+                            String name1 = p1.getFileName().toString();
+                            String name2 = p2.getFileName().toString();
+                            int num1 = Integer.parseInt(name1.replaceAll(LocalStorageConstants.CHUNK_NUMBER_REGEX, SymbolConstants.EMPTY_STR));
+                            int num2 = Integer.parseInt(name2.replaceAll(LocalStorageConstants.CHUNK_NUMBER_REGEX, SymbolConstants.EMPTY_STR));
+                            return Integer.compare(num1, num2);
+                        })
+                        .toList();
+            }
 
             if (chunks.isEmpty()) {
-                throw new RuntimeException("没有找到分片文件: " + uploadId);
+                throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.CHUNK_FILES_EMPTY, uploadId);
             }
 
             // 生成目标文件名
@@ -272,13 +279,13 @@ public class LocalStoragePlugin implements StoragePlugin {
             String fileName = firstChunk.getFileName().toString();
             String extension = FileUtils.getFileExtension(fileName);
             if (!extension.isEmpty()) {
-                targetFileName += "." + extension;
+                targetFileName += FileConstants.EXTENSION_SEPARATOR + extension;
             }
 
             // 按日期分目录
             String datePath = LocalDateTime.now().format(DATE_FORMATTER);
             Path targetDir = this.storagePath
-                    .resolve("default")
+                    .resolve(LocalStorageConstants.DEFAULT_BUCKET)
                     .resolve(datePath);
             Files.createDirectories(targetDir);
 
@@ -286,7 +293,7 @@ public class LocalStoragePlugin implements StoragePlugin {
 
             // 合并分片
             try (OutputStream os = Files.newOutputStream(targetPath)) {
-                byte[] buffer = new byte[8192];
+                byte[] buffer = new byte[LocalStorageConstants.BUFFER_SIZE];
                 for (Path chunk : chunks) {
                     try (InputStream is = Files.newInputStream(chunk)) {
                         int bytesRead;
@@ -307,24 +314,25 @@ public class LocalStoragePlugin implements StoragePlugin {
 
         } catch (IOException e) {
             logger.error("分片合并失败: {}", e.getMessage(), e);
-            throw new RuntimeException("分片合并失败: " + e.getMessage(), e);
+            throw new LocalChunkOperationException(LocalStorageErrorCodeEnums.CHUNK_MERGE_FAILED, e);
         }
     }
 
     @Override
     public void cleanupChunks(String uploadId) {
         try {
-            Path chunkDir = this.storagePath.resolve("chunks").resolve(uploadId);
+            Path chunkDir = this.storagePath.resolve(LocalStorageConstants.CHUNKS_DIR).resolve(uploadId);
             if (Files.exists(chunkDir)) {
-                Files.walk(chunkDir)
-                        .filter(Files::isRegularFile)
-                        .forEach(p -> {
-                            try {
-                                Files.deleteIfExists(p);
-                            } catch (IOException e) {
-                                logger.warn("删除分片文件失败: {}", p);
-                            }
-                        });
+                try (java.util.stream.Stream<Path> stream = Files.walk(chunkDir)) {
+                    stream.filter(Files::isRegularFile)
+                            .forEach(p -> {
+                                try {
+                                    Files.deleteIfExists(p);
+                                } catch (IOException e) {
+                                    logger.warn("删除分片文件失败: {}", p);
+                                }
+                            });
+                }
                 Files.deleteIfExists(chunkDir);
                 logger.debug("清理分片目录成功: {}", uploadId);
             }

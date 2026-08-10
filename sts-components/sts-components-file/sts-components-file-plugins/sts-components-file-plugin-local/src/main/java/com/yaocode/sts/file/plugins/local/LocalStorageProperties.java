@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.plugins.local;
 
+import com.yaocode.sts.file.plugins.local.LocalStorageConstants;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -7,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 本地存储配置属性
  */
 @Data
-@ConfigurationProperties(prefix = "yaocode.storage.local")
+@ConfigurationProperties(prefix = LocalStorageConstants.CONFIG_PREFIX)
 public class LocalStorageProperties {
 
     /**

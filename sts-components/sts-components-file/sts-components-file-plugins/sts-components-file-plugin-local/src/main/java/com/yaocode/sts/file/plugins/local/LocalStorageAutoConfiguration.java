@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 @EnableConfigurationProperties(LocalStorageProperties.class)
 @ConditionalOnProperty(
-        prefix = "yaocode.storage.local",
+        prefix = LocalStorageConstants.CONFIG_PREFIX,
         name = "enabled",
         havingValue = "true",
         matchIfMissing = true

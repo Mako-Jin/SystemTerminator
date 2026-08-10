@@ -5,7 +5,7 @@ package com.yaocode.sts.common.basic.constants;
  * @author: Jin-LiangBo
  * @date: 2026年07月04日
  */
-public interface FileConstants {
+public interface CommonFileConstants {
 
     // ==================== 文件后缀 ====================
     /**
