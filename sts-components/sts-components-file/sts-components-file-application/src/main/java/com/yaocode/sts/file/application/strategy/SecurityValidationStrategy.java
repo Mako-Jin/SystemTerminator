@@ -1,7 +1,8 @@
 package com.yaocode.sts.file.application.strategy;
 
-import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
+import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
+import com.yaocode.sts.file.core.exception.FileHashException;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
@@ -50,6 +51,6 @@ public class SecurityValidationStrategy extends AbstractDuplicateStrategy {
             byte[] fileBytes
     ) {
         // 抛出异常，由上层处理
-        throw new BusinessException("FILE_HASH_MISMATCH", "file.hash.mismatch", "MD5匹配但SHA-256不匹配，可能存在文件篡改风险");
+        throw new FileHashException(FileErrorCodeEnums.FILE_HASH_MISMATCH, context.getFileMd5());
     }
 }

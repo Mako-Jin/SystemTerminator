@@ -1,9 +1,9 @@
 package com.yaocode.sts.file.core.exception;
 
-
 import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
 
 public class FileStorageException extends FileException {
+
     public FileStorageException(String message, Exception e) {
         super(message, e);
     }

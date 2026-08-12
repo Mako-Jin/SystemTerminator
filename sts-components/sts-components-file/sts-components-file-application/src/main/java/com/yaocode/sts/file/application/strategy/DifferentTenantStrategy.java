@@ -1,10 +1,15 @@
 package com.yaocode.sts.file.application.strategy;
 
+import com.yaocode.sts.common.tools.messages.MessageUtils;
+import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
+import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
 import com.yaocode.sts.file.core.strategy.AbstractDuplicateStrategy;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,6 +27,9 @@ import java.util.Objects;
 @Component
 @Order(50)
 public class DifferentTenantStrategy extends AbstractDuplicateStrategy {
+
+    @Resource
+    private MessageUtils messageUtils;
 
     public DifferentTenantStrategy() {
         this.name = "跨租户复用策略";
@@ -55,11 +63,11 @@ public class DifferentTenantStrategy extends AbstractDuplicateStrategy {
                 .fileUrl(existFile.getFileUrl())
                 .storageType(existFile.getStorageType())
                 .tenantId(context.getTenantId())
-                .uploadStatus(1)
+                .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
                 .isDuplicate(true)
                 .sourceFileId(existFile.getFileId())
-                .versionNumber(1)
-                .message("跨租户秒传成功")
+                .versionNumber(FileConstants.INITIAL_VERSION_NUMBER)
+                .message(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_CROSS_TENANT_SUCCESS))
                 .build();
     }
 }

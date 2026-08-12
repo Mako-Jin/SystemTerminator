@@ -105,4 +105,47 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     String HASH_INPUT_STREAM_NULL = "hash.input.stream.null";
     String HASH_DATA_EMPTY = "hash.data.empty";
     String HASH_TEXT_EMPTY = "hash.text.empty";
+
+    // ==================== 文件管理 (200-219) - 应用层独有 ====================
+    String FILE_ALREADY_DELETED = "application.file.already.deleted";
+    String FILE_ALREADY_ARCHIVED = "application.file.already.archived";
+    String FILE_NOT_DELETED = "application.file.not.deleted";
+    String FILE_EXPIRED = "application.file.expired";
+    String FILE_NOT_IN_RECYCLE_BIN = "application.file.not.in.recycle.bin";
+    String FILE_ALREADY_AUDITED = "application.file.already.audited";
+    String FILE_ARCHIVED_CANNOT_DELETE = "application.file.archived.cannot.delete";
+    String FILE_DOWNLOAD_ERROR = "application.file.download.error";
+    String STORAGE_OPERATION_FAILED = "application.storage.operation.failed";
+    String TARGET_STORAGE_SAME_AS_CURRENT = "application.target.storage.same.as.current";
+    String DELETE_STORAGE_FILE_FAILED = "application.delete.storage.file.failed";
+
+    // ==================== 存储节点管理 (220-229) ====================
+    String NODE_CODE_EXISTS = "application.node.code.exists";
+    String STORAGE_NODE_DELETE_FAILED = "application.storage.node.delete.failed";
+
+    // ==================== 版本扩展 (230-249) - 应用层独有 ====================
+    String BRANCH_ALREADY_EXISTS = "application.branch.already.exists";
+    String BRANCH_NOT_FOUND = "application.branch.not.found";
+    String BRANCH_NOT_SAME_FILE = "application.branch.not.same.file";
+    String BRANCH_HEAD_NOT_FOUND = "application.branch.head.not.found";
+    String SOURCE_BRANCH_NOT_FOUND = "application.source.branch.not.found";
+    String DEFAULT_BRANCH_NOT_FOUND = "application.default.branch.not.found";
+    String CANNOT_DELETE_DEFAULT_BRANCH = "application.cannot.delete.default.branch";
+    String TAG_ALREADY_EXISTS = "application.tag.already.exists";
+    String TAG_NOT_FOUND = "application.tag.not.found";
+    String CURRENT_VERSION_NOT_FOUND = "application.current.version.not.found";
+    String VERSION_CONTROL_NOT_ENABLED = "application.version.control.not.enabled";
+    String NO_COMMON_ANCESTOR = "application.no.common.ancestor";
+    String ALREADY_LATEST_VERSION = "application.already.latest.version";
+
+    // ==================== 策略消息 (250-269) ====================
+    String STRATEGY_CROSS_TENANT_SUCCESS = "file.duplicate.strategy.cross.tenant.success";
+    String STRATEGY_OVERWRITE_SUCCESS = "file.duplicate.strategy.overwrite.success";
+    String STRATEGY_REUSE_SUCCESS = "file.duplicate.strategy.reuse.success";
+    String STRATEGY_NEW_VERSION_SUCCESS = "file.duplicate.strategy.new.version.success";
+    String STRATEGY_AUTO_RENAME = "file.duplicate.strategy.auto.rename";
+
+    // ==================== 其他 (270-299) ====================
+    String UPLOAD_SUCCESS = "file.upload.success";
+    String DEFAULT_VERSION_REMARK = "file.version.default.remark";
 }

@@ -1,6 +1,9 @@
 package com.yaocode.sts.file.application.strategy;
 
+import com.yaocode.sts.common.tools.messages.MessageUtils;
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
+import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
@@ -29,6 +32,9 @@ public class SameUserStrategy extends AbstractDuplicateStrategy {
 
     @Resource
     private FileBaseInfoDao fileBaseInfoDao;
+
+    @Resource
+    private MessageUtils messageUtils;
 
     public SameUserStrategy() {
         this.name = "同一用户覆盖策略";
@@ -80,11 +86,11 @@ public class SameUserStrategy extends AbstractDuplicateStrategy {
                 .fileUrl(existFile.getFileUrl())
                 .storageType(context.getStorageType())
                 .tenantId(context.getTenantId())
-                .uploadStatus(1)
+                .uploadStatus(UploadStatusEnums.CANCELLED.getCode())
                 .isDuplicate(true)
                 .sourceFileId(existFile.getFileId())
                 .versionNumber(entity.getVersion())
-                .message("文件已覆盖")
+                .message(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_OVERWRITE_SUCCESS))
                 .build();
     }
 }

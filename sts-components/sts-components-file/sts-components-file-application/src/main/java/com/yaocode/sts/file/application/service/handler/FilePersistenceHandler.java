@@ -1,14 +1,16 @@
 package com.yaocode.sts.file.application.service.handler;
 
 import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.tools.messages.MessageUtils;
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import com.yaocode.sts.file.infrastructure.entity.FileDeduplicationEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
-import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -52,13 +54,16 @@ public class FilePersistenceHandler implements FileUploadHandler {
     private final ConcurrentHashMap<String, ReentrantLock> fingerprintLocks = new ConcurrentHashMap<>();
 
     @Resource
-    private FileBaseInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
     @Resource
     private FileDeduplicationDao fileDeduplicationDao;
     @Resource
     private FileUploadApplicationConverter converter;
     @Resource
     private FileUploadCleanupHandler cleanupHandler;
+
+    @Resource
+    private MessageUtils messageUtils;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
@@ -76,7 +81,7 @@ public class FilePersistenceHandler implements FileUploadHandler {
                 command, fileUploadDto.getFileId(), fileUploadDto.getFilePath(),
                 fileUploadDto.getFileUrl(), fileUploadDto.getFileMd5(), fileUploadDto.getFileSha256()
         );
-        fileInfoMapper.insert(entity);
+        fileBaseInfoDao.save(entity);
 
         // 2. 插入去重记录
         saveDeduplicationRecord(fileUploadDto);
@@ -88,7 +93,7 @@ public class FilePersistenceHandler implements FileUploadHandler {
         UploadResult result = converter.toUploadResultFromEntity(entity);
         long processingTime = fileUploadDto.getProcessingTime();
         result.setProcessingTime(processingTime);
-        result.setMessage("上传成功，耗时: " + processingTime + "ms");
+        result.setMessage(messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_SUCCESS, processingTime));
 
         fileUploadDto.setResult(result);
 

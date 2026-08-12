@@ -11,33 +11,16 @@ package com.yaocode.sts.file.infrastructure.constants;
  */
 public interface FileInfrastructureConstants {
 
-    // ==================== 默认配置值 ====================
-
-    /** 默认存储类型 */
-    String DEFAULT_STORAGE_TYPE = "local";
-
-    /** 默认去重策略 */
-    String DEFAULT_DEDUP_STRATEGY = "REUSE";
-
-    /** 默认节点选择策略 */
-    String DEFAULT_SELECTION_STRATEGY = "auto";
-
     /** 临时文件默认目录 */
     String DEFAULT_TEMP_DIR = "./uploads/tmp";
 
     // ==================== 存储阈值 ====================
-
-    /** 存储切换阈值 (100MB) */
-    long STORAGE_SWITCH_THRESHOLD = 100L * 1024 * 1024;
 
     /** 默认最大文件大小 (1GB) */
     long DEFAULT_MAX_FILE_SIZE = 1024L * 1024 * 1024;
 
     /** 默认分片大小 (10MB) */
     long DEFAULT_CHUNK_SIZE = 10L * 1024 * 1024;
-
-    /** 默认缓冲区大小 */
-    int DEFAULT_BUFFER_SIZE = 8192;
 
     // ==================== 超时配置 ====================
 

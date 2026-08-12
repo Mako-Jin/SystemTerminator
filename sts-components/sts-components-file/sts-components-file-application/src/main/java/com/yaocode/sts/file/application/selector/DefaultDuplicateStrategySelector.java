@@ -34,7 +34,7 @@ public class DefaultDuplicateStrategySelector implements DuplicateStrategySelect
     @PostConstruct
     public void init() {
         String defaultStrategy = fileStorageConfig != null ?
-                fileStorageConfig.getUpload().getDefaultDeduplicationStrategy() : "REUSE";
+                fileStorageConfig.getUpload().getDefaultDeduplicationStrategy() : DuplicateFileStrategyEnums.REUSE.getDesc();
         try {
             this.fallbackStrategy = DuplicateFileStrategyEnums.valueOf(defaultStrategy.toUpperCase());
         } catch (IllegalArgumentException e) {

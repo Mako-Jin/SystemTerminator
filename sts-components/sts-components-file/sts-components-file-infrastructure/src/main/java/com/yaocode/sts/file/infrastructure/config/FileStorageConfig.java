@@ -1,5 +1,9 @@
 package com.yaocode.sts.file.infrastructure.config;
 
+import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
+import com.yaocode.sts.file.core.enums.StorageTypeEnums;
+import com.yaocode.sts.file.core.enums.StrategyTypeEnums;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.infrastructure.constants.FileInfrastructureConstants;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -63,25 +67,25 @@ public class FileStorageConfig {
         private List<String> blockedExtensions = List.of("exe", "bat", "sh", "com", "scr");
 
         /** 流式上传缓冲区大小 */
-        private int streamBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
+        private int streamBufferSize = FileConstants.BUFFER_SIZE;
 
         /** 上传超时时间（秒） */
         private int uploadTimeout = FileInfrastructureConstants.DEFAULT_UPLOAD_TIMEOUT;
 
         private boolean deduplicationEnabled = true;
-        private String defaultDeduplicationStrategy = FileInfrastructureConstants.DEFAULT_DEDUP_STRATEGY;
+        private String defaultDeduplicationStrategy = DuplicateFileStrategyEnums.REUSE.name();
     }
 
     @Data
     public static class StorageConfig {
         /** 默认存储类型 */
-        private String defaultType = FileInfrastructureConstants.DEFAULT_STORAGE_TYPE;
+        private String defaultType = StorageTypeEnums.LOCAL.getType();
 
         /** 存储插件配置 */
         private Map<String, StoragePluginConfig> plugins = new HashMap<>();
 
         /** 存储切换阈值（超过此大小切换到对象存储） */
-        private long switchThreshold = FileInfrastructureConstants.STORAGE_SWITCH_THRESHOLD;
+        private long switchThreshold = FileConstants.LARGE_FILE_THRESHOLD;
 
         /** 是否启用存储健康检查 */
         private boolean healthCheckEnabled = true;
@@ -90,7 +94,7 @@ public class FileStorageConfig {
         private int healthCheckInterval = FileInfrastructureConstants.DEFAULT_HEALTH_CHECK_INTERVAL;
 
         /** 存储节点选择策略 */
-        private String selectionStrategy = FileInfrastructureConstants.DEFAULT_SELECTION_STRATEGY;
+        private String selectionStrategy = StrategyTypeEnums.AUTO.getCode();
     }
 
     @Data
@@ -129,7 +133,7 @@ public class FileStorageConfig {
         private boolean enabled = true;
 
         /** 默认去重策略 */
-        private String defaultStrategy = FileInfrastructureConstants.DEFAULT_DEDUP_STRATEGY;
+        private String defaultStrategy = DuplicateFileStrategyEnums.REUSE.name();
 
         /** 是否允许跨租户复用 */
         private boolean crossTenantEnabled = true;
@@ -179,9 +183,9 @@ public class FileStorageConfig {
 
     @Data
     public static class PerformanceProperties {
-        private int hashBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
-        private int uploadBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
-        private int downloadBufferSize = FileInfrastructureConstants.DEFAULT_BUFFER_SIZE;
+        private int hashBufferSize = FileConstants.BUFFER_SIZE;
+        private int uploadBufferSize = FileConstants.BUFFER_SIZE;
+        private int downloadBufferSize = FileConstants.BUFFER_SIZE;
         private boolean enableStreaming = true;
         private boolean enableParallel = false;
         private long parallelThreshold = FileInfrastructureConstants.PARALLEL_THRESHOLD;

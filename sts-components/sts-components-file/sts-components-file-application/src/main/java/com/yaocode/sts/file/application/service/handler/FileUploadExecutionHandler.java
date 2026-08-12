@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.application.service.handler;
 
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
@@ -56,7 +57,7 @@ public class FileUploadExecutionHandler implements FileUploadHandler {
         }
 
         UploadFileCommand command = fileUploadDto.getCommand();
-        String bucket = command.getBucket() != null ? command.getBucket() : "default";
+        String bucket = command.getBucket() != null ? command.getBucket() : FileConstants.DEFAULT_BUCKET;
 
         try (InputStream is = Files.newInputStream(fileUploadDto.getTempFile())) {
             String filePath = plugin.upload(is, command.getFileName(), command.getFileSize(),
@@ -70,7 +71,7 @@ public class FileUploadExecutionHandler implements FileUploadHandler {
                     fileUploadDto.getFileId(), storageType, filePath);
 
         } catch (IOException e) {
-            throw new FileStorageException("STORAGE_UPLOAD_FAILED", e, storageType);
+            throw new FileStorageException(FileErrorCodeEnums.STORAGE_UPLOAD_FAILED, e, storageType);
         }
     }
 }

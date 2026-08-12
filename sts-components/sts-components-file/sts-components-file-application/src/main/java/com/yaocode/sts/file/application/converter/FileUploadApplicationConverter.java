@@ -112,8 +112,6 @@ public interface FileUploadApplicationConverter {
     // ==================== FileInfoResult 转换 ====================
 
     @Mapping(target = "tags", expression = "java(parseJsonArray(entity.getTags()))")
-//    @Mapping(target = "fileStatusDesc", ignore = true)
-//    @Mapping(target = "uploadStatusDesc", ignore = true)
     @Mapping(target = "filePath", ignore = true)
     @Mapping(target = "fileSha256", ignore = true)
     FileInfoResult toFileInfoResult(FileInfoEntity entity);

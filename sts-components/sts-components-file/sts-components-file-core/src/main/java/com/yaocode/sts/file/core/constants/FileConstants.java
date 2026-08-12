@@ -95,4 +95,44 @@ public interface FileConstants {
     /** 文件大小格式化 - GB 模板 */
     String SIZE_FORMAT_GB = "%.2f GB";
 
+    /** 初始版本号 */
+    int INITIAL_VERSION_NUMBER = 1;
+
+    // ==================== 默认存储配置 ====================
+
+    /** 默认Bucket名称 */
+    String DEFAULT_BUCKET = "default";
+
+    /** 默认租户ID */
+    String DEFAULT_TENANT_ID = "default";
+
+    // ==================== 文件大小阈值 ====================
+
+    /** 小文件阈值 (10MB) - 小于此值使用本地存储 */
+    long SMALL_FILE_THRESHOLD = 10L * 1024 * 1024;
+
+    /** 大文件阈值 (100MB) - 大于此值使用对象存储 */
+    long LARGE_FILE_THRESHOLD = 100L * 1024 * 1024;
+
+    // ==================== 临时文件 ====================
+
+    /** 临时文件扩展名 */
+    String TEMP_FILE_EXTENSION = ".tmp";
+
+    /** 临时文件前缀 */
+    String TEMP_FILE_PREFIX = "upload_";
+
+    // ==================== 回收站配置 ====================
+
+    /** 回收站保留天数 */
+    int RECYCLE_BIN_RETAIN_DAYS = 30;
+
+    // ==================== 版本管理 ====================
+
+    /** 默认分支名称 */
+    String DEFAULT_BRANCH_NAME = "main";
+
+    /** 未知分支名称 */
+    String UNKNOWN_BRANCH_NAME = "unknown";
+
 }

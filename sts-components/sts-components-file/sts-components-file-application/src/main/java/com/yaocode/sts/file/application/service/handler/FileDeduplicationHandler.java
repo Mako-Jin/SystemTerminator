@@ -7,8 +7,9 @@ import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.DuplicateStrategyService;
+import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
 import com.yaocode.sts.file.core.enums.UploadStatusEnums;
-import com.yaocode.sts.file.core.exception.FileException;
+import com.yaocode.sts.file.core.exception.FileHashException;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
@@ -80,7 +81,7 @@ public class FileDeduplicationHandler implements FileUploadHandler {
         // 验证哈希一致性
         if (!isHashConsistent(fileSha256, existCheck.getFileSha256())) {
             log.warn("MD5匹配但SHA-256不匹配, md5={}", fileMd5);
-            throw new FileException("FILE_HASH_MISMATCH", "file.hash.mismatch");
+            throw new FileHashException(FileErrorCodeEnums.FILE_HASH_MISMATCH, fileMd5);
         }
 
         // 标记为重复文件

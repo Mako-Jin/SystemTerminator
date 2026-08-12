@@ -1,9 +1,13 @@
 package com.yaocode.sts.file.application.service.handler;
 
+import com.yaocode.sts.common.crypto.enums.AlgorithmTypeEnums;
+import com.yaocode.sts.common.crypto.utils.HexUtils;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
+import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
 import com.yaocode.sts.file.core.exception.FileValidationException;
 import com.yaocode.sts.file.infrastructure.config.FileStorageConfig;
 import jakarta.annotation.Resource;
@@ -73,11 +77,11 @@ public class FileUploadPreparationHandler implements FileUploadHandler {
                 Files.createDirectories(tempDirPath);
             }
 
-            Path tempFile = tempDirPath.resolve(UUID.randomUUID() + ".tmp");
+            Path tempFile = tempDirPath.resolve(UUID.randomUUID() + FileConstants.TEMP_FILE_EXTENSION);
 
             int bufferSize = fileStorageConfig.getUpload().getStreamBufferSize();
-            MessageDigest md5Digest = MessageDigest.getInstance("MD5");
-            MessageDigest sha256Digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest md5Digest = MessageDigest.getInstance(AlgorithmTypeEnums.MD5.getDisplayName());
+            MessageDigest sha256Digest = MessageDigest.getInstance(AlgorithmTypeEnums.SHA_256.getDisplayName());
 
             long totalBytes = 0;
             try (InputStream inputStream = command.getFile().getInputStream();
@@ -97,8 +101,8 @@ public class FileUploadPreparationHandler implements FileUploadHandler {
             }
 
             // 3. 回填哈希和实际大小到 command 和 fileUploadDto
-            String fileMd5 = bytesToHex(md5Digest.digest());
-            String fileSha256 = bytesToHex(sha256Digest.digest());
+            String fileMd5 = HexUtils.bytesToHex(md5Digest.digest());
+            String fileSha256 = HexUtils.bytesToHex(sha256Digest.digest());
 
             command.setFileMd5(fileMd5);
             command.setFileSha256(fileSha256);
@@ -111,15 +115,8 @@ public class FileUploadPreparationHandler implements FileUploadHandler {
             return tempFile;
 
         } catch (NoSuchAlgorithmException | IOException e) {
-            throw new FileValidationException("FILE_PREPARE_FAILED", e, command.getFileName());
+            throw new FileValidationException(FileErrorCodeEnums.FILE_PREPARE_FAILED, e, command.getFileName());
         }
     }
 
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
-    }
 }

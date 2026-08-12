@@ -1,9 +1,13 @@
 package com.yaocode.sts.file.application.service.impl;
 
 import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.file.application.model.command.CreateVersionCommand;
 import com.yaocode.sts.file.application.service.DuplicateStrategyService;
 import com.yaocode.sts.file.application.service.FileVersionService;
+import com.yaocode.sts.file.application.service.handler.FileUploadCleanupHandler;
+import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.core.enums.DuplicateFileStrategyEnums;
 import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
 import com.yaocode.sts.file.core.enums.StorageTypeEnums;
@@ -11,6 +15,7 @@ import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.exception.FileException;
 import com.yaocode.sts.file.core.exception.FilePermissionException;
 import com.yaocode.sts.file.core.exception.FileStorageException;
+import com.yaocode.sts.file.core.exception.FileUploadException;
 import com.yaocode.sts.file.core.model.ExecuteResult;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
@@ -54,6 +59,9 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
     @Resource
     private FileVersionService fileVersionService;
 
+    @Resource
+    private FileUploadCleanupHandler fileUploadCleanupHandler;
+
     /**
      * 自注入代理对象，用于解决 @Transactional 自调用失效问题。
      * <p>
@@ -66,6 +74,9 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
     @Lazy
     @Resource
     private DuplicateStrategyServiceImpl self;
+
+    @Resource
+    private MessageUtils messageUtils;
 
     @Override
     public ExecuteResult execute(
@@ -138,7 +149,7 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
     }
 
     private ExecuteResult handleReuse(FileExistenceContext existFile, Path tempFile) {
-        cleanupTempFile(tempFile);
+        fileUploadCleanupHandler.cleanupTempFile(tempFile);
         return ExecuteResult.builder()
                 .fileId(existFile.getFileId())
                 .fileName(existFile.getFileName())
@@ -152,7 +163,7 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
                 .isDuplicate(true)
                 .sourceFileId(existFile.getFileId())
                 .versionNumber(existFile.getVersionNumber())
-                .message("秒传成功（已复用已有文件）")
+                .message(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_REUSE_SUCCESS))
                 .build();
     }
 
@@ -174,17 +185,16 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
         StorageTypeEnums storageType = StorageTypeEnums.fromCode(context.getStorageType());
         StoragePlugin plugin = pluginManager.getPlugin(storageType);
         if (plugin == null) {
-            throw new FileStorageException("STORAGE_TYPE_NOT_SUPPORTED",
-                    "storage.type.not.supported", String.valueOf(context.getStorageType()));
+            throw new FileStorageException(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED, context.getStorageType());
         }
 
         String filePath;
         try (InputStream is = Files.newInputStream(tempFile)) {
-            String bucket = context.getBucket() != null ? context.getBucket() : "default";
+            String bucket = context.getBucket() != null ? context.getBucket() : FileConstants.DEFAULT_BUCKET;
             filePath = plugin.upload(is, context.getFileName(), context.getFileSize(),
                     context.getTenantId(), bucket);
         } catch (IOException e) {
-            throw new FileStorageException("STORAGE_UPLOAD_FAILED", e, context.getStorageType());
+            throw new FileUploadException(FileErrorCodeEnums.STORAGE_UPLOAD_FAILED, e, context.getStorageType());
         }
         String fileUrl = plugin.getFileUrl(filePath);
 
@@ -192,12 +202,12 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
         try {
             self.persistNewVersion(context, existFile, fileMd5, fileSha256, tempFile);
         } catch (Exception e) {
-            cleanupTempFile(tempFile);
+            fileUploadCleanupHandler.cleanupTempFile(tempFile);
             plugin.delete(filePath);
             throw e;
         }
 
-        cleanupTempFile(tempFile);
+        fileUploadCleanupHandler.cleanupTempFile(tempFile);
 
         return ExecuteResult.builder()
                 .fileId(existFile.getFileId())
@@ -212,7 +222,7 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
                 .isDuplicate(true)
                 .sourceFileId(existFile.getFileId())
                 .versionNumber(newVersion)
-                .message("已创建新版本 v" + newVersion)
+                .message(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_NEW_VERSION_SUCCESS, newVersion))
                 .build();
     }
 
@@ -234,8 +244,11 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
                 .fileSize(context.getFileSize())
                 .fileMd5(fileMd5)
                 .fileSha256(fileSha256)
-                .versionType(2)
-                .versionRemark(context.getVersionRemark() != null ? context.getVersionRemark() : "上传新版本")
+                .versionType(FileConstants.INITIAL_VERSION_NUMBER + 1)
+                .versionRemark(context.getVersionRemark() != null ?
+                        context.getVersionRemark() :
+                        messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_NEW_VERSION_SUCCESS)
+                )
                 .setAsCurrent(true)
                 .tenantId(context.getTenantId())
                 .userId(context.getUserId())
@@ -259,17 +272,16 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
         StorageTypeEnums storageType = StorageTypeEnums.fromCode(context.getStorageType());
         StoragePlugin plugin = pluginManager.getPlugin(storageType);
         if (plugin == null) {
-            throw new FileStorageException("STORAGE_TYPE_NOT_SUPPORTED",
-                    "storage.type.not.supported", String.valueOf(context.getStorageType()));
+            throw new FileStorageException(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED, context.getStorageType());
         }
 
         String filePath;
         try (InputStream is = Files.newInputStream(tempFile)) {
-            String bucket = context.getBucket() != null ? context.getBucket() : "default";
+            String bucket = context.getBucket() != null ? context.getBucket() : FileConstants.DEFAULT_BUCKET;
             filePath = plugin.upload(is, context.getFileName(), context.getFileSize(),
                     context.getTenantId(), bucket);
         } catch (IOException e) {
-            throw new FileStorageException("STORAGE_UPLOAD_FAILED", e, context.getStorageType());
+            throw new FileStorageException(FileErrorCodeEnums.STORAGE_UPLOAD_FAILED, e, context.getStorageType());
         }
         String fileUrl = plugin.getFileUrl(filePath);
 
@@ -277,12 +289,12 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
             self.persistOverwrite(existFile, context, fileMd5, fileSha256, filePath, fileUrl);
         } catch (Exception e) {
             // 事务回滚后，补偿删除远程文件
-            cleanupTempFile(tempFile);
+            fileUploadCleanupHandler.cleanupTempFile(tempFile);
             plugin.delete(filePath);  // 补偿操作，清理孤儿文件
             throw e;
         }
 
-        cleanupTempFile(tempFile);
+        fileUploadCleanupHandler.cleanupTempFile(tempFile);
 
         return ExecuteResult.builder()
                 .fileId(existFile.getFileId())
@@ -297,7 +309,7 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
                 .isDuplicate(true)
                 .sourceFileId(existFile.getFileId())
                 .versionNumber(existFile.getVersionNumber())
-                .message("文件已覆盖更新")
+                .message(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_OVERWRITE_SUCCESS))
                 .build();
     }
 
@@ -341,10 +353,10 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
         String newFileName = FileNameUtils.generateUniqueFileName(context.getFileName());
         context.setFileName(newFileName);
         context.setEnableDeduplication(EnableEnums.DISABLED.getCode());
-        cleanupTempFile(tempFile);
+        fileUploadCleanupHandler.cleanupTempFile(tempFile);
         return ExecuteResult.builder()
                 .fileName(newFileName)
-                .message("文件名已自动重命名，请重新上传")
+                .message(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_AUTO_RENAME, newFileName))
                 .uploadStatus(UploadStatusEnums.UPLOADING.getCode())
                 .build();
     }
@@ -353,18 +365,8 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
         try {
             return Files.newInputStream(tempFile);
         } catch (IOException e) {
-            throw new FileStorageException("FILE_READ_FAILED", e, tempFile.toString());
+            throw new FileUploadException(FileErrorCodeEnums.FILE_READ_FAILED, e, tempFile.toString());
         }
     }
 
-    private void cleanupTempFile(Path tempFile) {
-        if (tempFile != null && Files.exists(tempFile)) {
-            try {
-                Files.deleteIfExists(tempFile);
-                log.debug("临时文件已删除: {}", tempFile);
-            } catch (IOException e) {
-                log.warn("删除临时文件失败: {}", tempFile, e);
-            }
-        }
-    }
 }

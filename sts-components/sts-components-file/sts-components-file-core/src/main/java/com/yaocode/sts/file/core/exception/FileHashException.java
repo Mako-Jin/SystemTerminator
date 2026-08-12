@@ -18,6 +18,10 @@ public class FileHashException extends FileException {
         super(errorCode.getCode(), errorCode.getMsg());
     }
 
+    public FileHashException(FileErrorCodeEnums errorCode, Object... args) {
+        super(errorCode.getCode(), errorCode.getMsg(), args);
+    }
+
     public FileHashException(FileErrorCodeEnums errorCode, Exception e) {
         super(errorCode.getCode(), errorCode.getMsg(), e);
     }

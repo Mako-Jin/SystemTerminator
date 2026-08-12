@@ -1,13 +1,13 @@
 package com.yaocode.sts.file.application.strategy;
 
+import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.enums.FileTypeEnums;
 import com.yaocode.sts.file.core.enums.StorageTypeEnums;
 import com.yaocode.sts.file.core.enums.StrategyTypeEnums;
 import com.yaocode.sts.file.core.model.StorageSelectionContext;
 import com.yaocode.sts.file.core.spi.StorageStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * 自动策略：根据文件大小、类型自动选择最优存储
@@ -31,32 +31,33 @@ public class AutoStorageStrategy implements StorageStrategy {
         }
 
         // 小文件（< 10MB）→ 本地存储
-        if (fileSize < 10 * 1024 * 1024) {
-            log.debug("小文件 ({} < 10MB)，选择: LOCAL", fileSize);
+        if (fileSize < FileConstants.SMALL_FILE_THRESHOLD) {
+            log.debug("小文件 ({} < {} MB)，选择: LOCAL", fileSize, FileConstants.SMALL_FILE_THRESHOLD / 1024 / 1024);
             return StorageTypeEnums.LOCAL;
         }
 
         // 大文件（> 100MB）→ 对象存储
-        if (fileSize > 100 * 1024 * 1024) {
-            log.debug("大文件 ({} > 100MB)，选择: MINIO", fileSize);
+        if (fileSize > FileConstants.LARGE_FILE_THRESHOLD) {
+            log.debug("大文件 ({} > {} MB)，选择: MINIO", fileSize, FileConstants.LARGE_FILE_THRESHOLD / 1024 / 1024);
             return StorageTypeEnums.MINIO;
         }
 
         // 2. 中等文件根据扩展名选择
         if (fileExtension != null) {
+            String ext = fileExtension.toLowerCase().trim();
             // 图片文件 → OSS
-            if (List.of("jpg", "jpeg", "png", "gif", "webp", "bmp", "svg").contains(fileExtension.toLowerCase())) {
-                log.debug("图片文件 (扩展名: {})，选择: OSS", fileExtension);
+            if (FileTypeEnums.IMAGE.containsExtension(ext)) {
+                log.debug("图片文件 (扩展名: {})，选择: OSS", ext);
                 return StorageTypeEnums.OSS;
             }
             // 视频文件 → MINIO
-            if (List.of("mp4", "avi", "mkv", "mov", "wmv", "flv").contains(fileExtension.toLowerCase())) {
-                log.debug("视频文件 (扩展名: {})，选择: MINIO", fileExtension);
+            if (FileTypeEnums.VIDEO.containsExtension(ext)) {
+                log.debug("视频文件 (扩展名: {})，选择: MINIO", ext);
                 return StorageTypeEnums.MINIO;
             }
             // 文档文件 → LOCAL
-            if (List.of("pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx").contains(fileExtension.toLowerCase())) {
-                log.debug("文档文件 (扩展名: {})，选择: LOCAL", fileExtension);
+            if (FileTypeEnums.isDocument(FileTypeEnums.fromExtension(ext).getCode())) {
+                log.debug("文档文件 (扩展名: {})，选择: LOCAL", ext);
                 return StorageTypeEnums.LOCAL;
             }
         }
