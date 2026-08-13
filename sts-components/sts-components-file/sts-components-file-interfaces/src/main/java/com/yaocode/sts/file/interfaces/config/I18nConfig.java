@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.interfaces.config;
 
+import com.yaocode.sts.common.domain.constants.HeaderConstants;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,7 @@ public class I18nConfig {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
-        interceptor.setParamName("lang");
+        interceptor.setParamName(HeaderConstants.LANG_HEADER_NAME);
         return interceptor;
     }
 

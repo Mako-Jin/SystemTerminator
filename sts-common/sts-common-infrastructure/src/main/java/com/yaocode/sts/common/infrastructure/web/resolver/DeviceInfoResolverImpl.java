@@ -80,8 +80,8 @@ public class DeviceInfoResolverImpl implements DeviceInfoResolver {
         context.getHeaderOrParameter(HeaderConstants.COUNTRY_CODE)
                 .or(() -> context.getHeaderOrParameter(RequestConstants.COUNTRY_CODE))
                 .ifPresent(deviceInfo::setCountryCode);
-        context.getHeaderOrParameter(HeaderConstants.LANGUAGE)
-                .or(() -> context.getHeaderOrParameter(RequestConstants.LANGUAGE))
+        context.getHeaderOrParameter(HeaderConstants.LANG_HEADER_NAME)
+                .or(() -> context.getHeaderOrParameter(RequestConstants.LANG_PARAM_NAME))
                 .ifPresent(deviceInfo::setLanguage);
         context.getHeaderOrParameter(HeaderConstants.TIMEZONE)
                 .or(() -> context.getHeaderOrParameter(RequestConstants.TIMEZONE))

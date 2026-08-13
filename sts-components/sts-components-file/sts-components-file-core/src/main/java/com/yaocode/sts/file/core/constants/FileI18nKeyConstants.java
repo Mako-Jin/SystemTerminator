@@ -18,6 +18,8 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     String FILE_EMPTY = "file.empty";
     String FILE_TOO_LARGE = "file.too.large";
     String FILE_SIZE_INVALID = "file.size.invalid";
+    String FILE_SIZE_EMPTY = "file.size.empty";
+    String CHUNK_SIZE_INVALID = "chunk.size.invalid";
     String FILE_NAME_EMPTY = "file.name.empty";
     String FILE_NAME_INVALID = "file.name.invalid";
     String FILE_ALREADY_EXISTS = "file.already.exists";
@@ -29,6 +31,10 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     String FILE_CONTENT_UNCHANGED = "file.content.unchanged";
     String FILE_METADATA_UPDATE_FAILED = "file.metadata.update.failed";
     String FILE_PREPARE_FAILED = "file.prepare.failed";
+
+    String FILE_MD5_EMPTY = "file.md5.empty";
+    String TAG_LENGTH_EXCEEDED = "tag.length.exceeded";
+    String TAG_FORMAT_INVALID = "tag.format.invalid";
 
     // ==================== 上传 (200-299) ====================
     String UPLOAD_FAILED = "upload.failed";
@@ -42,6 +48,12 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     String UPLOAD_CHUNK_ALREADY_EXISTS = "upload.chunk.already.exists";
     String UPLOAD_PREPARE_FAILED = "upload.prepare.failed";
     String UPLOAD_CANCEL_FAILED = "upload.cancel.failed";
+
+    // ==================== 上传参数校验 (130-149) ====================
+    String PARAM_FILE_EMPTY = "param.file.empty";
+    String PARAM_FILE_SIZE_INVALID = "param.file.size.invalid";
+    String UPLOAD_ID_EMPTY = "upload.id.empty";
+    String FILE_ID_EMPTY = "file.id.empty";
 
     // ==================== 下载 (300-399) ====================
     String DOWNLOAD_FAILED = "download.failed";

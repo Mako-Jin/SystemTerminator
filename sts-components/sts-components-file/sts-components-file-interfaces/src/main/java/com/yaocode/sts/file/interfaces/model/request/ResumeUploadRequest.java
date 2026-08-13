@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.interfaces.model.request;
 
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -19,13 +20,13 @@ public class ResumeUploadRequest {
     /**
      * 文件ID
      */
-    @NotBlank(message = "文件ID不能为空")
+    @NotBlank(message = FileI18nKeyConstants.FILE_ID_EMPTY)
     private String fileId;
 
     /**
      * 上传ID
      */
-    @NotBlank(message = "上传ID不能为空")
+    @NotBlank(message = FileI18nKeyConstants.UPLOAD_ID_EMPTY)
     private String uploadId;
 
     /**

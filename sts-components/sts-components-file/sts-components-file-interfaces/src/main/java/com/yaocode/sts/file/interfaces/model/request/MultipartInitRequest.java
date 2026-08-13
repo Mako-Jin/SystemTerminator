@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.interfaces.model.request;
 
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,21 +22,21 @@ public class MultipartInitRequest {
     /**
      * 文件名
      */
-    @NotBlank(message = "文件名不能为空")
+    @NotBlank(message = FileI18nKeyConstants.FILE_NAME_EMPTY)
     private String fileName;
 
     /**
      * 文件大小（字节）
      */
-    @NotNull(message = "文件大小不能为空")
-    @Positive(message = "文件大小必须大于0")
+    @NotNull(message = FileI18nKeyConstants.FILE_SIZE_EMPTY)
+    @Positive(message = FileI18nKeyConstants.FILE_SIZE_INVALID)
     private Long fileSize;
 
     /**
      * 分片大小（字节），默认10MB
      */
-    @Positive(message = "分片大小必须大于0")
-    private Long chunkSize = 10 * 1024 * 1024L;
+    @Positive(message = FileI18nKeyConstants.CHUNK_SIZE_INVALID)
+    private Long chunkSize = 10L * 1024L * 1024L;
 
     /**
      * 文件MD5值
@@ -68,7 +69,7 @@ public class MultipartInitRequest {
     /**
      * 是否公开
      */
-    private Boolean isPublic = false;
+    private Boolean isPublic = Boolean.FALSE;
     /**
      * 元数据
      */

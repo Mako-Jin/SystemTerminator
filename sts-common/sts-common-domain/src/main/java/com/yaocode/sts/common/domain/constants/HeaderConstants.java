@@ -133,9 +133,9 @@ public interface HeaderConstants {
     // ==========================================
 
     /**
-     * 语言设置（优先使用 Accept-Language）
+     * 语言参数名
      */
-    String LANGUAGE = "Accept-Language";
+    String LANG_HEADER_NAME = "Accept-Language";
 
     /**
      * 时区

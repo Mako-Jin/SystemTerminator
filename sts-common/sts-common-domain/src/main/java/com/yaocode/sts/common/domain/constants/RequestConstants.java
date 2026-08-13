@@ -224,7 +224,7 @@ public interface RequestConstants {
     /**
      * 语言设置（优先使用 Accept-Language）
      */
-    String LANGUAGE = "acceptLanguage";
+    String LANG_PARAM_NAME = "acceptLanguage";
     /**
      * 时区
      */

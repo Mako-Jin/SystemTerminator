@@ -1,6 +1,7 @@
 package com.yaocode.sts.file.interfaces.api;
 
 import com.yaocode.sts.common.web.model.ResultModel;
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import jakarta.validation.constraints.NotBlank;
@@ -65,16 +66,16 @@ public interface FileUploadApi {
      */
     @PostMapping(value = "/upload/single", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResultModel<UploadResponse> uploadFile(
-            @RequestPart("file") @NotNull(message = "文件不能为空") MultipartFile file,
+            @RequestPart("file") @NotNull(message = FileI18nKeyConstants.PARAM_FILE_EMPTY) MultipartFile file,
             @RequestParam(required = false) Integer storageType,
             @RequestParam(required = false) String bucket,
             @RequestParam(defaultValue = "true") Integer enableDeduplication,
             @RequestParam(required = false)
-            @Size(max = 2000, message = "标签总长度不能超过2000字符")
-            @Pattern(regexp = "^(\\[[^\\]]*\\]|[\\p{IsHan}A-Za-z0-9_,\\s]*)$", message = "标签格式不正确，支持逗号分隔或 JSON 数组")
+            @Size(max = 2000, message = FileI18nKeyConstants.TAG_LENGTH_EXCEEDED)
+            @Pattern(regexp = "^(\\[[^]]*]|[\\p{IsHan}A-Za-z0-9_,\\s]*)$", message = FileI18nKeyConstants.TAG_FORMAT_INVALID)
             String tags,
             @RequestParam(required = false) String description,
-            @RequestParam(defaultValue = "false") Integer isPublic,
+            @RequestParam(defaultValue = "0") Integer isPublic,
             @RequestParam(required = false) Map<String, String> metadata
     );
 
@@ -299,8 +300,8 @@ public interface FileUploadApi {
      */
     @PostMapping("/check")
     ResultModel<FileExistenceResponse> checkFileExists(
-            @RequestParam @NotBlank(message = "文件MD5不能为空") String fileMd5,
-            @RequestParam @Positive(message = "文件大小必须大于0") Long fileSize,
+            @RequestParam @NotBlank(message = FileI18nKeyConstants.FILE_MD5_EMPTY) String fileMd5,
+            @RequestParam @Positive(message = FileI18nKeyConstants.PARAM_FILE_SIZE_INVALID) Long fileSize,
             @RequestParam(required = false) Integer storageType
     );
 
