@@ -1,7 +1,7 @@
 package com.yaocode.sts.file.infrastructure.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,12 +15,12 @@ import java.util.List;
  * @since 1.0.0
  */
 @Mapper
-public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
+public interface FileBaseInfoMapper extends BaseMapper<FileBasicInfoEntity> {
 
     /**
      * 根据文件ID列表和租户ID批量查询
      */
-    List<FileInfoEntity> selectByFileIdsAndTenant(
+    List<FileBasicInfoEntity> selectByFileIdsAndTenant(
             @Param("fileIds") List<String> fileIds,
             @Param("tenantId") String tenantId
     );
@@ -54,7 +54,7 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
     /**
      * 查询过期文件（回收站）
      */
-    List<FileInfoEntity> selectExpiredFiles(
+    List<FileBasicInfoEntity> selectExpiredFiles(
             @Param("expireTime") LocalDateTime expireTime,
             @Param("storageType") String storageType,
             @Param("tenantId") String tenantId
@@ -63,7 +63,7 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
     /**
      * 查询临时文件（未完成上传）
      */
-    List<FileInfoEntity> selectTempFiles(
+    List<FileBasicInfoEntity> selectTempFiles(
             @Param("expireTime") LocalDateTime expireTime,
             @Param("tenantId") String tenantId
     );
@@ -73,7 +73,7 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
     /**
      * 获取文件详细信息
      */
-    FileInfoEntity getFileDetail(
+    FileBasicInfoEntity getFileDetail(
             @Param("fileId") String fileId,
             @Param("tenantId") String tenantId
     );
@@ -81,15 +81,7 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
     /**
      * 获取文件版本列表
      */
-    List<FileInfoEntity> getFileVersions(
-            @Param("fileId") String fileId,
-            @Param("tenantId") String tenantId
-    );
-
-    /**
-     * 获取文件最大版本号
-     */
-    Integer getMaxVersionByFileId(
+    List<FileBasicInfoEntity> getFileVersions(
             @Param("fileId") String fileId,
             @Param("tenantId") String tenantId
     );
@@ -111,7 +103,7 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
     /**
      * 查找重复文件
      */
-    List<FileInfoEntity> findDuplicateFiles(
+    List<FileBasicInfoEntity> findDuplicateFiles(
             @Param("storageType") String storageType,
             @Param("tenantId") String tenantId
     );
@@ -185,20 +177,6 @@ public interface FileBaseInfoMapper extends BaseMapper<FileInfoEntity> {
 //            @Param("status") Integer status,
 //            @Param("updateUserId") String updateUserId
 //    );
-
-    /**
-     * 更新文件内容
-     */
-    int updateFileContent(
-            @Param("fileId") String fileId,
-            @Param("filePath") String filePath,
-            @Param("fileUrl") String fileUrl,
-            @Param("fileSize") Long fileSize,
-            @Param("fileMd5") String fileMd5,
-            @Param("fileSha256") String fileSha256,
-            @Param("uploadTime") LocalDateTime uploadTime,
-            @Param("tenantId") String tenantId
-    );
 
 //    /**
 //     * 更新文件版本号

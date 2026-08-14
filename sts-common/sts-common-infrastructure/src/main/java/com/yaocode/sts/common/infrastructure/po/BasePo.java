@@ -55,6 +55,6 @@ public class BasePo {
     /** 是否删除 0-未删除 1-已删除 */
     @TableLogic
     @TableField(value = "is_deleted", select = false)
-    private Integer isDeleted;
+    private Integer isDeleted = 0;
 
 }

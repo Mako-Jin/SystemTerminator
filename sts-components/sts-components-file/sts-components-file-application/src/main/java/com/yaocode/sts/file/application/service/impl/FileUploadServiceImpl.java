@@ -1,12 +1,16 @@
 package com.yaocode.sts.file.application.service.impl;
 
+import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
+import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.FileUploadService;
+import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.application.service.handler.FileDeduplicationHandler;
 import com.yaocode.sts.file.application.service.handler.FilePersistenceHandler;
 import com.yaocode.sts.file.application.service.handler.FileStorageSelectionHandler;
@@ -19,6 +23,9 @@ import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 文件上传服务实现（完整优化版）
@@ -60,6 +67,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Resource
     private FileUploadApplicationConverter fileUploadApplicationConverter;
 
+    @Resource
+    private MessageUtils messageUtils;
+
     // ==================== 1. 主入口 ====================
 
     @Override
@@ -80,6 +90,32 @@ public class FileUploadServiceImpl implements FileUploadService {
             cleanupHandler.cleanupOnFailure(fileUploadDto);
             throw e;
         }
+    }
+
+    @Override
+    public List<UploadResult> uploadBatch(UploadBatchCommand command) {
+        List<UploadResult> results = new ArrayList<>();
+        if (command.getFiles() == null || command.getFiles().isEmpty()) {
+            return results;
+        }
+        for (FileObjectDto file : command.getFiles()) {
+            try {
+                UploadFileCommand fileCommand = fileUploadApplicationConverter.buildUploadFileCommand(command, file);
+                UploadResult result = this.upload(fileCommand);
+                results.add(result);
+            } catch (Exception e) {
+                log.error("批量上传文件失败: {}", file.getFileName(), e);
+                results.add(UploadResult.builder()
+                        .fileName(file.getFileName())
+                        .fileSize(file.getFileSize())
+                        .fileMd5(file.getMd5())
+                        .uploadStatus(UploadStatusEnums.FAILED.getCode())
+                        .uploadStatusDesc(UploadStatusEnums.FAILED.getDesc())
+                        .message(messageUtils.resolveExceptionMessage(e))
+                        .build());
+            }
+        }
+        return results;
     }
 
     // ==================== 7. 对外接口 ====================

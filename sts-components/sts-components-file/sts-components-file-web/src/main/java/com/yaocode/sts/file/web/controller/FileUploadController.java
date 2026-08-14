@@ -3,6 +3,7 @@ package com.yaocode.sts.file.web.controller;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.utils.ResultUtils;
+import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,33 +65,30 @@ public class FileUploadController implements FileUploadApi {
         return ResultUtils.ok(response);
     }
 
-//    /**
-//     * 批量文件上传
-//     */
-//    @Override
-//    public ResultModel<List<UploadResponse>> uploadBatchFiles(
-//            List<MultipartFile> files,
-//            String storageType,
-//            String businessId,
-//            String businessType,
-//            String tags,
-//            String description,
-//            Boolean isPublic
-//    ) {
-//
-//        log.info("批量上传文件: {} 个文件", files.size());
-//
-//        List<UploadResponse> responses = converter.toUploadResponseList(
-//                fileUploadService.uploadBatch(
-//                        converter.toUploadBatchCommand(
-//                                files, storageType, businessId, businessType,
-//                                tags, description, isPublic
-//                        )
-//                )
-//        );
-//        return ResultUtils.ok(responses);
-//    }
-//
+    /**
+     * 批量文件上传
+     */
+    @Override
+    public ResultModel<List<UploadResponse>> uploadBatchFiles(
+            List<MultipartFile> files,
+            Integer storageType,
+            String bucket,
+            Integer enableDeduplication,
+            String tags,
+            String description,
+            Integer isPublic,
+            Map<String, String> metadata
+    ) {
+
+        log.info("批量上传文件: {} 个文件", files.size());
+        UploadBatchCommand uploadBatchCommand = converter.toUploadBatchCommand(
+                files, storageType, tags, description, isPublic, bucket, enableDeduplication, metadata
+        );
+        List<UploadResult> uploadResults = fileUploadService.uploadBatch(uploadBatchCommand);
+        List<UploadResponse> responses = converter.toUploadResponseList(uploadResults);
+        return ResultUtils.ok(responses);
+    }
+
 //    // ==================== 2. 分片上传 ====================
 //
 //    /**

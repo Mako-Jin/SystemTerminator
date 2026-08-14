@@ -3,7 +3,9 @@ package com.yaocode.sts.file.application.converter;
 import com.yaocode.sts.common.domain.context.RequestContextHolder;
 import com.yaocode.sts.common.tools.JSONUtils;
 import com.yaocode.sts.common.tools.StringUtils;
+import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
@@ -13,7 +15,7 @@ import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
 import com.yaocode.sts.file.core.model.FileUploadContext;
 import com.yaocode.sts.file.core.utils.FileUtils;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -59,9 +61,9 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "isDuplicate", constant = "false")
     @Mapping(target = "duplicateFileId", ignore = true)
     @Mapping(target = "message", constant = "上传成功")
-    UploadResult toUploadResultFromEntity(FileInfoEntity entity);
+    UploadResult toUploadResultFromEntity(FileBasicInfoEntity entity);
 
-    List<UploadResult> toUploadResultList(List<FileInfoEntity> entities);
+    List<UploadResult> toUploadResultList(List<FileBasicInfoEntity> entities);
 
     // ==================== FileInfoEntity 构建 ====================
 
@@ -76,8 +78,6 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "storageBucket", expression = "java(getBucket(command))")
     @Mapping(target = "fileType", expression = "java(getFileType(command))")
     @Mapping(target = "fileExtension", expression = "java(getFileExtensionCode(command))")
-    @Mapping(target = "tenantId", expression = "java(getTenantId(command))")
-    @Mapping(target = "createUserId", expression = "java(getUserId(command))")
     @Mapping(target = "tags", expression = "java(toJsonArray(command.getTags()))")
     @Mapping(target = "description", source = "command.description")
     @Mapping(target = "isPublic", expression = "java(getIsPublic(command))")
@@ -92,15 +92,11 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "isCompressed", constant = "0")
     @Mapping(target = "downloadCount", constant = "0L")
     @Mapping(target = "viewCount", constant = "0L")
+    @Mapping(target = "isDeleted", constant = "0")
     @Mapping(target = "version", constant = "1")
-    @Mapping(target = "createTime", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "updateTime", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "createUserName", ignore = true)
-    @Mapping(target = "updateUserId", ignore = true)
-    @Mapping(target = "updateUserName", ignore = true)
     @Mapping(target = "versionNumber", ignore = true)
     @Mapping(target = "versionControlEnabled", ignore = true)
-    FileInfoEntity toFileInfoEntity(
+    FileBasicInfoEntity toFileInfoEntity(
             UploadFileCommand command,
             String fileId,
             String filePath,
@@ -114,9 +110,9 @@ public interface FileUploadApplicationConverter {
     @Mapping(target = "tags", expression = "java(parseJsonArray(entity.getTags()))")
     @Mapping(target = "filePath", ignore = true)
     @Mapping(target = "fileSha256", ignore = true)
-    FileInfoResult toFileInfoResult(FileInfoEntity entity);
+    FileInfoResult toFileInfoResult(FileBasicInfoEntity entity);
 
-    List<FileInfoResult> toFileInfoResultList(List<FileInfoEntity> entities);
+    List<FileInfoResult> toFileInfoResultList(List<FileBasicInfoEntity> entities);
 
     // ==================== Context 构建 ====================
 
@@ -159,30 +155,6 @@ public interface FileUploadApplicationConverter {
         String fileName = command.getFileName();
         FileExtensionEnums extEnum = FileUtils.getFileExtensionEnums(fileName);
         return extEnum.getCode();
-    }
-
-    @Named("getTenantId")
-    default String getTenantId(UploadFileCommand command) {
-        if (command.getTenantId() != null && !command.getTenantId().isEmpty()) {
-            return command.getTenantId();
-        }
-        var tenantId = RequestContextHolder.getTenantId();
-        if (tenantId != null) {
-            return tenantId.getValue();
-        }
-        return "default";
-    }
-
-    @Named("getUserId")
-    default String getUserId(UploadFileCommand command) {
-        if (command.getUserId() != null && !command.getUserId().isEmpty()) {
-            return command.getUserId();
-        }
-        var userId = RequestContextHolder.getUserId();
-        if (userId != null) {
-            return userId.getValue();
-        }
-        return "system";
     }
 
     @Named("getIsPublic")
@@ -252,4 +224,30 @@ public interface FileUploadApplicationConverter {
                 .filter(s -> !s.isEmpty())
                 .toList();
     }
+
+    /**
+     * 将批量命令 + 单个文件对象 构建为单文件上传命令
+     */
+    default UploadFileCommand buildUploadFileCommand(UploadBatchCommand batchCommand, FileObjectDto file) {
+        return UploadFileCommand.builder()
+                .file(file)
+                .fileName(file.getFileName())
+                .fileSize(file.getFileSize())
+                .fileMd5(file.getMd5())
+//                .fileSha256(file.getSha256())
+                .storageType(batchCommand.getStorageType())
+                .bucket(batchCommand.getBucket())
+                .tags(batchCommand.getTags())
+                .description(batchCommand.getDescription())
+                .isPublic(batchCommand.getIsPublic())
+                .enableDeduplication(batchCommand.getEnableDeduplication())
+//                .versionRemark(batchCommand.getVersionRemark())
+//                .preferredStorages(batchCommand.getPreferredStorages())
+//                .strategy(batchCommand.getStrategy())
+                .tenantId(batchCommand.getTenantId())
+                .userId(batchCommand.getUserId())
+//                .username(batchCommand.getUsername())
+                .build();
+    }
+
 }

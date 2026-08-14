@@ -200,16 +200,6 @@ public class FileDetailInfoResponse {
     private String compressionAlgorithm;
 
     /**
-     * 业务ID
-     */
-    private String businessId;
-
-    /**
-     * 业务类型
-     */
-    private String businessType;
-
-    /**
      * 版本数量
      */
     private Integer versionCount;

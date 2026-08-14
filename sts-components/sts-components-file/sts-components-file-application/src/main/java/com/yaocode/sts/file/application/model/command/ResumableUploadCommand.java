@@ -22,12 +22,6 @@ public class ResumableUploadCommand {
     /** 存储类型 */
     private String storageType;
 
-    /** 业务ID */
-    private String businessId;
-
-    /** 业务类型 */
-    private String businessType;
-
     /** 文件标签 */
     private String tags;
 

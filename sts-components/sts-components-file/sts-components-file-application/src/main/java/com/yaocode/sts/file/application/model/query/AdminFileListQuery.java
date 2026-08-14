@@ -28,16 +28,6 @@ public class AdminFileListQuery {
     private String storageType;
 
     /**
-     * 业务ID
-     */
-    private String businessId;
-
-    /**
-     * 业务类型
-     */
-    private String businessType;
-
-    /**
      * 上传用户ID
      */
     private String uploadUserId;

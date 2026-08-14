@@ -125,16 +125,6 @@ public class FileDetailInfoResult {
     private String description;
 
     /**
-     * 业务ID
-     */
-    private String businessId;
-
-    /**
-     * 业务类型
-     */
-    private String businessType;
-
-    /**
      * 租户ID
      */
     private String tenantId;

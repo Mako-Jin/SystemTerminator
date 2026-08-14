@@ -106,6 +106,8 @@ public interface FileConstants {
     /** 默认租户ID */
     String DEFAULT_TENANT_ID = "default";
 
+    String DEFAULT_USER_ID = "default";
+
     // ==================== 文件大小阈值 ====================
 
     /** 小文件阈值 (10MB) - 小于此值使用本地存储 */

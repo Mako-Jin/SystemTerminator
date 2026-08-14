@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,17 +92,21 @@ public interface FileUploadApi {
      * @param isPublic      是否公开（默认false）
      * @return 上传响应列表
      */
-//    @PostMapping(value = "/upload/batch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    ResultModel<List<UploadResponse>> uploadBatchFiles(
-//            @RequestPart("files") @Size(max = 50, message = "单次最多上传50个文件") List<MultipartFile> files,
-//            @RequestParam(required = false) String storageType,
-//            @RequestParam(required = false) String businessId,
-//            @RequestParam(required = false) String businessType,
-//            @RequestParam(required = false) String tags,
-//            @RequestParam(required = false) String description,
-//            @RequestParam(defaultValue = "false") Boolean isPublic
-//    );
-//
+    @PostMapping(value = "/upload/batch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResultModel<List<UploadResponse>> uploadBatchFiles(
+            @RequestPart("files") @Size(max = 50, message = FileI18nKeyConstants.PARAM_FILES_MAX_EXCEEDED) List<MultipartFile> files,
+            @RequestParam(required = false) Integer storageType,
+            @RequestParam(required = false) String bucket,
+            @RequestParam(defaultValue = "1") Integer enableDeduplication,
+            @RequestParam(required = false)
+            @Size(max = 2000, message = FileI18nKeyConstants.TAG_LENGTH_EXCEEDED)
+            @Pattern(regexp = "^(\\[[^]]*]|[\\p{IsHan}A-Za-z0-9_,\\s]*)$", message = FileI18nKeyConstants.TAG_FORMAT_INVALID)
+            String tags,
+            @RequestParam(required = false) String description,
+            @RequestParam(defaultValue = "0") Integer isPublic,
+            @RequestParam(required = false) Map<String, String> metadata
+    );
+
 //    // ==================== 2. 分片上传 ====================
 //
 //    /**

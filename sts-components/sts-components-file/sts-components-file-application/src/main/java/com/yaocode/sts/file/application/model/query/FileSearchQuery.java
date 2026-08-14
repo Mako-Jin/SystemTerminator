@@ -65,12 +65,6 @@ public class FileSearchQuery {
     /** 上传用户名 */
     private String uploadUserName;
 
-    /** 业务ID */
-    private String businessId;
-
-    /** 业务类型 */
-    private String businessType;
-
     /** 排序字段 */
     private String orderBy;
 

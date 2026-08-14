@@ -48,6 +48,7 @@ import com.yaocode.sts.file.application.model.result.UploadProgressResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.model.result.UploadStatisticsResult;
 import com.yaocode.sts.file.application.model.result.UploadStatusResult;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.core.exception.FileUploadException;
 import com.yaocode.sts.file.interfaces.model.request.AsyncUploadRequest;
 import com.yaocode.sts.file.interfaces.model.request.Base64UploadRequest;
@@ -104,12 +105,12 @@ public class FileUploadConverter {
 
     private String getCurrentTenantId() {
         var tenantId = RequestContextHolder.getTenantId();
-        return tenantId != null ? tenantId.getValue() : null;
+        return tenantId != null ? tenantId.getValue() : FileConstants.DEFAULT_TENANT_ID;
     }
 
     private String getCurrentUserId() {
         var userId = RequestContextHolder.getUserId();
-        return userId != null ? userId.getValue() : null;
+        return userId != null ? userId.getValue() : FileConstants.DEFAULT_USER_ID;
     }
 
     private String getCurrentUserName() {
@@ -198,12 +199,13 @@ public class FileUploadConverter {
      */
     public UploadBatchCommand toUploadBatchCommand(
             List<MultipartFile> files,
-            String storageType,
-            String businessId,
-            String businessType,
+            Integer storageType,
             String tags,
             String description,
-            Boolean isPublic
+            Integer isPublic,
+            String bucket,
+            Integer enableDeduplication,
+            java.util.Map<String, String> metadata
     ) {
 
         List<FileObjectDto> fileObjects = toFileObjectList(files);
@@ -211,11 +213,12 @@ public class FileUploadConverter {
         return UploadBatchCommand.builder()
                 .files(fileObjects)
                 .storageType(storageType)
-                .businessId(businessId)
-                .businessType(businessType)
+                .bucket(bucket)
+                .enableDeduplication(enableDeduplication)
+                .metadata(metadata)
                 .tags(tags)
                 .description(description)
-                .isPublic(isPublic != null ? isPublic : false)
+                .isPublic(isPublic)
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())
                 .build();
@@ -232,11 +235,9 @@ public class FileUploadConverter {
                 .fileMd5(request.getFileMd5())
                 .fileType(request.getFileType())
                 .storageType(request.getStorageType())
-                .businessId(request.getBusinessId())
-                .businessType(request.getBusinessType())
                 .tags(request.getTags())
                 .description(request.getDescription())
-                .isPublic(request.getIsPublic() != null ? request.getIsPublic() : false)
+                .isPublic(request.getIsPublic())
                 .metadata(request.getMetadata())
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())
@@ -331,8 +332,6 @@ public class FileUploadConverter {
             String fileName,
             Long fileSize,
             String storageType,
-            String businessId,
-            String businessType,
             String tags,
             String description,
             Boolean isPublic,
@@ -344,13 +343,11 @@ public class FileUploadConverter {
                 .fileName(fileName)
                 .fileSize(fileSize)
                 .storageType(storageType)
-                .businessId(businessId)
-                .businessType(businessType)
                 .tags(tags)
                 .description(description)
-                .isPublic(isPublic != null ? isPublic : false)
+                .isPublic(isPublic)
                 .inputStream(inputStream)
-                .chunked(chunked != null ? chunked : false)
+                .chunked(chunked)
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())
                 .build();
@@ -365,11 +362,9 @@ public class FileUploadConverter {
                 .fileMd5(request.getFileMd5())
                 .fileSize(request.getFileSize())
                 .storageType(request.getStorageType())
-                .businessId(request.getBusinessId())
-                .businessType(request.getBusinessType())
                 .tags(request.getTags())
                 .description(request.getDescription())
-                .isPublic(request.getIsPublic() != null ? request.getIsPublic() : false)
+                .isPublic(request.getIsPublic())
                 .metadata(request.getMetadata())
                 .fileType(request.getFileType())
                 .tenantId(getCurrentTenantId())
@@ -386,11 +381,9 @@ public class FileUploadConverter {
                 .fileSize(request.getFileSize())
                 .fileMd5(request.getFileMd5())
                 .storageType(request.getStorageType())
-                .businessId(request.getBusinessId())
-                .businessType(request.getBusinessType())
                 .tags(request.getTags())
                 .description(request.getDescription())
-                .isPublic(request.getIsPublic() != null ? request.getIsPublic() : false)
+                .isPublic(request.getIsPublic())
                 .metadata(request.getMetadata())
                 .fileContentBase64(request.getFileContentBase64())
                 .fileUrl(request.getFileUrl())
@@ -443,11 +436,9 @@ public class FileUploadConverter {
                 .fileName(request.getFileName())
                 .base64Content(request.getBase64Content())
                 .storageType(request.getStorageType())
-                .businessId(request.getBusinessId())
-                .businessType(request.getBusinessType())
                 .tags(request.getTags())
                 .description(request.getDescription())
-                .isPublic(request.getIsPublic() != null ? request.getIsPublic() : false)
+                .isPublic(request.getIsPublic())
                 .metadata(request.getMetadata())
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())
@@ -462,11 +453,9 @@ public class FileUploadConverter {
                 .fileUrl(request.getFileUrl())
                 .fileName(request.getFileName())
                 .storageType(request.getStorageType())
-                .businessId(request.getBusinessId())
-                .businessType(request.getBusinessType())
                 .tags(request.getTags())
                 .description(request.getDescription())
-                .isPublic(request.getIsPublic() != null ? request.getIsPublic() : false)
+                .isPublic(request.getIsPublic())
                 .timeout(request.getTimeout() != null ? request.getTimeout() : 60)
                 .headers(request.getHeaders())
                 .metadata(request.getMetadata())
@@ -481,8 +470,6 @@ public class FileUploadConverter {
     public AutoUploadCommand toAutoUploadCommand(
             MultipartFile file,
             String storageType,
-            String businessId,
-            String businessType,
             Long chunkThreshold,
             String tags,
             String description,
@@ -492,12 +479,10 @@ public class FileUploadConverter {
         return AutoUploadCommand.builder()
                 .file(toFileObject(file))
                 .storageType(storageType)
-                .businessId(businessId)
-                .businessType(businessType)
                 .chunkThreshold(chunkThreshold != null ? chunkThreshold : 10 * 1024 * 1024L)
                 .tags(tags)
                 .description(description)
-                .isPublic(isPublic != null ? isPublic : false)
+                .isPublic(isPublic)
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())
                 .build();
@@ -510,8 +495,6 @@ public class FileUploadConverter {
             MultipartFile file,
             String fileId,
             String storageType,
-            String businessId,
-            String businessType,
             String tags,
             String description
     ) {
@@ -520,8 +503,6 @@ public class FileUploadConverter {
                 .file(toFileObject(file))
                 .fileId(fileId)
                 .storageType(storageType)
-                .businessId(businessId)
-                .businessType(businessType)
                 .tags(tags)
                 .description(description)
                 .tenantId(getCurrentTenantId())
@@ -536,8 +517,6 @@ public class FileUploadConverter {
             MultipartFile file,
             List<String> preferredStorages,
             String storageType,
-            String businessId,
-            String businessType,
             String strategy,
             String tags,
             String description
@@ -547,8 +526,6 @@ public class FileUploadConverter {
                 .file(toFileObject(file))
                 .preferredStorages(preferredStorages)
                 .storageType(storageType)
-                .businessId(businessId)
-                .businessType(businessType)
                 .strategy(strategy != null ? strategy : "auto")
                 .tags(tags)
                 .description(description)

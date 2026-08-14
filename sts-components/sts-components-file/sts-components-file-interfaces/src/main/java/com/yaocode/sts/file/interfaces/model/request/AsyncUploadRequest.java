@@ -40,14 +40,6 @@ public class AsyncUploadRequest {
      */
     private String storageType;
     /**
-     * 业务ID
-     */
-    private String businessId;
-    /**
-     * 业务类型
-     */
-    private String businessType;
-    /**
      * 标签（逗号分隔）
      */
     private String tags;

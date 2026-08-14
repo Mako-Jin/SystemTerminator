@@ -16,11 +16,12 @@ import com.yaocode.sts.file.core.model.FileUploadContext;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import com.yaocode.sts.file.infrastructure.entity.FileDeduplicationEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -114,38 +115,61 @@ public class FileDeduplicationHandler implements FileUploadHandler {
     // ========== 内部方法 ==========
 
     public FileExistenceResult checkFileExists(
-            String fileMd5, Long fileSize, Integer storageType, String tenantId) {
+            String fileMd5, Long fileSize, Integer storageType, String tenantId
+    ) {
+        // 1. 先去重表查询（快速索引）
         String fingerprint = buildFingerprint(fileMd5, fileSize, storageType, tenantId);
-
         FileDeduplicationEntity dedup = fileDeduplicationDao.selectByFingerprint(fingerprint);
-        if (dedup == null) {
-            return FileExistenceResult.builder().exists(false).build();
+        // 2. 去重表没有记录，查 file_base_info 表（兜底）
+        List<FileBasicInfoEntity> duplicates = fileBaseInfoDao.selectByMd5AndTenant(fileMd5, tenantId);
+
+        if (dedup != null) {
+            // 去重表有记录，直接根据 dedup 查询文件详情构建返回结果
+            FileBasicInfoEntity file = fileBaseInfoDao.selectByFileIdAndTenant(dedup.getFileId(), tenantId);
+            if (file != null) {
+                FileExistenceResult result = buildExistenceResult(file);
+                result.setExists(true);
+
+                // 检查是否有多个相同MD5的文件
+                result.setIsDuplicate(duplicates.size() > 1);
+                result.setDuplicateFiles(converter.toFileInfoResultList(duplicates));
+
+                log.debug("通过去重表发现重复文件: md5={}, fileId={}", fileMd5, dedup.getFileId());
+                return result;
+            } else {
+                // 去重表有记录但文件详情不存在（数据不一致），清理脏数据
+                log.warn("去重记录存在但文件详情不存在，清理脏数据: fileId={}, fingerprint={}", dedup.getFileId(), fingerprint);
+                fileDeduplicationDao.removeById(dedup.getDeduplicationId());
+            }
         }
 
-        FileInfoEntity file = fileBaseInfoDao.selectByFileIdAndTenant(dedup.getFileId(), tenantId);
-        if (file == null) {
-            return FileExistenceResult.builder().exists(false).build();
+        if (!CollectionUtils.isEmpty(duplicates)) {
+            // 进一步按文件大小和存储类型过滤
+            FileBasicInfoEntity matchedFile = duplicates.stream()
+                    .filter(f -> Objects.equals(f.getFileSize(), fileSize))
+                    .filter(f -> Objects.equals(f.getStorageType(), storageType))
+                    .findFirst()
+                    .orElse(null);
+
+            if (matchedFile != null) {
+                // 找到了完全匹配的文件，构建返回结果
+                FileExistenceResult result = buildExistenceResult(matchedFile);
+                result.setExists(true);
+                result.setIsDuplicate(duplicates.size() > 1);
+                result.setDuplicateFiles(converter.toFileInfoResultList(duplicates));
+                log.debug("通过 file_base_info 发现重复文件: md5={}, fileId={}", fileMd5, matchedFile.getFileId());
+                return result;
+            }
         }
 
-        FileExistenceResult result = FileExistenceResult.builder()
-                .exists(true)
-                .fileId(file.getFileId())
-                .fileName(file.getFileName())
-                .fileSize(file.getFileSize())
-                .fileMd5(file.getFileMd5())
-                .fileSha256(file.getFileSha256())
-                .fileUrl(file.getStorageUrl())
-                .storageType(file.getStorageType())
-                .tenantId(file.getTenantId())
-                .userId(file.getCreateUserId())
-                .versionNumber(file.getVersionNumber())
+        // 3. 去重表和详情表都没有匹配的记录，返回不存在
+        log.debug(
+                "文件不存在: md5={}, fileSize={}, storageType={}, tenantId={}",
+                fileMd5, fileSize, storageType, tenantId
+        );
+        return FileExistenceResult.builder()
+                .exists(false)
                 .build();
-
-        List<FileInfoEntity> duplicates = fileBaseInfoDao.selectByMd5AndTenant(fileMd5, tenantId);
-        result.setIsDuplicate(duplicates.size() > 1);
-        result.setDuplicateFiles(converter.toFileInfoResultList(duplicates));
-
-        return result;
     }
 
     private boolean isHashConsistent(String fileSha256, String existSha256) {
@@ -180,6 +204,25 @@ public class FileDeduplicationHandler implements FileUploadHandler {
                 .uploadTime(LocalDateTime.now())
                 .processingTime(processingTime)
                 .message(executeResult.getMessage())
+                .build();
+    }
+
+    /**
+     * 构建 FileExistenceResult
+     */
+    private FileExistenceResult buildExistenceResult(FileBasicInfoEntity file) {
+        return FileExistenceResult.builder()
+                .exists(true)
+                .fileId(file.getFileId())
+                .fileName(file.getFileName())
+                .fileSize(file.getFileSize())
+                .fileMd5(file.getFileMd5())
+                .fileSha256(file.getFileSha256())
+                .fileUrl(file.getStorageUrl())
+                .storageType(file.getStorageType())
+                .tenantId(file.getTenantId())
+                .userId(file.getCreateUserId())
+                .versionNumber(file.getVersionNumber())
                 .build();
     }
 }

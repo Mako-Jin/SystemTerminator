@@ -47,7 +47,7 @@ import com.yaocode.sts.file.application.service.FileAdminService;
 import com.yaocode.sts.file.application.service.FileStorageService;
 import com.yaocode.sts.file.core.enums.FileStatusEnums;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import com.yaocode.sts.file.infrastructure.entity.StorageNodeEntity;
 import com.yaocode.sts.file.infrastructure.mapper.StorageNodeMapper;
 import jakarta.annotation.Resource;
@@ -90,7 +90,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteFile(DeleteFileCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(command.getFileId(), command.getTenantId());
+        FileBasicInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
         }
@@ -155,7 +155,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public void permanentDeleteFile(PermanentDeleteCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
+        FileBasicInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
@@ -186,7 +186,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public void restoreFile(RestoreFileCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
+        FileBasicInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");
@@ -364,7 +364,7 @@ public class FileAdminServiceImpl implements FileAdminService {
     @Transactional(rollbackFor = Exception.class)
     public String migrateFile(MigrateFileCommand command) {
         // 1. 检查文件是否存在
-        FileInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
+        FileBasicInfoEntity entity = fileBaseInfoDao.selectByFileIdAndTenant(
                 command.getFileId(), command.getTenantId());
         if (entity == null) {
             throw new BusinessException("文件不存在");

@@ -24,12 +24,6 @@ public class HybridUploadCommand {
     /** 指定存储类型 */
     private String storageType;
 
-    /** 业务ID */
-    private String businessId;
-
-    /** 业务类型 */
-    private String businessType;
-
     /** 选择策略（auto/priority/cost/performance） */
     private String strategy;
 

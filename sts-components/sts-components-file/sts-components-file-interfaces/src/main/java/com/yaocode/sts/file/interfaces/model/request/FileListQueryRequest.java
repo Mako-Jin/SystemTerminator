@@ -26,16 +26,6 @@ public class FileListQueryRequest {
     private String storageType;
 
     /**
-     * 业务ID
-     */
-    private String businessId;
-
-    /**
-     * 业务类型
-     */
-    private String businessType;
-
-    /**
      * 上传开始时间
      */
     private String startTime;

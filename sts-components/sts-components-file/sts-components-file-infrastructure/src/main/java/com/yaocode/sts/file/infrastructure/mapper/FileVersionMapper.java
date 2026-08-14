@@ -95,7 +95,7 @@ public interface FileVersionMapper extends BaseMapper<FileVersionEntity> {
     /**
      * 根据文件ID获取最大版本号
      */
-    Integer getMaxVersionByFileId(@Param("fileId") String fileId);
+    Integer getMaxVersionByFileId(@Param("fileId") String fileId, @Param("tenantId") String tenantId);
 
     /**
      * 根据分支ID获取最大版本号

@@ -2,8 +2,6 @@ package com.yaocode.sts.file.application.service.impl;
 
 import com.yaocode.sts.common.basic.exception.BusinessException;
 import com.yaocode.sts.common.tools.StringUtils;
-import com.yaocode.sts.common.tools.id.IdFactory;
-import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.file.application.converter.FileVersionApplicationConverter;
 import com.yaocode.sts.file.application.model.command.CreateBranchCommand;
 import com.yaocode.sts.file.application.model.command.CreateVersionCommand;
@@ -34,8 +32,8 @@ import com.yaocode.sts.file.application.service.FileVersionService;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.core.utils.DiffUtils;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileBranchEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileVersionEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileVersionTagEntity;
 import com.yaocode.sts.file.infrastructure.mapper.FileBranchMapper;
@@ -708,7 +706,7 @@ public class FileVersionServiceImpl implements FileVersionService {
         if (!StringUtils.hasText(fileId)) {
             return null;
         }
-        FileInfoEntity fileInfo = fileBaseInfoDao.selectByFileIdAndTenant(fileId, tenantId);
+        FileBasicInfoEntity fileInfo = fileBaseInfoDao.selectByFileIdAndTenant(fileId, tenantId);
         return fileInfo != null ? fileInfo.getFileName() : null;
     }
 

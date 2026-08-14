@@ -143,10 +143,14 @@
     </update>
 
     <select id="getMaxVersionByFileId" resultType="java.lang.Integer">
-        SELECT MAX(version_number)
-        FROM file_tbl_file_version
-        WHERE file_id = #{fileId}
-          AND is_deleted = 0
+        SELECT
+            MAX(version_number)
+        FROM
+            file_tbl_file_version
+        WHERE
+            file_id = #{fileId}
+            AND tenant_id = #{tenantId}
+            AND is_deleted = 0
     </select>
 
     <select id="getMaxVersionByBranchId" resultType="java.lang.Integer">

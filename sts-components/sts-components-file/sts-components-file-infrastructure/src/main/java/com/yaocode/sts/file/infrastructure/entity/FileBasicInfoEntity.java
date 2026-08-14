@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("file_tbl_file_info")
 @EqualsAndHashCode(callSuper = true)
-public class FileInfoEntity extends BasePo {
+public class FileBasicInfoEntity extends BasePo {
 
     /**
      * 文件全局唯一标识(UUID)

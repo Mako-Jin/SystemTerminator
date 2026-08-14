@@ -1,6 +1,7 @@
 package com.yaocode.sts.file.application.service.handler;
 
 import com.yaocode.sts.common.basic.enums.EnableEnums;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
@@ -9,8 +10,8 @@ import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import com.yaocode.sts.file.infrastructure.entity.FileDeduplicationEntity;
-import com.yaocode.sts.file.infrastructure.entity.FileInfoEntity;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -77,7 +78,7 @@ public class FilePersistenceHandler implements FileUploadHandler {
         UploadFileCommand command = fileUploadDto.getCommand();
 
         // 1. 插入文件信息
-        FileInfoEntity entity = converter.toFileInfoEntity(
+        FileBasicInfoEntity entity = converter.toFileInfoEntity(
                 command, fileUploadDto.getFileId(), fileUploadDto.getFilePath(),
                 fileUploadDto.getFileUrl(), fileUploadDto.getFileMd5(), fileUploadDto.getFileSha256()
         );
@@ -130,6 +131,8 @@ public class FilePersistenceHandler implements FileUploadHandler {
             FileDeduplicationEntity existing = fileDeduplicationDao.selectByFingerprint(fingerprint);
             if (existing != null) {
                 log.debug("去重记录已存在，幂等忽略: fingerprint={}, fileId={}", fingerprint, fileUploadDto.getFileId());
+                existing.setReferenceCount(existing.getReferenceCount() + 1);
+                fileDeduplicationDao.updateById(existing);
                 return;
             }
 
@@ -143,6 +146,7 @@ public class FilePersistenceHandler implements FileUploadHandler {
             dedup.setStorageType(command.getStorageType());
             dedup.setTenantId(command.getTenantId());
             dedup.setReferenceCount(1);
+            dedup.setIsDeleted(YesNoEnums.NO.getCode());
             dedup.setCreateTime(LocalDateTime.now());
             dedup.setUpdateTime(LocalDateTime.now());
 

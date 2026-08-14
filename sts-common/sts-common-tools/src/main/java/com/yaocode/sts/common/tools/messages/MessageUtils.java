@@ -1,9 +1,11 @@
 package com.yaocode.sts.common.tools.messages;
 
+import com.yaocode.sts.common.basic.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.util.StringUtils;
 
 /**
  * 国际化信息处理类
@@ -77,6 +79,29 @@ public class MessageUtils {
             log.error("get message error:message is {} , cause is {}" , e.getMessage(), e.getCause());
             return defaultMessage;
         }
+    }
+
+    /**
+     * 将异常消息转换为国际化消息
+     * <p>
+     * 支持 BusinessException 的 args 占位符替换，普通异常直接转换消息 key
+     * </p>
+     *
+     * @param exception 异常
+     * @return 国际化消息，如果消息为空返回 "unknown error"
+     */
+    public String resolveExceptionMessage(Exception exception) {
+        String message = exception.getMessage();
+        if (!StringUtils.hasText(message)) {
+            return "unknown error";
+        }
+        if (exception instanceof BusinessException businessException) {
+            Object[] args = businessException.getArgs();
+            if (args != null && args.length > 0) {
+                return getMessage(message, args);
+            }
+        }
+        return getMessage(message);
     }
 
 }

@@ -23,9 +23,10 @@ import com.yaocode.sts.file.core.spi.DuplicateStrategySelector;
 import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.core.utils.FileFingerprintUtils;
 import com.yaocode.sts.file.core.utils.FileNameUtils;
+import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
+import com.yaocode.sts.file.infrastructure.dao.FileVersionDao;
 import com.yaocode.sts.file.infrastructure.manager.StoragePluginManager;
-import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -48,7 +49,10 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
     private DuplicateStrategySelector strategySelector;
 
     @Resource
-    private FileBaseInfoMapper fileInfoMapper;
+    private FileBaseInfoDao fileBaseInfoDao;
+
+    @Resource
+    private FileVersionDao fileVersionDao;
 
     @Resource
     private FileDeduplicationDao fileDeduplicationDao;
@@ -178,7 +182,7 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
             throw new FilePermissionException(FileErrorCodeEnums.PERMISSION_DENIED);
         }
 
-        int currentVersion = fileInfoMapper.getMaxVersionByFileId(
+        int currentVersion = fileVersionDao.getMaxVersionByFileId(
                 existFile.getFileId(), context.getTenantId());
         int newVersion = currentVersion + 1;
 
@@ -326,15 +330,14 @@ public class DuplicateStrategyServiceImpl implements DuplicateStrategyService {
             String filePath,
             String fileUrl
     ) {
-        fileInfoMapper.updateFileContent(
+        fileBaseInfoDao.updateFileContent(
                 existFile.getFileId(),
+                context.getTenantId(),
                 filePath,
                 fileUrl,
                 context.getFileSize(),
                 fileMd5,
-                fileSha256,
-                LocalDateTime.now(),
-                context.getTenantId()
+                fileSha256
         );
         String fingerprint = FileFingerprintUtils.buildFingerprint(
                 fileMd5, context.getFileSize(), context.getStorageType(), context.getTenantId()

@@ -1,9 +1,12 @@
 package com.yaocode.sts.file.application.service;
 
+import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
+
+import java.util.List;
 
 /**
  * 文件上传服务接口
@@ -23,11 +26,11 @@ public interface FileUploadService {
      */
     UploadResult upload(UploadFileCommand command);
 
-//    /**
-//     * 批量上传文件
-//     */
-//    List<UploadResult> uploadBatch(UploadBatchCommand command);
-//
+    /**
+     * 批量上传文件
+     */
+    List<UploadResult> uploadBatch(UploadBatchCommand command);
+
 //    // ==================== 2. 分片上传（命令 + 查询） ====================
 //
 //    /**

@@ -87,7 +87,15 @@ public class AuditMetaObjectHandler implements MetaObjectHandler {
     private void fillUserFields(MetaObject metaObject, boolean isCreate) {
         UserId userId = RequestContextHolder.getUserId();
         if (Objects.isNull(userId)) {
-            throw new IllegalArgumentException("UserId is null");
+            logger.warn("审计填充: UserId 为空，使用默认用户");
+            if (isCreate) {
+                this.strictInsertFill(metaObject, "createUserId", String.class, "default");
+                this.strictInsertFill(metaObject, "create_user_id", String.class, "default");
+            } else {
+                this.strictInsertFill(metaObject, "updateUserId", String.class, "default");
+                this.strictInsertFill(metaObject, "update_user_id", String.class, "default");
+            }
+            return;
         }
         if (isCreate) {
             this.strictInsertFill(metaObject, "createUserId", String.class, userId.getValue());
@@ -118,7 +126,10 @@ public class AuditMetaObjectHandler implements MetaObjectHandler {
     private void fillTenantField(MetaObject metaObject) {
         TenantId tenantId = RequestContextHolder.getTenantId();
         if (Objects.isNull(tenantId)) {
-            throw new IllegalArgumentException("TenantId is null");
+            logger.warn("审计填充: TenantId 为空，使用默认租户");
+            this.strictInsertFill(metaObject, "tenantId", String.class, "default");
+            this.strictInsertFill(metaObject, "tenant_id", String.class, "default");
+            return;
         }
         this.strictInsertFill(metaObject, "tenantId", String.class, tenantId.getValue());
         this.strictInsertFill(metaObject, "tenant_id", String.class, tenantId.getValue());

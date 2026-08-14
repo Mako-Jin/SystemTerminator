@@ -52,8 +52,13 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     // ==================== 上传参数校验 (130-149) ====================
     String PARAM_FILE_EMPTY = "param.file.empty";
     String PARAM_FILE_SIZE_INVALID = "param.file.size.invalid";
+    String PARAM_FILES_MAX_EXCEEDED = "param.files.max.exceeded";
     String UPLOAD_ID_EMPTY = "upload.id.empty";
     String FILE_ID_EMPTY = "file.id.empty";
+    String CHUNK_NUMBER_INVALID = "chunk.number.invalid";
+    String TOTAL_CHUNKS_INVALID = "total.chunks.invalid";
+    String CHUNK_FILE_EMPTY = "chunk.file.empty";
+    String TASK_ID_EMPTY = "task.id.empty";
 
     // ==================== 下载 (300-399) ====================
     String DOWNLOAD_FAILED = "download.failed";
