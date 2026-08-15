@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.application.service;
 
+import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
@@ -99,11 +100,11 @@ public interface FileUploadService {
      */
     FileExistenceResult checkFileExists(FileExistenceQuery query);
 
-//    /**
-//     * 秒传（命令）
-//     */
-//    UploadResult fastUpload(FastUploadCommand command);
-//
+    /**
+     * 秒传（命令）
+     */
+    UploadResult fastUpload(FastUploadCommand command);
+
 //    // ==================== 6. 异步上传（命令 + 查询） ====================
 //
 //    /**

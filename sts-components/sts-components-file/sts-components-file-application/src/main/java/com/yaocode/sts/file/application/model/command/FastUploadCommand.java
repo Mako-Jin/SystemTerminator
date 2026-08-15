@@ -24,7 +24,7 @@ public class FastUploadCommand {
     private Long fileSize;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
 
     /** 文件标签 */
     private String tags;
@@ -33,7 +33,7 @@ public class FastUploadCommand {
     private String description;
 
     /** 是否公开 */
-    private Boolean isPublic;
+    private Integer isPublic;
 
     /** 文件类型 */
     private String fileType;

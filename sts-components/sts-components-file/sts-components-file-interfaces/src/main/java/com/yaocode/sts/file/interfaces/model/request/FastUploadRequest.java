@@ -41,15 +41,7 @@ public class FastUploadRequest {
     /**
      * 存储类型
      */
-    private String storageType;
-    /**
-     * 业务ID
-     */
-    private String businessId;
-    /**
-     * 业务类型
-     */
-    private String businessType;
+    private Integer storageType;
     /**
      * 标签（逗号分隔）
      */
@@ -61,7 +53,7 @@ public class FastUploadRequest {
     /**
      * 是否公开
      */
-    private Boolean isPublic = Boolean.FALSE;
+    private Integer isPublic = 0;
     /**
      * 元数据
      */

@@ -2,8 +2,10 @@ package com.yaocode.sts.file.interfaces.api;
 
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
+import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -11,6 +13,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -85,11 +88,12 @@ public interface FileUploadApi {
      *
      * @param files         上传的文件列表（必填，最多50个）
      * @param storageType   存储类型（可选）
-     * @param businessId    业务ID（可选）
-     * @param businessType  业务类型（可选）
      * @param tags          文件标签（可选）
      * @param description   文件描述（可选）
+     * @param bucket        存储桶（可选，默认使用系统配置）
+     * @param enableDeduplication 是否启用去重（默认1）
      * @param isPublic      是否公开（默认false）
+     * @param metadata      元数据（可选，自定义属性）
      * @return 上传响应列表
      */
     @PostMapping(value = "/upload/batch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -303,24 +307,24 @@ public interface FileUploadApi {
      * @param storageType 存储类型（可选）
      * @return 检查响应
      */
-    @PostMapping("/check")
+    @PostMapping("/exist-check")
     ResultModel<FileExistenceResponse> checkFileExists(
             @RequestParam @NotBlank(message = FileI18nKeyConstants.FILE_MD5_EMPTY) String fileMd5,
             @RequestParam @Positive(message = FileI18nKeyConstants.PARAM_FILE_SIZE_INVALID) Long fileSize,
             @RequestParam(required = false) Integer storageType
     );
 
-//    /**
-//     * 秒传 - 直接获取已存在文件的信息
-//     *
-//     * @param request 秒传请求
-//     * @return 上传响应
-//     */
-//    @PostMapping("/fast-upload")
-//    ResultModel<UploadResponse> fastUpload(
-//            @RequestBody @Valid FastUploadRequest request
-//    );
-//
+    /**
+     * 秒传 - 直接获取已存在文件的信息
+     *
+     * @param request 秒传请求
+     * @return 上传响应
+     */
+    @PostMapping("/fast-upload")
+    ResultModel<UploadResponse> fastUpload(
+            @RequestBody @Valid FastUploadRequest request
+    );
+
 //    // ==================== 6. 异步上传 ====================
 //
 //    /**

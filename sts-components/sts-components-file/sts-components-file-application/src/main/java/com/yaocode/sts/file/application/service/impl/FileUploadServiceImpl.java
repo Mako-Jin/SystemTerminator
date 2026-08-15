@@ -1,7 +1,10 @@
 package com.yaocode.sts.file.application.service.impl;
 
+import com.yaocode.sts.common.tools.id.IdFactory;
+import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
+import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
@@ -10,7 +13,10 @@ import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.FileUploadService;
+import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
+import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
 import com.yaocode.sts.file.core.enums.UploadStatusEnums;
+import com.yaocode.sts.file.core.exception.FileUploadException;
 import com.yaocode.sts.file.application.service.handler.FileDeduplicationHandler;
 import com.yaocode.sts.file.application.service.handler.FilePersistenceHandler;
 import com.yaocode.sts.file.application.service.handler.FileStorageSelectionHandler;
@@ -20,6 +26,7 @@ import com.yaocode.sts.file.application.service.handler.FileUploadPreparationHan
 import com.yaocode.sts.file.application.service.handler.FileUploadValidationHandler;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
+import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -104,7 +111,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 UploadResult result = this.upload(fileCommand);
                 results.add(result);
             } catch (Exception e) {
-                log.error("批量上传文件失败: {}", file.getFileName(), e);
+                log.warn("批量上传文件失败: {}", file.getFileName(), e);
                 results.add(UploadResult.builder()
                         .fileName(file.getFileName())
                         .fileSize(file.getFileSize())
@@ -123,5 +130,49 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public FileExistenceResult checkFileExists(FileExistenceQuery query) {
         return deduplicationHandler.checkFileExists(query.getFileMd5(), query.getFileSize(), query.getStorageType(), query.getTenantId());
+    }
+
+    @Override
+    public UploadResult fastUpload(FastUploadCommand command) {
+        long startTime = System.currentTimeMillis();
+
+        // 1. 检查文件是否已存在
+        FileExistenceResult existenceResult = deduplicationHandler.checkFileExists(
+                command.getFileMd5(),
+                command.getFileSize(),
+                command.getStorageType(),
+                command.getTenantId()
+        );
+
+        // 2. 文件不存在，无法秒传
+        if (existenceResult == null || !existenceResult.getExists()) {
+            throw new FileUploadException(FileErrorCodeEnums.FILE_NOT_FOUND);
+        }
+
+        // 3. 查询原文件实体（获取完整存储信息）
+        FileBasicInfoEntity originalEntity = fileBaseInfoDao.selectByFileIdAndTenant(
+                existenceResult.getFileId(), command.getTenantId()
+        );
+        if (originalEntity == null) {
+            throw new FileUploadException(FileErrorCodeEnums.FILE_NOT_FOUND);
+        }
+
+        // 4. 创建引用记录（新 fileId，复用物理文件）
+        String newFileId = IdFactory.generate(IdGeneratorType.UUID);
+        FileBasicInfoEntity refEntity = fileUploadApplicationConverter.toFastUploadEntity(
+                command, originalEntity, newFileId
+        );
+        fileBaseInfoDao.save(refEntity);
+
+        // 5. 构建返回结果
+        long processingTime = System.currentTimeMillis() - startTime;
+        String message = messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_REUSE_SUCCESS);
+        UploadResult uploadResult = fileUploadApplicationConverter.toFastUploadResult(
+                newFileId, command, originalEntity, message, processingTime
+        );
+
+        log.info("秒传成功: newFileId={}, originalFileId={}, 耗时={}ms",
+                newFileId, originalEntity.getFileId(), processingTime);
+        return uploadResult;
     }
 }

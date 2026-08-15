@@ -3,6 +3,7 @@ package com.yaocode.sts.file.web.controller;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.utils.ResultUtils;
+import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
@@ -10,6 +11,7 @@ import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.FileUploadService;
 import com.yaocode.sts.file.interfaces.api.FileUploadApi;
+import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import com.yaocode.sts.file.web.converter.FileUploadConverter;
@@ -316,21 +318,18 @@ public class FileUploadController implements FileUploadApi {
         return ResultUtils.ok(response);
     }
 
-//    /**
-//     * 秒传 - 直接获取已存在文件的信息
-//     */
-//    @Override
-//    public ResultModel<UploadResponse> fastUpload(@Valid FastUploadRequest request) {
-//        log.info("秒传: {}", request.getFileName());
-//
-//        UploadResponse response = converter.toUploadResponse(
-//                fileUploadService.fastUpload(
-//                        converter.toFastUploadCommand(request)
-//                )
-//        );
-//        return ResultUtils.ok(response);
-//    }
-//
+    /**
+     * 秒传 - 直接获取已存在文件的信息
+     */
+    @Override
+    public ResultModel<UploadResponse> fastUpload(FastUploadRequest request) {
+        log.info("秒传: {}", request.getFileName());
+        FastUploadCommand command = converter.toFastUploadCommand(request);
+        UploadResult result = fileUploadService.fastUpload(command);
+        UploadResponse response = converter.toUploadResponse(result);
+        return ResultUtils.ok(response);
+    }
+
 //    // ==================== 6. 异步上传 ====================
 //
 //    /**

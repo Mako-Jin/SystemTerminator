@@ -1,15 +1,18 @@
 package com.yaocode.sts.file.application.converter;
 
-import com.yaocode.sts.common.domain.context.RequestContextHolder;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.tools.JSONUtils;
 import com.yaocode.sts.common.tools.StringUtils;
+import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.core.enums.FileExtensionEnums;
+import com.yaocode.sts.file.core.enums.FileStatusEnums;
 import com.yaocode.sts.file.core.enums.FileTypeEnums;
 import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.core.model.FileExistenceContext;
@@ -223,6 +226,82 @@ public interface FileUploadApplicationConverter {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toList();
+    }
+
+    // ==================== FastUpload 转换 ====================
+
+    /**
+     * 构建秒传引用实体：复用原文件的物理存储信息，使用新的业务元数据
+     */
+    default FileBasicInfoEntity toFastUploadEntity(
+            FastUploadCommand command,
+            FileBasicInfoEntity originalEntity,
+            String newFileId
+    ) {
+        LocalDateTime now = LocalDateTime.now();
+        FileBasicInfoEntity entity = new FileBasicInfoEntity();
+        entity.setFileId(newFileId);
+        // 存储信息：完全复用原文件
+        entity.setFilePath(originalEntity.getFilePath());
+        entity.setFileSize(originalEntity.getFileSize());
+        entity.setFileMd5(originalEntity.getFileMd5());
+        entity.setFileSha256(originalEntity.getFileSha256());
+        entity.setStorageType(originalEntity.getStorageType());
+        entity.setStorageBucket(originalEntity.getStorageBucket());
+        entity.setStorageRegion(originalEntity.getStorageRegion());
+        entity.setStorageUrl(originalEntity.getStorageUrl());
+        entity.setStorageMetadata(originalEntity.getStorageMetadata());
+        entity.setFileType(originalEntity.getFileType());
+        entity.setFileExtension(originalEntity.getFileExtension());
+        // 业务信息：使用命令中的值
+        entity.setFileName(command.getFileName());
+        entity.setTags(toJsonArray(command.getTags()));
+        entity.setDescription(command.getDescription());
+        entity.setIsPublic(command.getIsPublic());
+        // 状态信息
+        entity.setUploadStatus(UploadStatusEnums.COMPLETED.getCode());
+        entity.setUploadProgress(100);
+        entity.setUploadStartTime(now);
+        entity.setUploadEndTime(now);
+        entity.setUploadTime(now);
+        entity.setFileStatus(FileStatusEnums.NORMAL.getCode());
+        entity.setIsEncrypted(YesNoEnums.NO.getCode());
+        entity.setIsCompressed(YesNoEnums.NO.getCode());
+        entity.setDownloadCount(0L);
+        entity.setViewCount(0L);
+        entity.setVersion(FileConstants.INITIAL_VERSION_NUMBER);
+        return entity;
+    }
+
+    /**
+     * 构建秒传返回结果
+     */
+    default UploadResult toFastUploadResult(
+            String newFileId,
+            FastUploadCommand command,
+            FileBasicInfoEntity originalEntity,
+            String message,
+            long processingTime
+    ) {
+        LocalDateTime now = LocalDateTime.now();
+        return UploadResult.builder()
+                .fileId(newFileId)
+                .fileName(command.getFileName())
+                .fileSize(originalEntity.getFileSize())
+                .fileMd5(originalEntity.getFileMd5())
+                .fileSha256(originalEntity.getFileSha256())
+                .fileUrl(originalEntity.getStorageUrl())
+                .storageType(originalEntity.getStorageType())
+                .tenantId(command.getTenantId())
+                .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                .uploadStatusDesc(UploadStatusEnums.COMPLETED.getDesc())
+                .isDuplicate(true)
+                .duplicateFileId(originalEntity.getFileId())
+                .sourceFileId(originalEntity.getFileId())
+                .uploadTime(now)
+                .processingTime(processingTime)
+                .message(message)
+                .build();
     }
 
     /**
