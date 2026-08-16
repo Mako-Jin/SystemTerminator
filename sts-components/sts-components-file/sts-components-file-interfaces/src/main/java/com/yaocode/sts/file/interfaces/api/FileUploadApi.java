@@ -1,11 +1,17 @@
 package com.yaocode.sts.file.interfaces.api;
 
+import com.yaocode.sts.common.web.model.PageResultModel;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
+import com.yaocode.sts.file.interfaces.model.request.CancelMultipartRequest;
+import com.yaocode.sts.file.interfaces.model.request.CompleteMultipartRequest;
 import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
 import com.yaocode.sts.file.interfaces.model.request.MultipartInitRequest;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
+import com.yaocode.sts.file.interfaces.model.response.MultipartSessionResponse;
+import com.yaocode.sts.file.interfaces.model.response.UploadPartResponse;
+import com.yaocode.sts.file.interfaces.model.response.UploadProgressResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +20,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -129,73 +137,73 @@ public interface FileUploadApi {
             @RequestBody @Valid MultipartInitRequest request
     );
 
-//    /**
-//     * 上传分片
-//     *
-//     * @param uploadId     上传ID（必填）
-//     * @param fileId       文件ID（必填）
-//     * @param chunkNumber  分片序号（从1开始）
-//     * @param totalChunks  总分片数
-//     * @param file         分片文件（必填）
-//     * @param chunkMd5     分片MD5（可选，用于校验）
-//     * @return 分片上传结果
-//     */
-//    @PostMapping(value = "/multipart/part", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    ResultModel<UploadPartResponse> uploadPart(
-//            @RequestParam @NotBlank(message = "上传ID不能为空") String uploadId,
-//            @RequestParam @NotBlank(message = "文件ID不能为空") String fileId,
-//            @RequestParam @Positive(message = "分片序号必须大于0") Integer chunkNumber,
-//            @RequestParam @Positive(message = "总分片数必须大于0") Integer totalChunks,
-//            @RequestPart("file") @NotNull(message = "分片文件不能为空") MultipartFile file,
-//            @RequestParam(required = false) String chunkMd5
-//    );
-//
-//    /**
-//     * 完成分片上传（合并分片）
-//     *
-//     * @param request 完成分片请求
-//     * @return 上传响应
-//     */
-//    @PostMapping("/multipart/complete")
-//    ResultModel<UploadResponse> completeMultipartUpload(
-//            @RequestBody @Valid CompleteMultipartRequest request
-//    );
-//
-//    /**
-//     * 取消分片上传
-//     *
-//     * @param request 取消请求
-//     * @return 操作结果
-//     */
-//    @DeleteMapping("/multipart/cancel")
-//    ResultModel<String> cancelMultipartUpload(
-//            @RequestBody @Valid CancelMultipartRequest request
-//    );
-//
-//    /**
-//     * 获取分片上传进度
-//     *
-//     * @param uploadId 上传ID
-//     * @return 上传进度
-//     */
-//    @GetMapping("/multipart/progress")
-//    ResultModel<UploadProgressResponse> getMultipartProgress(
-//            @RequestParam @NotBlank(message = "上传ID不能为空") String uploadId
-//    );
-//
-//    /**
-//     * 获取所有未完成的分片上传会话
-//     *
-//     * @param page 页码
-//     * @param size 每页数量
-//     * @return 会话列表
-//     */
-//    @GetMapping("/multipart/sessions")
-//    PageResultModel<MultipartSessionResponse> getMultipartSessions(
-//            @RequestParam(defaultValue = "1") Integer page,
-//            @RequestParam(defaultValue = "20") Integer size
-//    );
-//
+    /**
+     * 上传分片
+     *
+     * @param uploadId     上传ID（必填）
+     * @param fileId       文件ID（必填）
+     * @param chunkNumber  分片序号（从1开始）
+     * @param totalChunks  总分片数
+     * @param file         分片文件（必填）
+     * @param chunkMd5     分片MD5（可选，用于校验）
+     * @return 分片上传结果
+     */
+    @PostMapping(value = "/multipart/part", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResultModel<UploadPartResponse> uploadPart(
+            @RequestParam @NotBlank(message = "上传ID不能为空") String uploadId,
+            @RequestParam @NotBlank(message = "文件ID不能为空") String fileId,
+            @RequestParam @Positive(message = "分片序号必须大于0") Integer chunkNumber,
+            @RequestParam @Positive(message = "总分片数必须大于0") Integer totalChunks,
+            @RequestPart("file") @NotNull(message = "分片文件不能为空") MultipartFile file,
+            @RequestParam(required = false) String chunkMd5
+    );
+
+    /**
+     * 完成分片上传（合并分片）
+     *
+     * @param request 完成分片请求
+     * @return 上传响应
+     */
+    @PostMapping("/multipart/complete")
+    ResultModel<UploadResponse> completeMultipartUpload(
+            @RequestBody @Valid CompleteMultipartRequest request
+    );
+
+    /**
+     * 取消分片上传
+     *
+     * @param request 取消请求
+     * @return 操作结果
+     */
+    @DeleteMapping("/multipart/cancel")
+    ResultModel<String> cancelMultipartUpload(
+            @RequestBody @Valid CancelMultipartRequest request
+    );
+
+    /**
+     * 获取分片上传进度
+     *
+     * @param uploadId 上传ID
+     * @return 上传进度
+     */
+    @GetMapping("/multipart/progress")
+    ResultModel<UploadProgressResponse> getMultipartProgress(
+            @RequestParam @NotBlank(message = "上传ID不能为空") String uploadId
+    );
+
+    /**
+     * 获取所有未完成的分片上传会话
+     *
+     * @param page 页码
+     * @param size 每页数量
+     * @return 会话列表
+     */
+    @GetMapping("/multipart/sessions")
+    PageResultModel<MultipartSessionResponse> getMultipartSessions(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "20") Integer size
+    );
+
 //    // ==================== 3. 断点续传 ====================
 //
 //    /**

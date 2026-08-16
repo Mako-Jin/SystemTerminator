@@ -1,5 +1,6 @@
 package com.yaocode.sts.file.interfaces.model.request;
 
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,13 +44,17 @@ public class MultipartInitRequest {
      */
     private String fileMd5;
     /**
-     * 文件类型
+     * 文件SHA256值
+     */
+    private String fileSha256;
+    /**
+     * 文件类型(MIME)
      */
     private String fileType;
     /**
      * 存储类型
      */
-    private String storageType;
+    private Integer storageType;
     /**
      * 标签（逗号分隔）
      */
@@ -61,7 +66,7 @@ public class MultipartInitRequest {
     /**
      * 是否公开
      */
-    private Boolean isPublic = Boolean.FALSE;
+    private Integer isPublic = YesNoEnums.NO.getCode();
     /**
      * 元数据
      */

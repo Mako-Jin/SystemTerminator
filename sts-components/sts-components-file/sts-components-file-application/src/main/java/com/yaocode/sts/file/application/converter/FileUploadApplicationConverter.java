@@ -236,6 +236,42 @@ public interface FileUploadApplicationConverter {
     // ==================== Multipart 转换 ====================
 
     /**
+     * 根据命令和计算参数构建上传会话实体
+     */
+    default UploadSessionEntity toUploadSessionEntity(
+            InitMultipartCommand command,
+            String uploadId,
+            String fileId,
+            Long fileSize,
+            Long chunkSize,
+            int totalChunks,
+            Integer storageTypeCode,
+            LocalDateTime expireTime
+    ) {
+        UploadSessionEntity entity = new UploadSessionEntity();
+        entity.setUploadId(uploadId);
+        entity.setFileId(fileId);
+        entity.setFileName(command.getFileName());
+        entity.setFileSize(fileSize);
+        entity.setStorageType(storageTypeCode);
+        entity.setTotalChunks(totalChunks);
+        entity.setChunkSize(chunkSize);
+        entity.setCompletedChunks(0);
+        entity.setUploadStatus(UploadStatusEnums.UPLOADING.getCode());
+        entity.setLastActiveTime(LocalDateTime.now());
+        entity.setExpireTime(expireTime);
+        entity.setTenantId(command.getTenantId());
+        entity.setFileMd5(command.getFileMd5());
+        entity.setFileSha256(command.getFileSha256());
+        entity.setFileType(FileTypeEnums.fromExtension(command.getFileType()).getCode());
+        entity.setTags(toJsonArray(command.getTags()));
+        entity.setDescription(command.getDescription());
+        entity.setIsPublic(command.getIsPublic());
+        entity.setMetadata(command.getMetadata() != null ? JSONUtils.toJson(command.getMetadata()) : null);
+        return entity;
+    }
+
+    /**
      * 构建分片初始化返回结果
      */
     default MultipartInitResult toMultipartInitResult(
@@ -255,6 +291,73 @@ public interface FileUploadApplicationConverter {
                 .totalChunks(totalChunks)
                 .expireTime(expireTime)
                 .storageType(command.getStorageType())
+                .fileMd5(command.getFileMd5())
+                .fileSha256(command.getFileSha256())
+                .fileType(command.getFileType())
+                .tags(command.getTags())
+                .description(command.getDescription())
+                .isPublic(command.getIsPublic())
+                .metadata(command.getMetadata() != null ? JSONUtils.toJson(command.getMetadata()) : null)
+                .isDuplicate(false)
+                .isResume(false)
+                .uploadedChunks(0)
+                .build();
+    }
+
+    /**
+     * 从已存在的活动会话实体构建续传结果
+     */
+    default MultipartInitResult toResumeInitResult(UploadSessionEntity sessionEntity) {
+        int completedChunks = sessionEntity.getCompletedChunks() != null ? sessionEntity.getCompletedChunks() : 0;
+        return MultipartInitResult.builder()
+                .uploadId(sessionEntity.getUploadId())
+                .fileId(sessionEntity.getFileId())
+                .fileName(sessionEntity.getFileName())
+                .fileSize(sessionEntity.getFileSize())
+                .chunkSize(sessionEntity.getChunkSize())
+                .totalChunks(sessionEntity.getTotalChunks())
+                .expireTime(sessionEntity.getExpireTime())
+                .storageType(sessionEntity.getStorageType())
+                .fileMd5(sessionEntity.getFileMd5())
+                .fileSha256(sessionEntity.getFileSha256())
+                .fileType(FileTypeEnums.fromCode(sessionEntity.getFileType()).getName())
+                .tags(sessionEntity.getTags())
+                .description(sessionEntity.getDescription())
+                .isPublic(sessionEntity.getIsPublic())
+                .metadata(sessionEntity.getMetadata())
+                .isDuplicate(false)
+                .isResume(true)
+                .uploadedChunks(completedChunks)
+                .build();
+    }
+
+    /**
+     * 构建秒传重复文件结果
+     */
+    default MultipartInitResult toDuplicateInitResult(
+            InitMultipartCommand command,
+            String fileId
+    ) {
+        return MultipartInitResult.builder()
+                .uploadId(null)
+                .fileId(fileId)
+                .fileName(command.getFileName())
+                .fileSize(command.getFileSize())
+                .chunkSize(command.getChunkSize())
+                .totalChunks(0)
+                .expireTime(null)
+                .storageType(command.getStorageType())
+                .fileMd5(command.getFileMd5())
+                .fileSha256(command.getFileSha256())
+                .fileType(command.getFileType())
+                .tags(command.getTags())
+                .description(command.getDescription())
+                .isPublic(command.getIsPublic())
+                .metadata(command.getMetadata() != null ? JSONUtils.toJson(command.getMetadata()) : null)
+                .isDuplicate(true)
+                .duplicateFileId(fileId)
+                .isResume(false)
+                .uploadedChunks(0)
                 .build();
     }
 
@@ -341,6 +444,13 @@ public interface FileUploadApplicationConverter {
                 .lastActiveTime(sessionEntity.getLastActiveTime() != null
                         ? sessionEntity.getLastActiveTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null)
                 .createTime(sessionEntity.getCreateTime())
+                .fileMd5(sessionEntity.getFileMd5())
+                .fileSha256(sessionEntity.getFileSha256())
+                .fileType(FileTypeEnums.fromCode(sessionEntity.getFileType()).getName())
+                .tags(sessionEntity.getTags())
+                .description(sessionEntity.getDescription())
+                .isPublic(sessionEntity.getIsPublic())
+                .metadata(sessionEntity.getMetadata())
                 .build();
     }
 

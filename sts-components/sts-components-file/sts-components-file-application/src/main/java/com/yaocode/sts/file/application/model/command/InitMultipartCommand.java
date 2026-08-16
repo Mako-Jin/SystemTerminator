@@ -26,11 +26,14 @@ public class InitMultipartCommand {
     /** 文件MD5 */
     private String fileMd5;
 
+    /** 文件SHA256 */
+    private String fileSha256;
+
     /** 文件类型 */
     private String fileType;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
 
     /** 文件标签 */
     private String tags;
@@ -39,7 +42,7 @@ public class InitMultipartCommand {
     private String description;
 
     /** 是否公开 */
-    private Boolean isPublic;
+    private Integer isPublic;
 
     /** 自定义元数据 */
     private Map<String, String> metadata;

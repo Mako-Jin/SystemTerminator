@@ -60,4 +60,22 @@ public class UploadSessionDaoImpl extends ServiceImpl<UploadSessionMapper, Uploa
                 .size(pageResult.getSize())
                 .build();
     }
+
+    @Override
+    public UploadSessionEntity selectActiveSession(String fileMd5, Long fileSize, Integer storageType, String tenantId) {
+        LambdaQueryWrapper<UploadSessionEntity> queryWrapper = new LambdaQueryWrapper<>();
+        if (fileMd5 != null && !fileMd5.isEmpty()) {
+            queryWrapper.eq(UploadSessionEntity::getFileMd5, fileMd5);
+        }
+        if (fileSize != null) {
+            queryWrapper.eq(UploadSessionEntity::getFileSize, fileSize);
+        }
+        if (storageType != null) {
+            queryWrapper.eq(UploadSessionEntity::getStorageType, storageType);
+        }
+        queryWrapper.eq(UploadSessionEntity::getTenantId, tenantId);
+        queryWrapper.eq(UploadSessionEntity::getUploadStatus, UploadStatusEnums.UPLOADING.getCode());
+        queryWrapper.last("LIMIT 1");
+        return this.getOne(queryWrapper);
+    }
 }

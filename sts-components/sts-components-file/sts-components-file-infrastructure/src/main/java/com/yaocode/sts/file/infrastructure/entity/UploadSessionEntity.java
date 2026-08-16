@@ -90,4 +90,40 @@ public class UploadSessionEntity extends BasePo {
      */
     @TableField("expire_time")
     private LocalDateTime expireTime;
+
+    /**
+     * 文件MD5
+     */
+    @TableField("file_md5")
+    private String fileMd5;
+    /**
+     * 文件SHA256值
+     */
+    @TableField("file_sha256")
+    private String fileSha256;
+    /**
+     * 文件类型(MIME)
+     */
+    @TableField("file_type")
+    private Integer fileType;
+    /**
+     * 文件标签(逗号分隔或JSON数组)
+     */
+    @TableField("tags")
+    private String tags;
+    /**
+     * 文件描述
+     */
+    @TableField("description")
+    private String description;
+    /**
+     * 是否公开: 0-否 1-是
+     */
+    @TableField("is_public")
+    private Integer isPublic;
+    /**
+     * 元数据(JSON格式)
+     */
+    @TableField("metadata")
+    private String metadata;
 }

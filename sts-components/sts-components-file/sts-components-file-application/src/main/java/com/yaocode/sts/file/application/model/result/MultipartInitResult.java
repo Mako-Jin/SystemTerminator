@@ -36,5 +36,40 @@ public class MultipartInitResult {
     private LocalDateTime expireTime;
 
     /** 存储类型 */
-    private String storageType;
+    private Integer storageType;
+
+    /** 文件MD5 */
+    private String fileMd5;
+    /** 文件类型(MIME) */
+    private String fileType;
+    /** 文件标签 */
+    private String tags;
+    /** 文件描述 */
+    private String description;
+    /** 是否公开: 0-否 1-是 */
+    private Integer isPublic;
+    /** 元数据(JSON格式) */
+    private String metadata;
+    /** 文件SHA256值 */
+    private String fileSha256;
+
+    /**
+     * 是否为重复文件（秒传场景）
+     */
+    private Boolean isDuplicate;
+
+    /**
+     * 重复文件的fileId（秒传场景返回已有文件ID）
+     */
+    private String duplicateFileId;
+
+    /**
+     * 是否为续传（已有活动会话）
+     */
+    private Boolean isResume;
+
+    /**
+     * 续传时已上传的分片数
+     */
+    private Integer uploadedChunks;
 }

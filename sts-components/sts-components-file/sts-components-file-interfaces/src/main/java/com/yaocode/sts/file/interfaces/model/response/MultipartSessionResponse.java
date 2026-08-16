@@ -59,4 +59,32 @@ public class MultipartSessionResponse {
      * 创建时间
      */
     private LocalDateTime createTime;
+    /**
+     * 文件MD5
+     */
+    private String fileMd5;
+    /**
+     * 文件SHA256
+     */
+    private String fileSha256;
+    /**
+     * 文件类型(MIME)
+     */
+    private String fileType;
+    /**
+     * 文件标签
+     */
+    private String tags;
+    /**
+     * 文件描述
+     */
+    private String description;
+    /**
+     * 是否公开: 0-否 1-是
+     */
+    private Integer isPublic;
+    /**
+     * 元数据(JSON格式)
+     */
+    private String metadata;
 }

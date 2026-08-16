@@ -1,22 +1,38 @@
 package com.yaocode.sts.file.web.controller;
 
+import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.common.web.annotation.SubRequestMapping;
+import com.yaocode.sts.common.web.model.PageResultModel;
 import com.yaocode.sts.common.web.model.ResultModel;
+import com.yaocode.sts.common.web.utils.PageResultUtils;
 import com.yaocode.sts.common.web.utils.ResultUtils;
+import com.yaocode.sts.file.application.model.command.CancelMultipartCommand;
+import com.yaocode.sts.file.application.model.command.CompleteMultipartCommand;
 import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.InitMultipartCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.command.UploadPartCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
+import com.yaocode.sts.file.application.model.query.MultipartSessionQuery;
+import com.yaocode.sts.file.application.model.query.UploadProgressQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.MultipartInitResult;
+import com.yaocode.sts.file.application.model.result.MultipartSessionResult;
+import com.yaocode.sts.file.application.model.result.UploadPartResult;
+import com.yaocode.sts.file.application.model.result.UploadProgressResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.FileUploadService;
 import com.yaocode.sts.file.interfaces.api.FileUploadApi;
+import com.yaocode.sts.file.interfaces.model.request.CancelMultipartRequest;
+import com.yaocode.sts.file.interfaces.model.request.CompleteMultipartRequest;
 import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
 import com.yaocode.sts.file.interfaces.model.request.MultipartInitRequest;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
+import com.yaocode.sts.file.interfaces.model.response.MultipartSessionResponse;
+import com.yaocode.sts.file.interfaces.model.response.UploadPartResponse;
+import com.yaocode.sts.file.interfaces.model.response.UploadProgressResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import com.yaocode.sts.file.web.converter.FileUploadConverter;
 import jakarta.annotation.Resource;
@@ -109,84 +125,71 @@ public class FileUploadController implements FileUploadApi {
         return ResultUtils.ok(response);
     }
 
-//    /**
-//     * 上传分片
-//     */
-//    @Override
-//    public ResultModel<UploadPartResponse> uploadPart(
-//            String uploadId,
-//            String fileId,
-//            Integer chunkNumber,
-//            Integer totalChunks,
-//            MultipartFile file,
-//            String chunkMd5
-//    ) {
-//
-//        log.info("上传分片: uploadId={}, chunkNumber={}/{}", uploadId, chunkNumber, totalChunks);
-//
-//        UploadPartResponse response = converter.toUploadPartResponse(
-//                fileUploadService.uploadPart(
-//                        converter.toUploadPartCommand(
-//                                uploadId, fileId, chunkNumber, totalChunks, file, chunkMd5
-//                        )
-//                )
-//        );
-//        return ResultUtils.ok(response);
-//    }
-//
-//    /**
-//     * 完成分片上传（合并分片）
-//     */
-//    @Override
-//    public ResultModel<UploadResponse> completeMultipartUpload(@Valid CompleteMultipartRequest request) {
-//        log.info("完成分片上传: uploadId={}", request.getUploadId());
-//
-//        UploadResponse response = converter.toUploadResponse(
-//                fileUploadService.completeMultipartUpload(
-//                        converter.toCompleteMultipartCommand(request)
-//                )
-//        );
-//        return ResultUtils.ok(response);
-//    }
-//
-//    /**
-//     * 取消分片上传
-//     */
-//    @Override
-//    public ResultModel<String> cancelMultipartUpload(@Valid CancelMultipartRequest request) {
-//        log.info("取消分片上传: uploadId={}", request.getUploadId());
-//
-//        fileUploadService.cancelMultipartUpload(
-//                converter.toCancelMultipartCommand(request)
-//        );
-//        return ResultUtils.ok("取消成功");
-//    }
-//
-//    /**
-//     * 获取分片上传进度
-//     */
-//    @Override
-//    public ResultModel<UploadProgressResponse> getMultipartProgress(String uploadId) {
-//        log.info("获取分片上传进度: {}", uploadId);
-//
-//        UploadProgressResponse response = converter.toUploadProgressResponse(
-//                fileUploadService.getMultipartProgress(
-//                        converter.toUploadProgressQuery(uploadId)
-//                )
-//        );
-//        return ResultUtils.ok(response);
-//    }
-//
-//    @Override
-//    public PageResultModel<MultipartSessionResponse> getMultipartSessions(Integer page, Integer size) {
-//        log.info("获取分片上传会话列表: page={}, size={}", page, size);
-//
-//        PageResult<MultipartSessionResult> result = fileUploadService.getMultipartSessions(
-//                converter.toMultipartSessionQuery(page, size)
-//        );
-//        return PageResultUtils.ok(result.getTotal(), converter.toMultipartSessionResponseList(result.getRecords()));
-//    }
-//
+    /**
+     * 上传分片
+     */
+    @Override
+    public ResultModel<UploadPartResponse> uploadPart(
+            String uploadId,
+            String fileId,
+            Integer chunkNumber,
+            Integer totalChunks,
+            MultipartFile file,
+            String chunkMd5
+    ) {
+
+        log.info("上传分片: uploadId={}, chunkNumber={}/{}", uploadId, chunkNumber, totalChunks);
+        UploadPartCommand uploadPartCommand = converter.toUploadPartCommand(
+                uploadId, fileId, chunkNumber, totalChunks, file, chunkMd5
+        );
+        UploadPartResult uploadPartResult = fileUploadService.uploadPart(uploadPartCommand);
+        UploadPartResponse response = converter.toUploadPartResponse(uploadPartResult);
+        return ResultUtils.ok(response);
+    }
+
+    /**
+     * 完成分片上传（合并分片）
+     */
+    @Override
+    public ResultModel<UploadResponse> completeMultipartUpload(CompleteMultipartRequest request) {
+        log.info("完成分片上传: uploadId={}", request.getUploadId());
+        CompleteMultipartCommand completeMultipartCommand = converter.toCompleteMultipartCommand(request);
+        UploadResult uploadResult = fileUploadService.completeMultipartUpload(completeMultipartCommand);
+        UploadResponse response = converter.toUploadResponse(uploadResult);
+        return ResultUtils.ok(response);
+    }
+
+    /**
+     * 取消分片上传
+     */
+    @Override
+    public ResultModel<String> cancelMultipartUpload(CancelMultipartRequest request) {
+        log.info("取消分片上传: uploadId={}", request.getUploadId());
+        CancelMultipartCommand cancelMultipartCommand = converter.toCancelMultipartCommand(request);
+        fileUploadService.cancelMultipartUpload(cancelMultipartCommand);
+        return ResultUtils.ok();
+    }
+
+    /**
+     * 获取分片上传进度
+     */
+    @Override
+    public ResultModel<UploadProgressResponse> getMultipartProgress(String uploadId) {
+        log.info("获取分片上传进度: {}", uploadId);
+        UploadProgressQuery uploadProgressQuery = converter.toUploadProgressQuery(uploadId);
+        UploadProgressResult uploadProgressResult = fileUploadService.getMultipartProgress(uploadProgressQuery);
+        UploadProgressResponse response = converter.toUploadProgressResponse(uploadProgressResult);
+        return ResultUtils.ok(response);
+    }
+
+    @Override
+    public PageResultModel<MultipartSessionResponse> getMultipartSessions(Integer page, Integer size) {
+        log.info("获取分片上传会话列表: page={}, size={}", page, size);
+        MultipartSessionQuery multipartSessionQuery = converter.toMultipartSessionQuery(page, size);
+        PageResult<MultipartSessionResult> result = fileUploadService.getMultipartSessions(multipartSessionQuery);
+        return PageResultUtils.ok(result.getTotal(), converter.toMultipartSessionResponseList(result.getRecords()));
+    }
+
 //    // ==================== 3. 断点续传 ====================
 //
 //    /**

@@ -21,4 +21,10 @@ public interface UploadSessionDao extends IService<UploadSessionEntity> {
      */
     PageResult<UploadSessionEntity> pageByTenant(String tenantId, Integer status, int page, int size);
 
+    /**
+     * 根据文件MD5+文件大小+存储类型查询活动(上传中)的会话
+     * 用于续传检测：同一文件断点续传时复用已有会话
+     */
+    UploadSessionEntity selectActiveSession(String fileMd5, Long fileSize, Integer storageType, String tenantId);
+
 }

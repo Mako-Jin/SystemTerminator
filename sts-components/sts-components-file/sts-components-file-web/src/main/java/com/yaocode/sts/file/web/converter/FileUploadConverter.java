@@ -233,6 +233,7 @@ public class FileUploadConverter {
                 .fileSize(request.getFileSize())
                 .chunkSize(request.getChunkSize() != null ? request.getChunkSize() : 10 * 1024 * 1024L)
                 .fileMd5(request.getFileMd5())
+                .fileSha256(request.getFileSha256())
                 .fileType(request.getFileType())
                 .storageType(request.getStorageType())
                 .tags(request.getTags())
@@ -699,6 +700,17 @@ public class FileUploadConverter {
                 .totalChunks(result.getTotalChunks())
                 .expireTime(result.getExpireTime())
                 .storageType(result.getStorageType())
+                .fileMd5(result.getFileMd5())
+                .fileSha256(result.getFileSha256())
+                .fileType(result.getFileType())
+                .tags(result.getTags())
+                .description(result.getDescription())
+                .isPublic(result.getIsPublic())
+                .metadata(result.getMetadata())
+                .isDuplicate(result.getIsDuplicate())
+                .duplicateFileId(result.getDuplicateFileId())
+                .isResume(result.getIsResume())
+                .uploadedChunks(result.getUploadedChunks())
                 .build();
     }
 
@@ -759,6 +771,13 @@ public class FileUploadConverter {
                 .expireTime(result.getExpireTime())
                 .lastActiveTime(result.getLastActiveTime())
                 .createTime(result.getCreateTime())
+                .fileMd5(result.getFileMd5())
+                .fileSha256(result.getFileSha256())
+                .fileType(result.getFileType())
+                .tags(result.getTags())
+                .description(result.getDescription())
+                .isPublic(result.getIsPublic())
+                .metadata(result.getMetadata())
                 .build();
     }
 

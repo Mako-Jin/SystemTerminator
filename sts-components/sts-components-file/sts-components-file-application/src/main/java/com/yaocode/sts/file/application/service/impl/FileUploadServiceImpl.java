@@ -158,36 +158,51 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public MultipartInitResult initMultipartUpload(InitMultipartCommand command) {
         long startTime = System.currentTimeMillis();
-        // 1. 生成唯一ID
-        String uploadId = IdFactory.generate(IdGeneratorType.UUID);
-        String fileId = IdFactory.generate(IdGeneratorType.UUID);
-        // 2. 计算分片信息
         Long chunkSize = command.getChunkSize() != null ? command.getChunkSize() : FileConstants.ONE_MB * 10;
         long fileSize = command.getFileSize() != null ? command.getFileSize() : 0L;
-        int totalChunks = fileSize > 0 ? (int) Math.ceil((double) fileSize / chunkSize) : 1;
-        // 3. 确定存储类型
-        StorageTypeEnums storageType = StorageTypeEnums.fromType(command.getStorageType());
+        StorageTypeEnums storageType = StorageTypeEnums.fromCode(command.getStorageType());
         if (storageType == null) {
             storageType = StorageTypeEnums.LOCAL;
         }
-        // 4. 创建上传会话
+
+        // === 第一重检查：秒传（相同MD5的文件已存在） ===
+        if (command.getFileMd5() != null && !command.getFileMd5().isEmpty()) {
+            FileExistenceResult existResult = deduplicationHandler.checkFileExists(
+                    command.getFileMd5(), fileSize, storageType.getCode(), command.getTenantId()
+            );
+            if (existResult != null && Boolean.TRUE.equals(existResult.getExists())) {
+                log.info("秒传命中: md5={}, fileId={}", command.getFileMd5(), existResult.getFileId());
+                return fileUploadApplicationConverter.toDuplicateInitResult(
+                        command, existResult.getFileId()
+                );
+            }
+
+            // === 第二重检查：续传（已有活动中的上传会话） ===
+            UploadSessionEntity activeSession = uploadSessionDao.selectActiveSession(
+                    command.getFileMd5(), fileSize, storageType.getCode(), command.getTenantId()
+            );
+            if (activeSession != null) {
+                log.info("续传命中: md5={}, uploadId={}, 已完成分片={}",
+                        command.getFileMd5(), activeSession.getUploadId(), activeSession.getCompletedChunks());
+                return fileUploadApplicationConverter.toResumeInitResult(activeSession);
+            }
+        }
+
+        // === 第三重：创建新会话 ===
+        String uploadId = IdFactory.generate(IdGeneratorType.UUID);
+        String fileId = IdFactory.generate(IdGeneratorType.UUID);
+        int totalChunks = fileSize > 0 ? (int) Math.ceil((double) fileSize / chunkSize) : 1;
         LocalDateTime expireTime = LocalDateTime.now().plusHours(24);
-        UploadSessionEntity sessionEntity = new UploadSessionEntity();
-        sessionEntity.setUploadId(uploadId);
-        sessionEntity.setFileId(fileId);
-        sessionEntity.setFileName(command.getFileName());
-        sessionEntity.setFileSize(fileSize);
-        sessionEntity.setStorageType(storageType.getCode());
-        sessionEntity.setTotalChunks(totalChunks);
-        sessionEntity.setChunkSize(chunkSize);
-        sessionEntity.setCompletedChunks(0);
-        sessionEntity.setUploadStatus(UploadStatusEnums.UPLOADING.getCode());
-        sessionEntity.setLastActiveTime(LocalDateTime.now());
-        sessionEntity.setExpireTime(expireTime);
-        sessionEntity.setTenantId(command.getTenantId());
+
+        UploadSessionEntity sessionEntity = fileUploadApplicationConverter.toUploadSessionEntity(
+                command, uploadId, fileId, fileSize, chunkSize, totalChunks,
+                storageType.getCode(), expireTime
+        );
         uploadSessionDao.save(sessionEntity);
-        log.info("初始化分片上传: uploadId={}, fileId={}, totalChunks={}, 耗时={}ms",
+
+        log.info("初始化分片上传(新会话): uploadId={}, fileId={}, totalChunks={}, 耗时={}ms",
                 uploadId, fileId, totalChunks, System.currentTimeMillis() - startTime);
+
         return fileUploadApplicationConverter.toMultipartInitResult(
                 command, uploadId, fileId, chunkSize, totalChunks, expireTime
         );
