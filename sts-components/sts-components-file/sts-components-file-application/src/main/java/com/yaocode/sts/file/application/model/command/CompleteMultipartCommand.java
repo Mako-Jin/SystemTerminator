@@ -30,7 +30,7 @@ public class CompleteMultipartCommand {
     private String tags;
 
     /** 是否公开 */
-    private Boolean isPublic;
+    private Integer isPublic;
 
     /** 自定义元数据 */
     private Map<String, String> metadata;

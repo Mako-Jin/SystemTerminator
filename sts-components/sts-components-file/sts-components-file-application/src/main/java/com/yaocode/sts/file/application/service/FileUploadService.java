@@ -1,10 +1,21 @@
 package com.yaocode.sts.file.application.service;
 
+import com.yaocode.sts.common.basic.model.PageResult;
+import com.yaocode.sts.file.application.model.command.CancelMultipartCommand;
+import com.yaocode.sts.file.application.model.command.CompleteMultipartCommand;
 import com.yaocode.sts.file.application.model.command.FastUploadCommand;
+import com.yaocode.sts.file.application.model.command.InitMultipartCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.command.UploadPartCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
+import com.yaocode.sts.file.application.model.query.MultipartSessionQuery;
+import com.yaocode.sts.file.application.model.query.UploadProgressQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
+import com.yaocode.sts.file.application.model.result.MultipartInitResult;
+import com.yaocode.sts.file.application.model.result.MultipartSessionResult;
+import com.yaocode.sts.file.application.model.result.UploadPartResult;
+import com.yaocode.sts.file.application.model.result.UploadProgressResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 
 import java.util.List;
@@ -32,38 +43,38 @@ public interface FileUploadService {
      */
     List<UploadResult> uploadBatch(UploadBatchCommand command);
 
-//    // ==================== 2. 分片上传（命令 + 查询） ====================
-//
-//    /**
-//     * 初始化分片上传
-//     */
-//    MultipartInitResult initMultipartUpload(InitMultipartCommand command);
-//
-//    /**
-//     * 上传分片
-//     */
-//    UploadPartResult uploadPart(UploadPartCommand command);
-//
-//    /**
-//     * 完成分片上传
-//     */
-//    UploadResult completeMultipartUpload(CompleteMultipartCommand command);
-//
-//    /**
-//     * 取消分片上传
-//     */
-//    void cancelMultipartUpload(CancelMultipartCommand command);
-//
-//    /**
-//     * 获取分片上传进度（查询）
-//     */
-//    UploadProgressResult getMultipartProgress(UploadProgressQuery query);
-//
-//    /**
-//     * 获取分片上传会话列表（查询）
-//     */
-//    PageResult<MultipartSessionResult> getMultipartSessions(MultipartSessionQuery query);
-//
+    // ==================== 2. 分片上传（命令 + 查询） ====================
+
+    /**
+     * 初始化分片上传
+     */
+    MultipartInitResult initMultipartUpload(InitMultipartCommand command);
+
+    /**
+     * 上传分片
+     */
+    UploadPartResult uploadPart(UploadPartCommand command);
+
+    /**
+     * 完成分片上传
+     */
+    UploadResult completeMultipartUpload(CompleteMultipartCommand command);
+
+    /**
+     * 取消分片上传
+     */
+    void cancelMultipartUpload(CancelMultipartCommand command);
+
+    /**
+     * 获取分片上传进度（查询）
+     */
+    UploadProgressResult getMultipartProgress(UploadProgressQuery query);
+
+    /**
+     * 获取分片上传会话列表（查询）
+     */
+    PageResult<MultipartSessionResult> getMultipartSessions(MultipartSessionQuery query);
+
 //    // ==================== 3. 断点续传（命令 + 查询） ====================
 //
 //    /**

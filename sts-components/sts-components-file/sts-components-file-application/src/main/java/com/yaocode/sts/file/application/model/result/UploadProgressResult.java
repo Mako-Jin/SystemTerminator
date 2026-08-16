@@ -3,6 +3,8 @@ package com.yaocode.sts.file.application.model.result;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 上传进度结果
  *

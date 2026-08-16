@@ -150,6 +150,13 @@ public class FileUtils {
     }
 
     /**
+     * 获取文件类型枚举
+     */
+    public static Integer getFileType(String fileName) {
+        return getFileTypeEnums(fileName).getCode();
+    }
+
+    /**
      * 获取文件类型代码（用于数据库）
      */
     public static int getFileTypeCode(String fileName) {

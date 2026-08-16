@@ -42,7 +42,7 @@ public class MultipartSessionResult {
     private String status;
 
     /** 过期时间戳 */
-    private Long expireTime;
+    private LocalDateTime expireTime;
 
     /** 最后活跃时间戳 */
     private Long lastActiveTime;

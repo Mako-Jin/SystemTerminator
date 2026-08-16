@@ -1,4 +1,9 @@
 package com.yaocode.sts.file.infrastructure.mapper;
 
-public interface FileChunkMapper {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yaocode.sts.file.infrastructure.entity.FileChunkEntity;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface FileChunkMapper extends BaseMapper<FileChunkEntity> {
 }

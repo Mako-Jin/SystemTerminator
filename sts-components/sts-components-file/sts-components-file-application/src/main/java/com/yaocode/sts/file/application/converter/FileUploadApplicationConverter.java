@@ -3,13 +3,19 @@ package com.yaocode.sts.file.application.converter;
 import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.tools.JSONUtils;
 import com.yaocode.sts.common.tools.StringUtils;
+import com.yaocode.sts.file.application.model.command.CompleteMultipartCommand;
 import com.yaocode.sts.file.application.model.command.FastUploadCommand;
+import com.yaocode.sts.file.application.model.command.InitMultipartCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
+import com.yaocode.sts.file.application.model.result.MultipartInitResult;
+import com.yaocode.sts.file.application.model.result.MultipartSessionResult;
+import com.yaocode.sts.file.application.model.result.UploadProgressResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.infrastructure.entity.UploadSessionEntity;
 import com.yaocode.sts.file.core.constants.FileConstants;
 import com.yaocode.sts.file.core.enums.FileExtensionEnums;
 import com.yaocode.sts.file.core.enums.FileStatusEnums;
@@ -25,6 +31,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -148,9 +155,7 @@ public interface FileUploadApplicationConverter {
 
     @Named("getFileType")
     default Integer getFileType(UploadFileCommand command) {
-        String fileName = command.getFileName();
-        FileExtensionEnums extEnum = FileUtils.getFileExtensionEnums(fileName);
-        return extEnum.getFileType().getCode();
+        return FileUtils.getFileType(command.getFileName());
     }
 
     @Named("getFileExtensionCode")
@@ -226,6 +231,150 @@ public interface FileUploadApplicationConverter {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toList();
+    }
+
+    // ==================== Multipart 转换 ====================
+
+    /**
+     * 构建分片初始化返回结果
+     */
+    default MultipartInitResult toMultipartInitResult(
+            InitMultipartCommand command,
+            String uploadId,
+            String fileId,
+            Long chunkSize,
+            int totalChunks,
+            LocalDateTime expireTime
+    ) {
+        return MultipartInitResult.builder()
+                .uploadId(uploadId)
+                .fileId(fileId)
+                .fileName(command.getFileName())
+                .fileSize(command.getFileSize())
+                .chunkSize(chunkSize)
+                .totalChunks(totalChunks)
+                .expireTime(expireTime)
+                .storageType(command.getStorageType())
+                .build();
+    }
+
+    /**
+     * 从分片会话实体构建分片上传结果
+     */
+    default UploadResult toUploadResultFromMultipart(
+            CompleteMultipartCommand command,
+            String fileId,
+            String fileUrl,
+            Long fileSize,
+            String fileMd5,
+            String message,
+            long processingTime
+    ) {
+        return UploadResult.builder()
+                .fileId(fileId)
+                .fileName(command.getFileName())
+                .fileSize(fileSize)
+                .fileMd5(fileMd5)
+                .fileUrl(fileUrl)
+                .storageType(null)
+                .tenantId(command.getTenantId())
+                .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                .uploadStatusDesc(UploadStatusEnums.COMPLETED.getDesc())
+                .isDuplicate(false)
+                .uploadTime(LocalDateTime.now())
+                .processingTime(processingTime)
+                .message(message)
+                .build();
+    }
+
+    /**
+     * 从分片会话实体构建分片进度结果
+     */
+    default UploadProgressResult toUploadProgressResult(
+            UploadSessionEntity sessionEntity,
+            Long uploadedSize,
+            String status,
+            String message
+    ) {
+        Integer totalChunks = sessionEntity.getTotalChunks();
+        int completedChunks = sessionEntity.getCompletedChunks() != null
+                ? sessionEntity.getCompletedChunks() : 0;
+        int progress = totalChunks > 0 ? (int) Math.round((completedChunks * 100.0) / totalChunks) : 0;
+
+        return UploadProgressResult.builder()
+                .uploadId(sessionEntity.getUploadId())
+                .fileId(sessionEntity.getFileId())
+                .fileName(sessionEntity.getFileName())
+                .fileSize(sessionEntity.getFileSize())
+                .chunkSize(sessionEntity.getChunkSize())
+                .totalChunks(totalChunks)
+                .uploadedChunks(completedChunks)
+                .progress(progress)
+                .uploadedSize(uploadedSize)
+                .status(status)
+                .lastActiveTime(sessionEntity.getLastActiveTime() != null
+                        ? sessionEntity.getLastActiveTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null)
+                .message(message)
+                .build();
+    }
+
+    /**
+     * 从分片会话实体构建分片会话结果
+     */
+    default MultipartSessionResult toMultipartSessionResult(UploadSessionEntity sessionEntity) {
+        Integer totalChunks = sessionEntity.getTotalChunks();
+        int completedChunks = sessionEntity.getCompletedChunks() != null
+                ? sessionEntity.getCompletedChunks() : 0;
+        int progress = totalChunks > 0 ? (int) Math.round((completedChunks * 100.0) / totalChunks) : 0;
+
+        return MultipartSessionResult.builder()
+                .uploadId(sessionEntity.getUploadId())
+                .fileId(sessionEntity.getFileId())
+                .fileName(sessionEntity.getFileName())
+                .fileSize(sessionEntity.getFileSize())
+                .chunkSize(sessionEntity.getChunkSize())
+                .totalChunks(totalChunks)
+                .uploadedChunks(completedChunks)
+                .progress(progress)
+                .status(UploadStatusEnums.fromCode(sessionEntity.getUploadStatus()).getDesc())
+                .expireTime(sessionEntity.getExpireTime())
+                .lastActiveTime(sessionEntity.getLastActiveTime() != null
+                        ? sessionEntity.getLastActiveTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null)
+                .createTime(sessionEntity.getCreateTime())
+                .build();
+    }
+
+    /**
+     * 从分片完成命令和存储信息构建FileBasicInfoEntity
+     */
+    default FileBasicInfoEntity toFileInfoEntityFromMultipart(
+            CompleteMultipartCommand command,
+            UploadSessionEntity sessionEntity,
+            String fileId,
+            String filePath,
+            String fileUrl,
+            String fileMd5
+    ) {
+        LocalDateTime now = LocalDateTime.now();
+        FileBasicInfoEntity entity = new FileBasicInfoEntity();
+        entity.setFileId(fileId);
+        entity.setFileName(command.getFileName() != null ? command.getFileName() : sessionEntity.getFileName());
+        entity.setFilePath(filePath);
+        entity.setFileSize(sessionEntity.getFileSize());
+        entity.setFileMd5(fileMd5);
+        entity.setStorageType(sessionEntity.getStorageType());
+        entity.setStorageUrl(fileUrl);
+        entity.setFileType(FileUtils.getFileType(entity.getFileName()));
+        entity.setFileExtension(FileUtils.getFileExtensionCode(entity.getFileName()));
+        entity.setTags(toJsonArray(command.getTags()));
+        entity.setDescription(command.getDescription());
+        entity.setIsPublic(command.getIsPublic());
+        entity.setUploadStatus(UploadStatusEnums.COMPLETED.getCode());
+        entity.setUploadProgress(100);
+        entity.setUploadStartTime(now);
+        entity.setUploadEndTime(now);
+        entity.setUploadTime(now);
+        return entity;
     }
 
     // ==================== FastUpload 转换 ====================

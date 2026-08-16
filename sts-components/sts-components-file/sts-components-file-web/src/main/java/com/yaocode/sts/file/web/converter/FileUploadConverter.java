@@ -278,7 +278,7 @@ public class FileUploadConverter {
                 .fileName(request.getFileName())
                 .description(request.getDescription())
                 .tags(request.getTags())
-                .isPublic(request.getIsPublic() != null ? request.getIsPublic() : false)
+                .isPublic(request.getIsPublic())
                 .metadata(request.getMetadata())
                 .tenantId(getCurrentTenantId())
                 .userId(getCurrentUserId())

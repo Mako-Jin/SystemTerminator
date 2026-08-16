@@ -4,15 +4,19 @@ import com.yaocode.sts.common.web.annotation.SubRequestMapping;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.common.web.utils.ResultUtils;
 import com.yaocode.sts.file.application.model.command.FastUploadCommand;
+import com.yaocode.sts.file.application.model.command.InitMultipartCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
+import com.yaocode.sts.file.application.model.result.MultipartInitResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
 import com.yaocode.sts.file.application.service.FileUploadService;
 import com.yaocode.sts.file.interfaces.api.FileUploadApi;
 import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
+import com.yaocode.sts.file.interfaces.model.request.MultipartInitRequest;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
+import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import com.yaocode.sts.file.web.converter.FileUploadConverter;
 import jakarta.annotation.Resource;
@@ -91,24 +95,20 @@ public class FileUploadController implements FileUploadApi {
         return ResultUtils.ok(responses);
     }
 
-//    // ==================== 2. 分片上传 ====================
-//
-//    /**
-//     * 初始化分片上传
-//     */
-//    @Override
-//    public ResultModel<MultipartInitResponse> initMultipartUpload(@Valid MultipartInitRequest request) {
-//        log.info("初始化分片上传: {}, 大小: {}", request.getFileName(), request.getFileSize());
-//
-//        MultipartInitResponse response = converter.toMultipartInitResponse(
-//                fileUploadService.initMultipartUpload(
-//                        converter.toInitMultipartCommand(request)
-//                )
-//        );
-//        return ResultUtils.ok(response);
-//    }
-//
-//
+    // ==================== 2. 分片上传 ====================
+
+    /**
+     * 初始化分片上传
+     */
+    @Override
+    public ResultModel<MultipartInitResponse> initMultipartUpload(MultipartInitRequest request) {
+        log.info("初始化分片上传: {}, 大小: {}", request.getFileName(), request.getFileSize());
+        InitMultipartCommand initMultipartCommand = converter.toInitMultipartCommand(request);
+        MultipartInitResult multipartInitResult = fileUploadService.initMultipartUpload(initMultipartCommand);
+        MultipartInitResponse response = converter.toMultipartInitResponse(multipartInitResult);
+        return ResultUtils.ok(response);
+    }
+
 //    /**
 //     * 上传分片
 //     */

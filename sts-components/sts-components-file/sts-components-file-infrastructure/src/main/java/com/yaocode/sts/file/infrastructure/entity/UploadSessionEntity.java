@@ -38,10 +38,22 @@ public class UploadSessionEntity extends BasePo {
     private String fileId;
 
     /**
+     * 文件名
+     */
+    @TableField("file_name")
+    private String fileName;
+
+    /**
+     * 文件大小（字节）
+     */
+    @TableField("file_size")
+    private Long fileSize;
+
+    /**
      * 存储类型
      */
     @TableField("storage_type")
-    private String storageType;
+    private Integer storageType;
 
     /**
      * 总分片数

@@ -19,7 +19,7 @@ public class MultipartSessionQuery {
     private Integer size;
 
     /** 会话状态 */
-    private String status;
+    private Integer status;
 
     /** 租户ID */
     private String tenantId;

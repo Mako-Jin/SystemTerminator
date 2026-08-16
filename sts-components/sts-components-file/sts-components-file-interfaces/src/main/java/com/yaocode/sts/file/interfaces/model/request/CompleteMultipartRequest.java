@@ -44,7 +44,7 @@ public class CompleteMultipartRequest {
     /**
      * 是否公开
      */
-    private Boolean isPublic;
+    private Integer isPublic;
     /**
      * 元数据
      */

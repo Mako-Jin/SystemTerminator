@@ -3,7 +3,9 @@ package com.yaocode.sts.file.interfaces.api;
 import com.yaocode.sts.common.web.model.ResultModel;
 import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
 import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
+import com.yaocode.sts.file.interfaces.model.request.MultipartInitRequest;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
+import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -111,22 +113,22 @@ public interface FileUploadApi {
             @RequestParam(required = false) Map<String, String> metadata
     );
 
-//    // ==================== 2. 分片上传 ====================
-//
-//    /**
-//     * 初始化分片上传
-//     * <p>
-//     * 大文件上传前调用，获取上传ID和分片信息
-//     * </p>
-//     *
-//     * @param request 分片上传初始化请求
-//     * @return 初始化响应（包含uploadId和分片信息）
-//     */
-//    @PostMapping("/multipart/init")
-//    ResultModel<MultipartInitResponse> initMultipartUpload(
-//            @RequestBody @Valid MultipartInitRequest request
-//    );
-//
+    // ==================== 2. 分片上传 ====================
+
+    /**
+     * 初始化分片上传
+     * <p>
+     * 大文件上传前调用，获取上传ID和分片信息
+     * </p>
+     *
+     * @param request 分片上传初始化请求
+     * @return 初始化响应（包含uploadId和分片信息）
+     */
+    @PostMapping("/multipart/init")
+    ResultModel<MultipartInitResponse> initMultipartUpload(
+            @RequestBody @Valid MultipartInitRequest request
+    );
+
 //    /**
 //     * 上传分片
 //     *

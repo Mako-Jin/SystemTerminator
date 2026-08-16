@@ -1,23 +1,27 @@
 package com.yaocode.sts.file.application.service.impl;
 
+import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
 import com.yaocode.sts.file.application.converter.FileUploadApplicationConverter;
-import com.yaocode.sts.file.application.model.command.FastUploadCommand;
-import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
-import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.command.*;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
-import com.yaocode.sts.file.application.model.result.FileExistenceResult;
-import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.application.model.query.MultipartSessionQuery;
+import com.yaocode.sts.file.application.model.query.UploadProgressQuery;
+import com.yaocode.sts.file.application.model.result.*;
 import com.yaocode.sts.file.application.service.handler.*;
 import com.yaocode.sts.file.core.constants.FileI18nKeyConstants;
-import com.yaocode.sts.file.core.enums.FileErrorCodeEnums;
-import com.yaocode.sts.file.core.enums.FileExtensionEnums;
-import com.yaocode.sts.file.core.enums.FileTypeEnums;
+import com.yaocode.sts.file.core.enums.*;
 import com.yaocode.sts.file.core.exception.FileUploadException;
+import com.yaocode.sts.file.core.spi.StoragePlugin;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
+import com.yaocode.sts.file.infrastructure.dao.FileChunkDao;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
+import com.yaocode.sts.file.infrastructure.dao.UploadSessionDao;
 import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
+import com.yaocode.sts.file.infrastructure.entity.FileChunkEntity;
+import com.yaocode.sts.file.infrastructure.entity.UploadSessionEntity;
+import com.yaocode.sts.file.infrastructure.manager.StoragePluginManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,6 +32,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,10 +72,16 @@ class FileUploadServiceImplTest {
     private FileDeduplicationDao fileDeduplicationDao;
     @Mock
     private FileBaseInfoDao fileBaseInfoDao;
-    @Mock
-    private FileUploadApplicationConverter converter;
+    @Spy
+    private FileUploadApplicationConverter converter = FileUploadApplicationConverter.INSTANCE;
     @Mock
     private MessageUtils messageUtils;
+    @Mock
+    private UploadSessionDao uploadSessionDao;
+    @Mock
+    private FileChunkDao fileChunkDao;
+    @Mock
+    private StoragePluginManager storagePluginManager;
 
     @Spy
     @InjectMocks
@@ -262,7 +274,7 @@ class FileUploadServiceImplTest {
             UploadFileCommand fileCommand = buildFileCommand(file);
             UploadResult result = buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1);
 
-            when(converter.buildUploadFileCommand(command, file)).thenReturn(fileCommand);
+            doReturn(fileCommand).when(converter).buildUploadFileCommand(command, file);
             doReturn(result).when(service).upload(fileCommand);
 
             List<UploadResult> results = service.uploadBatch(command);
@@ -287,9 +299,9 @@ class FileUploadServiceImplTest {
             UploadFileCommand cmd2 = buildFileCommand(file2);
             UploadFileCommand cmd3 = buildFileCommand(file3);
 
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2)).thenReturn(cmd2);
-            when(converter.buildUploadFileCommand(command, file3)).thenReturn(cmd3);
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doReturn(cmd2).when(converter).buildUploadFileCommand(command, file2);
+            doReturn(cmd3).when(converter).buildUploadFileCommand(command, file3);
 
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1)).when(service).upload(cmd1);
             doReturn(buildUploadResult(FILE_ID_2, FILE_NAME_2, FILE_SIZE_2, FILE_MD5_2)).when(service).upload(cmd2);
@@ -313,7 +325,7 @@ class FileUploadServiceImplTest {
             UploadBatchCommand command = buildBatchCommand(List.of(file));
             UploadFileCommand fileCommand = buildFileCommand(file);
 
-            when(converter.buildUploadFileCommand(command, file)).thenReturn(fileCommand);
+            doReturn(fileCommand).when(converter).buildUploadFileCommand(command, file);
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1))
                     .when(service).upload(fileCommand);
 
@@ -339,8 +351,8 @@ class FileUploadServiceImplTest {
 
             UploadFileCommand cmd1 = buildFileCommand(file1);
             UploadFileCommand cmd2 = buildFileCommand(file2);
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2)).thenReturn(cmd2);
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doReturn(cmd2).when(converter).buildUploadFileCommand(command, file2);
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1)).when(service).upload(cmd1);
             doReturn(buildUploadResult(FILE_ID_2, FILE_NAME_2, FILE_SIZE_2, FILE_MD5_2)).when(service).upload(cmd2);
 
@@ -371,9 +383,9 @@ class FileUploadServiceImplTest {
             UploadFileCommand cmd2 = buildFileCommand(file2);
             UploadFileCommand cmd3 = buildFileCommand(file3);
 
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2)).thenReturn(cmd2);
-            when(converter.buildUploadFileCommand(command, file3)).thenReturn(cmd3);
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doReturn(cmd2).when(converter).buildUploadFileCommand(command, file2);
+            doReturn(cmd3).when(converter).buildUploadFileCommand(command, file3);
 
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1)).when(service).upload(cmd1);
             doThrow(new RuntimeException("存储失败: " + FILE_NAME_2)).when(service).upload(cmd2);
@@ -404,8 +416,8 @@ class FileUploadServiceImplTest {
 
             UploadFileCommand cmd1 = buildFileCommand(file1);
             UploadFileCommand cmd2 = buildFileCommand(file2);
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2)).thenReturn(cmd2);
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doReturn(cmd2).when(converter).buildUploadFileCommand(command, file2);
             doThrow(new RuntimeException("存储不可用")).when(service).upload(cmd1);
             doThrow(new RuntimeException("存储不可用")).when(service).upload(cmd2);
 
@@ -428,8 +440,8 @@ class FileUploadServiceImplTest {
 
             UploadFileCommand cmd1 = buildFileCommand(file1);
             UploadFileCommand cmd2 = buildFileCommand(file2);
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2)).thenReturn(cmd2);
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doReturn(cmd2).when(converter).buildUploadFileCommand(command, file2);
             doThrow(new RuntimeException("第一个文件失败")).when(service).upload(cmd1);
             doReturn(buildUploadResult(FILE_ID_2, FILE_NAME_2, FILE_SIZE_2, FILE_MD5_2)).when(service).upload(cmd2);
 
@@ -456,9 +468,8 @@ class FileUploadServiceImplTest {
             UploadBatchCommand command = buildBatchCommand(List.of(file1, file2));
 
             UploadFileCommand cmd1 = buildFileCommand(file1);
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2))
-                    .thenThrow(new IllegalArgumentException("文件名非法"));
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doThrow(new IllegalArgumentException("文件名非法")).when(converter).buildUploadFileCommand(command, file2);
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1)).when(service).upload(cmd1);
 
             List<UploadResult> results = service.uploadBatch(command);
@@ -489,8 +500,8 @@ class FileUploadServiceImplTest {
 
             UploadFileCommand cmd1 = buildFileCommand(file1);
             UploadFileCommand cmd2 = buildFileCommand(file2);
-            when(converter.buildUploadFileCommand(command, file1)).thenReturn(cmd1);
-            when(converter.buildUploadFileCommand(command, file2)).thenReturn(cmd2);
+            doReturn(cmd1).when(converter).buildUploadFileCommand(command, file1);
+            doReturn(cmd2).when(converter).buildUploadFileCommand(command, file2);
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1)).when(service).upload(cmd1);
             doReturn(buildUploadResult(FILE_ID_2, FILE_NAME_2, FILE_SIZE_2, FILE_MD5_2)).when(service).upload(cmd2);
 
@@ -507,7 +518,7 @@ class FileUploadServiceImplTest {
             UploadBatchCommand command = buildBatchCommand(List.of(file));
             UploadFileCommand fileCommand = buildFileCommand(file);
 
-            when(converter.buildUploadFileCommand(command, file)).thenReturn(fileCommand);
+            doReturn(fileCommand).when(converter).buildUploadFileCommand(command, file);
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1))
                     .when(service).upload(fileCommand);
 
@@ -528,7 +539,7 @@ class FileUploadServiceImplTest {
             UploadBatchCommand command = buildBatchCommand(List.of(file));
             UploadFileCommand fileCommand = buildFileCommand(file);
 
-            when(converter.buildUploadFileCommand(command, file)).thenReturn(fileCommand);
+            doReturn(fileCommand).when(converter).buildUploadFileCommand(command, file);
             doReturn(buildUploadResult(FILE_ID_1, FILE_NAME_1, FILE_SIZE_1, FILE_MD5_1))
                     .when(service).upload(fileCommand);
 
@@ -581,6 +592,7 @@ class FileUploadServiceImplTest {
 
             verify(fileBaseInfoDao).save(argThat(ref -> {
                 // 验证引用实体的存储信息完全复用原文件
+                // 注意：tags 已被 converter.toJsonArray() 转换为 JSON 数组格式
                 return ref.getFileId() != null
                         && !ref.getFileId().isEmpty()
                         && ref.getFilePath().equals(FILE_PATH_1)
@@ -590,7 +602,7 @@ class FileUploadServiceImplTest {
                         && ref.getStorageType().equals(STORAGE_TYPE)
                         && ref.getStorageUrl().equals(STORAGE_URL_1)
                         && ref.getFileName().equals(FILE_NAME_1)
-                        && ref.getTags().equals(TAGS)
+                        && ref.getTags() != null && ref.getTags().contains("important") && ref.getTags().contains("archive")
                         && ref.getDescription().equals(DESCRIPTION)
                         && ref.getUploadStatus() == 1
                         && ref.getUploadProgress() == 100;
@@ -648,7 +660,7 @@ class FileUploadServiceImplTest {
 
             verify(fileBaseInfoDao).save(argThat(ref ->
                     ref.getFileName().equals("custom-name.pdf")
-                    && ref.getTags().equals("tag1,tag2")
+                    && ref.getTags() != null && ref.getTags().contains("tag1") && ref.getTags().contains("tag2")
                     && ref.getDescription().equals("自定义描述")
                     && ref.getIsPublic() == 0));
         }
@@ -822,6 +834,645 @@ class FileUploadServiceImplTest {
             assertThat(result).isNotNull();
             assertThat(result.getExists()).isTrue();
             verify(deduplicationHandler).checkFileExists(FILE_MD5_1, FILE_SIZE_1, null, TENANT_ID);
+        }
+    }
+
+    // ==================== 8. initMultipartUpload —— 初始化分片会话 ====================
+
+    private static final String UPLOAD_ID = "UPLOAD-001";
+    private static final String UPLOAD_ID_2 = "UPLOAD-002";
+    private static final String FILE_ID_MULTIPART = "FILE-MULTI-001";
+    private static final Integer TOTAL_CHUNKS = 5;
+    private static final Long CHUNK_SIZE = 1024L * 1024L * 10L; // 10MB
+    private static final Long TOTAL_FILE_SIZE = 1024L * 1024L * 50L; // 50MB
+
+    private InitMultipartCommand buildInitCommand(String storageType) {
+        return InitMultipartCommand.builder()
+                .fileName(FILE_NAME_1)
+                .fileSize(TOTAL_FILE_SIZE)
+                .chunkSize(CHUNK_SIZE)
+                .fileMd5(FILE_MD5_1)
+                .storageType(storageType)
+                .tenantId(TENANT_ID)
+                .userId(USER_ID)
+                .build();
+    }
+
+    private UploadSessionEntity buildSessionEntity(Integer storageType) {
+        UploadSessionEntity entity = new UploadSessionEntity();
+        entity.setUploadId(UPLOAD_ID);
+        entity.setFileId(FILE_ID_MULTIPART);
+        entity.setFileName(FILE_NAME_1);
+        entity.setFileSize(TOTAL_FILE_SIZE);
+        entity.setStorageType(storageType);
+        entity.setTotalChunks(TOTAL_CHUNKS);
+        entity.setChunkSize(CHUNK_SIZE);
+        entity.setCompletedChunks(0);
+        entity.setUploadStatus(UploadStatusEnums.UPLOADING.getCode());
+        entity.setLastActiveTime(LocalDateTime.now());
+        entity.setExpireTime(LocalDateTime.now().plusHours(24));
+        return entity;
+    }
+
+    @Nested
+    @DisplayName("initMultipartUpload —— 初始化分片会话")
+    class InitMultipartTests {
+
+        @Test
+        @DisplayName("成功创建上传会话")
+        void should_initSession_when_validCommand() {
+            InitMultipartCommand command = buildInitCommand("local");
+            MultipartInitResult expected = MultipartInitResult.builder()
+                    .uploadId(UPLOAD_ID)
+                    .fileId(FILE_ID_MULTIPART)
+                    .fileName(FILE_NAME_1)
+                    .fileSize(TOTAL_FILE_SIZE)
+                    .chunkSize(CHUNK_SIZE)
+                    .totalChunks(TOTAL_CHUNKS)
+                    .storageType("local")
+                    .expireTime(LocalDateTime.now().plusSeconds(86400))
+                    .build();
+
+            doReturn(expected).when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
+
+            MultipartInitResult result = service.initMultipartUpload(command);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getUploadId()).isEqualTo(UPLOAD_ID);
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getTotalChunks()).isEqualTo(TOTAL_CHUNKS);
+            verify(uploadSessionDao).save(argThat(session -> {
+                return session.getUploadId() != null
+                        && session.getFileId() != null
+                        && session.getFileName().equals(FILE_NAME_1)
+                        && session.getTotalChunks().equals(TOTAL_CHUNKS)
+                        && session.getUploadStatus().equals(UploadStatusEnums.UPLOADING.getCode())
+                        && TENANT_ID.equals(session.getTenantId());
+            }));
+        }
+
+        @Test
+        @DisplayName("未指定 storageType 时使用默认值 LOCAL")
+        void should_defaultToLocal_when_storageTypeIsBlank() {
+            InitMultipartCommand command = buildInitCommand("");
+            MultipartInitResult expected = MultipartInitResult.builder()
+                    .uploadId(UPLOAD_ID)
+                    .fileId(FILE_ID_MULTIPART)
+                    .storageType("local")
+                    .build();
+            doReturn(expected).when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
+
+            service.initMultipartUpload(command);
+
+            verify(uploadSessionDao).save(argThat(session ->
+                    StorageTypeEnums.LOCAL.getCode().equals(session.getStorageType())));
+        }
+
+        @Test
+        @DisplayName("fileSize 为 null 时使用默认值 0L 且 totalChunks 为 1")
+        void should_useDefaultSize_when_fileSizeIsNull() {
+            InitMultipartCommand command = InitMultipartCommand.builder()
+                    .fileName(FILE_NAME_1)
+                    .storageType("local")
+                    .tenantId(TENANT_ID)
+                    .userId(USER_ID)
+                    .build();
+            MultipartInitResult expected = MultipartInitResult.builder()
+                    .uploadId(UPLOAD_ID)
+                    .fileId(FILE_ID_MULTIPART)
+                    .totalChunks(1)
+                    .build();
+            doReturn(expected).when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
+
+            service.initMultipartUpload(command);
+
+            verify(uploadSessionDao).save(argThat(session ->
+                    session.getFileSize() == 0L && session.getTotalChunks() == 1));
+        }
+
+        @Test
+        @DisplayName("未指定 chunkSize 时默认 10MB")
+        void should_useDefaultChunkSize_when_notSpecified() {
+            InitMultipartCommand command = InitMultipartCommand.builder()
+                    .fileName(FILE_NAME_1)
+                    .fileSize(TOTAL_FILE_SIZE)
+                    .storageType("local")
+                    .tenantId(TENANT_ID)
+                    .userId(USER_ID)
+                    .build();
+            doReturn(MultipartInitResult.builder().uploadId(UPLOAD_ID).fileId(FILE_ID_MULTIPART).build())
+                    .when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
+
+            service.initMultipartUpload(command);
+
+            verify(uploadSessionDao).save(argThat(session ->
+                    session.getChunkSize().equals(1024L * 1024L * 10L)));
+        }
+    }
+
+    // ==================== 9. uploadPart —— 分片上传 ====================
+
+    private UploadPartCommand buildUploadPartCommand(Integer chunkNumber, FileObjectDto file) {
+        return UploadPartCommand.builder()
+                .uploadId(UPLOAD_ID)
+                .fileId(FILE_ID_MULTIPART)
+                .chunkNumber(chunkNumber)
+                .file(file)
+                .chunkMd5("chunk-md5-" + chunkNumber)
+                .tenantId(TENANT_ID)
+                .userId(USER_ID)
+                .build();
+    }
+
+    private FileChunkEntity buildChunkEntity(Integer chunkNumber, Integer status) {
+        FileChunkEntity entity = new FileChunkEntity();
+        entity.setUploadId(UPLOAD_ID);
+        entity.setFileId(FILE_ID_MULTIPART);
+        entity.setChunkNumber(chunkNumber);
+        entity.setChunkSize(CHUNK_SIZE);
+        entity.setChunkMd5("chunk-md5-" + chunkNumber);
+        entity.setStorageType(StorageTypeEnums.LOCAL.getCode());
+        entity.setChunkStatus(status);
+        return entity;
+    }
+
+    @Nested
+    @DisplayName("uploadPart —— 分片上传")
+    class UploadPartTests {
+
+        @Test
+        @DisplayName("会话不存在 —— 抛出 UPLOAD_SESSION_NOT_FOUND")
+        void should_throwSessionNotFound_when_sessionMissing() {
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(null);
+
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_SESSION_NOT_FOUND.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("会话已取消 —— 抛出 UPLOAD_CANCEL_FAILED")
+        void should_throwCancelled_when_sessionCancelled() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.CANCELLED.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_CANCEL_FAILED.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("存储类型无效 —— 抛出 STORAGE_TYPE_NOT_SUPPORTED")
+        void should_throwStorageNotSupported_when_storageInvalid() {
+            UploadSessionEntity session = buildSessionEntity(999);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("存储插件不存在 —— 抛出 STORAGE_TYPE_NOT_SUPPORTED")
+        void should_throwStorageNotSupported_when_pluginNotFound() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(null);
+
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("分片文件为空 —— 抛出 UPLOAD_CHUNK_MISSING")
+        void should_throwChunkMissing_when_fileMissing() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_CHUNK_MISSING.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("成功上传分片（新建分片记录）")
+        void should_uploadChunkSuccessfully_when_newChunk() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.uploadChunk(any(InputStream.class), anyString(), anyInt(), anyLong()))
+                    .thenReturn("/path/chunk-1");
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(null);
+            when(fileChunkDao.countCompletedByUploadId(UPLOAD_ID)).thenReturn(1);
+
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, "chunk-md5-1");
+            UploadPartCommand command = buildUploadPartCommand(1, file);
+
+            UploadPartResult result = service.uploadPart(command);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getSuccess()).isTrue();
+            assertThat(result.getUploadedChunks()).isEqualTo(1);
+            verify(fileChunkDao).save(argThat(c ->
+                    c.getChunkNumber() == 1
+                            && c.getUploadId().equals(UPLOAD_ID)
+                            && c.getChunkStatus().equals(ChunkStatusEnums.UPLOADING.getCode())));
+            verify(fileChunkDao).updateStatus(eq(UPLOAD_ID), eq(1),
+                    eq(ChunkStatusEnums.COMPLETED.getCode()), eq("/path/chunk-1"));
+        }
+
+        @Test
+        @DisplayName("重试分片上传 —— 更新已有分片记录的状态")
+        void should_updateExistingChunk_when_retry() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.uploadChunk(any(InputStream.class), anyString(), anyInt(), anyLong()))
+                    .thenReturn("/path/chunk-1");
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            FileChunkEntity existing = buildChunkEntity(1, ChunkStatusEnums.FAILED.getCode());
+            existing.setRetryCount(1);
+            when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(existing);
+            when(fileChunkDao.countCompletedByUploadId(UPLOAD_ID)).thenReturn(1);
+
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, "chunk-md5-1");
+            UploadPartCommand command = buildUploadPartCommand(1, file);
+
+            service.uploadPart(command);
+
+            verify(fileChunkDao, never()).save(any());
+            verify(fileChunkDao).updateById(argThat(c ->
+                    c.getRetryCount() == 2
+                            && c.getChunkStatus().equals(ChunkStatusEnums.UPLOADING.getCode())));
+        }
+
+        @Test
+        @DisplayName("存储插件抛异常 —— 分片标记失败并抛出 UPLOAD_FAILED")
+        void should_markChunkFailed_when_pluginThrows() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.uploadChunk(any(InputStream.class), anyString(), anyInt(), anyLong()))
+                    .thenThrow(new RuntimeException("IO error"));
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(null);
+
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, "chunk-md5-1");
+            UploadPartCommand command = buildUploadPartCommand(1, file);
+
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_FAILED.getCode());
+                    });
+            verify(fileChunkDao).updateStatus(eq(UPLOAD_ID), eq(1),
+                    eq(ChunkStatusEnums.FAILED.getCode()), isNull());
+        }
+    }
+
+    // ==================== 10. completeMultipartUpload —— 完成分片上传 ====================
+
+    private CompleteMultipartCommand buildCompleteCommand() {
+        return CompleteMultipartCommand.builder()
+                .uploadId(UPLOAD_ID)
+                .fileId(FILE_ID_MULTIPART)
+                .fileName(FILE_NAME_1)
+                .tags(TAGS)
+                .description(DESCRIPTION)
+                .isPublic(1)
+                .tenantId(TENANT_ID)
+                .userId(USER_ID)
+                .build();
+    }
+
+    @Nested
+    @DisplayName("completeMultipartUpload —— 完成分片上传")
+    class CompleteMultipartTests {
+
+        @Test
+        @DisplayName("会话不存在 —— 抛出 UPLOAD_SESSION_NOT_FOUND")
+        void should_throw_when_sessionMissing() {
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(null);
+
+            assertThatThrownBy(() -> service.completeMultipartUpload(buildCompleteCommand()))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_SESSION_NOT_FOUND.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("分片未全部完成 —— 抛出 UPLOAD_CHUNK_MISSING")
+        void should_throw_when_chunksNotCompleted() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            // 只有 2 个完成，需要 5 个
+            FileChunkEntity c1 = buildChunkEntity(1, ChunkStatusEnums.COMPLETED.getCode());
+            FileChunkEntity c2 = buildChunkEntity(2, ChunkStatusEnums.COMPLETED.getCode());
+            FileChunkEntity c3 = buildChunkEntity(3, ChunkStatusEnums.UPLOADING.getCode());
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(List.of(c1, c2, c3));
+
+            assertThatThrownBy(() -> service.completeMultipartUpload(buildCompleteCommand()))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_CHUNK_MISSING.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("全部分片完成 —— 合并并持久化文件")
+        void should_mergeAndPersist_when_allChunksCompleted() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.mergeChunks(UPLOAD_ID, FILE_ID_MULTIPART)).thenReturn("/merged/file.pdf");
+            when(plugin.getFileUrl("/merged/file.pdf")).thenReturn("https://cdn.example.com/file.pdf");
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+
+            List<FileChunkEntity> chunks = new ArrayList<>();
+            for (int i = 1; i <= TOTAL_CHUNKS; i++) {
+                chunks.add(buildChunkEntity(i, ChunkStatusEnums.COMPLETED.getCode()));
+            }
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID)).thenReturn(chunks);
+
+            FileBasicInfoEntity savedEntity = new FileBasicInfoEntity();
+            savedEntity.setFileId(FILE_ID_MULTIPART);
+            doReturn(savedEntity).when(converter).toFileInfoEntityFromMultipart(any(), any(), anyString(), anyString(), anyString(), any());
+            doReturn(UploadResult.builder()
+                            .fileId(FILE_ID_MULTIPART)
+                            .fileName(FILE_NAME_1)
+                            .fileSize(TOTAL_FILE_SIZE)
+                            .fileUrl("https://cdn.example.com/file.pdf")
+                            .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                            .isDuplicate(false)
+                            .build()).when(converter).toUploadResultFromMultipart(any(), anyString(), anyString(), any(), any(), anyString(), anyLong());
+            when(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_REUSE_SUCCESS))
+                    .thenReturn("合并成功");
+
+            UploadResult result = service.completeMultipartUpload(buildCompleteCommand());
+
+            assertThat(result).isNotNull();
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getUploadStatus()).isEqualTo(UploadStatusEnums.COMPLETED.getCode());
+            verify(plugin).mergeChunks(UPLOAD_ID, FILE_ID_MULTIPART);
+            verify(plugin).getFileUrl("/merged/file.pdf");
+            verify(plugin).cleanupChunks(UPLOAD_ID);
+            verify(fileBaseInfoDao).save(savedEntity);
+            verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
+                    eq(UploadStatusEnums.COMPLETED.getCode()), eq(TOTAL_CHUNKS));
+            verify(fileChunkDao).deleteByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID);
+        }
+    }
+
+    // ==================== 11. cancelMultipartUpload —— 取消分片上传 ====================
+
+    private CancelMultipartCommand buildCancelCommand(String reason) {
+        return CancelMultipartCommand.builder()
+                .uploadId(UPLOAD_ID)
+                .fileId(FILE_ID_MULTIPART)
+                .reason(reason)
+                .tenantId(TENANT_ID)
+                .userId(USER_ID)
+                .build();
+    }
+
+    @Nested
+    @DisplayName("cancelMultipartUpload —— 取消分片上传")
+    class CancelMultipartTests {
+
+        @Test
+        @DisplayName("会话不存在 —— 抛出 UPLOAD_SESSION_NOT_FOUND")
+        void should_throw_when_sessionMissing() {
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(null);
+
+            assertThatThrownBy(() -> service.cancelMultipartUpload(buildCancelCommand("用户取消")))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_SESSION_NOT_FOUND.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("成功取消 —— 更新会话状态、分片状态、清理存储")
+        void should_cancelSuccessfully() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setCompletedChunks(2);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+
+            FileChunkEntity c1 = buildChunkEntity(1, ChunkStatusEnums.COMPLETED.getCode());
+            FileChunkEntity c2 = buildChunkEntity(2, ChunkStatusEnums.COMPLETED.getCode());
+            FileChunkEntity c3 = buildChunkEntity(3, ChunkStatusEnums.UPLOADING.getCode());
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(List.of(c1, c2, c3));
+
+            service.cancelMultipartUpload(buildCancelCommand("用户取消"));
+
+            verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
+                    eq(UploadStatusEnums.CANCELLED.getCode()), eq(2));
+            verify(plugin).cleanupChunks(UPLOAD_ID);
+            // 非已完成分片被更新为取消
+            verify(fileChunkDao).updateById(argThat(c ->
+                    c.getChunkNumber() == 3
+                            && c.getChunkStatus().equals(ChunkStatusEnums.CANCELLED.getCode())
+                            && "用户取消".equals(c.getErrorMessage())));
+            // 已完成的分片不被更新
+            verify(fileChunkDao, never()).updateById(argThat(c -> c.getChunkNumber() == 1));
+            verify(fileChunkDao, never()).updateById(argThat(c -> c.getChunkNumber() == 2));
+        }
+
+        @Test
+        @DisplayName("存储类型无效时仍能取消（跳过存储清理）")
+        void should_cancelWithoutStorageCleanup_when_storageInvalid() {
+            UploadSessionEntity session = buildSessionEntity(999);
+            session.setCompletedChunks(0);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(new ArrayList<>());
+
+            service.cancelMultipartUpload(buildCancelCommand("用户取消"));
+
+            verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
+                    eq(UploadStatusEnums.CANCELLED.getCode()), eq(0));
+            verify(storagePluginManager, never()).getPlugin(any(StorageTypeEnums.class));
+        }
+    }
+
+    // ==================== 12. getMultipartProgress —— 查询上传进度 ====================
+
+    @Nested
+    @DisplayName("getMultipartProgress —— 查询上传进度")
+    class GetMultipartProgressTests {
+
+        private UploadProgressQuery buildQuery(String uploadId) {
+            return UploadProgressQuery.builder()
+                    .uploadId(uploadId)
+                    .tenantId(TENANT_ID)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("会话不存在 —— 抛出 UPLOAD_SESSION_NOT_FOUND")
+        void should_throw_when_sessionMissing() {
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(null);
+
+            assertThatThrownBy(() -> service.getMultipartProgress(buildQuery(UPLOAD_ID)))
+                    .isInstanceOf(FileUploadException.class);
+        }
+
+        @Test
+        @DisplayName("查询上传中会话的进度")
+        void should_returnProgress_when_uploading() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setCompletedChunks(2);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            FileChunkEntity c1 = buildChunkEntity(1, ChunkStatusEnums.COMPLETED.getCode());
+            c1.setChunkSize(CHUNK_SIZE);
+            FileChunkEntity c2 = buildChunkEntity(2, ChunkStatusEnums.COMPLETED.getCode());
+            c2.setChunkSize(CHUNK_SIZE);
+            when(fileChunkDao.selectCompletedByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(List.of(c1, c2));
+
+            UploadProgressResult expected = UploadProgressResult.builder()
+                    .uploadId(UPLOAD_ID)
+                    .fileId(FILE_ID_MULTIPART)
+                    .fileName(FILE_NAME_1)
+                    .totalChunks(TOTAL_CHUNKS)
+                    .uploadedChunks(2)
+                    .progress(40)
+                    .uploadedSize(CHUNK_SIZE * 2)
+                    .status("上传中")
+                    .message("上传中")
+                    .build();
+            doReturn(expected).when(converter).toUploadProgressResult(any(), anyLong(), anyString(), anyString());
+
+            UploadProgressResult result = service.getMultipartProgress(buildQuery(UPLOAD_ID));
+
+            assertThat(result).isNotNull();
+            assertThat(result.getUploadId()).isEqualTo(UPLOAD_ID);
+            assertThat(result.getProgress()).isEqualTo(40);
+            assertThat(result.getUploadedSize()).isEqualTo(CHUNK_SIZE * 2);
+            assertThat(result.getStatus()).isEqualTo("上传中");
+        }
+
+        @Test
+        @DisplayName("已完成会话 —— status 为已完成")
+        void should_returnCompletedStatus_when_completed() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.COMPLETED.getCode());
+            session.setCompletedChunks(TOTAL_CHUNKS);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            when(fileChunkDao.selectCompletedByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
+                    .thenReturn(new ArrayList<>());
+            doReturn(UploadProgressResult.builder().status("已完成").message("上传完成").build())
+                    .when(converter).toUploadProgressResult(any(), anyLong(), anyString(), anyString());
+
+            UploadProgressResult result = service.getMultipartProgress(buildQuery(UPLOAD_ID));
+
+            assertThat(result.getStatus()).isEqualTo("已完成");
+            assertThat(result.getMessage()).isEqualTo("上传完成");
+        }
+    }
+
+    // ==================== 13. getMultipartSessions —— 分页查询分片会话 ====================
+
+    @Nested
+    @DisplayName("getMultipartSessions —— 分页查询分片会话")
+    class GetMultipartSessionsTests {
+
+        @Test
+        @DisplayName("分页查询会话列表 —— 返回分页结果")
+        void should_returnPageResult() {
+            MultipartSessionQuery query = MultipartSessionQuery.builder()
+                    .page(1)
+                    .size(10)
+                    .tenantId(TENANT_ID)
+                    .build();
+
+            UploadSessionEntity session1 = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            UploadSessionEntity session2 = buildSessionEntity(StorageTypeEnums.MINIO.getCode());
+            PageResult<UploadSessionEntity> pageResult = PageResult.<UploadSessionEntity>builder()
+                    .total(2L)
+                    .page(1L)
+                    .size(10L)
+                    .records(List.of(session1, session2))
+                    .build();
+            when(uploadSessionDao.pageByTenant(eq(TENANT_ID), any(), eq(1), eq(10)))
+                    .thenReturn(pageResult);
+            doReturn(MultipartSessionResult.builder().uploadId(UPLOAD_ID).fileId(FILE_ID_MULTIPART).build())
+                    .when(converter).toMultipartSessionResult(session1);
+            doReturn(MultipartSessionResult.builder().uploadId(UPLOAD_ID_2).fileId("FILE-002").build())
+                    .when(converter).toMultipartSessionResult(session2);
+
+            PageResult<MultipartSessionResult> result = service.getMultipartSessions(query);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getTotal()).isEqualTo(2L);
+            assertThat(result.getPage()).isEqualTo(1L);
+            assertThat(result.getRecords()).hasSize(2);
+            assertThat(result.getRecords().get(0).getUploadId()).isEqualTo(UPLOAD_ID);
+            assertThat(result.getRecords().get(1).getUploadId()).isEqualTo(UPLOAD_ID_2);
+        }
+
+        @Test
+        @DisplayName("未传分页参数 —— 使用默认值 page=1, size=10")
+        void should_useDefaultPagination_when_notSpecified() {
+            MultipartSessionQuery query = MultipartSessionQuery.builder()
+                    .tenantId(TENANT_ID)
+                    .build();
+            PageResult<UploadSessionEntity> empty = PageResult.<UploadSessionEntity>builder()
+                    .total(0L)
+                    .records(new ArrayList<>())
+                    .build();
+            when(uploadSessionDao.pageByTenant(eq(TENANT_ID), any(), eq(1), eq(10)))
+                    .thenReturn(empty);
+
+            PageResult<MultipartSessionResult> result = service.getMultipartSessions(query);
+
+            assertThat(result.getRecords()).isEmpty();
+            verify(uploadSessionDao).pageByTenant(eq(TENANT_ID), any(), eq(1), eq(10));
         }
     }
 }

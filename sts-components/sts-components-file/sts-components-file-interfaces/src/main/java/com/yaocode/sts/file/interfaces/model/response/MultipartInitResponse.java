@@ -3,6 +3,8 @@ package com.yaocode.sts.file.interfaces.model.response;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 分片上传初始化响应
  * <p>
@@ -42,7 +44,7 @@ public class MultipartInitResponse {
     /**
      * 过期时间（毫秒级时间戳）
      */
-    private Long expireTime;
+    private LocalDateTime expireTime;
     /**
      * 存储类型
      */

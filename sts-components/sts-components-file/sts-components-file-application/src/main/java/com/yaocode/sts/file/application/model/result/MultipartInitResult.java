@@ -3,6 +3,8 @@ package com.yaocode.sts.file.application.model.result;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 分片初始化结果
  *
@@ -31,7 +33,7 @@ public class MultipartInitResult {
     private Integer totalChunks;
 
     /** 过期时间戳 */
-    private Long expireTime;
+    private LocalDateTime expireTime;
 
     /** 存储类型 */
     private String storageType;

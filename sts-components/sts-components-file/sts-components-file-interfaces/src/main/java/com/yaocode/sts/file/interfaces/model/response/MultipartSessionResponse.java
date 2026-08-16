@@ -50,7 +50,7 @@ public class MultipartSessionResponse {
     /**
      * 过期时间（毫秒级时间戳）
      */
-    private Long expireTime;
+    private LocalDateTime expireTime;
     /**
      * 最后活跃时间（毫秒级时间戳）
      */
