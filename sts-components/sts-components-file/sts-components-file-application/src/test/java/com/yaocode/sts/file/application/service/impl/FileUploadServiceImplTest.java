@@ -94,6 +94,7 @@ class FileUploadServiceImplTest {
     private static final String FILE_ID_1 = "FILE-001";
     private static final String FILE_ID_2 = "FILE-002";
     private static final String FILE_ID_3 = "FILE-003";
+    private static final String EXISTING_FILE_ID = "FILE-EXIST-001";
     private static final String FILE_NAME_1 = "document.pdf";
     private static final String FILE_NAME_2 = "image.png";
     private static final String FILE_NAME_3 = "video.mp4";
@@ -846,7 +847,7 @@ class FileUploadServiceImplTest {
     private static final Long CHUNK_SIZE = 1024L * 1024L * 10L; // 10MB
     private static final Long TOTAL_FILE_SIZE = 1024L * 1024L * 50L; // 50MB
 
-    private InitMultipartCommand buildInitCommand(String storageType) {
+    private InitMultipartCommand buildInitCommand(Integer storageType) {
         return InitMultipartCommand.builder()
                 .fileName(FILE_NAME_1)
                 .fileSize(TOTAL_FILE_SIZE)
@@ -878,10 +879,19 @@ class FileUploadServiceImplTest {
     @DisplayName("initMultipartUpload —— 初始化分片会话")
     class InitMultipartTests {
 
+        private void stubNoDuplicateAndNoResume() {
+            when(deduplicationHandler.checkFileExists(anyString(), anyLong(), any(), anyString()))
+                    .thenReturn(FileExistenceResult.builder().exists(false).build());
+            when(uploadSessionDao.selectActiveSession(anyString(), anyLong(), any(), anyString()))
+                    .thenReturn(null);
+        }
+
         @Test
-        @DisplayName("成功创建上传会话")
+        @DisplayName("正常创建 —— 无重复文件且无活动会话")
         void should_initSession_when_validCommand() {
-            InitMultipartCommand command = buildInitCommand("local");
+            InitMultipartCommand command = buildInitCommand(StorageTypeEnums.LOCAL.getCode());
+            stubNoDuplicateAndNoResume();
+
             MultipartInitResult expected = MultipartInitResult.builder()
                     .uploadId(UPLOAD_ID)
                     .fileId(FILE_ID_MULTIPART)
@@ -889,10 +899,12 @@ class FileUploadServiceImplTest {
                     .fileSize(TOTAL_FILE_SIZE)
                     .chunkSize(CHUNK_SIZE)
                     .totalChunks(TOTAL_CHUNKS)
-                    .storageType("local")
+                    .storageType(1)
                     .expireTime(LocalDateTime.now().plusSeconds(86400))
+                    .isDuplicate(false)
+                    .isResume(false)
+                    .uploadedChunks(0)
                     .build();
-
             doReturn(expected).when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
 
             MultipartInitResult result = service.initMultipartUpload(command);
@@ -901,24 +913,23 @@ class FileUploadServiceImplTest {
             assertThat(result.getUploadId()).isEqualTo(UPLOAD_ID);
             assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
             assertThat(result.getTotalChunks()).isEqualTo(TOTAL_CHUNKS);
-            verify(uploadSessionDao).save(argThat(session -> {
-                return session.getUploadId() != null
-                        && session.getFileId() != null
-                        && session.getFileName().equals(FILE_NAME_1)
-                        && session.getTotalChunks().equals(TOTAL_CHUNKS)
-                        && session.getUploadStatus().equals(UploadStatusEnums.UPLOADING.getCode())
-                        && TENANT_ID.equals(session.getTenantId());
-            }));
+            assertThat(result.getIsDuplicate()).isFalse();
+            assertThat(result.getIsResume()).isFalse();
+            verify(deduplicationHandler).checkFileExists(eq(FILE_MD5_1), eq(TOTAL_FILE_SIZE), any(), eq(TENANT_ID));
+            verify(uploadSessionDao).selectActiveSession(eq(FILE_MD5_1), eq(TOTAL_FILE_SIZE), any(), eq(TENANT_ID));
+            verify(uploadSessionDao).save(any(UploadSessionEntity.class));
         }
 
         @Test
         @DisplayName("未指定 storageType 时使用默认值 LOCAL")
         void should_defaultToLocal_when_storageTypeIsBlank() {
-            InitMultipartCommand command = buildInitCommand("");
+            InitMultipartCommand command = buildInitCommand(null);
+            stubNoDuplicateAndNoResume();
+
             MultipartInitResult expected = MultipartInitResult.builder()
                     .uploadId(UPLOAD_ID)
                     .fileId(FILE_ID_MULTIPART)
-                    .storageType("local")
+                    .storageType(1)
                     .build();
             doReturn(expected).when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
 
@@ -933,7 +944,7 @@ class FileUploadServiceImplTest {
         void should_useDefaultSize_when_fileSizeIsNull() {
             InitMultipartCommand command = InitMultipartCommand.builder()
                     .fileName(FILE_NAME_1)
-                    .storageType("local")
+                    .storageType(StorageTypeEnums.LOCAL.getCode())
                     .tenantId(TENANT_ID)
                     .userId(USER_ID)
                     .build();
@@ -956,7 +967,7 @@ class FileUploadServiceImplTest {
             InitMultipartCommand command = InitMultipartCommand.builder()
                     .fileName(FILE_NAME_1)
                     .fileSize(TOTAL_FILE_SIZE)
-                    .storageType("local")
+                    .storageType(StorageTypeEnums.LOCAL.getCode())
                     .tenantId(TENANT_ID)
                     .userId(USER_ID)
                     .build();
@@ -967,6 +978,75 @@ class FileUploadServiceImplTest {
 
             verify(uploadSessionDao).save(argThat(session ->
                     session.getChunkSize().equals(1024L * 1024L * 10L)));
+        }
+
+        @Test
+        @DisplayName("秒传命中 —— 相同MD5文件已存在，直接返回已有文件")
+        void should_returnDuplicate_when_fileAlreadyExists() {
+            InitMultipartCommand command = buildInitCommand(StorageTypeEnums.LOCAL.getCode());
+            FileExistenceResult existResult = FileExistenceResult.builder()
+                    .exists(true)
+                    .fileId(EXISTING_FILE_ID)
+                    .fileUrl("https://cdn.example.com/existing.mp4")
+                    .build();
+            when(deduplicationHandler.checkFileExists(eq(FILE_MD5_1), eq(TOTAL_FILE_SIZE), any(), eq(TENANT_ID)))
+                    .thenReturn(existResult);
+
+            MultipartInitResult result = service.initMultipartUpload(command);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getIsDuplicate()).isTrue();
+            assertThat(result.getDuplicateFileId()).isEqualTo(EXISTING_FILE_ID);
+            assertThat(result.getUploadId()).isNull();
+            assertThat(result.getIsResume()).isFalse();
+            verify(uploadSessionDao, never()).save(any(UploadSessionEntity.class));
+            verify(uploadSessionDao, never()).selectActiveSession(anyString(), anyLong(), any(), anyString());
+        }
+
+        @Test
+        @DisplayName("续传命中 —— 已有上传中的会话，返回已有会话信息")
+        void should_returnResume_when_activeSessionExists() {
+            InitMultipartCommand command = buildInitCommand(StorageTypeEnums.LOCAL.getCode());
+            when(deduplicationHandler.checkFileExists(anyString(), anyLong(), any(), anyString()))
+                    .thenReturn(FileExistenceResult.builder().exists(false).build());
+            UploadSessionEntity activeSession = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            activeSession.setCompletedChunks(2);
+            when(uploadSessionDao.selectActiveSession(eq(FILE_MD5_1), eq(TOTAL_FILE_SIZE), any(), eq(TENANT_ID)))
+                    .thenReturn(activeSession);
+
+            MultipartInitResult result = service.initMultipartUpload(command);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getIsDuplicate()).isFalse();
+            assertThat(result.getIsResume()).isTrue();
+            assertThat(result.getUploadId()).isEqualTo(UPLOAD_ID);
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getUploadedChunks()).isEqualTo(2);
+            verify(uploadSessionDao, never()).save(any(UploadSessionEntity.class));
+        }
+
+        @Test
+        @DisplayName("fileMd5 为空 —— 跳过查重和续传检查，直接创建新会话")
+        void should_skipChecks_when_fileMd5IsNull() {
+            InitMultipartCommand command = InitMultipartCommand.builder()
+                    .fileName(FILE_NAME_1)
+                    .fileSize(TOTAL_FILE_SIZE)
+                    .chunkSize(CHUNK_SIZE)
+                    .storageType(StorageTypeEnums.LOCAL.getCode())
+                    .tenantId(TENANT_ID)
+                    .userId(USER_ID)
+                    .build();
+            doReturn(MultipartInitResult.builder().uploadId(UPLOAD_ID).fileId(FILE_ID_MULTIPART)
+                    .isDuplicate(false).isResume(false).uploadedChunks(0).build())
+                    .when(converter).toMultipartInitResult(any(), anyString(), anyString(), any(), anyInt(), any());
+
+            MultipartInitResult result = service.initMultipartUpload(command);
+
+            assertThat(result.getIsDuplicate()).isFalse();
+            assertThat(result.getIsResume()).isFalse();
+            verify(deduplicationHandler, never()).checkFileExists(anyString(), anyLong(), any(), anyString());
+            verify(uploadSessionDao, never()).selectActiveSession(anyString(), anyLong(), any(), anyString());
+            verify(uploadSessionDao).save(any(UploadSessionEntity.class));
         }
     }
 
