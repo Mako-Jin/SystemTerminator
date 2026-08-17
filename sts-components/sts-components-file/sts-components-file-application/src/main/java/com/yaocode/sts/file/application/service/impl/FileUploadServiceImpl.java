@@ -1,6 +1,7 @@
 package com.yaocode.sts.file.application.service.impl;
 
 import com.yaocode.sts.common.basic.model.PageResult;
+import com.yaocode.sts.common.crypto.utils.HexUtils;
 import com.yaocode.sts.common.tools.id.IdFactory;
 import com.yaocode.sts.common.tools.id.IdGeneratorType;
 import com.yaocode.sts.common.tools.messages.MessageUtils;
@@ -50,12 +51,15 @@ import com.yaocode.sts.file.infrastructure.manager.StoragePluginManager;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 文件上传服务实现（完整优化版）
@@ -156,6 +160,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public MultipartInitResult initMultipartUpload(InitMultipartCommand command) {
         long startTime = System.currentTimeMillis();
         Long chunkSize = command.getChunkSize() != null ? command.getChunkSize() : FileConstants.ONE_MB * 10;
@@ -209,6 +214,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UploadPartResult uploadPart(UploadPartCommand command) {
         long startTime = System.currentTimeMillis();
         // 1. 校验会话
@@ -220,6 +226,23 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (UploadStatusEnums.CANCELLED.getCode().equals(sessionEntity.getUploadStatus())) {
             throw new FileUploadException(FileErrorCodeEnums.UPLOAD_CANCEL_FAILED);
         }
+        if (UploadStatusEnums.COMPLETED.getCode().equals(sessionEntity.getUploadStatus())) {
+            throw new FileUploadException(FileErrorCodeEnums.UPLOAD_SESSION_COMPLETED);
+        }
+        // 1.1 校验会话是否过期
+        if (sessionEntity.getExpireTime() != null && sessionEntity.getExpireTime().isBefore(LocalDateTime.now())) {
+            throw new FileUploadException(FileErrorCodeEnums.UPLOAD_SESSION_EXPIRED);
+        }
+        // 1.2 校验分片序号范围
+        Integer chunkNumber = command.getChunkNumber();
+        Integer totalChunks = sessionEntity.getTotalChunks();
+        if (chunkNumber == null || chunkNumber < 1 || chunkNumber > totalChunks) {
+            throw new FileUploadException(FileErrorCodeEnums.CHUNK_NUMBER_OUT_OF_RANGE);
+        }
+        // 1.3 校验 fileId 归属
+        if (!command.getFileId().equals(sessionEntity.getFileId())) {
+            throw new FileUploadException(FileErrorCodeEnums.FILE_ID_NOT_IN_UPLOAD);
+        }
         // 2. 获取存储插件
         StorageTypeEnums storageEnum = StorageTypeEnums.fromCode(sessionEntity.getStorageType());
         StoragePlugin plugin = storagePluginManager.getPlugin(storageEnum);
@@ -227,20 +250,32 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new FileUploadException(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED);
         }
         // 3. 获取或创建分片记录
-        Integer chunkNumber = command.getChunkNumber();
         FileChunkEntity chunkEntity = fileChunkDao.selectByUploadIdAndChunkNumber(
                 command.getUploadId(), chunkNumber);
+        // 3.1 检测分片编号与内容是否匹配（防止客户端错把分片内容传错编号）
+        if (chunkEntity != null && chunkEntity.getChunkMd5() != null
+                && command.getChunkMd5() != null
+                && !chunkEntity.getChunkMd5().equals(command.getChunkMd5())) {
+            log.warn("分片编号与内容不匹配: uploadId={}, chunkNumber={}, 存储的md5={}, 客户端md5={}",
+                    command.getUploadId(), chunkNumber, chunkEntity.getChunkMd5(), command.getChunkMd5());
+            throw new FileUploadException(FileErrorCodeEnums.UPLOAD_CHUNK_MD5_MISMATCH);
+        }
+        // 3.2 如果分片已完成且MD5一致，直接返回（幂等）
+        if (chunkEntity != null && ChunkStatusEnums.COMPLETED.getCode().equals(chunkEntity.getChunkStatus())
+                && chunkEntity.getChunkMd5() != null
+                && chunkEntity.getChunkMd5().equals(command.getChunkMd5())) {
+            int completedChunks = sessionEntity.getCompletedChunks() != null
+                    ? sessionEntity.getCompletedChunks() : 0;
+            return fileUploadApplicationConverter.toUploadPartResult(
+                    command.getUploadId(), command.getFileId(), chunkNumber, totalChunks, completedChunks);
+        }
+        long chunkSize = fileUploadApplicationConverter.resolveChunkSize(command, sessionEntity);
+        // 3.1 校验分片大小（最后一片允许小于等于 chunkSize）
+        if (chunkSize > sessionEntity.getChunkSize() + 1) {
+            throw new FileUploadException(FileErrorCodeEnums.FILE_SIZE_INVALID);
+        }
         if (chunkEntity == null) {
-            chunkEntity = new FileChunkEntity();
-            chunkEntity.setUploadId(command.getUploadId());
-            chunkEntity.setFileId(command.getFileId());
-            chunkEntity.setChunkNumber(chunkNumber);
-            chunkEntity.setChunkSize(command.getFile() != null ? command.getFile().getFileSize() : sessionEntity.getChunkSize());
-            chunkEntity.setChunkMd5(command.getChunkMd5());
-            chunkEntity.setStorageType(sessionEntity.getStorageType());
-            chunkEntity.setChunkStatus(ChunkStatusEnums.UPLOADING.getCode());
-            chunkEntity.setUploadStartTime(LocalDateTime.now());
-            chunkEntity.setTenantId(command.getTenantId());
+            chunkEntity = fileUploadApplicationConverter.toNewFileChunkEntity(command, sessionEntity, chunkNumber, chunkSize);
             fileChunkDao.save(chunkEntity);
         } else {
             // 重试场景：更新状态
@@ -250,19 +285,29 @@ public class FileUploadServiceImpl implements FileUploadService {
             chunkEntity.setUploadStartTime(LocalDateTime.now());
             fileChunkDao.updateById(chunkEntity);
         }
-        // 4. 上传分片到存储
+        // 4. 上传分片到存储（同时计算 MD5）
         String chunkPath = null;
+        String actualMd5 = null;
+        FileObjectDto file = command.getFile();
         try {
-            FileObjectDto file = command.getFile();
             if (file == null || file.getInputStream() == null) {
                 throw new FileUploadException(FileErrorCodeEnums.UPLOAD_CHUNK_MISSING);
             }
-            try (InputStream is = file.getInputStream()) {
-                chunkPath = plugin.uploadChunk(is, command.getUploadId(), chunkNumber, chunkEntity.getChunkSize());
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            try (DigestInputStream dis = new DigestInputStream(file.getInputStream(), md)) {
+                chunkPath = plugin.uploadChunk(dis, command.getUploadId(), chunkNumber, chunkSize);
             } catch (IOException e) {
                 throw new FileUploadException(FileErrorCodeEnums.UPLOAD_FAILED, e);
             }
+            actualMd5 = HexUtils.bytesToHex(md.digest());
+            // 4.1 MD5 校验：客户端传了 chunkMd5 则必须与实际一致
+            if (command.getChunkMd5() != null && !command.getChunkMd5().equalsIgnoreCase(actualMd5)) {
+                log.warn("分片MD5校验失败: uploadId={}, chunkNumber={}, 客户端md5={}, 实际md5={}",
+                        command.getUploadId(), chunkNumber, command.getChunkMd5(), actualMd5);
+                throw new FileUploadException(FileErrorCodeEnums.UPLOAD_CHUNK_MD5_MISMATCH);
+            }
             // 5. 更新分片状态为已完成
+            chunkEntity.setChunkMd5(actualMd5);
             fileChunkDao.updateStatus(command.getUploadId(), chunkNumber,
                     ChunkStatusEnums.COMPLETED.getCode(), chunkPath);
             // 6. 更新会话已完成分片数
@@ -272,9 +317,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             uploadSessionDao.updateById(sessionEntity);
         } catch (FileUploadException e) {
             // 标记分片失败
-            fileChunkDao.updateStatus(command.getUploadId(), chunkNumber,
-                    ChunkStatusEnums.FAILED.getCode(), null);
-            // 业务层主动抛出的异常（如 UPLOAD_CHUNK_MISSING）保持原样
+            if (!Objects.equals(chunkEntity.getChunkStatus(), ChunkStatusEnums.FAILED.getCode())) {
+                fileChunkDao.updateStatus(command.getUploadId(), chunkNumber,
+                        ChunkStatusEnums.FAILED.getCode(), null);
+            }
             throw e;
         } catch (Exception e) {
             // 标记分片失败
@@ -283,21 +329,12 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new FileUploadException(FileErrorCodeEnums.UPLOAD_FAILED, e);
         }
         // 7. 构建返回
-        Integer totalChunks = sessionEntity.getTotalChunks();
         int completedChunks = sessionEntity.getCompletedChunks() != null
                 ? sessionEntity.getCompletedChunks() : 0;
-        int progress = totalChunks > 0 ? (int) Math.round((completedChunks * 100.0) / totalChunks) : 0;
         log.info("分片上传成功: uploadId={}, chunkNumber={}, completedChunks={}, 耗时={}ms",
                 command.getUploadId(), chunkNumber, completedChunks, System.currentTimeMillis() - startTime);
-        return UploadPartResult.builder()
-                .uploadId(command.getUploadId())
-                .fileId(command.getFileId())
-                .chunkNumber(chunkNumber)
-                .totalChunks(totalChunks)
-                .success(true)
-                .uploadedChunks(completedChunks)
-                .progress(progress)
-                .build();
+        return fileUploadApplicationConverter.toUploadPartResult(
+                command.getUploadId(), command.getFileId(), chunkNumber, totalChunks, completedChunks);
     }
 
     @Override
@@ -388,6 +425,10 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (sessionEntity == null) {
             throw new FileUploadException(FileErrorCodeEnums.UPLOAD_SESSION_NOT_FOUND);
         }
+        // 1.1 校验会话是否过期
+        if (sessionEntity.getExpireTime() != null && sessionEntity.getExpireTime().isBefore(LocalDateTime.now())) {
+            throw new FileUploadException(FileErrorCodeEnums.UPLOAD_SESSION_EXPIRED);
+        }
         // 2. 统计已上传大小
         List<FileChunkEntity> completedChunks = fileChunkDao.selectCompletedByUploadIdAndTenantId(query.getUploadId(), query.getTenantId());
         long uploadedSize = completedChunks.stream()
@@ -397,9 +438,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         String status = UploadStatusEnums.fromCode(sessionEntity.getUploadStatus()).getDesc();
         String message = null;
         if (UploadStatusEnums.COMPLETED.getCode().equals(sessionEntity.getUploadStatus())) {
-            message = "上传完成";
+            message = messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_SUCCESS);
         } else if (UploadStatusEnums.UPLOADING.getCode().equals(sessionEntity.getUploadStatus())) {
-            message = "上传中";
+            message = messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_IN_PROGRESS);
         }
         return fileUploadApplicationConverter.toUploadProgressResult(
                 sessionEntity, uploadedSize, status, message

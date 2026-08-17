@@ -8,15 +8,19 @@ import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.InitMultipartCommand;
 import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
+import com.yaocode.sts.file.application.model.command.UploadPartCommand;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
 import com.yaocode.sts.file.application.model.result.MultipartInitResult;
 import com.yaocode.sts.file.application.model.result.MultipartSessionResult;
+import com.yaocode.sts.file.application.model.result.UploadPartResult;
 import com.yaocode.sts.file.application.model.result.UploadProgressResult;
 import com.yaocode.sts.file.application.model.result.UploadResult;
+import com.yaocode.sts.file.infrastructure.entity.FileChunkEntity;
 import com.yaocode.sts.file.infrastructure.entity.UploadSessionEntity;
 import com.yaocode.sts.file.core.constants.FileConstants;
+import com.yaocode.sts.file.core.enums.ChunkStatusEnums;
 import com.yaocode.sts.file.core.enums.FileExtensionEnums;
 import com.yaocode.sts.file.core.enums.FileStatusEnums;
 import com.yaocode.sts.file.core.enums.FileTypeEnums;
@@ -234,6 +238,73 @@ public interface FileUploadApplicationConverter {
     }
 
     // ==================== Multipart 转换 ====================
+
+    /**
+     * 构建新的分片实体
+     */
+    default FileChunkEntity toNewFileChunkEntity(
+            UploadPartCommand command,
+            UploadSessionEntity sessionEntity,
+            Integer chunkNumber,
+            long chunkSize
+    ) {
+        FileChunkEntity entity = new FileChunkEntity();
+        entity.setUploadId(command.getUploadId());
+        entity.setFileId(command.getFileId());
+        entity.setChunkNumber(chunkNumber);
+        entity.setChunkSize(chunkSize);
+        entity.setChunkMd5(command.getChunkMd5());
+        entity.setStorageType(sessionEntity.getStorageType());
+        entity.setChunkStatus(ChunkStatusEnums.UPLOADING.getCode());
+        entity.setUploadStartTime(LocalDateTime.now());
+        entity.setTenantId(command.getTenantId());
+        return entity;
+    }
+
+    /**
+     * 构建分片上传结果（统一入口，处理进度计算）
+     */
+    default UploadPartResult toUploadPartResult(
+            String uploadId,
+            String fileId,
+            Integer chunkNumber,
+            Integer totalChunks,
+            int completedChunks
+    ) {
+        int progress = calculateProgress(totalChunks, completedChunks);
+        return UploadPartResult.builder()
+                .uploadId(uploadId)
+                .fileId(fileId)
+                .chunkNumber(chunkNumber)
+                .totalChunks(totalChunks)
+                .success(true)
+                .uploadedChunks(completedChunks)
+                .progress(progress)
+                .build();
+    }
+
+    /**
+     * 计算上传进度百分比（上限100）
+     */
+    @Named("calculateProgress")
+    default int calculateProgress(Integer totalChunks, int completedChunks) {
+        if (totalChunks == null || totalChunks <= 0) {
+            return 0;
+        }
+        return Math.min(100, (int) Math.round(completedChunks * 100.0 / totalChunks));
+    }
+
+    /**
+     * 解析分片大小：优先使用客户端提供的文件大小，否则使用会话配置的默认分片大小
+     */
+    @Named("resolveChunkSize")
+    default long resolveChunkSize(UploadPartCommand command, UploadSessionEntity sessionEntity) {
+        FileObjectDto file = command.getFile();
+        if (file != null && file.getFileSize() != null) {
+            return file.getFileSize();
+        }
+        return sessionEntity.getChunkSize();
+    }
 
     /**
      * 根据命令和计算参数构建上传会话实体

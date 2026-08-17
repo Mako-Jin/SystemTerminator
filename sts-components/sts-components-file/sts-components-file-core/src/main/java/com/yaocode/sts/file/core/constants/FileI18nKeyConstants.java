@@ -58,6 +58,9 @@ public interface FileI18nKeyConstants extends BasicI18nKeyConstants {
     String CHUNK_NUMBER_INVALID = "chunk.number.invalid";
     String TOTAL_CHUNKS_INVALID = "total.chunks.invalid";
     String CHUNK_FILE_EMPTY = "chunk.file.empty";
+    String CHUNK_NUMBER_OUT_OF_RANGE = "chunk.number.out.of.range";
+    String FILE_ID_NOT_IN_UPLOAD = "file.id.not.in.upload";
+    String UPLOAD_IN_PROGRESS = "upload.in.progress";
     String TASK_ID_EMPTY = "task.id.empty";
 
     // ==================== 下载 (300-399) ====================

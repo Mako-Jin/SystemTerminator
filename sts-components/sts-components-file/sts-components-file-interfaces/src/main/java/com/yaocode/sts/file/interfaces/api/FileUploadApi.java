@@ -14,6 +14,7 @@ import com.yaocode.sts.file.interfaces.model.response.UploadPartResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadProgressResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -150,12 +151,17 @@ public interface FileUploadApi {
      */
     @PostMapping(value = "/multipart/part", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResultModel<UploadPartResponse> uploadPart(
-            @RequestParam @NotBlank(message = "上传ID不能为空") String uploadId,
-            @RequestParam @NotBlank(message = "文件ID不能为空") String fileId,
-            @RequestParam @Positive(message = "分片序号必须大于0") Integer chunkNumber,
-            @RequestParam @Positive(message = "总分片数必须大于0") Integer totalChunks,
-            @RequestPart("file") @NotNull(message = "分片文件不能为空") MultipartFile file,
-            @RequestParam(required = false) String chunkMd5
+            @RequestParam @NotBlank(message = FileI18nKeyConstants.UPLOAD_ID_EMPTY) String uploadId,
+            @RequestParam @NotBlank(message = FileI18nKeyConstants.FILE_ID_EMPTY) String fileId,
+            @RequestParam @Positive(message = FileI18nKeyConstants.CHUNK_NUMBER_INVALID)
+            Integer chunkNumber,
+            @RequestParam @Positive(message = FileI18nKeyConstants.TOTAL_CHUNKS_INVALID)
+            @Max(value = 10000, message = FileI18nKeyConstants.TOTAL_CHUNKS_INVALID)
+            Integer totalChunks,
+            @RequestPart("file") @NotNull(message = FileI18nKeyConstants.CHUNK_FILE_EMPTY) MultipartFile file,
+            @RequestParam(required = false)
+            @Pattern(regexp = "^[a-fA-F0-9]{32}$", message = FileI18nKeyConstants.FILE_HASH_MISMATCH)
+            String chunkMd5
     );
 
     /**

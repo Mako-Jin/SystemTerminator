@@ -108,11 +108,17 @@ class FileUploadServiceImplTest {
     private static final String TAGS = "important,archive";
     private static final String DESCRIPTION = "测试文件";
 
+    /**
+     * 空内容的 MD5 值（用于空 InputStream 的 DigestInputStream 计算结果）
+     */
+    private static final String EMPTY_MD5 = "d41d8cd98f00b204e9800998ecf8427e";
+
     private FileObjectDto buildFileDto(String fileName, Long fileSize, String md5) {
         return FileObjectDto.builder()
                 .fileName(fileName)
                 .fileSize(fileSize)
-                .inputStream(new ByteArrayInputStream(new byte[0]))
+                // 使用已知内容的字节数组，便于 DigestInputStream 计算出预期的 MD5
+                .inputStream(new ByteArrayInputStream("test-data".getBytes()))
                 .md5(md5)
                 .contentType("application/octet-stream")
                 .build();
@@ -1052,16 +1058,25 @@ class FileUploadServiceImplTest {
 
     // ==================== 9. uploadPart —— 分片上传 ====================
 
-    private UploadPartCommand buildUploadPartCommand(Integer chunkNumber, FileObjectDto file) {
+    /**
+     * 构建分片上传命令
+     * @param chunkNumber 分片编号
+     * @param file 文件对象
+     * @param chunkMd5 分片MD5（如果为null则使用空内容的MD5）
+     */
+    private UploadPartCommand buildUploadPartCommand(Integer chunkNumber, FileObjectDto file, String chunkMd5) {
         return UploadPartCommand.builder()
                 .uploadId(UPLOAD_ID)
                 .fileId(FILE_ID_MULTIPART)
                 .chunkNumber(chunkNumber)
                 .file(file)
-                .chunkMd5("chunk-md5-" + chunkNumber)
+                .chunkMd5(chunkMd5 != null ? chunkMd5 : EMPTY_MD5)
                 .tenantId(TENANT_ID)
                 .userId(USER_ID)
                 .build();
+    }
+    private UploadPartCommand buildUploadPartCommand(Integer chunkNumber, FileObjectDto file) {
+        return buildUploadPartCommand(chunkNumber, file, null);
     }
 
     private FileChunkEntity buildChunkEntity(Integer chunkNumber, Integer status) {
@@ -1070,7 +1085,8 @@ class FileUploadServiceImplTest {
         entity.setFileId(FILE_ID_MULTIPART);
         entity.setChunkNumber(chunkNumber);
         entity.setChunkSize(CHUNK_SIZE);
-        entity.setChunkMd5("chunk-md5-" + chunkNumber);
+        // 使用空内容的 MD5 值，与 DigestInputStream 计算结果一致
+        entity.setChunkMd5(EMPTY_MD5);
         entity.setStorageType(StorageTypeEnums.LOCAL.getCode());
         entity.setChunkStatus(status);
         return entity;
@@ -1175,7 +1191,7 @@ class FileUploadServiceImplTest {
             when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(null);
             when(fileChunkDao.countCompletedByUploadId(UPLOAD_ID)).thenReturn(1);
 
-            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, "chunk-md5-1");
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, EMPTY_MD5);
             UploadPartCommand command = buildUploadPartCommand(1, file);
 
             UploadPartResult result = service.uploadPart(command);
@@ -1227,7 +1243,7 @@ class FileUploadServiceImplTest {
             when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
             when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(null);
 
-            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, "chunk-md5-1");
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, EMPTY_MD5);
             UploadPartCommand command = buildUploadPartCommand(1, file);
 
             assertThatThrownBy(() -> service.uploadPart(command))
@@ -1235,6 +1251,171 @@ class FileUploadServiceImplTest {
                     .satisfies(ex -> {
                         FileUploadException fie = (FileUploadException) ex;
                         assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_FAILED.getCode());
+                    });
+            verify(fileChunkDao).updateStatus(eq(UPLOAD_ID), eq(1),
+                    eq(ChunkStatusEnums.FAILED.getCode()), isNull());
+        }
+
+        // ==================== 新增校验场景 ====================
+        @Test
+        @DisplayName("会话已完成 —— 抛出 UPLOAD_SESSION_COMPLETED")
+        void should_throwCompleted_when_sessionAlreadyCompleted() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.COMPLETED.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_SESSION_COMPLETED.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("会话已过期 —— 抛出 UPLOAD_SESSION_EXPIRED")
+        void should_throwExpired_when_sessionExpired() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setExpireTime(LocalDateTime.now().minusHours(1));
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            UploadPartCommand command = buildUploadPartCommand(1, null);
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_SESSION_EXPIRED.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("chunkNumber 越界 —— 抛出 CHUNK_NUMBER_OUT_OF_RANGE")
+        void should_throwChunkOutOfRange_when_chunkNumberExceedsTotal() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            // chunkNumber 超出 totalChunks (5)
+            UploadPartCommand command = buildUploadPartCommand(TOTAL_CHUNKS + 1, null);
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.CHUNK_NUMBER_OUT_OF_RANGE.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("chunkNumber 为0或负数 —— 抛出 CHUNK_NUMBER_OUT_OF_RANGE")
+        void should_throwChunkOutOfRange_when_chunkNumberInvalid() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            UploadPartCommand command = buildUploadPartCommand(0, null);
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.CHUNK_NUMBER_OUT_OF_RANGE.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("fileId 不匹配 —— 抛出 FILE_ID_NOT_IN_UPLOAD")
+        void should_throwFileIdNotMatch_when_fileIdMismatch() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            // 使用不同的 fileId
+            UploadPartCommand command = UploadPartCommand.builder()
+                    .uploadId(UPLOAD_ID)
+                    .fileId("FILE-DIFFERENT-001")  // 不同的 fileId
+                    .chunkNumber(1)
+                    .file(null)
+                    .chunkMd5(EMPTY_MD5)
+                    .tenantId(TENANT_ID)
+                    .userId(USER_ID)
+                    .build();
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.FILE_ID_NOT_IN_UPLOAD.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("分片大小超限 —— 抛出 FILE_SIZE_INVALID")
+        void should_throwSizeInvalid_when_chunkSizeExceeds() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            // 分片大小超过 session 的 chunkSize + 1
+            FileObjectDto file = FileObjectDto.builder()
+                    .fileName("chunk-over-size.bin")
+                    .fileSize(CHUNK_SIZE + 100)  // 超过限制
+                    .inputStream(new ByteArrayInputStream(new byte[0]))
+                    .md5(EMPTY_MD5)
+                    .contentType("application/octet-stream")
+                    .build();
+            UploadPartCommand command = buildUploadPartCommand(1, file);
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.FILE_SIZE_INVALID.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("分片编号与内容不匹配 —— 抛出 CHUNK_MD5_INVALID")
+        void should_throwChunkMd5Invalid_when_mismatch() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            // 数据库中已有分片记录，且 MD5 与客户端不同
+            FileChunkEntity existing = buildChunkEntity(1, ChunkStatusEnums.UPLOADING.getCode());
+            existing.setChunkMd5("different-md5-value");  // 存储的 MD5
+            when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(existing);
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, null);
+            // 客户端传的 MD5 与数据库不同
+            UploadPartCommand command = buildUploadPartCommand(1, file, "client-md5-value");
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_CHUNK_MD5_MISMATCH.getCode());
+                    });
+        }
+        @Test
+        @DisplayName("幂等返回 —— 已完成分片且 MD5 一致，直接返回成功")
+        void should_returnIdempotent_when_chunkAlreadyCompleted() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setCompletedChunks(3);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            // 数据库中分片已完成，且 MD5 与客户端一致
+            FileChunkEntity existing = buildChunkEntity(1, ChunkStatusEnums.COMPLETED.getCode());
+            when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(existing);
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, EMPTY_MD5);
+            UploadPartCommand command = buildUploadPartCommand(1, file);
+            UploadPartResult result = service.uploadPart(command);
+            assertThat(result).isNotNull();
+            assertThat(result.getSuccess()).isTrue();
+            assertThat(result.getUploadedChunks()).isEqualTo(3);
+            verify(fileChunkDao, never()).save(any());
+            verify(plugin, never()).uploadChunk(any(), anyString(), anyInt(), anyLong());
+        }
+        @Test
+        @DisplayName("MD5 校验失败 —— 抛出 UPLOAD_CHUNK_MD5_MISMATCH")
+        void should_throwMd5Mismatch_when_md5NotMatch() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.uploadChunk(any(InputStream.class), anyString(), anyInt(), anyLong()))
+                    .thenReturn("/path/chunk-1");
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            when(fileChunkDao.selectByUploadIdAndChunkNumber(UPLOAD_ID, 1)).thenReturn(null);
+            FileObjectDto file = buildFileDto("chunk-1.bin", CHUNK_SIZE, null);
+            // 客户端传的 MD5 与实际计算的不一致
+            UploadPartCommand command = buildUploadPartCommand(1, file, "wrong-md5-value");
+            assertThatThrownBy(() -> service.uploadPart(command))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_CHUNK_MD5_MISMATCH.getCode());
                     });
             verify(fileChunkDao).updateStatus(eq(UPLOAD_ID), eq(1),
                     eq(ChunkStatusEnums.FAILED.getCode()), isNull());
@@ -1466,7 +1647,7 @@ class FileUploadServiceImplTest {
                     .status("上传中")
                     .message("上传中")
                     .build();
-            doReturn(expected).when(converter).toUploadProgressResult(any(), anyLong(), anyString(), anyString());
+            doReturn(expected).when(converter).toUploadProgressResult(any(), anyLong(), anyString(), any());
 
             UploadProgressResult result = service.getMultipartProgress(buildQuery(UPLOAD_ID));
 
@@ -1487,7 +1668,7 @@ class FileUploadServiceImplTest {
             when(fileChunkDao.selectCompletedByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
                     .thenReturn(new ArrayList<>());
             doReturn(UploadProgressResult.builder().status("已完成").message("上传完成").build())
-                    .when(converter).toUploadProgressResult(any(), anyLong(), anyString(), anyString());
+                    .when(converter).toUploadProgressResult(any(), anyLong(), anyString(), any());
 
             UploadProgressResult result = service.getMultipartProgress(buildQuery(UPLOAD_ID));
 
