@@ -12,6 +12,7 @@ import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
 import com.yaocode.sts.file.interfaces.model.response.MultipartSessionResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadPartResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadProgressResponse;
+import com.yaocode.sts.file.interfaces.model.response.CancelMultipartResponse;
 import com.yaocode.sts.file.interfaces.model.response.UploadResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -177,12 +178,16 @@ public interface FileUploadApi {
 
     /**
      * 取消分片上传
+     * <p>
+     * 该接口用于取消正在进行的分片上传会话，清理已上传的分片数据。
+     * 此操作是幂等的，多次取消同一个 uploadId 不会产生副作用。
+     * </p>
      *
-     * @param request 取消请求
-     * @return 操作结果
+     * @param request 取消请求（uploadId 必填，fileId 可选）
+     * @return 取消操作结果（包含清理的分片数量、取消时间等信息）
      */
     @DeleteMapping("/multipart/cancel")
-    ResultModel<String> cancelMultipartUpload(
+    ResultModel<CancelMultipartResponse> cancelMultipartUpload(
             @RequestBody @Valid CancelMultipartRequest request
     );
 

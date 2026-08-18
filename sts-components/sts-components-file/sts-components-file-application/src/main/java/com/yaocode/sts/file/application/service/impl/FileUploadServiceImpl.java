@@ -18,6 +18,7 @@ import com.yaocode.sts.file.application.model.dto.FileUploadDto;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.query.MultipartSessionQuery;
 import com.yaocode.sts.file.application.model.query.UploadProgressQuery;
+import com.yaocode.sts.file.application.model.result.CancelMultipartResult;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.MultipartInitResult;
 import com.yaocode.sts.file.application.model.result.MultipartSessionResult;
@@ -338,49 +339,82 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UploadResult completeMultipartUpload(CompleteMultipartCommand command) {
         long startTime = System.currentTimeMillis();
+        String uploadId = command.getUploadId();
+        String tenantId = command.getTenantId();
+
         // 1. 查询会话
-        UploadSessionEntity sessionEntity = uploadSessionDao.selectByUploadIdAndTenant(
-                command.getUploadId(), command.getTenantId());
+        UploadSessionEntity sessionEntity = uploadSessionDao.selectByUploadIdAndTenant(uploadId, tenantId);
         if (sessionEntity == null) {
             throw new FileUploadException(FileErrorCodeEnums.UPLOAD_SESSION_NOT_FOUND);
         }
-        // 2. 检查所有分片是否完成
-        List<FileChunkEntity> allChunks = fileChunkDao.selectByUploadIdAndTenantId(command.getUploadId(), command.getTenantId());
+
+        // 2. 幂等检查：会话已完成，直接返回已持久化的文件信息，避免重复请求
+        if (UploadStatusEnums.COMPLETED.getCode().equals(sessionEntity.getUploadStatus())) {
+            log.info("分片上传已完成（幂等返回）: uploadId={}, fileId={}", uploadId, sessionEntity.getFileId());
+            FileBasicInfoEntity existed = fileBaseInfoDao.selectByFileIdAndTenant(
+                    sessionEntity.getFileId(), tenantId);
+            if (existed != null) {
+                long processingTime = System.currentTimeMillis() - startTime;
+                String message = messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_SUCCESS);
+                return fileUploadApplicationConverter.toUploadResultFromMultipart(
+                        existed, command, message, processingTime
+                );
+            }
+            // 文件记录不存在（异常情况），继续走合并流程
+            log.warn("会话已完成但文件记录不存在，重新执行合并: uploadId={}", uploadId);
+        }
+
+        // 3. 状态检查：已取消或已失败的会话不能再完成
+        if (UploadStatusEnums.CANCELLED.getCode().equals(sessionEntity.getUploadStatus())) {
+            throw new FileUploadException(FileErrorCodeEnums.UPLOAD_CANCEL_FAILED);
+        }
+        if (UploadStatusEnums.FAILED.getCode().equals(sessionEntity.getUploadStatus())) {
+            throw new FileUploadException(FileErrorCodeEnums.UPLOAD_FAILED);
+        }
+
+        // 4. 检查所有分片是否完成（包含已软删除的分片记录）
+        List<FileChunkEntity> allChunks = fileChunkDao.selectByUploadIdAndTenantId(uploadId, tenantId);
         int completedCount = (int) allChunks.stream()
                 .filter(c -> ChunkStatusEnums.COMPLETED.getCode().equals(c.getChunkStatus()))
                 .count();
         if (completedCount < sessionEntity.getTotalChunks()) {
             throw new FileUploadException(FileErrorCodeEnums.UPLOAD_CHUNK_MISSING);
         }
-        // 3. 获取存储插件并合并分片
+
+        // 5. 获取存储插件并合并分片
         StorageTypeEnums storageTypeEnums = StorageTypeEnums.fromCode(sessionEntity.getStorageType());
         StoragePlugin plugin = storagePluginManager.getPlugin(storageTypeEnums);
         if (plugin == null) {
             throw new FileUploadException(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED);
         }
-        String mergedPath = plugin.mergeChunks(command.getUploadId(), sessionEntity.getFileId());
+        String mergedPath = plugin.mergeChunks(uploadId, sessionEntity.getFileId());
         String fileUrl = plugin.getFileUrl(mergedPath);
-        // 4. 获取合并后文件的MD5
-        String fileMd5 = null;
-        if (!allChunks.isEmpty()) {
-            fileMd5 = allChunks.get(0).getChunkMd5();
-        }
-        // 5. 持久化文件信息
+        String fileMd5 = sessionEntity.getFileMd5();
+        // 7. 持久化文件信息
         FileBasicInfoEntity fileInfoEntity = fileUploadApplicationConverter.toFileInfoEntityFromMultipart(
                 command, sessionEntity, sessionEntity.getFileId(), mergedPath, fileUrl, fileMd5
         );
         fileBaseInfoDao.save(fileInfoEntity);
-        // 6. 更新会话状态为已完成
-        uploadSessionDao.updateStatus(command.getUploadId(),
+
+        // 8. 更新会话状态为已完成
+        uploadSessionDao.updateStatus(uploadId,
                 UploadStatusEnums.COMPLETED.getCode(), sessionEntity.getTotalChunks());
-        // 7. 清理分片记录和临时文件
-        fileChunkDao.deleteByUploadIdAndTenantId(command.getUploadId(), command.getTenantId());
-        plugin.cleanupChunks(command.getUploadId());
+
+        // 9. 清理分片记录和临时文件（物理清理存储，逻辑清理分片记录）
+        fileChunkDao.deleteByUploadIdAndTenantId(uploadId, tenantId);
+        try {
+            plugin.cleanupChunks(uploadId);
+        } catch (Exception e) {
+            // 清理失败不影响主流程，避免客户端无法获取已合并的文件
+            log.warn("清理分片临时文件失败: uploadId={}, error={}", uploadId, e.getMessage());
+        }
+
         long processingTime = System.currentTimeMillis() - startTime;
         log.info("分片上传完成: uploadId={}, fileId={}, 耗时={}ms",
-                command.getUploadId(), sessionEntity.getFileId(), processingTime);
+                uploadId, sessionEntity.getFileId(), processingTime);
         String message = messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_REUSE_SUCCESS);
         return fileUploadApplicationConverter.toUploadResultFromMultipart(
                 command, sessionEntity.getFileId(), fileUrl, sessionEntity.getFileSize(), fileMd5, message, processingTime
@@ -388,33 +422,60 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public void cancelMultipartUpload(CancelMultipartCommand command) {
+    @Transactional(rollbackFor = Exception.class)
+    public CancelMultipartResult cancelMultipartUpload(CancelMultipartCommand command) {
         // 1. 查询会话
         UploadSessionEntity sessionEntity = uploadSessionDao.selectByUploadIdAndTenant(
                 command.getUploadId(), command.getTenantId());
         if (sessionEntity == null) {
             throw new FileUploadException(FileErrorCodeEnums.UPLOAD_SESSION_NOT_FOUND);
         }
-        // 2. 更新会话状态为已取消
-        uploadSessionDao.updateStatus(command.getUploadId(),
-                UploadStatusEnums.CANCELLED.getCode(),
-                sessionEntity.getCompletedChunks() != null ? sessionEntity.getCompletedChunks() : 0);
-        // 3. 更新所有分片状态为已取消
-        List<FileChunkEntity> allChunks = fileChunkDao.selectByUploadIdAndTenantId(command.getUploadId(), command.getTenantId());
-        for (FileChunkEntity chunk : allChunks) {
-            if (!ChunkStatusEnums.COMPLETED.getCode().equals(chunk.getChunkStatus())) {
-                chunk.setChunkStatus(ChunkStatusEnums.CANCELLED.getCode());
-                chunk.setErrorMessage(command.getReason());
-                fileChunkDao.updateById(chunk);
-            }
+
+        // 2. 幂等处理：已取消则直接返回成功
+        if (UploadStatusEnums.CANCELLED.getCode().equals(sessionEntity.getUploadStatus())) {
+            log.info("分片上传已取消（幂等返回）: uploadId={}", command.getUploadId());
+            int totalUploadedChunks = sessionEntity.getCompletedChunks() != null
+                    ? sessionEntity.getCompletedChunks() : 0;
+            return fileUploadApplicationConverter.toCancelMultipartResult(
+                    command.getUploadId(), sessionEntity.getFileId(),
+                    0, totalUploadedChunks,
+                    command.getReason(), "会话已取消");
         }
-        // 4. 清理存储中的临时分片
+
+        // 3. 更新会话状态为已取消
+        int completedChunks = sessionEntity.getCompletedChunks() != null
+                ? sessionEntity.getCompletedChunks() : 0;
+        uploadSessionDao.updateStatus(command.getUploadId(),
+                UploadStatusEnums.CANCELLED.getCode(), completedChunks);
+
+        // 4. 批量更新所有未完成的分片状态为已取消
+        int cancelledChunks = fileChunkDao.batchUpdateStatusByUploadId(
+                command.getUploadId(), command.getTenantId(),
+                ChunkStatusEnums.CANCELLED.getCode(),
+                ChunkStatusEnums.COMPLETED.getCode(),
+                command.getReason()
+        );
+
+        // 5. 清理存储中的临时分片（异常容错）
         StorageTypeEnums storageTypeEnums = StorageTypeEnums.fromCode(sessionEntity.getStorageType());
         StoragePlugin plugin = storagePluginManager.getPlugin(storageTypeEnums);
         if (plugin != null) {
-            plugin.cleanupChunks(command.getUploadId());
+            try {
+                plugin.cleanupChunks(command.getUploadId());
+            } catch (Exception e) {
+                log.warn("清理分片临时文件失败: uploadId={}, error={}", command.getUploadId(), e.getMessage());
+            }
         }
-        log.info("取消分片上传: uploadId={}, reason={}", command.getUploadId(), command.getReason());
+
+        log.info("取消分片上传: uploadId={}, fileId={}, cancelledChunks={}, reason={}",
+                command.getUploadId(), sessionEntity.getFileId(), cancelledChunks, command.getReason());
+
+        String message = messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_CANCEL_FAILED);
+        return fileUploadApplicationConverter.toCancelMultipartResult(
+                command.getUploadId(), sessionEntity.getFileId(),
+                cancelledChunks, completedChunks,
+                command.getReason(), message
+        );
     }
 
     @Override
@@ -474,6 +535,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UploadResult fastUpload(FastUploadCommand command) {
         long startTime = System.currentTimeMillis();
 

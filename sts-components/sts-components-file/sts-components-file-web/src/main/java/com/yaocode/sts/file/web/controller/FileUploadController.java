@@ -16,6 +16,7 @@ import com.yaocode.sts.file.application.model.command.UploadPartCommand;
 import com.yaocode.sts.file.application.model.query.FileExistenceQuery;
 import com.yaocode.sts.file.application.model.query.MultipartSessionQuery;
 import com.yaocode.sts.file.application.model.query.UploadProgressQuery;
+import com.yaocode.sts.file.application.model.result.CancelMultipartResult;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.MultipartInitResult;
 import com.yaocode.sts.file.application.model.result.MultipartSessionResult;
@@ -28,6 +29,7 @@ import com.yaocode.sts.file.interfaces.model.request.CancelMultipartRequest;
 import com.yaocode.sts.file.interfaces.model.request.CompleteMultipartRequest;
 import com.yaocode.sts.file.interfaces.model.request.FastUploadRequest;
 import com.yaocode.sts.file.interfaces.model.request.MultipartInitRequest;
+import com.yaocode.sts.file.interfaces.model.response.CancelMultipartResponse;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.MultipartInitResponse;
 import com.yaocode.sts.file.interfaces.model.response.MultipartSessionResponse;
@@ -163,11 +165,12 @@ public class FileUploadController implements FileUploadApi {
      * 取消分片上传
      */
     @Override
-    public ResultModel<String> cancelMultipartUpload(CancelMultipartRequest request) {
+    public ResultModel<CancelMultipartResponse> cancelMultipartUpload(CancelMultipartRequest request) {
         log.info("取消分片上传: uploadId={}", request.getUploadId());
         CancelMultipartCommand cancelMultipartCommand = converter.toCancelMultipartCommand(request);
-        fileUploadService.cancelMultipartUpload(cancelMultipartCommand);
-        return ResultUtils.ok();
+        CancelMultipartResult cancelMultipartResult = fileUploadService.cancelMultipartUpload(cancelMultipartCommand);
+        CancelMultipartResponse response = converter.toCancelMultipartResponse(cancelMultipartResult);
+        return ResultUtils.ok(response);
     }
 
     /**

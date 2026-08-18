@@ -37,4 +37,19 @@ public interface FileChunkDao extends IService<FileChunkEntity> {
      */
     List<FileChunkEntity> selectCompletedByUploadIdAndTenantId(String uploadId, String tenantId);
 
+    /**
+     * 批量更新指定上传会话中未完成的分片状态
+     *
+     * @param uploadId      上传ID
+     * @param tenantId      租户ID
+     * @param targetStatus  目标状态
+     * @param excludeStatus 排除的状态（不更新该状态的分片）
+     * @param errorMessage  错误信息（可选）
+     * @return 更新的行数
+     */
+    int batchUpdateStatusByUploadId(
+            String uploadId, String tenantId,
+            Integer targetStatus, Integer excludeStatus,
+            String errorMessage
+    );
 }

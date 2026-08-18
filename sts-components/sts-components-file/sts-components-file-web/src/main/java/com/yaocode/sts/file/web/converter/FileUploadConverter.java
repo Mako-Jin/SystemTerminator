@@ -30,6 +30,7 @@ import com.yaocode.sts.file.application.model.query.UploadProgressQuery;
 import com.yaocode.sts.file.application.model.query.UploadStatisticsQuery;
 import com.yaocode.sts.file.application.model.query.UploadStatusQuery;
 import com.yaocode.sts.file.application.model.result.AsyncTaskResult;
+import com.yaocode.sts.file.application.model.result.CancelMultipartResult;
 import com.yaocode.sts.file.application.model.result.AsyncUploadResult;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
@@ -60,6 +61,7 @@ import com.yaocode.sts.file.interfaces.model.request.ResumeUploadRequest;
 import com.yaocode.sts.file.interfaces.model.request.UploadCallbackRequest;
 import com.yaocode.sts.file.interfaces.model.request.UrlFetchRequest;
 import com.yaocode.sts.file.interfaces.model.response.AsyncTaskStatusResponse;
+import com.yaocode.sts.file.interfaces.model.response.CancelMultipartResponse;
 import com.yaocode.sts.file.interfaces.model.response.AsyncUploadResponse;
 import com.yaocode.sts.file.interfaces.model.response.FileExistenceResponse;
 import com.yaocode.sts.file.interfaces.model.response.FileInfoResponse;
@@ -784,6 +786,25 @@ public class FileUploadConverter {
     /**
      * 分片会话结果列表 → 分片会话响应列表
      */
+    /**
+     * 取消分片上传结果 → 取消分片上传响应
+     */
+    public CancelMultipartResponse toCancelMultipartResponse(CancelMultipartResult result) {
+        if (result == null) {
+            return null;
+        }
+        return CancelMultipartResponse.builder()
+                .uploadId(result.getUploadId())
+                .fileId(result.getFileId())
+                .success(result.getSuccess())
+                .cancelledChunks(result.getCancelledChunks())
+                .totalUploadedChunks(result.getTotalUploadedChunks())
+                .cancelledAt(result.getCancelledAt())
+                .reason(result.getReason())
+                .message(result.getMessage())
+                .build();
+    }
+
     public List<MultipartSessionResponse> toMultipartSessionResponseList(List<MultipartSessionResult> results) {
         if (results == null) {
             return null;

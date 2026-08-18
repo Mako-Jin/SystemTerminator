@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.infrastructure.dao.UploadSessionDao;
@@ -26,6 +27,7 @@ public class UploadSessionDaoImpl extends ServiceImpl<UploadSessionMapper, Uploa
         LambdaQueryWrapper<UploadSessionEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UploadSessionEntity::getUploadId, uploadId);
         queryWrapper.eq(UploadSessionEntity::getTenantId, tenantId);
+        queryWrapper.eq(UploadSessionEntity::getIsDeleted, YesNoEnums.NO.getCode());
         queryWrapper.last("LIMIT 1");
         return this.getOne(queryWrapper);
     }
@@ -34,6 +36,7 @@ public class UploadSessionDaoImpl extends ServiceImpl<UploadSessionMapper, Uploa
     public void updateStatus(String uploadId, Integer uploadStatus, Integer completedChunks) {
         LambdaUpdateWrapper<UploadSessionEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(UploadSessionEntity::getUploadId, uploadId);
+        updateWrapper.eq(UploadSessionEntity::getIsDeleted, YesNoEnums.NO.getCode());
         updateWrapper.set(UploadSessionEntity::getUploadStatus, uploadStatus);
         updateWrapper.set(UploadSessionEntity::getCompletedChunks, completedChunks);
         updateWrapper.set(UploadSessionEntity::getLastActiveTime, LocalDateTime.now());
@@ -45,6 +48,7 @@ public class UploadSessionDaoImpl extends ServiceImpl<UploadSessionMapper, Uploa
         Page<UploadSessionEntity> pageParam = new Page<>(page, size);
         LambdaQueryWrapper<UploadSessionEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UploadSessionEntity::getTenantId, tenantId);
+        queryWrapper.eq(UploadSessionEntity::getIsDeleted, YesNoEnums.NO.getCode());
         if (Objects.nonNull(status)) {
             UploadStatusEnums statusEnum = UploadStatusEnums.fromCode(status);
             if (statusEnum != null) {
@@ -74,6 +78,7 @@ public class UploadSessionDaoImpl extends ServiceImpl<UploadSessionMapper, Uploa
             queryWrapper.eq(UploadSessionEntity::getStorageType, storageType);
         }
         queryWrapper.eq(UploadSessionEntity::getTenantId, tenantId);
+        queryWrapper.eq(UploadSessionEntity::getIsDeleted, YesNoEnums.NO.getCode());
         queryWrapper.eq(UploadSessionEntity::getUploadStatus, UploadStatusEnums.UPLOADING.getCode());
         queryWrapper.last("LIMIT 1");
         return this.getOne(queryWrapper);

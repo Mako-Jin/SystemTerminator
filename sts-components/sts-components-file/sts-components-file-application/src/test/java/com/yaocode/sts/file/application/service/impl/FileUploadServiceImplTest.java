@@ -1519,6 +1519,215 @@ class FileUploadServiceImplTest {
                     eq(UploadStatusEnums.COMPLETED.getCode()), eq(TOTAL_CHUNKS));
             verify(fileChunkDao).deleteByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID);
         }
+
+        @Test
+        @DisplayName("幂等 —— 会话已完成，直接返回持久化文件信息")
+        void should_returnImmediately_when_alreadyCompleted() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.COMPLETED.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            FileBasicInfoEntity entity = buildOriginalEntity();
+            entity.setFileId(FILE_ID_MULTIPART);
+            when(fileBaseInfoDao.selectByFileIdAndTenant(FILE_ID_MULTIPART, TENANT_ID))
+                    .thenReturn(entity);
+            when(messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_SUCCESS))
+                    .thenReturn("上传成功");
+            // 幂等路径调用的是 4 参数版本: toUploadResultFromMultipart(FileBasicInfoEntity, CompleteMultipartCommand, String, long)
+            doReturn(UploadResult.builder()
+                            .fileId(FILE_ID_MULTIPART)
+                            .fileName(FILE_NAME_1)
+                            .fileSize(TOTAL_FILE_SIZE)
+                            .fileUrl(STORAGE_URL_1)
+                            .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                            .build())
+                    .when(converter).toUploadResultFromMultipart(any(FileBasicInfoEntity.class), any(CompleteMultipartCommand.class), anyString(), anyLong());
+
+            UploadResult result = service.completeMultipartUpload(buildCompleteCommand());
+
+            assertThat(result).isNotNull();
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getUploadStatus()).isEqualTo(UploadStatusEnums.COMPLETED.getCode());
+            verify(fileBaseInfoDao).selectByFileIdAndTenant(FILE_ID_MULTIPART, TENANT_ID);
+            verify(storagePluginManager, never()).getPlugin(any(StorageTypeEnums.class));
+            verify(fileBaseInfoDao, never()).save(any());
+            verify(uploadSessionDao, never()).updateStatus(anyString(), anyInt(), anyInt());
+        }
+
+        @Test
+        @DisplayName("会话已取消 —— 抛出 UPLOAD_CANCEL_FAILED")
+        void should_throw_when_sessionCancelled() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.CANCELLED.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            assertThatThrownBy(() -> service.completeMultipartUpload(buildCompleteCommand()))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_CANCEL_FAILED.getCode());
+                    });
+
+            verify(fileChunkDao, never()).selectByUploadIdAndTenantId(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("会话已失败 —— 抛出 UPLOAD_FAILED")
+        void should_throw_when_sessionFailed() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.FAILED.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            assertThatThrownBy(() -> service.completeMultipartUpload(buildCompleteCommand()))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.UPLOAD_FAILED.getCode());
+                    });
+
+            verify(fileChunkDao, never()).selectByUploadIdAndTenantId(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("幂等分支 —— 会话已完成但文件记录不存在，重新执行合并流程")
+        void should_retryMerge_when_completedButFileMissing() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.COMPLETED.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            // 幂等检查：文件记录不存在
+            when(fileBaseInfoDao.selectByFileIdAndTenant(FILE_ID_MULTIPART, TENANT_ID))
+                    .thenReturn(null);
+
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.mergeChunks(UPLOAD_ID, FILE_ID_MULTIPART)).thenReturn("/merged/file.pdf");
+            when(plugin.getFileUrl("/merged/file.pdf")).thenReturn("https://cdn.example.com/file.pdf");
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+
+            List<FileChunkEntity> chunks = new ArrayList<>();
+            for (int i = 1; i <= TOTAL_CHUNKS; i++) {
+                chunks.add(buildChunkEntity(i, ChunkStatusEnums.COMPLETED.getCode()));
+            }
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID)).thenReturn(chunks);
+
+            FileBasicInfoEntity savedEntity = new FileBasicInfoEntity();
+            savedEntity.setFileId(FILE_ID_MULTIPART);
+            doReturn(savedEntity).when(converter).toFileInfoEntityFromMultipart(any(), any(), anyString(), anyString(), anyString(), any());
+            doReturn(UploadResult.builder()
+                            .fileId(FILE_ID_MULTIPART)
+                            .fileName(FILE_NAME_1)
+                            .fileSize(TOTAL_FILE_SIZE)
+                            .fileUrl("https://cdn.example.com/file.pdf")
+                            .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                            .isDuplicate(false)
+                            .build()).when(converter).toUploadResultFromMultipart(any(), anyString(), anyString(), any(), any(), anyString(), anyLong());
+            when(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_REUSE_SUCCESS))
+                    .thenReturn("合并成功");
+
+            UploadResult result = service.completeMultipartUpload(buildCompleteCommand());
+
+            assertThat(result).isNotNull();
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            verify(plugin).mergeChunks(UPLOAD_ID, FILE_ID_MULTIPART);
+            verify(plugin).getFileUrl("/merged/file.pdf");
+            verify(fileBaseInfoDao).save(savedEntity);
+            verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
+                    eq(UploadStatusEnums.COMPLETED.getCode()), eq(TOTAL_CHUNKS));
+        }
+
+        @Test
+        @DisplayName("存储插件不存在 —— 抛出 STORAGE_TYPE_NOT_SUPPORTED")
+        void should_throw_when_storagePluginNotFound() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            List<FileChunkEntity> chunks = new ArrayList<>();
+            for (int i = 1; i <= TOTAL_CHUNKS; i++) {
+                chunks.add(buildChunkEntity(i, ChunkStatusEnums.COMPLETED.getCode()));
+            }
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID)).thenReturn(chunks);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(null);
+
+            assertThatThrownBy(() -> service.completeMultipartUpload(buildCompleteCommand()))
+                    .isInstanceOf(FileUploadException.class)
+                    .satisfies(ex -> {
+                        FileUploadException fie = (FileUploadException) ex;
+                        assertThat(fie.getCode()).isEqualTo(FileErrorCodeEnums.STORAGE_TYPE_NOT_SUPPORTED.getCode());
+                    });
+        }
+
+        @Test
+        @DisplayName("cleanupChunks 抛出异常 —— 主流程仍成功返回")
+        void should_succeed_when_cleanupChunksFails() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.mergeChunks(UPLOAD_ID, FILE_ID_MULTIPART)).thenReturn("/merged/file.pdf");
+            when(plugin.getFileUrl("/merged/file.pdf")).thenReturn("https://cdn.example.com/file.pdf");
+            // cleanupChunks 抛出异常
+            doThrow(new RuntimeException("临时文件清理失败"))
+                    .when(plugin).cleanupChunks(UPLOAD_ID);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+
+            List<FileChunkEntity> chunks = new ArrayList<>();
+            for (int i = 1; i <= TOTAL_CHUNKS; i++) {
+                chunks.add(buildChunkEntity(i, ChunkStatusEnums.COMPLETED.getCode()));
+            }
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID)).thenReturn(chunks);
+
+            FileBasicInfoEntity savedEntity = new FileBasicInfoEntity();
+            savedEntity.setFileId(FILE_ID_MULTIPART);
+            doReturn(savedEntity).when(converter).toFileInfoEntityFromMultipart(any(), any(), anyString(), anyString(), anyString(), any());
+            doReturn(UploadResult.builder()
+                            .fileId(FILE_ID_MULTIPART)
+                            .fileName(FILE_NAME_1)
+                            .fileSize(TOTAL_FILE_SIZE)
+                            .fileUrl("https://cdn.example.com/file.pdf")
+                            .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                            .isDuplicate(false)
+                            .build()).when(converter).toUploadResultFromMultipart(any(), anyString(), anyString(), any(), any(), anyString(), anyLong());
+            when(messageUtils.getMessage(FileI18nKeyConstants.STRATEGY_REUSE_SUCCESS))
+                    .thenReturn("合并成功");
+
+            UploadResult result = service.completeMultipartUpload(buildCompleteCommand());
+
+            assertThat(result).isNotNull();
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getUploadStatus()).isEqualTo(UploadStatusEnums.COMPLETED.getCode());
+            // 主流程仍执行完毕
+            verify(plugin).cleanupChunks(UPLOAD_ID);
+            verify(fileBaseInfoDao).save(savedEntity);
+            verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
+                    eq(UploadStatusEnums.COMPLETED.getCode()), eq(TOTAL_CHUNKS));
+        }
+
+        @Test
+        @DisplayName("mergeChunks 抛出异常 —— 整体回滚不保存任何数据")
+        void should_rollback_when_mergeChunksFails() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(plugin.mergeChunks(UPLOAD_ID, FILE_ID_MULTIPART))
+                    .thenThrow(new RuntimeException("存储层合并失败"));
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+
+            List<FileChunkEntity> chunks = new ArrayList<>();
+            for (int i = 1; i <= TOTAL_CHUNKS; i++) {
+                chunks.add(buildChunkEntity(i, ChunkStatusEnums.COMPLETED.getCode()));
+            }
+            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID)).thenReturn(chunks);
+
+            assertThatThrownBy(() -> service.completeMultipartUpload(buildCompleteCommand()))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("存储层合并失败");
+
+            // 合并失败后不应执行持久化和状态更新
+            verify(fileBaseInfoDao, never()).save(any());
+            verify(uploadSessionDao, never()).updateStatus(anyString(), anyInt(), anyInt());
+            verify(fileChunkDao, never()).deleteByUploadIdAndTenantId(anyString(), anyString());
+            verify(plugin, never()).cleanupChunks(anyString());
+        }
     }
 
     // ==================== 11. cancelMultipartUpload —— 取消分片上传 ====================
@@ -1552,34 +1761,103 @@ class FileUploadServiceImplTest {
         }
 
         @Test
-        @DisplayName("成功取消 —— 更新会话状态、分片状态、清理存储")
-        void should_cancelSuccessfully() {
+        @DisplayName("幂等 —— 会话已取消时直接返回，不重复操作")
+        void should_returnImmediately_when_alreadyCancelled() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setUploadStatus(UploadStatusEnums.CANCELLED.getCode());
+            session.setCompletedChunks(3);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+
+            CancelMultipartResult result = service.cancelMultipartUpload(buildCancelCommand("用户取消"));
+
+            assertThat(result).isNotNull();
+            assertThat(result.getUploadId()).isEqualTo(UPLOAD_ID);
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getSuccess()).isTrue();
+            assertThat(result.getCancelledChunks()).isEqualTo(0);
+            assertThat(result.getTotalUploadedChunks()).isEqualTo(3);
+            assertThat(result.getReason()).isEqualTo("用户取消");
+            assertThat(result.getMessage()).isEqualTo("会话已取消");
+            verify(uploadSessionDao, never()).updateStatus(anyString(), anyInt(), anyInt());
+            verify(fileChunkDao, never()).batchUpdateStatusByUploadId(anyString(), anyString(), anyInt(), anyInt(), anyString());
+            verify(storagePluginManager, never()).getPlugin(any(StorageTypeEnums.class));
+        }
+
+        @Test
+        @DisplayName("成功取消 —— 返回完整 CancelMultipartResult")
+        void should_returnCompleteResult_when_cancelSuccessfully() {
             UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
             session.setCompletedChunks(2);
             when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            when(fileChunkDao.batchUpdateStatusByUploadId(
+                    eq(UPLOAD_ID), eq(TENANT_ID),
+                    eq(ChunkStatusEnums.CANCELLED.getCode()),
+                    eq(ChunkStatusEnums.COMPLETED.getCode()),
+                    eq("用户取消"))).thenReturn(3);
+            when(messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_CANCEL_FAILED))
+                    .thenReturn("取消成功");
+
+            CancelMultipartResult result = service.cancelMultipartUpload(buildCancelCommand("用户取消"));
+
+            assertThat(result).isNotNull();
+            assertThat(result.getUploadId()).isEqualTo(UPLOAD_ID);
+            assertThat(result.getFileId()).isEqualTo(FILE_ID_MULTIPART);
+            assertThat(result.getSuccess()).isTrue();
+            assertThat(result.getCancelledChunks()).isEqualTo(3);
+            assertThat(result.getTotalUploadedChunks()).isEqualTo(2);
+            assertThat(result.getCancelledAt()).isNotNull();
+            assertThat(result.getReason()).isEqualTo("用户取消");
+            assertThat(result.getMessage()).isEqualTo("取消成功");
+        }
+
+        @Test
+        @DisplayName("成功取消 —— 验证 DAO 调用（批量更新 + 会话更新 + 存储清理）")
+        void should_callDaoCorrectly_when_cancelSuccessfully() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setCompletedChunks(2);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            when(fileChunkDao.batchUpdateStatusByUploadId(
+                    eq(UPLOAD_ID), eq(TENANT_ID),
+                    eq(ChunkStatusEnums.CANCELLED.getCode()),
+                    eq(ChunkStatusEnums.COMPLETED.getCode()),
+                    eq("用户取消"))).thenReturn(3);
+            when(messageUtils.getMessage(anyString())).thenReturn("ok");
 
             StoragePlugin plugin = mock(StoragePlugin.class);
             when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
-
-            FileChunkEntity c1 = buildChunkEntity(1, ChunkStatusEnums.COMPLETED.getCode());
-            FileChunkEntity c2 = buildChunkEntity(2, ChunkStatusEnums.COMPLETED.getCode());
-            FileChunkEntity c3 = buildChunkEntity(3, ChunkStatusEnums.UPLOADING.getCode());
-            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
-                    .thenReturn(List.of(c1, c2, c3));
 
             service.cancelMultipartUpload(buildCancelCommand("用户取消"));
 
             verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
                     eq(UploadStatusEnums.CANCELLED.getCode()), eq(2));
+            verify(fileChunkDao).batchUpdateStatusByUploadId(
+                    UPLOAD_ID, TENANT_ID,
+                    ChunkStatusEnums.CANCELLED.getCode(),
+                    ChunkStatusEnums.COMPLETED.getCode(),
+                    "用户取消");
             verify(plugin).cleanupChunks(UPLOAD_ID);
-            // 非已完成分片被更新为取消
-            verify(fileChunkDao).updateById(argThat(c ->
-                    c.getChunkNumber() == 3
-                            && c.getChunkStatus().equals(ChunkStatusEnums.CANCELLED.getCode())
-                            && "用户取消".equals(c.getErrorMessage())));
-            // 已完成的分片不被更新
-            verify(fileChunkDao, never()).updateById(argThat(c -> c.getChunkNumber() == 1));
-            verify(fileChunkDao, never()).updateById(argThat(c -> c.getChunkNumber() == 2));
+        }
+
+        @Test
+        @DisplayName("存储清理异常 —— 取消仍然成功（异常容错）")
+        void should_succeed_when_cleanupFails() {
+            UploadSessionEntity session = buildSessionEntity(StorageTypeEnums.LOCAL.getCode());
+            session.setCompletedChunks(1);
+            when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
+            when(fileChunkDao.batchUpdateStatusByUploadId(anyString(), anyString(), anyInt(), anyInt(), anyString()))
+                    .thenReturn(2);
+            when(messageUtils.getMessage(FileI18nKeyConstants.UPLOAD_CANCEL_FAILED))
+                    .thenReturn("取消成功");
+
+            StoragePlugin plugin = mock(StoragePlugin.class);
+            when(storagePluginManager.getPlugin(StorageTypeEnums.LOCAL)).thenReturn(plugin);
+            doThrow(new RuntimeException("OSS连接超时")).when(plugin).cleanupChunks(UPLOAD_ID);
+
+            CancelMultipartResult result = service.cancelMultipartUpload(buildCancelCommand("用户取消"));
+
+            assertThat(result.getSuccess()).isTrue();
+            assertThat(result.getCancelledChunks()).isEqualTo(2);
+            verify(plugin).cleanupChunks(UPLOAD_ID);
         }
 
         @Test
@@ -1588,14 +1866,26 @@ class FileUploadServiceImplTest {
             UploadSessionEntity session = buildSessionEntity(999);
             session.setCompletedChunks(0);
             when(uploadSessionDao.selectByUploadIdAndTenant(UPLOAD_ID, TENANT_ID)).thenReturn(session);
-            when(fileChunkDao.selectByUploadIdAndTenantId(UPLOAD_ID, TENANT_ID))
-                    .thenReturn(new ArrayList<>());
+            when(fileChunkDao.batchUpdateStatusByUploadId(
+                    eq(UPLOAD_ID), eq(TENANT_ID),
+                    eq(ChunkStatusEnums.CANCELLED.getCode()),
+                    eq(ChunkStatusEnums.COMPLETED.getCode()),
+                    eq("用户取消"))).thenReturn(0);
+            when(messageUtils.getMessage(anyString())).thenReturn("ok");
 
-            service.cancelMultipartUpload(buildCancelCommand("用户取消"));
+            CancelMultipartResult result = service.cancelMultipartUpload(buildCancelCommand("用户取消"));
 
+            assertThat(result.getSuccess()).isTrue();
+            assertThat(result.getCancelledChunks()).isEqualTo(0);
             verify(uploadSessionDao).updateStatus(eq(UPLOAD_ID),
                     eq(UploadStatusEnums.CANCELLED.getCode()), eq(0));
-            verify(storagePluginManager, never()).getPlugin(any(StorageTypeEnums.class));
+            verify(fileChunkDao).batchUpdateStatusByUploadId(
+                    UPLOAD_ID, TENANT_ID,
+                    ChunkStatusEnums.CANCELLED.getCode(),
+                    ChunkStatusEnums.COMPLETED.getCode(),
+                    "用户取消");
+            // fromCode(999) 返回 null，getPlugin(null) 被调用
+            verify(storagePluginManager).getPlugin((StorageTypeEnums) isNull());
         }
     }
 

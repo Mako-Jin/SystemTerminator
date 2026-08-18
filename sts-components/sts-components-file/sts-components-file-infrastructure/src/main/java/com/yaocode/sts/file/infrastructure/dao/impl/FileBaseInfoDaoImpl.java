@@ -3,7 +3,9 @@ package com.yaocode.sts.file.infrastructure.dao.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.file.core.enums.FileStatusEnums;
+import com.yaocode.sts.file.core.enums.UploadStatusEnums;
 import com.yaocode.sts.file.infrastructure.dao.FileBaseInfoDao;
 import com.yaocode.sts.file.infrastructure.entity.FileBasicInfoEntity;
 import com.yaocode.sts.file.infrastructure.mapper.FileBaseInfoMapper;
@@ -24,6 +26,8 @@ public class FileBaseInfoDaoImpl extends ServiceImpl<FileBaseInfoMapper, FileBas
         LambdaQueryWrapper<FileBasicInfoEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FileBasicInfoEntity::getFileId, fileId);
         queryWrapper.eq(FileBasicInfoEntity::getTenantId, tenantId);
+        queryWrapper.eq(FileBasicInfoEntity::getFileStatus, FileStatusEnums.NORMAL.getCode());
+        queryWrapper.eq(FileBasicInfoEntity::getIsDeleted, YesNoEnums.NO.getCode());
         return this.getOne(queryWrapper);
     }
 
@@ -37,11 +41,16 @@ public class FileBaseInfoDaoImpl extends ServiceImpl<FileBaseInfoMapper, FileBas
     }
 
     @Override
-    public void updateFileContent(String fileId, String tenantId, String filePath, String fileUrl,
-                                  Long fileSize, String fileMd5, String fileSha256) {
+    public void updateFileContent(
+            String fileId, String tenantId, String filePath, String fileUrl,
+            Long fileSize, String fileMd5, String fileSha256
+    ) {
         LambdaUpdateWrapper<FileBasicInfoEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(FileBasicInfoEntity::getFileId, fileId);
         updateWrapper.eq(FileBasicInfoEntity::getTenantId, tenantId);
+        updateWrapper.eq(FileBasicInfoEntity::getFileStatus, FileStatusEnums.NORMAL.getCode());
+        updateWrapper.eq(FileBasicInfoEntity::getUploadStatus, UploadStatusEnums.COMPLETED.getCode());
+        updateWrapper.eq(FileBasicInfoEntity::getIsDeleted, YesNoEnums.NO.getCode());
         updateWrapper.set(FileBasicInfoEntity::getFilePath, filePath);
         updateWrapper.set(FileBasicInfoEntity::getStorageUrl, fileUrl);
         updateWrapper.set(FileBasicInfoEntity::getFileSize, fileSize);

@@ -3,6 +3,7 @@ package com.yaocode.sts.file.infrastructure.dao.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yaocode.sts.common.basic.enums.YesNoEnums;
 import com.yaocode.sts.common.tools.StringUtils;
 import com.yaocode.sts.file.infrastructure.dao.FileDeduplicationDao;
 import com.yaocode.sts.file.infrastructure.entity.FileDeduplicationEntity;
@@ -19,6 +20,7 @@ public class FileDeduplicationDaoImpl extends ServiceImpl<FileDeduplicationMappe
         }
         LambdaQueryWrapper<FileDeduplicationEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(FileDeduplicationEntity::getFingerprint, fingerprint);
+        wrapper.eq(FileDeduplicationEntity::getIsDeleted, YesNoEnums.NO.getCode());
         return this.getOne(wrapper);
     }
 
@@ -27,6 +29,7 @@ public class FileDeduplicationDaoImpl extends ServiceImpl<FileDeduplicationMappe
         LambdaUpdateWrapper<FileDeduplicationEntity> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(FileDeduplicationEntity::getFileId, fileId);
         wrapper.eq(FileDeduplicationEntity::getTenantId, tenantId);
+        wrapper.eq(FileDeduplicationEntity::getIsDeleted, YesNoEnums.NO.getCode());
         wrapper.set(FileDeduplicationEntity::getFingerprint, fingerprint);
         wrapper.set(FileDeduplicationEntity::getFileMd5, fileMd5);
         wrapper.set(FileDeduplicationEntity::getFileSha256, fileSha256);

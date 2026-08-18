@@ -10,6 +10,7 @@ import com.yaocode.sts.file.application.model.command.UploadBatchCommand;
 import com.yaocode.sts.file.application.model.command.UploadFileCommand;
 import com.yaocode.sts.file.application.model.command.UploadPartCommand;
 import com.yaocode.sts.file.application.model.dto.FileObjectDto;
+import com.yaocode.sts.file.application.model.result.CancelMultipartResult;
 import com.yaocode.sts.file.application.model.result.FileExistenceResult;
 import com.yaocode.sts.file.application.model.result.FileInfoResult;
 import com.yaocode.sts.file.application.model.result.MultipartInitResult;
@@ -462,6 +463,33 @@ public interface FileUploadApplicationConverter {
     }
 
     /**
+     * 从分片会话实体构建分片上传结果
+     */
+    default UploadResult toUploadResultFromMultipart(
+            FileBasicInfoEntity existed,
+            CompleteMultipartCommand command,
+            String message,
+            long processingTime
+    ) {
+        return UploadResult.builder()
+                .fileId(existed.getFileId())
+                .fileName(command.getFileName() != null ? command.getFileName() : existed.getFileName())
+                .fileSize(existed.getFileSize())
+                .fileMd5(existed.getFileMd5())
+                .fileSha256(existed.getFileSha256())
+                .fileUrl(existed.getStorageUrl())
+                .storageType(existed.getStorageType())
+                .tenantId(existed.getTenantId())
+                .uploadStatus(UploadStatusEnums.COMPLETED.getCode())
+                .uploadStatusDesc(UploadStatusEnums.COMPLETED.getDesc())
+                .isDuplicate(false)
+                .uploadTime(LocalDateTime.now())
+                .processingTime(processingTime)
+                .message(message)
+                .build();
+    }
+
+    /**
      * 从分片会话实体构建分片进度结果
      */
     default UploadProgressResult toUploadProgressResult(
@@ -630,6 +658,29 @@ public interface FileUploadApplicationConverter {
                 .sourceFileId(originalEntity.getFileId())
                 .uploadTime(now)
                 .processingTime(processingTime)
+                .message(message)
+                .build();
+    }
+
+    /**
+     * 构建取消分片上传结果
+     */
+    default CancelMultipartResult toCancelMultipartResult(
+            String uploadId,
+            String fileId,
+            int cancelledChunks,
+            int totalUploadedChunks,
+            String reason,
+            String message
+    ) {
+        return CancelMultipartResult.builder()
+                .uploadId(uploadId)
+                .fileId(fileId)
+                .success(true)
+                .cancelledChunks(cancelledChunks)
+                .totalUploadedChunks(totalUploadedChunks)
+                .cancelledAt(LocalDateTime.now())
+                .reason(reason)
                 .message(message)
                 .build();
     }

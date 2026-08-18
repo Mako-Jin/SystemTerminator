@@ -2,6 +2,7 @@ package com.yaocode.sts.file.application.service;
 
 import com.yaocode.sts.common.basic.model.PageResult;
 import com.yaocode.sts.file.application.model.command.CancelMultipartCommand;
+import com.yaocode.sts.file.application.model.result.CancelMultipartResult;
 import com.yaocode.sts.file.application.model.command.CompleteMultipartCommand;
 import com.yaocode.sts.file.application.model.command.FastUploadCommand;
 import com.yaocode.sts.file.application.model.command.InitMultipartCommand;
@@ -63,7 +64,7 @@ public interface FileUploadService {
     /**
      * 取消分片上传
      */
-    void cancelMultipartUpload(CancelMultipartCommand command);
+    CancelMultipartResult cancelMultipartUpload(CancelMultipartCommand command);
 
     /**
      * 获取分片上传进度（查询）
