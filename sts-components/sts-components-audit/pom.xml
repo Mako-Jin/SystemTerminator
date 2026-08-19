@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.yaocode.sts.components</groupId>
+        <artifactId>sts-components</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.yaocode.sts.components.audit</groupId>
+    <artifactId>sts-components-audit</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>sts-components-audit</name>
+    <description>分布式审计日志框架 - 支持多存储(MySQL/ES/ClickHouse)、多传输协议(HTTP/MQ)</description>
+
+    <modules>
+        <module>sts-components-audit-common</module>
+        <module>sts-components-audit-starter</module>
+        <module>sts-components-audit-gateway</module>
+        <module>sts-components-audit-storage</module>
+        <module>sts-components-audit-admin</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.yaocode.sts.components.audit</groupId>
+                <artifactId>sts-components-audit-common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.audit</groupId>
+                <artifactId>sts-components-audit-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.audit</groupId>
+                <artifactId>sts-components-audit-gateway</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.audit</groupId>
+                <artifactId>sts-components-audit-storage</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yaocode.sts.components.audit</groupId>
+                <artifactId>sts-components-audit-admin</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+    </build>
+</project>

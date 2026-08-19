@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.yaocode.sts.components.audit</groupId>
+        <artifactId>sts-components-audit</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>sts-components-audit-admin</artifactId>
+    <packaging>jar</packaging>
+
+    <name>sts-components-audit-admin</name>
+    <description>审计治理层 - 定时清理(按保留天数)、监控指标采集、手动运维接口</description>
+
+    <dependencies>
+        <!-- 公共 + 存储 -->
+        <dependency>
+            <groupId>com.yaocode.sts.components.audit</groupId>
+            <artifactId>sts-components-audit-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yaocode.sts.components.audit</groupId>
+            <artifactId>sts-components-audit-storage</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
+</project>
