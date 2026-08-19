@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.regex.Pattern;
 
 /**
@@ -43,12 +43,22 @@ public class StandardParserService implements ParserService {
      */
     private final Map<String, ProcessDefinitionParser> parserCache = new ConcurrentHashMap<>();
 
-    // TODO 使用带过期策略的缓存
-//    private final Cache<String, ProcessDefinitionParser> parserCache =
-//            Caffeine.newBuilder()
-//                    .expireAfterAccess(10, TimeUnit.MINUTES)
-//                    .maximumSize(100)
-//                    .build();
+    /**
+     * 解析器缓存 - 使用Caffeine实现
+     */
+    // 还没引入依赖，暂不替换
+//    private final Cache<String, ProcessDefinitionParser> parserCache = Caffeine.newBuilder()
+//            .maximumSize(100)
+//            .expireAfterAccess(30, TimeUnit.MINUTES)
+//            .expireAfterWrite(60, TimeUnit.MINUTES)
+//            .recordStats()
+//            .removalListener(new RemovalListener<String, ProcessDefinitionParser>() {
+//                @Override
+//                public void onRemoval(String key, ProcessDefinitionParser value, RemovalCause cause) {
+//                    log.debug("解析器缓存移除: key={}, cause={}", key, cause);
+//                }
+//            })
+//            .build();
 
     /**
      * 解析配置
@@ -81,8 +91,11 @@ public class StandardParserService implements ParserService {
         this.configuration = ParserConfiguration.defaultConfig();
     }
 
+    /**
+     * 文件名验证：禁止路径遍历字符，允许中文字符和多级扩展名
+     */
     private static final Pattern SAFE_FILENAME_PATTERN =
-            Pattern.compile("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9]{1,10}$");
+            Pattern.compile("^[^/\\:*?\"<>|\\s]+$");
 
     private void validateResourceName(String resourceName) throws ParseException {
         if (resourceName == null || resourceName.isEmpty()) {
@@ -95,8 +108,14 @@ public class StandardParserService implements ParserService {
             throw new ParseException("非法的资源名称: " + resourceName);
         }
 
-        // 验证文件名格式
-        if (!SAFE_FILENAME_PATTERN.matcher(resourceName).matches()) {
+        // 提取纯文件名（去除路径）后验证
+        String fileName = resourceName;
+        int lastSeparator = Math.max(resourceName.lastIndexOf('/'), resourceName.lastIndexOf('\\'));
+        if (lastSeparator >= 0) {
+            fileName = resourceName.substring(lastSeparator + 1);
+        }
+
+        if (!SAFE_FILENAME_PATTERN.matcher(fileName).matches()) {
             throw new ParseException("资源名称格式不正确: " + resourceName);
         }
     }
@@ -106,7 +125,6 @@ public class StandardParserService implements ParserService {
     @Override
     public ParseResult parse(byte[] content, String resourceName) throws ParseException {
         long startTime = System.currentTimeMillis();
-        validateResourceName(resourceName);
         try {
             ProcessDefinitionParser parser = getParser(resourceName);
             ParseResult result = parser.parse(content, resourceName);
@@ -121,7 +139,6 @@ public class StandardParserService implements ParserService {
     @Override
     public ParseResult parse(InputStream inputStream, String resourceName) throws ParseException {
         long startTime = System.currentTimeMillis();
-        validateResourceName(resourceName);
         try {
             ProcessDefinitionParser parser = getParser(resourceName);
             ParseResult result = parser.parse(inputStream, resourceName);
@@ -162,10 +179,11 @@ public class StandardParserService implements ParserService {
     public ProcessDefinitionParser getParser(String resourceName) throws ParseException {
         validateResourceName(resourceName);
 
-        String key = resourceName.toLowerCase();
+        // 规范化缓存key：提取扩展名并转小写
+        String cacheKey = extractExtension(resourceName).toLowerCase();
 
         // 从缓存获取
-        ProcessDefinitionParser cached = parserCache.get(key);
+        ProcessDefinitionParser cached = parserCache.get(cacheKey);
         if (cached != null) {
             return cached;
         }
@@ -173,7 +191,7 @@ public class StandardParserService implements ParserService {
         // 遍历查找
         for (ProcessDefinitionParser parser : parsers) {
             if (parser.supports(resourceName)) {
-                // 缓存所有支持的格式
+                // 缓存所有支持的格式扩展名
                 for (String format : parser.getSupportedFormats()) {
                     parserCache.put(format.toLowerCase(), parser);
                 }
@@ -214,12 +232,10 @@ public class StandardParserService implements ParserService {
         }
 
         boolean added = parsers.add(parser);
-        if (added) {
-            log.info("动态注册解析器: {}", parser.getParserName());
-            // 清除缓存，因为新解析器可能支持已有格式
-            parserCache.clear();
-            statistics.recordRegistration(parser.getParserName());
-        }
+        log.info("动态注册解析器: {}", parser.getParserName());
+        // 清除缓存，因为新解析器可能支持已有格式
+        parserCache.clear();
+        statistics.recordRegistration(parser.getParserName());
         return added;
     }
 
@@ -279,6 +295,20 @@ public class StandardParserService implements ParserService {
     // ==================== 辅助方法 ====================
 
     /**
+     * 从文件名获取格式扩展名（带点前缀，如 .bpmn）
+     */
+    private String extractExtension(String resourceName) {
+        if (resourceName == null) {
+            return "";
+        }
+        int lastDot = resourceName.lastIndexOf('.');
+        if (lastDot > 0 && lastDot < resourceName.length() - 1) {
+            return resourceName.substring(lastDot);
+        }
+        return "";
+    }
+
+    /**
      * 从文件名获取格式
      */
     private String getFormatFromName(String resourceName) {
@@ -295,21 +325,21 @@ public class StandardParserService implements ParserService {
     // ==================== 内部统计类 ====================
 
     private static class ParserStatistics {
-        private final Map<String, AtomicLong> parseCount = new ConcurrentHashMap<>();
-        private final Map<String, AtomicLong> successCount = new ConcurrentHashMap<>();
-        private final Map<String, AtomicLong> failureCount = new ConcurrentHashMap<>();
-        private final Map<String, AtomicLong> totalTime = new ConcurrentHashMap<>();
+        private final Map<String, LongAdder> parseCount = new ConcurrentHashMap<>();
+        private final Map<String, LongAdder> successCount = new ConcurrentHashMap<>();
+        private final Map<String, LongAdder> failureCount = new ConcurrentHashMap<>();
+        private final Map<String, LongAdder> totalTime = new ConcurrentHashMap<>();
         private final List<String> registeredParsers = new CopyOnWriteArrayList<>();
 
         void recordParse(String resourceName, boolean success, long time) {
             String key = getFormatFromName(resourceName);
-            parseCount.computeIfAbsent(key, k -> new AtomicLong()).incrementAndGet();
+            parseCount.computeIfAbsent(key, k -> new LongAdder()).increment();
             if (success) {
-                successCount.computeIfAbsent(key, k -> new AtomicLong()).incrementAndGet();
+                successCount.computeIfAbsent(key, k -> new LongAdder()).increment();
             } else {
-                failureCount.computeIfAbsent(key, k -> new AtomicLong()).incrementAndGet();
+                failureCount.computeIfAbsent(key, k -> new LongAdder()).increment();
             }
-            totalTime.computeIfAbsent(key, k -> new AtomicLong()).addAndGet(time);
+            totalTime.computeIfAbsent(key, k -> new LongAdder()).add(time);
         }
 
         void recordRegistration(String parserName) {
@@ -327,12 +357,16 @@ public class StandardParserService implements ParserService {
 
             Map<String, Object> formatStats = new java.util.HashMap<>();
             for (String format : parseCount.keySet()) {
+                long total = parseCount.get(format).sum();
+                long success = successCount.getOrDefault(format, new LongAdder()).sum();
+                long failure = failureCount.getOrDefault(format, new LongAdder()).sum();
+                long avgTime = total > 0 ? totalTime.getOrDefault(format, new LongAdder()).sum() / total : 0;
+
                 Map<String, Object> fStats = new java.util.HashMap<>();
-                fStats.put("total", parseCount.get(format).get());
-                fStats.put("success", successCount.getOrDefault(format, new AtomicLong()).get());
-                fStats.put("failure", failureCount.getOrDefault(format, new AtomicLong()).get());
-                fStats.put("avgTime", totalTime.getOrDefault(format, new AtomicLong()).get() /
-                        Math.max(1, parseCount.get(format).get()));
+                fStats.put("total", total);
+                fStats.put("success", success);
+                fStats.put("failure", failure);
+                fStats.put("avgTime", avgTime);
                 formatStats.put(format, fStats);
             }
             stats.put("formatStats", formatStats);

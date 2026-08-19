@@ -3,7 +3,6 @@ package com.yaocode.sts.flow.core.engine.parser.impl;
 import com.yaocode.sts.flow.core.engine.parser.ParseContext;
 import com.yaocode.sts.flow.core.engine.parser.enums.ErrorSeverityEnums;
 import com.yaocode.sts.flow.core.engine.parser.error.ParseError;
-import com.yaocode.sts.flow.core.engine.parser.error.ParseWarning;
 import com.yaocode.sts.flow.core.engine.parser.rule.ParseRule;
 import com.yaocode.sts.flow.core.engine.parser.rule.RuleRegistry;
 import com.yaocode.sts.flow.core.engine.parser.xml.XmlParser;
@@ -13,11 +12,17 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * BPMN 2.0 流程解析器
@@ -34,7 +39,7 @@ public class BpmnProcessParser extends AbstractProcessParser {
      */
     private static final List<String> SUPPORTED_FORMATS = List.of(".bpmn", ".xml", ".bpmn20.xml");
 
-    private static final int MAX_RECURSION_DEPTH = 100;
+    private static final int MAX_ELEMENT_COUNT = 100000; // 最大元素数量限制
 
     /**
      * 格式名称
@@ -58,8 +63,13 @@ public class BpmnProcessParser extends AbstractProcessParser {
      */
     private final BpmnModelBuilder modelBuilder = new BpmnModelBuilder();
 
+    /**
+     * 延迟执行记录（使用对象引用作为 key，替代不稳定的 identityHashCode）
+     */
+    private final Map<Object, PendingEnd> pendingEnds = new ConcurrentHashMap<>();
+
     @Override
-    protected Object doParse(byte[] content, String resourceName, ParseContext context) throws ParseException {
+    protected ProcessDefinition doParse(byte[] content, String resourceName, ParseContext context) throws ParseException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(content)) {
             return doParse(bais, resourceName, context);
         } catch (Exception e) {
@@ -68,7 +78,7 @@ public class BpmnProcessParser extends AbstractProcessParser {
     }
 
     @Override
-    protected Object doParse(InputStream inputStream, String resourceName, ParseContext context) throws ParseException {
+    protected ProcessDefinition doParse(InputStream inputStream, String resourceName, ParseContext context) throws ParseException {
         if (xmlParser == null) {
             throw new ParseException("XML 解析器未设置");
         }
@@ -82,22 +92,69 @@ public class BpmnProcessParser extends AbstractProcessParser {
                 throw new ParseException("BPMN 文档根元素为空");
             }
 
-            // 使用规则引擎解析
-            return parseElement(rootElement, context, null);
+            // 使用迭代方式解析
+            return parseElementIterative(rootElement, context);
 
         } catch (Exception e) {
             throw new ParseException("BPMN 解析失败: " + resourceName, e);
         }
     }
 
-    private Object parseElement(Element element, ParseContext context, Object parent) {
-        return parseElement(element, context, parent, 0);
+    /**
+     * 迭代式元素解析 - 避免栈溢出
+     */
+    private ProcessDefinition parseElementIterative(Element rootElement, ParseContext context) {
+        // 使用栈来模拟递归
+        Deque<ParseFrame> stack = new ArrayDeque<>();
+
+        // 初始化根元素解析帧
+        ParseFrame rootFrame = new ParseFrame(rootElement, null, 0);
+        stack.push(rootFrame);
+
+        int elementCount = 0;
+
+        while (!stack.isEmpty()) {
+            ParseFrame frame = stack.pop();
+            Element element = frame.element;
+            Object parent = frame.parent;
+            int depth = frame.depth;
+
+            // 检查元素数量限制
+            if (++elementCount > MAX_ELEMENT_COUNT) {
+                context.addError(ParseError.builder()
+                        .message("元素数量超过限制: " + MAX_ELEMENT_COUNT)
+                        .severity(ErrorSeverityEnums.FATAL)
+                        .build());
+                return null;
+            }
+
+            // 处理当前元素
+            Object currentObject = processElement(element, context, parent);
+
+            if (currentObject != null) {
+                context.setCurrentObject(currentObject);
+            }
+
+            // 获取子元素并压入栈（逆序入栈保证处理顺序）
+            List<Element> children = getChildElements(element);
+            for (int i = children.size() - 1; i >= 0; i--) {
+                Element child = children.get(i);
+                ParseFrame childFrame = new ParseFrame(child, currentObject != null ? currentObject : parent, depth + 1);
+                stack.push(childFrame);
+            }
+        }
+
+        // 消费所有 PendingEnd，确保 rule.end() 在子元素之后被调用
+        consumePendingEnds(context);
+
+        // 返回根元素解析结果
+        return context.getDefinition("root");
     }
 
     /**
-     * 递归解析元素
+     * 处理单个元素
      */
-    private Object parseElement(Element element, ParseContext context, Object parent, int depth) {
+    private Object processElement(Element element, ParseContext context, Object parent) {
         String tagName = element.getTagName();
         String localName = tagName.contains(":") ?
                 tagName.substring(tagName.indexOf(":") + 1) : tagName;
@@ -112,23 +169,14 @@ public class BpmnProcessParser extends AbstractProcessParser {
         // 获取解析规则
         ParseRule rule = ruleRegistry != null ? ruleRegistry.getRule(context, localName) : null;
         if (rule == null) {
-            log.warn("未找到元素规则: {}", tagName);
-            context.addWarning(ParseWarning.builder()
-                    .message("未找到元素规则: " + tagName)
-                    .element(element)
-                    .build());
+            log.trace("未找到元素规则: {}", tagName);
             return null;
         }
 
-        // 压入父对象
+        // 处理元素开始
         context.pushParent(parent);
-
         try {
-            // 执行规则开始
             Object currentObject = rule.begin(element, context);
-            if (Objects.nonNull(currentObject)) {
-                context.setCurrentObject(currentObject);
-            }
 
             // 设置属性
             org.w3c.dom.NamedNodeMap attributes = element.getAttributes();
@@ -137,25 +185,11 @@ public class BpmnProcessParser extends AbstractProcessParser {
                 rule.setProperty(element, context, attr.getName(), attr.getValue());
             }
 
-            if (depth > MAX_RECURSION_DEPTH) {
-                context.addError(ParseError.builder()
-                        .message("XML 嵌套深度超过限制: " + MAX_RECURSION_DEPTH)
-                        .severity(ErrorSeverityEnums.FATAL)
-                        .build());
-                return null;
+            // 执行规则结束（在子元素处理完成后，由框架自动调用）
+            // 使用延迟执行机制，以对象引用为 key 保证唯一性
+            if (currentObject != null) {
+                pendingEnds.put(currentObject, new PendingEnd(rule, element, parent, currentObject));
             }
-
-            // 递归解析子元素
-            org.w3c.dom.NodeList children = element.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                org.w3c.dom.Node child = children.item(i);
-                if (child instanceof Element) {
-                    parseElement((Element) child, context, currentObject, depth + 1);
-                }
-            }
-
-            // 执行规则结束
-            rule.end(element, context, parent, currentObject);
 
             return currentObject;
 
@@ -172,6 +206,61 @@ public class BpmnProcessParser extends AbstractProcessParser {
             context.popParent();
         }
     }
+
+    /**
+     * 获取子元素列表
+     */
+    private List<Element> getChildElements(Element element) {
+        List<Element> children = new ArrayList<>();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node instanceof Element) {
+                children.add((Element) node);
+            }
+        }
+        return children;
+    }
+
+    /**
+     * 消费所有 PendingEnd，按 LIFO 顺序执行 rule.end()
+     * 确保父元素的 end 在子元素之后调用
+     */
+    private void consumePendingEnds(ParseContext context) {
+        // 按注册的逆序执行（子元素先 end，父元素后 end）
+        List<Map.Entry<Object, PendingEnd>> entries = new ArrayList<>(pendingEnds.entrySet());
+        for (int i = entries.size() - 1; i >= 0; i--) {
+            Map.Entry<Object, PendingEnd> entry = entries.get(i);
+            PendingEnd pending = entry.getValue();
+            try {
+                pending.rule().end(pending.element(), context, pending.parent(), pending.currentObject());
+            } catch (Exception e) {
+                log.error("执行规则 end 失败: {}", pending.rule().getRuleName(), e);
+                context.addError(ParseError.builder()
+                        .message("执行规则结束失败: " + pending.rule().getRuleName())
+                        .severity(ErrorSeverityEnums.ERROR)
+                        .element(pending.element())
+                        .cause(e)
+                        .build());
+            }
+        }
+        pendingEnds.clear();
+    }
+
+    /**
+     * 解析帧 - 用于迭代解析
+     */
+    private record ParseFrame(Element element, Object parent, int depth) {}
+
+    /**
+     * 延迟执行记录
+     */
+    private record PendingEnd(
+            ParseRule rule,
+            Element element,
+            Object parent,
+            Object currentObject
+    ) {}
 
     @Override
     protected ProcessDefinition buildProcessDefinition(Object parsedObject, ParseContext context) {

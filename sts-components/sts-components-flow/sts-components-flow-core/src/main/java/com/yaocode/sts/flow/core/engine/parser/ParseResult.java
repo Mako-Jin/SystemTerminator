@@ -10,6 +10,7 @@ import com.yaocode.sts.flow.core.model.ProcessDefinition;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Map;
  *
  * @author Process Engine Team
  */
+@Slf4j
 @Data
 @Builder
 public class ParseResult {
@@ -151,31 +153,42 @@ public class ParseResult {
     }
 
     /**
-     * 打印解析报告
+     * 生成解析报告字符串
+     *
+     * @return 格式化的解析报告
      */
-    public void printReport() {
-        System.out.println("=== Parse Report ===");
-        System.out.println("Success: " + success);
-        System.out.println("Status: " + status);
-        System.out.println("Format: " + format);
-        System.out.println("Process ID: " + (processDefinition != null ? processDefinition.getProcessId() : "N/A"));
-        System.out.println("Process Name: " + (processDefinition != null ? processDefinition.getProcessName() : "N/A"));
-        System.out.println("Nodes: " + (processDefinition != null && processDefinition.getNodes() != null ?
-                processDefinition.getNodes().size() : 0));
-        System.out.println("Sequences: " + (processDefinition != null && processDefinition.getSequences() != null ?
-                processDefinition.getSequences().size() : 0));
-        System.out.println("Errors: " + (errors != null ? errors.size() : 0));
-        System.out.println("Warnings: " + (warnings != null ? warnings.size() : 0));
-        System.out.println("Parse Time: " + parseTime + "ms");
+    public String generateReport() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== Parse Report ===\n");
+        sb.append("Success: ").append(success).append("\n");
+        sb.append("Status: ").append(status).append("\n");
+        sb.append("Format: ").append(format).append("\n");
+        sb.append("Process ID: ").append(processDefinition != null ? processDefinition.getProcessId() : "N/A").append("\n");
+        sb.append("Process Name: ").append(processDefinition != null ? processDefinition.getProcessName() : "N/A").append("\n");
+        sb.append("Nodes: ").append(processDefinition != null && processDefinition.getNodes() != null ?
+                processDefinition.getNodes().size() : 0).append("\n");
+        sb.append("Sequences: ").append(processDefinition != null && processDefinition.getSequences() != null ?
+                processDefinition.getSequences().size() : 0).append("\n");
+        sb.append("Errors: ").append(errors != null ? errors.size() : 0).append("\n");
+        sb.append("Warnings: ").append(warnings != null ? warnings.size() : 0).append("\n");
+        sb.append("Parse Time: ").append(parseTime).append("ms\n");
 
         if (errors != null && !errors.isEmpty()) {
-            System.out.println("\n--- Errors ---");
-            errors.forEach(e -> System.out.printf("[%s] %s%n", e.getSeverity(), e.getMessage()));
+            sb.append("\n--- Errors ---\n");
+            errors.forEach(e -> sb.append("[").append(e.getSeverity()).append("] ").append(e.getMessage()).append("\n"));
         }
 
         if (warnings != null && !warnings.isEmpty()) {
-            System.out.println("\n--- Warnings ---");
-            warnings.forEach(w -> System.out.println(w.getMessage()));
+            sb.append("\n--- Warnings ---\n");
+            warnings.forEach(w -> sb.append(w.getMessage()).append("\n"));
         }
+        return sb.toString();
+    }
+
+    /**
+     * 通过日志输出解析报告
+     */
+    public void printReport() {
+        log.info("Parse Report: {}", generateReport());
     }
 }

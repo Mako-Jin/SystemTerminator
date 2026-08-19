@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * 规则注册中心
@@ -467,37 +468,37 @@ public class RuleRegistry {
      */
     @Getter
     public static class RegistryStatistics {
-        private int totalRegistrations = 0;
-        private int totalUnregistrations = 0;
-        private long totalHits = 0;
-        private long totalMisses = 0;
-        private int totalUpdates = 0;
+        private final LongAdder totalRegistrations = new LongAdder();
+        private final LongAdder totalUnregistrations = new LongAdder();
+        private final LongAdder totalHits = new LongAdder();
+        private final LongAdder totalMisses = new LongAdder();
+        private final LongAdder totalUpdates = new LongAdder();
 
-        synchronized void recordRegistration(String name, boolean isUpdate) {
-            totalRegistrations++;
+        void recordRegistration(String name, boolean isUpdate) {
+            totalRegistrations.increment();
             if (isUpdate) {
-                totalUpdates++;
+                totalUpdates.increment();
             }
         }
 
-        synchronized void recordUnregistration(String name) {
-            totalUnregistrations++;
+        void recordUnregistration(String name) {
+            totalUnregistrations.increment();
         }
 
-        synchronized void recordHit(boolean hit) {
+        void recordHit(boolean hit) {
             if (hit) {
-                totalHits++;
+                totalHits.increment();
             } else {
-                totalMisses++;
+                totalMisses.increment();
             }
         }
 
-        synchronized void reset() {
-            totalRegistrations = 0;
-            totalUnregistrations = 0;
-            totalHits = 0;
-            totalMisses = 0;
-            totalUpdates = 0;
+        void reset() {
+            totalRegistrations.reset();
+            totalUnregistrations.reset();
+            totalHits.reset();
+            totalMisses.reset();
+            totalUpdates.reset();
         }
 
         synchronized void clear() {
@@ -508,35 +509,59 @@ public class RuleRegistry {
          * 获取命中率
          */
         public double getHitRate() {
-            long total = totalHits + totalMisses;
-            return total > 0 ? (double) totalHits / total : 0.0;
+            long hits = totalHits.sum();
+            long misses = totalMisses.sum();
+            long total = hits + misses;
+            return total > 0 ? (double) hits / total : 0.0;
         }
 
         /**
          * 获取总查询次数
          */
         public long getTotalLookups() {
-            return totalHits + totalMisses;
+            return totalHits.sum() + totalMisses.sum();
+        }
+
+        /**
+         * 获取总注册数
+         */
+        public long getTotalRegistrations() {
+            return totalRegistrations.sum();
+        }
+
+        /**
+         * 获取总注销数
+         */
+        public long getTotalUnregistrations() {
+            return totalUnregistrations.sum();
+        }
+
+        /**
+         * 获取总更新数
+         */
+        public long getTotalUpdates() {
+            return totalUpdates.sum();
         }
 
         /**
          * 打印统计信息
          */
         public void print() {
-            System.out.println("=== RuleRegistry Statistics ===");
-            System.out.println("Total Registrations: " + totalRegistrations);
-            System.out.println("Total Updates: " + totalUpdates);
-            System.out.println("Total Unregistrations: " + totalUnregistrations);
-            System.out.println("Total Lookups: " + getTotalLookups());
-            System.out.println("Hits: " + totalHits);
-            System.out.println("Misses: " + totalMisses);
-            System.out.println("Hit Rate: " + String.format("%.2f%%", getHitRate() * 100));
+            log.info("=== RuleRegistry Statistics ===");
+            log.info("Total Registrations: {}", totalRegistrations.sum());
+            log.info("Total Updates: {}", totalUpdates.sum());
+            log.info("Total Unregistrations: {}", totalUnregistrations.sum());
+            log.info("Total Lookups: {}", getTotalLookups());
+            log.info("Hits: {}", totalHits.sum());
+            log.info("Misses: {}", totalMisses.sum());
+            log.info("Hit Rate: {}", String.format("%.2f%%", getHitRate() * 100));
         }
 
         @Override
         public String toString() {
             return String.format("RegistryStatistics{registrations=%d, unregistrations=%d, hits=%d, misses=%d, hitRate=%.2f%%}",
-                    totalRegistrations, totalUnregistrations, totalHits, totalMisses, getHitRate() * 100);
+                    totalRegistrations.sum(), totalUnregistrations.sum(),
+                    totalHits.sum(), totalMisses.sum(), getHitRate() * 100);
         }
     }
 

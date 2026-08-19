@@ -92,30 +92,22 @@ public class XmlParserFactory {
     /**
      * 根据输入流内容自动选择解析器
      *
+     * <p>优化策略：不预读整个流来判断大小，而是默认使用混合解析器（HybridXmlParser），
+     * 由混合解析器在解析时按需决定使用 DOM 还是 SAX
+     *
      * @param inputStream XML 输入流
      * @param systemId    系统标识符
      * @return XML 解析器
      */
     public static XmlParser getParserForStream(InputStream inputStream, String systemId) {
-        // 尝试读取前几个字节判断文件大小
-        try {
-            if (!inputStream.markSupported()) {
-                return getParser(ParseStrategyEnums.DOM);
-            }
-
-            inputStream.mark(DEFAULT_DOM_THRESHOLD + 1);
-            byte[] buffer = new byte[DEFAULT_DOM_THRESHOLD + 1];
-            int bytesRead = inputStream.read(buffer);
-            inputStream.reset();
-
-            if (bytesRead > DEFAULT_DOM_THRESHOLD) {
-                log.debug("流较大 ({} bytes)，使用 SAX 解析: {}", bytesRead, systemId);
-                return getParser(ParseStrategyEnums.SAX);
-            }
-        } catch (Exception e) {
-            log.warn("检测流大小失败，使用 DOM 解析: {}", systemId, e);
+        // 如果流支持 mark/reset，委托给混合解析器（它会在解析时自动选择）
+        if (inputStream != null && inputStream.markSupported()) {
+            log.debug("流支持 mark/reset，使用混合解析器: {}", systemId);
+            return getParser(ParseStrategyEnums.HYBRID);
         }
 
+        // 不支持 mark 的流无法检测大小，默认使用 DOM
+        log.debug("流不支持 mark，使用 DOM 解析: {}", systemId);
         return getParser(ParseStrategyEnums.DOM);
     }
 

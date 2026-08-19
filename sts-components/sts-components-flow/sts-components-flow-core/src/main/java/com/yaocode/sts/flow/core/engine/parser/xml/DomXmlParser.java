@@ -52,65 +52,33 @@ public class DomXmlParser extends AbstractXmlParser {
         long startTime = System.currentTimeMillis();
         logParseStart(systemId);
 
-        // ✅ 1. 检查 InputStream
-        System.out.println("=== DomXmlParser.parse() 开始 ===");
-        System.out.println("systemId: " + systemId);
-        System.out.println("inputStream: " + inputStream);
-
         try {
-            // ✅ 2. 检查 InputStream 是否可用
             if (inputStream == null) {
-                System.out.println("❌ inputStream 为 null");
                 throw new ParseException("InputStream 为 null");
             }
 
-            // ✅ 3. 检查 InputStream 是否有数据
+            // 记录输入流状态（调试日志级别）
             try {
                 int available = inputStream.available();
-                System.out.println("available bytes: " + available);
-                if (available == 0) {
-                    System.out.println("⚠️ InputStream 可用字节为 0，可能已被读取");
-                }
+                log.debug("InputStream available bytes: {}, systemId: {}", available, systemId);
             } catch (IOException e) {
-                System.out.println("获取 available 失败: " + e.getMessage());
+                log.debug("获取 InputStream available 失败: {}", e.getMessage());
             }
 
-            // ✅ 4. 读取前 100 个字节看看内容
-            if (inputStream.markSupported()) {
-                inputStream.mark(1024);
-                byte[] buffer = new byte[Math.min(100, inputStream.available())];
-                int read = inputStream.read(buffer);
-                if (read > 0) {
-                    String preview = new String(buffer, 0, read, StandardCharsets.UTF_8);
-                    System.out.println("XML 预览: " + preview.substring(0, Math.min(50, preview.length())) + "...");
-                }
-                inputStream.reset();  // 重置，让后续解析器重新读取
-            }
-            DocumentBuilderFactory factory = getDocumentBuilderFactory();
+            // 使用新的工厂实例避免并发安全问题（父类配置的工厂是共享的）
+            DocumentBuilderFactory factory = newDocumentBuilderFactory();
 
-            // 禁用外部实体解析，防止XXE攻击
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            // 限制实体展开深度
+            // 额外的 XXE 防护（父类已配置基础项，此处补充 attribute 级别限制）
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
-
-            // ✅ 打印工厂配置
-            System.out.println("NamespaceAware: " + factory.isNamespaceAware());
-            System.out.println("Validating: " + factory.isValidating());
-            System.out.println("IgnoringComments: " + factory.isIgnoringComments());
-            System.out.println("IgnoringElementContentWhitespace: " + factory.isIgnoringElementContentWhitespace());
-            System.out.println("Coalescing: " + factory.isCoalescing());
-            System.out.println("ExpandEntityReferences: " + factory.isExpandEntityReferences());
+            log.debug("DocumentBuilderFactory config: namespaceAware={}, validating={}",
+                    factory.isNamespaceAware(), factory.isValidating());
 
             DocumentBuilder builder = factory.newDocumentBuilder();
-            System.out.println("DocumentBuilder: " + builder.getClass().getName());
 
-            // 设置 EntityResolver
-//            builder.setEntityResolver(getEntityResolver());
+            // 设置 EntityResolver - 防止外部 DTD/实体引用
+            builder.setEntityResolver(getEntityResolver());
 
             // 设置错误处理器（参考 Tomcat 风格）
             builder.setErrorHandler(new ErrorHandler() {

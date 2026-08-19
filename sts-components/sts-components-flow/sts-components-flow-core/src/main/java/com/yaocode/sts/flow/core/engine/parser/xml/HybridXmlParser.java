@@ -74,6 +74,16 @@ public class HybridXmlParser extends AbstractXmlParser {
     @Setter
     private boolean forceSax = false;
 
+    /**
+     * 复用的 DOM 解析器实例
+     */
+    private final DomXmlParser domParser = new DomXmlParser();
+
+    /**
+     * 复用的 SAX 解析器实例
+     */
+    private final SaxXmlParser saxParser = new SaxXmlParser();
+
     @Override
     public Document parse(InputStream inputStream, String systemId) throws ParseException {
         long startTime = System.currentTimeMillis();
@@ -129,20 +139,17 @@ public class HybridXmlParser extends AbstractXmlParser {
     }
 
     /**
-     * 使用 DOM 解析
+     * 使用 DOM 解析（复用实例）
      */
     private Document parseWithDom(InputStream inputStream, String systemId) throws ParseException {
-        DomXmlParser domParser = new DomXmlParser();
         return domParser.parse(inputStream, systemId);
     }
 
     /**
-     * 使用 SAX 解析
+     * 使用 SAX 解析（复用实例，每次更新配置）
      */
     private void parseWithSax(InputStream inputStream, String systemId) throws ParseException {
-        SaxXmlParser saxParser = new SaxXmlParser();
-
-        // 传递配置
+        // 传递最新配置
         saxParser.setRuleRegistry(ruleRegistry);
         saxParser.setContext(context);
 

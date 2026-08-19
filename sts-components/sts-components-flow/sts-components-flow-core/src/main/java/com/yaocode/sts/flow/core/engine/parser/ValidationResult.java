@@ -4,6 +4,7 @@ import com.yaocode.sts.flow.core.engine.parser.enums.ErrorSeverityEnums;
 import com.yaocode.sts.flow.core.engine.parser.error.ParseError;
 import com.yaocode.sts.flow.core.engine.parser.error.ParseWarning;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  *
  * @author Process Engine Team
  */
+@Slf4j
 @Data
 public class ValidationResult {
 
@@ -354,28 +356,37 @@ public class ValidationResult {
     }
 
     /**
-     * 打印验证报告
+     * 打印验证报告（使用日志输出）
      */
     public void printReport() {
-        System.out.println("=== Validation Report ===");
-        System.out.println("Validator: " + validatorName);
-        System.out.println("Valid: " + valid);
-        System.out.println("Errors: " + (errors != null ? errors.size() : 0));
-        System.out.println("Warnings: " + (warnings != null ? warnings.size() : 0));
-        System.out.println("Validate Time: " + validateTime + "ms");
+        if (!log.isInfoEnabled()) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== Validation Report ===\n");
+        sb.append("Validator: ").append(validatorName).append("\n");
+        sb.append("Valid: ").append(valid).append("\n");
+        sb.append("Errors: ").append(errors != null ? errors.size() : 0).append("\n");
+        sb.append("Warnings: ").append(warnings != null ? warnings.size() : 0).append("\n");
+        sb.append("Validate Time: ").append(validateTime).append("ms");
 
         if (message != null) {
-            System.out.println("Message: " + message);
+            sb.append("\nMessage: ").append(message);
         }
 
         if (errors != null && !errors.isEmpty()) {
-            System.out.println("\n--- Errors ---");
-            errors.forEach(e -> System.out.printf("  [%s] %s%n", e.getSeverity(), e.getMessage()));
+            sb.append("\n\n--- Errors ---");
+            for (ParseError e : errors) {
+                sb.append("\n  [").append(e.getSeverity()).append("] ").append(e.getMessage());
+            }
         }
 
         if (warnings != null && !warnings.isEmpty()) {
-            System.out.println("\n--- Warnings ---");
-            warnings.forEach(w -> System.out.println("  " + w.getMessage()));
+            sb.append("\n\n--- Warnings ---");
+            for (ParseWarning w : warnings) {
+                sb.append("\n  ").append(w.getMessage());
+            }
         }
+        log.info(sb.toString());
     }
 }

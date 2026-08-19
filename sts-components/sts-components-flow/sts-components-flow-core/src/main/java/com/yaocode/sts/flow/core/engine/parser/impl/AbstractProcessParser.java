@@ -6,11 +6,11 @@ import com.yaocode.sts.flow.core.engine.parser.ParseResult;
 import com.yaocode.sts.flow.core.engine.parser.ParserConfiguration;
 import com.yaocode.sts.flow.core.engine.parser.ValidationResult;
 import com.yaocode.sts.flow.core.engine.parser.api.ProcessDefinitionParser;
-import com.yaocode.sts.flow.core.engine.parser.listener.ParseListener;
 import com.yaocode.sts.flow.core.engine.parser.api.Validator;
 import com.yaocode.sts.flow.core.engine.parser.enums.ErrorSeverityEnums;
 import com.yaocode.sts.flow.core.engine.parser.enums.ParseStatusEnums;
 import com.yaocode.sts.flow.core.engine.parser.error.ParseError;
+import com.yaocode.sts.flow.core.engine.parser.listener.ParseListener;
 import com.yaocode.sts.flow.core.exception.ParseException;
 import com.yaocode.sts.flow.core.model.ProcessDefinition;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * 抽象解析器基类
@@ -59,36 +60,59 @@ public abstract class AbstractProcessParser implements ProcessDefinitionParser, 
 
     @Override
     public ParseResult parse(byte[] content, String resourceName) throws ParseException {
+        return executeParse(resourceName, context -> {
+            preProcess(content, resourceName, context);
+            return doParse(content, resourceName, context);
+        });
+    }
+
+    @Override
+    public ParseResult parse(InputStream inputStream, String resourceName) throws ParseException {
+        return executeParse(resourceName, context -> {
+            preProcess(inputStream, resourceName, context);
+            return doParse(inputStream, resourceName, context);
+        });
+    }
+
+    /**
+     * 执行解析流程的统一骨架（模板方法）
+     *
+     * @param resourceName 资源名称
+     * @param parser       实际解析逻辑（接收 ParseContext，返回解析结果）
+     * @return 解析结果
+     */
+    private ParseResult executeParse(String resourceName, Function<ParseContext, Object> parser) {
         long startTime = System.currentTimeMillis();
         ParseContext context = createContext();
 
         try {
-            // 1. 前置处理
-            preProcess(content, resourceName, context);
+            // 1. 执行具体解析
+            Object rawResult = parser.apply(context);
+            checkTimeout(startTime, resourceName);
 
-            // 2. 执行解析
-            Object rawResult = doParse(content, resourceName, context);
-
-            // 3. 后置处理
+            // 2. 后置处理
             Object processedResult = postProcess(rawResult, context);
+            checkTimeout(startTime, resourceName);
 
-            // 4. 构建流程定义
+            // 3. 构建流程定义
             ProcessDefinition processDefinition = buildProcessDefinition(processedResult, context);
+            checkTimeout(startTime, resourceName);
 
-            // 5. 执行验证
+            // 4. 执行验证
             if (!configuration.isSkipValidation()) {
                 validate(context);
+                checkTimeout(startTime, resourceName);
             }
 
-            // 6. 检查是否有致命错误
+            // 5. 检查是否有致命错误
             if (context.hasFatalError() && configuration.isStrictMode()) {
                 throw new ParseException("解析失败，存在致命错误");
             }
 
-            // 7. 构建结果
+            // 6. 构建结果
             ParseResult result = buildResult(processDefinition, rawResult, context, startTime);
 
-            // 8. 触发完成事件
+            // 7. 触发完成事件
             fireParseCompleted(context, result);
 
             return result;
@@ -105,38 +129,20 @@ public abstract class AbstractProcessParser implements ProcessDefinitionParser, 
         }
     }
 
-    @Override
-    public ParseResult parse(InputStream inputStream, String resourceName) throws ParseException {
-        long startTime = System.currentTimeMillis();
-        ParseContext context = createContext();
-
-        try {
-            preProcess(inputStream, resourceName, context);
-            Object rawResult = doParse(inputStream, resourceName, context);
-            Object processedResult = postProcess(rawResult, context);
-            ProcessDefinition processDefinition = buildProcessDefinition(processedResult, context);
-
-            if (!configuration.isSkipValidation()) {
-                validate(context);
-            }
-
-            if (context.hasFatalError() && configuration.isStrictMode()) {
-                throw new ParseException("解析失败，存在致命错误");
-            }
-
-            ParseResult result = buildResult(processDefinition, rawResult, context, startTime);
-            fireParseCompleted(context, result);
-            return result;
-
-        } catch (Exception e) {
-            log.error("解析失败: {}", resourceName, e);
-            context.addError(ParseError.builder()
-                    .message(e.getMessage())
-                    .severity(ErrorSeverityEnums.FATAL)
-                    .cause(e)
-                    .build());
-            fireParseFailed(context, e);
-            return buildErrorResult(context, startTime, e);
+    /**
+     * 检查解析是否超时
+     *
+     * @param startTime    开始时间戳
+     * @param resourceName 资源名称
+     * @throws ParseException 如果超时
+     */
+    private void checkTimeout(long startTime, String resourceName) throws ParseException {
+        long elapsed = System.currentTimeMillis() - startTime;
+        if (elapsed > configuration.getParseTimeout()) {
+            log.warn("解析超时: resource={}, elapsed={}ms, timeout={}ms",
+                    resourceName, elapsed, configuration.getParseTimeout());
+            throw new ParseException(String.format("解析超时: %s (耗时 %dms，超时 %dms)",
+                    resourceName, elapsed, configuration.getParseTimeout()));
         }
     }
 
@@ -166,12 +172,12 @@ public abstract class AbstractProcessParser implements ProcessDefinitionParser, 
     /**
      * 执行具体解析（子类实现）
      */
-    protected abstract Object doParse(byte[] content, String resourceName, ParseContext context) throws ParseException;
+    protected abstract ProcessDefinition doParse(byte[] content, String resourceName, ParseContext context) throws ParseException;
 
     /**
      * 执行具体解析（输入流版本，子类实现）
      */
-    protected abstract Object doParse(InputStream inputStream, String resourceName, ParseContext context) throws ParseException;
+    protected abstract ProcessDefinition doParse(InputStream inputStream, String resourceName, ParseContext context) throws ParseException;
 
     /**
      * 后置处理（钩子方法）
@@ -204,8 +210,10 @@ public abstract class AbstractProcessParser implements ProcessDefinitionParser, 
     /**
      * 构建成功结果
      */
-    protected ParseResult buildResult(ProcessDefinition processDefinition, Object rawResult,
-                                      ParseContext context, long startTime) {
+    protected ParseResult buildResult(
+            ProcessDefinition processDefinition, Object rawResult,
+            ParseContext context, long startTime
+    ) {
         return ParseResult.builder()
                 .success(!context.hasError())
                 .status(context.hasFatalError() ? ParseStatusEnums.FAILED :

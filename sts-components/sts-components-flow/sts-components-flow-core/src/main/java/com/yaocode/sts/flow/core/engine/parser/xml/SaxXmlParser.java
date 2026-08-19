@@ -69,10 +69,18 @@ public class SaxXmlParser extends AbstractXmlParser {
     /**
      * 命名空间映射
      */
-    private final Map<String, String> namespaceMap = new HashMap<>();
+    private final Map<String, String> namespaceMap = new HashMap<>(16);
+
+    /**
+     * 共享的 Document 工厂（用于创建 Element，轻量级）
+     */
+    private transient javax.xml.parsers.DocumentBuilder sharedDocumentBuilder;
 
     @Override
     public Document parse(InputStream inputStream, String systemId) throws ParseException {
+        // 自动重置状态，防止多次解析间状态残留
+        reset();
+
         long startTime = System.currentTimeMillis();
         logParseStart(systemId);
 
@@ -88,7 +96,7 @@ public class SaxXmlParser extends AbstractXmlParser {
                                          String qName, Attributes attributes) throws SAXException {
                     // 记录命名空间
                     if (uri != null && !uri.isEmpty()) {
-                        String prefix = getPrefix(qName);
+                        String prefix = extractPrefix(qName);
                         namespaceMap.put(prefix, uri);
                         if (context != null) {
                             context.getNamespaces().put(prefix, uri);
@@ -201,7 +209,10 @@ public class SaxXmlParser extends AbstractXmlParser {
                     throw e;
                 }
 
-                private String getPrefix(String qName) {
+                /**
+                 * 从 QName 提取前缀（内部类版本，避免与外部类方法冲突）
+                 */
+                private String extractPrefix(String qName) {
                     int colonIndex = qName.indexOf(':');
                     return colonIndex > 0 ? qName.substring(0, colonIndex) : "";
                 }
@@ -245,13 +256,33 @@ public class SaxXmlParser extends AbstractXmlParser {
     }
 
     /**
+     * 获取共享的 DocumentBuilder（懒加载，线程不安全由调用方保证）
+     */
+    private javax.xml.parsers.DocumentBuilder getSharedDocumentBuilder() {
+        if (sharedDocumentBuilder == null) {
+            try {
+                javax.xml.parsers.DocumentBuilderFactory factory =
+                        javax.xml.parsers.DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                // XXE 防护
+                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                sharedDocumentBuilder = factory.newDocumentBuilder();
+            } catch (Exception e) {
+                throw new RuntimeException("创建共享 DocumentBuilder 失败", e);
+            }
+        }
+        return sharedDocumentBuilder;
+    }
+
+    /**
      * 创建 Element 对象（用于规则）
+     * 使用共享 Document 工厂，避免每个元素都创建新的工厂实例
      */
     private Element createElement(String qName, Attributes attributes) {
         try {
-            javax.xml.parsers.DocumentBuilderFactory factory =
-                    javax.xml.parsers.DocumentBuilderFactory.newInstance();
-            org.w3c.dom.Document doc = factory.newDocumentBuilder().newDocument();
+            org.w3c.dom.Document doc = getSharedDocumentBuilder().newDocument();
             Element element = doc.createElement(qName);
 
             for (int i = 0; i < attributes.getLength(); i++) {
@@ -260,7 +291,7 @@ public class SaxXmlParser extends AbstractXmlParser {
 
             return element;
         } catch (Exception e) {
-            throw new RuntimeException("创建元素失败", e);
+            throw new RuntimeException("创建元素失败: " + qName, e);
         }
     }
 
@@ -301,6 +332,7 @@ public class SaxXmlParser extends AbstractXmlParser {
         namespaceMap.clear();
         if (context != null) {
             context.setCurrentObject(null);
+            context.clearAttributes();
         }
     }
 }

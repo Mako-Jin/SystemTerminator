@@ -23,7 +23,7 @@ public class JsonProcessParser extends AbstractProcessParser {
     private static final String FORMAT_NAME = "JSON";
 
     @Override
-    protected Object doParse(byte[] content, String resourceName, ParseContext context) throws ParseException {
+    protected ProcessDefinition doParse(byte[] content, String resourceName, ParseContext context) throws ParseException {
         try {
             Map<String, Object> jsonData = JSONUtils.parseMap(content);
             return parseJson(jsonData, context);
@@ -33,7 +33,7 @@ public class JsonProcessParser extends AbstractProcessParser {
     }
 
     @Override
-    protected Object doParse(InputStream inputStream, String resourceName, ParseContext context) throws ParseException {
+    protected ProcessDefinition doParse(InputStream inputStream, String resourceName, ParseContext context) throws ParseException {
         try {
             // TODO 使用 Map<String, Object> 进行类型转换，容易出现运行时异常。
             Map<String, Object> jsonData = JSONUtils.parseMap(inputStream);
@@ -46,7 +46,7 @@ public class JsonProcessParser extends AbstractProcessParser {
     /**
      * 解析 JSON 数据
      */
-    private Object parseJson(Map<String, Object> jsonData, ParseContext context) {
+    private ProcessDefinition parseJson(Map<String, Object> jsonData, ParseContext context) {
         // 构建流程定义
         ProcessDefinition.ProcessDefinitionBuilder builder = ProcessDefinition.builder();
 
